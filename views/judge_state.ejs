@@ -1,0 +1,77 @@
+<% this.title = 'Judge State' %>
+<% include header %>
+<div class="am-container am-g">
+    <h1>评测记录</h1>
+    <form class="am-form-inline am-u-sm-8" role="form" method="get" action="<%= syzoj.utils.makeUrl(['judge_state']) %>">
+        <div class="am-form-group am-fl">
+            <input type="text" class="am-form-field am-input-sm" name="submitter" placeholder="提交者" value="<%= form.submitter %>">
+        </div>
+        <div class="am-form-group am-fl">
+            <input type="number" class="am-form-field am-input-sm" name="problem_id" placeholder="题目编号", value="<%= form.problem_id %>">
+        </div>
+        <button type="submit" class="am-btn am-btn-primary am-input-sm am-fl">搜索</button>
+    </form>
+    <div class="am-u-sm-4">
+        <% if (user) { %>
+        <a class="am-btn am-btn-success am-input-sm am-fr" href="<%= syzoj.utils.makeUrl(['judge_state'], { submitter: user.username }) %>">我的提交</a>
+        <% } %>
+    </div>
+    <div class="am-u-sm-12">
+        <table class="am-table" style="text-align: center; ">
+            <thead>
+            <tr>
+                <th style="text-align: center; ">编号</th>
+                <th style="text-align: center; ">题目名称</th>
+                <th style="text-align: center; ">状态</th>
+                <th style="text-align: center; ">分数</th>
+                <th style="text-align: center; ">总时间</th>
+                <th style="text-align: center; ">提交者</th>
+                <th style="text-align: center; ">提交时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (let judge of judge_state) { %>
+              <tr>
+                  <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">#<%= judge.id %></a></td>
+                  <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>"><%= judge.problem.title %></a></td>
+                  <% if (!judge.hidden) { %>
+                  <td>
+                      <% if (judge.status === 'Accepted') { %>
+                          <span style="color: green">
+                      <% } else if (judge.status === 'Wrong Answer') { %>
+                          <span style="color: red">
+                      <% } else if (judge.status === 'Compile Error') { %>
+                          <span>
+                             <a class="ce_link" style="color: rgb(0, 68, 136)" href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">
+                             </a>
+                      <% } else if (judge.status === 'System Error') { %>
+                          <span style="color: grey">
+                      <% } else { %>
+                          <span style="color: red">
+                      <% } %>
+                      <%= judge.status %>
+                          </span>
+                  </td>
+
+                  <% if (judge.allowedSeeCode) { %>
+                  <td><a class="score_link" href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><%= judge.result.score %></a></td>
+                  <% } else { %>
+                  <td><%= judge.result.score %></td>
+                  <% } %>
+
+                  <td><%= judge.result.total_time %> ms</td>
+                  <% } else { %>
+                  <td>隐藏</td>
+                  <td>隐藏</td>
+                  <td>隐藏</td>
+                  <% } %>
+                  <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a></td>
+                  <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
+              </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% include page %>
+<% include footer %>

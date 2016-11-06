@@ -1,0 +1,52 @@
+/*
+ *  This file is part of SYZOJ.
+ *
+ *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
+ *
+ *  SYZOJ is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  SYZOJ is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public
+ *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+'use strict';
+
+let User = syzoj.model('user');
+let Article = syzoj.model('article');
+
+app.get('/', async (req, res) => {
+  try {
+    let ranklist = await User.query(1, 10, { is_show: true }, [['ac_num', 'desc']]);
+
+    let notices = await syzoj.config.notices.mapAsync(async notice => {
+      if (notice.type === 'link') return notice;
+      else if (notice.type === 'article') {
+        let article = await Article.fromID(notice.id);
+        if (!article) throw `No such article ${notice.id}`;
+        return {
+          title: article.title,
+          url: syzoj.utils.makeUrl(['article', article.id]),
+          date: syzoj.utils.formatDate(article.public_time, 'L')
+        };
+      }
+    });
+
+    res.render('index', {
+      ranklist: ranklist,
+      notices: notices
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});

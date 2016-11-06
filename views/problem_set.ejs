@@ -1,0 +1,39 @@
+<% this.title = 'Problem Set' %>
+<% include header %>
+<div class="am-container">
+    <h1>题库</h1>
+    <div class="am-u-sm-12">
+        <table class="am-table">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>题目名称</th>
+                <th>通过</th>
+                <th>提交</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (let problem of problems) { %>
+                <% if (problem.is_public || problem.allowedEdit) { %>
+                <%
+                let style = '';
+                if (problem.status === true) style = 'background: rgba(46, 199, 46, 0.15); ';
+                else if (problem.status === false) style = 'background: rgba(255, 0, 0, 0.15); ';
+                %>
+                <tr style="<%= style %>">
+                    <td><%= problem.id %></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
+                      <% if (!problem.is_public) { %>--[未审核] <% } %>
+                    </a></td>
+                    <td><%= problem.ac_num %></td>
+                    <td><%= problem.submit_num %></td>
+                </tr>
+                <% } %>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+    </hr>
+</div>
+<% include page  %>
+<% include footer %>

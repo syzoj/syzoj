@@ -1,0 +1,45 @@
+{
+  "name": "syzoj",
+  "version": "2.0.0",
+  "description": "An OnlineJudge System for OI",
+  "main": "app.js",
+  "scripts": {
+    "start": "babel-node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syzoj/syzoj.git"
+  },
+  "keywords": [
+    "onlinejudge",
+    "oj",
+    "express"
+  ],
+  "author": "Menci",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/syzoj/syzoj/issues"
+  },
+  "homepage": "https://github.com/syzoj/syzoj#readme",
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2017": "^6.16.0",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.1",
+    "gravatar": "^1.5.2",
+    "highlight.js": "^9.6.0",
+    "md5": "^2.2.1",
+    "moemark-renderer": "^1.1.3",
+    "moment": "^2.15.0",
+    "multer": "^1.2.0",
+    "mysql": "^2.11.1",
+    "request": "^2.74.0",
+    "sequelize": "^3.24.3",
+    "sqlite3": "^3.1.4"
+  }
+}

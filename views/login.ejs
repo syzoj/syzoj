@@ -1,0 +1,89 @@
+<% this.title = 'Login' %>
+<% include header %>
+<div class="am-container am-g">
+    <div class="am-u-sm-8 am-u-sm-centered">
+        <h1>登陆</h1>
+
+        <div class="am-alert am-alert-danger am-u-sm-12" id="error" data-am-alert hidden>
+            <p id="error_info">没什么可给你，但求凭这阙歌。谢谢你风雨里，都不退愿陪着我。</p>
+        </div>
+        <form class="am-form am-form-horizontal">
+            <div class="am-form-group">
+                <label class="am-u-sm-2 am-form-label">用户名</label>
+
+                <div class="am-u-sm-10">
+                    <input type="text" placeholder="请输入用户名" id="username" onkeydown="key_login()">
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label class="am-u-sm-2 am-form-label">密码</label>
+
+                <div class="am-u-sm-10">
+                    <input type="password" placeholder="请输入密码" id="password" onkeydown="key_login()">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <div class="am-u-sm-10 am-u-sm-offset-2">
+                    <p class="am-btn am-btn-default" id="login">登陆</p>
+                </div>
+            </div>
+        </form>
+        </dsiv>
+    </div>
+</div>
+<script type="text/javascript">
+function key_login() {
+	if (event.keyCode == 13) {
+		login();
+	}
+}
+function show_error(error){
+    $("#error_info").text(error);
+    $("#error").show();
+}
+function success(){
+    window.location.href="/";
+}
+function login(){
+    password=$.md5($("#password").val()+"syzoj2_xxx")
+    $("#login").text("请稍等 ......");
+    //alert(url);
+    $.ajax({
+        url : "/api/login",
+        type : 'POST',
+        data:{"username":$("#username").val(),"password":password},
+        async:false,
+        success : function(data) {
+            console.log(data);
+            error_code=data.error_code;
+            switch(error_code){
+                case 1001:
+                    show_error("没有这个用户名");
+                    break;
+                case 1002:
+                    show_error("密码错误");
+                    break;
+                case 1:
+                    success();
+                    break;
+                default:
+                    show_error("未知错误");
+                    break;
+            }
+            $("#login").text("登陆");
+        },
+        error :  function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+            show_error("未知错误");
+            $("#login").text("登陆");
+        }
+    });
+}
+$(document).ready(function(){
+    $("#login").click(function(){
+        login();
+    });
+});
+</script>
+<% include footer %>

@@ -1,0 +1,87 @@
+<% this.title = 'Home'; %>
+<% include header %>
+<style>
+.am-panel-bd p:last-child {
+margin-bottom: 0;
+}
+</style>
+<div class="am-container am-g">
+	<div class="am-u-sm-8">
+		<div class="am-panel am-panel-default">
+		 	<div class="am-panel-hd">
+		   		<h3 class="am-panel-title">公告板</h3>
+		 	</div>
+		 	<div class="am-panel-bd">
+				<table class="am-table">
+		            <thead>
+		            <tr>
+		                <th>标题</th>
+		                <th>时间</th>
+		            </tr>
+		            </thead>
+		            <tbody>
+                  <% for (let item of notices) { %>
+		                <tr>
+		                    <td><a href="<%= item.url %>"><%= item.title %></a></td>
+		                    <td><%= item.date %></td>
+		                </tr>
+                  <% } %>
+		            </tbody>
+		        </table>
+			</div>
+		</div>
+		<div class="am-panel am-panel-default">
+		 	<div class="am-panel-hd">
+		   		<h3 class="am-panel-title">排名</h3>
+		 	</div>
+		 	<div class="am-panel-bd">
+			    <table class="am-table">
+			        <thead>
+			        <tr>
+			            <th>#</th>
+			            <th>昵称</th>
+			            <th>个性签名</th>
+			        </tr>
+			        </thead>
+			        <tbody>
+                <%
+                let i = 0;
+                for (let user of ranklist) {
+                  ++i;
+                %>
+      		        <tr>
+      		        	<td><%= i %></td>
+      		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a>
+                      <% if (user.nameplate) { %>
+                      <%- user.nameplate %>
+                      <% } %>
+                    </td>
+      		        	<td><%= user.information %></td>
+      		        </tr>
+      		     <%
+                } %>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+    </div>
+	<div class="am-u-sm-4">
+		<div class="am-panel am-panel-default">
+		 	<div class="am-panel-hd">
+		   		<h3 class="am-panel-title">信息栏</h3>
+		 	</div>
+		 	<div class="am-panel-bd">
+				<p><%- syzoj.config.announcement %></p>
+			</div>
+		</div>
+		<!--div class="am-panel am-panel-default">
+		 	<div class="am-panel-hd">
+		   		<h3 class="am-panel-title">近期比赛</h3>
+		 	</div>
+		 	<div class="am-panel-bd">
+				<p>还没有举行过任何比赛</p>
+			</div>
+		</div-->
+	</div>
+</div>
+<% include footer %>

@@ -1,0 +1,76 @@
+<% this.title = 'Upload Test Data'; %>
+<% include header %>
+<script>
+    function go_enable() {
+        document.getElementById('file_io_input_name').disabled = false;
+        document.getElementById('file_io_output_name').disabled = false;
+    }
+    function go_disable() {
+        document.getElementById('file_io_input_name').disabled = true;
+        document.getElementById('file_io_output_name').disabled = true;
+    }
+</script>
+<div class="am-container am-g">
+	<div class="am-u-sm-6">
+		<% if (problem.testdata) { %>
+			<p>数据包：<%= problem.testdata.filename %></p>
+		<%
+    try {
+      let list = syzoj.utils.parseTestData(problem.testdata.getPath());
+    %>
+				<h3>你已经上传了测试数据，并且已经解析出以下数据点</h3>
+				    <table class="am-table">
+				        <thead>
+				        <tr>
+				            <th>输入文件</th>
+				            <th>输出文件</th>
+				        </tr>
+				        </thead>
+				        <tbody>
+				        <% for (let testcase of list) { %>
+				            <tr>
+				                <td><%= testcase.input %></td>
+				                <td><%= testcase.output %></td>
+				            </tr>
+				        <% } %>
+				        </tbody>
+				    </table>
+			<% } catch (e) { %>
+				<h3>你已经上传了测试数据，但是数据包出现错误：<%= e %></h3>
+			<% } %>
+		<% } else { %>
+			<h3>你还没有上传数据</h3>
+		<% } %>
+	</div>
+	<div class="am-u-sm-6">
+		<form class="am-form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>" method="post" enctype="multipart/form-data">
+		    <div class="am-form-group">
+		      <label for="doc-ds-ipt-1">时间限制(单位:ms)</label>
+		      <input type="number" name="time_limit" value="<%= problem.time_limit %>">
+		    </div>
+		    <div class="am-form-group">
+		      <label for="doc-ds-ipt-1">内存限制(单位:MB)</label>
+		      <input type="number" name="memory_limit" value="<%= problem.memory_limit %>">
+		    </div>
+            <div class="am-form-group">
+                <label>IO 方式</label><br>
+                <div style="position: relative; height: 20px; margin-top: 10px; font-weight: 100;">
+                <input style="position: absolute; top: 0px; font-size: 16px; line-height: 16px; margin: 0px; font-weight: initial; left: 0px;" onclick="go_disable();" id="std-io" name="io_method" value="std-io" type="radio"<% if (!problem.file_io) { %> checked<% } %>>
+                <label style="left: 22px; position: absolute; top: 0px; font-size: 16px; line-height: 16px; margin: 0px; font-weight: initial;" for="std-io">标准 IO</label>
+                <input style="left: 120px; position: absolute; top: 0px; font-size: 16px; line-height: 16px; margin: 0px; font-weight: initial;" onclick="go_enable();" value="file-io" id="file-io" name="io_method" type="radio"<% if (problem.file_io) { %> checked<% } %>>
+                <label style="left: 144px; position: absolute; top: 0px; font-size: 16px; line-height: 16px; margin: 0px; font-weight: initial;" for="file-io">文件 IO</label></div><br>
+                <label for="file_io_input_name">输入文件名：</label>
+                <input type="text" id="file_io_input_name" name="file_io_input_name" value="<%= problem.file_io_input_name %>"<% if (!problem.file_io) { %> disabled<% } %>>
+                <label for="file_io_output_name">输出文件名：</label>
+                <input type="text" id="file_io_output_name" name="file_io_output_name" value="<%= problem.file_io_output_name %>"<% if (!problem.file_io) { %> disabled<% } %>>
+            </div>
+		    <div class="am-form-group">
+			      <label for="doc-ipt-file-1">测试数据</label>
+			      <input type="file" name="testdata">
+			      <p class="am-form-help">数据格式请看...</p>
+		    </div>
+			<button type="submit" class="am-btn am-btn-primary">提交</button>
+		</form>
+	</div>
+</div>
+<% include footer %>

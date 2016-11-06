@@ -1,0 +1,230 @@
+/*
+ *  This file is part of SYZOJ.
+ *
+ *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
+ *
+ *  SYZOJ is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  SYZOJ is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public
+ *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+'use strict';
+
+let Article = syzoj.model('article');
+let ArticleComment = syzoj.model('article-comment');
+let User = syzoj.model('user');
+
+app.get('/discussion', async (req, res) => {
+  try {
+    let page = parseInt(req.query.page);
+    if (!page || page < 1) page = 1;
+
+    let count = await Article.count();
+    let pageCnt = Math.ceil(count / syzoj.config.page.discussion);
+    if (page > pageCnt) page = pageCnt;
+
+    let articles = await Article.query(page, syzoj.config.page.discussion, null, [['public_time', 'asc']]);
+
+    for (let article of articles) await article.loadRelationships();
+
+    res.render('discussion', {
+      articles: articles,
+      pageCnt: pageCnt,
+      page: page
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/article/:id', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let article = await Article.fromID(id);
+    if (!article) throw 'No such article';
+
+    await article.loadRelationships();
+    article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
+    article.allowedComment = await article.isAllowedCommentBy(res.locals.user);
+    article.content = await syzoj.utils.markdown(article.content);
+
+    let where = { article_id: id };
+
+    let page = parseInt(req.query.page);
+    if (!page || page < 1) page = 1;
+    let count = await ArticleComment.count(where);
+    let pageCnt = Math.ceil(count / syzoj.config.page.article_comment);
+    if (page > pageCnt) page = pageCnt;
+
+    let comments = [];
+    if (count) {
+      comments = await ArticleComment.query(page, syzoj.config.page.article_comment, where, [['public_time', 'asc']]);
+
+      for (let comment of comments) {
+        comment.content = await syzoj.utils.markdown(comment.content);
+        comment.allowedEdit = await comment.isAllowedEditBy(res.locals.user);
+        await comment.loadRelationships();
+      }
+    }
+
+    res.render('article', {
+      article: article,
+      comments: comments,
+      pageCnt: pageCnt,
+      page: page
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/article/:id/edit', async (req, res) => {
+  try {
+    if (!res.locals.user) throw 'Please login.';
+
+    let id = parseInt(req.params.id);
+    let article = await Article.fromID(id);
+
+    if (!article) {
+      article = await Article.create();
+      article.id = 0;
+      article.allowedEdit = true;
+    } else {
+      article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
+    }
+
+    res.render('edit_article', {
+      article: article
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.post('/article/:id/edit', async (req, res) => {
+  try {
+    if (!res.locals.user) throw 'Please login.';
+
+    let id = parseInt(req.params.id);
+    let article = await Article.fromID(id);
+
+    let time = syzoj.utils.getCurrentTime();
+    if (!article) {
+      article = await Article.create();
+      article.user_id = res.locals.user.id;
+      article.public_time = article.sort_time = time;
+    } else {
+      if (!await article.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+    }
+
+    article.title = req.body.title;
+    article.content = req.body.content;
+    article.update_time = time;
+
+    await article.save();
+
+    res.redirect(syzoj.utils.makeUrl(['article', article.id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/article/:id/delete', async (req, res) => {
+  try {
+    if (!res.locals.user) throw 'Please login.';
+
+    let id = parseInt(req.params.id);
+    let article = await Article.fromID(id);
+
+    if (!article) {
+      throw 'No such article.';
+    } else {
+      if (!await article.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+    }
+
+    await article.destroy();
+
+    res.redirect(syzoj.utils.makeUrl(['discussion']));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.post('/article/:id/comment', async (req, res) => {
+  try {
+    if (!res.locals.user) throw 'Please login.';
+
+    let id = parseInt(req.params.id);
+    let article = await Article.fromID(id);
+
+    if (!article) {
+      throw 'No such article.';
+    } else {
+      if (!await article.isAllowedCommentBy(res.locals.user)) throw 'Permission denied.';
+    }
+
+    let comment = await ArticleComment.create({
+      content: req.body.comment,
+      article_id: id,
+      user_id: res.locals.user.id,
+      public_time: syzoj.utils.getCurrentTime()
+    });
+
+    await comment.save();
+
+    res.redirect(syzoj.utils.makeUrl(['article', article.id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/article/:article_id/comment/:id/delete', async (req, res) => {
+  try {
+    if (!res.locals.user) throw 'Please login.';
+
+    let id = parseInt(req.params.id);
+    let comment = await ArticleComment.fromID(id);
+
+    if (!comment) {
+      throw 'No such comment.';
+    } else {
+      if (!await comment.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+    }
+
+    await comment.destroy();
+
+    res.redirect(syzoj.utils.makeUrl(['article', comment.article_id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});

@@ -1,0 +1,45 @@
+<% if (pageCnt) { %>
+<div class="am-u-sm-12">
+    <ul class="am-pagination am-pagination-centered">
+        <li class="<% if (page === 1) { %>am-disabled<% } %>">
+            <a href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: page - 1 })) %>">
+                <span class="am-icon-angle-double-left"></span>
+            </a>
+        </li>
+        <%
+        let leftCnt = page - 1, rightCnt = pageCnt - page, omitLeft = leftCnt > 4, omitRight = rightCnt > 4;
+        if (omitLeft) leftCnt = 3;
+        if (omitRight) rightCnt = 3;
+        if (omitLeft) {
+        %>
+        <li><span>...</span></li>
+        <%
+        }
+        for (let i = page - leftCnt; i < page; i++) { %>
+          <li>
+              <a href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: i })) %>"><%= i %></a>
+          </li>
+        <%
+        }
+        %>
+        <li class="am-active">
+            <a href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: page })) %>"><%= page %></a>
+        </li>
+        <% for (let i = page + 1; i <= page + rightCnt; i++) { %>
+          <li>
+              <a href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: i })) %>"><%= i %></a>
+          </li>
+        <%
+        }
+        if (omitRight) {
+        %>
+        <li><span>...</span></li>
+        <% } %>
+        <li class="<% if (page === pageCnt) { %>am-disabled<% } %>">
+            <a href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: page + 1 })) %>">
+                <span class="am-icon-angle-double-right"></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<% } %>

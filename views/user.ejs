@@ -1,0 +1,75 @@
+<% this.title = user.nickname + ' - User'; %>
+<% include header %>
+<div class="am-container am-g">
+	<h1>用户信息</h1>
+	<div class="am-u-sm-8">
+		<div class="am-u-sm-6">
+			<div class="am-panel am-panel-default">
+			 	<div class="am-panel-hd">
+			 		<h3 class="am-panel-title">头像</h3>
+			 	</div>
+			 	<div class="am-panel-bd">
+			 		<img width="160" height="160" src="<%= syzoj.utils.gravatar(user.email, 320) %>">
+				</div>
+			</div>
+		</div>
+		<div class="am-u-sm-6">
+			<div class="am-panel am-panel-default">
+			 	<div class="am-panel-hd">
+			   		<h3 class="am-panel-title">用户昵称</h3>
+			 	</div>
+			 	<div class="am-panel-bd">
+					<p><%= user.username %>
+          <% if (user.nameplate) { %><%= user.nameplate %><% } %>
+          </p>
+				</div>
+
+			 	<div class="am-panel-hd">
+			   		<h3 class="am-panel-title">用户邮箱</h3>
+			 	</div>
+			 	<div class="am-panel-bd">
+					<p><%= user.email %></p>
+				</div>
+			</div>
+		</div>
+
+		<div class="am-u-sm-12">
+			<div class="am-panel am-panel-default">
+			 	<div class="am-panel-hd">
+			 		<h3 class="am-panel-title">共发表了<%= user.articles_num %>篇文章</h3>
+			 	</div>
+				<div class="am-panel-bd">
+					<table class="am-table">
+						<tbody>
+						<% /*
+							<tr>
+								<td><a href="{{url_for('article',article_id=article.id)}}">{{article.title}}</a></td>
+								<td>{{tool.pretty_time(article.public_time)}}</td>
+							</tr>
+						*/ %>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="am-u-sm-4">
+		<div class="am-panel am-panel-default">
+			 	<div class="am-panel-hd">
+			   		<h3 class="am-panel-title">个性签名</h3>
+			 	</div>
+			 	<div class="am-panel-bd">
+					<p><%= user.information %></p>
+				</div>
+			</div>
+		<div class="am-panel am-panel-default">
+			<div class="am-panel-hd">一共通过了 <%= user.ac_problems.length %> 道题</div>
+			<div class="am-panel-bd">
+        <% for (let problem of user.ac_problems) { %>
+				    <a href="<%= syzoj.utils.makeUrl(['problem', problem]) %>"><%= problem %></a>
+				<% } %>
+	  		</div>
+	  	</div>
+	</div>
+</div>
+<% include footer %>

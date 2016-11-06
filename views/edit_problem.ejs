@@ -1,0 +1,103 @@
+<% this.title = 'Edit Problem' %>
+<% include header %>
+<style type="text/css">
+    .problem-header{
+    text-align: center;
+    }
+    .am-panel-title{
+    font-size: 1.6em;
+    }
+</style>
+<div class="am-container am-g">
+    <% if (problem.id) { %>
+        <h1>修改题目</h1>
+    <% } else { %>
+        <h1>上传题目</h1>
+    <% } %>
+    <form class="am-form" method="post" action="<%= syzoj.utils.makeUrl(['problem', req.params.id, 'edit']) %>">
+        <div data-am-widget="tabs" class="am-tabs am-tabs-d2">
+            <ul class="am-tabs-nav am-cf">
+                <li class="am-active" id="edit">
+                    <a href="#">编辑</a>
+                </li>
+                <li class="" id="preview">
+                    <a href="#">预览</a>
+                </li>
+            </ul>
+            <div class="am-tabs-bd" data-am-tabs="{noSwipe: 1}">
+                <div class="am-tab-panel am-active" id="edit-panel">
+                    <fieldset>
+                        <div class="am-form-group">
+                            <label for="doc-ds-ipt-1">题目名称</label>
+                            <input type="text" class="am-form-field" id="title" name="title"
+                                   value="<%= problem.title %>">
+                        </div>
+
+                        <div class="am-form-group">
+                            <label>题目描述</label>
+                            <textarea class="" rows="5" id="description" name="description"><%= problem.description %></textarea>
+                        </div>
+
+                        <div class="am-form-group">
+                            <label>输入格式</label>
+                            <textarea class="" rows="5" id="input" name="input_format"><%= problem.input_format %></textarea>
+                        </div>
+
+                        <div class="am-form-group">
+                            <label>输出格式</label>
+                            <textarea class="" rows="5" id="output" name="output_format"><%= problem.output_format %></textarea>
+                        </div>
+
+                        <div class="am-form-group">
+                            <label>样例</label>
+                            <textarea class="" rows="5" id="example" name="example"><%= problem.example %></textarea>
+                        </div>
+
+                        <div class="am-form-group">
+                            <label>数据范围与提示</label>
+                            <textarea class="" rows="5" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="am-tab-panel" id="preview-panel">
+                    <h1 class="problem-header" id="pv-title"></h1>
+
+                    <div class="am-panel-hd"><h3 class="am-panel-title big">题目描述</h3></div>
+                    <div class="am-panel-bd" id="pv-description"></div>
+                    <div class="am-panel-hd"><h3 class="am-panel-title">输入格式</h3></div>
+                    <div class="am-panel-bd" id="pv-input"></div>
+                    <div class="am-panel-hd"><h3 class="am-panel-title">输出格式</h3></div>
+                    <div class="am-panel-bd" id="pv-output"></div>
+                    <div class="am-panel-hd"><h3 class="am-panel-title">测试样例</h3></div>
+                    <div class="am-panel-bd" id="pv-example"></div>
+                    <div class="am-panel-hd"><h3 class="am-panel-title">数据范围与提示</h3></div>
+                    <div class="am-panel-bd" id="pv-hint"></div>
+                </div>
+            </div>
+        </div>
+        <% if (problem.allowedEdit) { %>
+        <button type="submit" class="am-btn am-btn-default">提交</button>
+        <% } %>
+    </form>
+</div>
+
+<script type="text/javascript">
+function render(output, input) {
+  $.post('/api/markdown', { s: input.val() }, function (s) {
+    console.log(s);
+    output.html(s);
+  });
+}
+$("#preview").click(function () {
+  $("#pv-title").text($("#title").val());
+  $("#pv-description, #pv-input, #pv-output, #pv-example, #pv-hint").text('Loading...');
+  render($("#pv-description"), $("#description"));
+  render($("#pv-input"), $("#input"));
+  render($("#pv-output"), $("#output"));
+  render($("#pv-example"), $("#example"));
+  render($("#pv-hint"), $("#hint"));
+});
+
+</script>
+<% include footer %>

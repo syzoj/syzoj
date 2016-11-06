@@ -1,0 +1,21 @@
+<% this.title = 'Error' %>
+<% include header %>
+<style type="text/css">
+    .down{
+    margin-top: 150px;
+    font-size:2em;
+    }
+</style>
+<div class="am-container down">
+    <p><%= err %></p>
+</div>
+
+<% if (typeof next !== 'undefined') { %>
+<script type="text/javascript">
+$(document).ready(function() {
+	setTimeout("window.location.href='<%- next %>'", 2000);
+});
+</script>
+<% } %>
+
+<% include footer %>

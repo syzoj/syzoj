@@ -1,0 +1,51 @@
+{
+  "title": "SYZOJ",
+  "hostname": "127.0.0.1",
+  "port": "5283",
+  "db": {
+    "database": null,
+    "username": null,
+    "password": null,
+    "host": null,
+    "dialect": "sqlite",
+    "storage": "syzoj.db"
+  },
+  "upload_dir": "uploads",
+  "default": {
+    "problem": {
+      "time_limit": 1000,
+      "memory_limit": 256
+    },
+    "user": {
+      "show": true
+    }
+  },
+  "page": {
+    "problem": 50,
+    "judge_state": 10,
+    "ranklist": 20,
+    "discussion": 10,
+    "article_comment": 10
+  },
+  "languages": [
+    "C++",
+    "C",
+    "Pascal"
+  ],
+  "notices": [
+    {
+      "type": "// article",
+      "id": 1,
+      "comment": "Specify the id if you want to show a article"
+    },
+    {
+      "type": "// link",
+      "url": "",
+      "date": "",
+      "comment": "Specify the url and date if you want to show any link"
+    }
+  ],
+  "announcement": "Here is the announcement",
+  "session_secret": "233",
+  "judge_token": "233"
+}

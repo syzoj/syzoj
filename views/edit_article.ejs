@@ -1,0 +1,62 @@
+<% this.title = 'Edit Article'; %>
+<% include header %>
+<style type="text/css">
+    .am-panel-title{
+    font-size: 1.6em;
+    }
+</style>
+<div class="am-container am-g">
+        <h1>编辑文章</h1>
+        <form class="am-form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>">
+        <div data-am-widget="tabs" class="am-tabs am-tabs-d2" data-am-tabs="{noSwipe: 1}">
+            <ul class="am-tabs-nav am-cf">
+                <li class="am-active" id="edit">
+                    <a href="#">编辑</a>
+                </li>
+                <li class="" id="preview">
+                    <a href="#">预览</a>
+                </li>
+            </ul>
+            <div class="am-tabs-bd">
+                <div class="am-tab-panel am-active" id="edit-panel">
+                    <fieldset>
+                        <div class="am-form-group">
+                            <label>文章标题</label>
+                            <input type="text" class="am-form-field" id="title" name="title"
+                                   value="<%= article.title %>">
+                        </div>
+
+                        <div class="am-form-group">
+                            <label>内容</label>
+                            <textarea class="" rows="15" id="content" name="content"><%= article.content %></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="am-tab-panel" id="preview-panel">
+                    <div class="am-panel-hd"><h3 class="am-panel-title" id="pv-title"></h3></div>
+                    <div class="am-panel-bd" id="pv-content"></div>
+                </div>
+            </div>
+        </div>
+        <% if (article.allowedEdit) { %>
+        <button type="submit" class="am-btn am-btn-default">提交</button>
+        <% } %>
+    </form>
+</div>
+
+<script type="text/javascript">
+function render(output, input) {
+  $.post('/api/markdown', { s: input.val() }, function (s) {
+    console.log(s);
+    output.html(s);
+  });
+}
+$("#preview").click(function () {
+  $("#pv-title").text($("#title").val());
+  $("#pv-content").text('Loading...');
+  render($("#pv-content"), $("#content"));
+});
+
+</script>
+<% include footer %>

@@ -1,0 +1,58 @@
+<% this.title = article.title; %>
+<% include header %>
+<style type="text/css" xmlns:style="http://www.w3.org/1999/xhtml">
+    .small{
+    font-size: 0.7em;
+    }
+</style>
+<div class="am-container am-g">
+	<div class="am-u-sm-12">
+ 		<h1><%= article.title %></h1>
+ 		<p class="small"><img width="16" height="16" src="<%= syzoj.utils.gravatar(article.user.email, 32) %>">
+ 			<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a>
+ 			<% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
+ 			<% if (article.allowedEdit) { %>
+            <a class="" href="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">删除文章</a>
+        	<a class="am-btn am-btn-success am-btn-sm am-fr" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>">编辑文章</a>
+      <% } %>
+ 		</p>
+	</div>
+    <div class="am-u-sm-12">
+	    <div class="am-panel am-panel-default">
+	        <div class="am-panel-bd" id="content"><%- article.content %></div>
+	    </div>
+    </div>
+    <div class="am-u-sm-12">
+        <h4>共 <%= comments.length %> 条回复</h4>
+        <% for (let comment of comments) { %>
+        <div class="am-panel am-panel-default am-u-sm-12">
+            <div class="am-panel-bd" style="padding: 0px;margin: 0px;">
+                <div class="am-u-sm-2" style="text-align:center;">
+                    <% if (comment.allowedEdit) { %>
+                    <a class="" href="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">删除</a>
+                    <% } %>
+                    <p class="small" style="display: block;padding: 0px;margin: 0px;">
+                        <%= syzoj.utils.formatDate(comment.public_time) %>
+                    </p>
+                    <img width="80" height="80" src="<%= syzoj.utils.gravatar(comment.user.email, 160) %>" style="vertical-align:middle">
+                    <p style="display: block;padding: 0px;margin: 0px;"><a href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><%= comment.user.nickname %></a></p>
+                </div>
+                <div class="am-u-sm-10"><%- comment.content %></div>
+            </div>
+        </div>
+        <% } %>
+        <% include page %>
+    </div>
+    <hr/>
+    <% if (article.allowedComment) { %>
+    <div class="am-u-sm-12">
+        <form class="am-form" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>" method="post">
+            <div class="am-form-group">
+                <textarea rows="5" name="comment"></textarea>
+            </div>
+            <button type="submit" class="am-btn am-btn-primary">发表回复</button>
+        </form>
+    </div>
+    <% } %>
+</div>
+<% include footer %>

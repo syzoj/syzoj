@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title><%= title %> - <%= syzoj.config.title %></title>
+    <link rel="shortcut icon" href="/syzoj_32.ico" />
+    <!-- For 360 browser -->
+    <meta name="renderer" content="webkit">
+    <!-- For Baidu Siteapp-->
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" href="/amazeui.min.css">
+    <style type="text/css">
+        .am-container {
+        width: 980px !important;
+        max-width: none;
+        }
+        .nav-link{
+        color: #fff;
+        }
+        .icon-48{
+            width: 36px;
+            height: 36px;
+        }
+        textarea,body{
+            text-rendering: auto;
+        }
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/tomorrow.min.css" />
+</head>
+
+<body class="am-with-topbar-fixed-top">
+<header class="am-topbar am-topbar-fixed-top">
+    <div class="am-container">
+        <h1 class="am-topbar-brand">
+            <a href="/"><img src="/syzoj-logo.png" class="icon-48"><%= syzoj.config.title %></a>
+        </h1>
+
+        <div class="am-topbar-collapse">
+            <div class="am-topbar-left">
+                <ul class="am-nav am-nav-pills am-topbar-nav">
+                    <li class="<% if (active === '') { %>am-active<% } %>"><a href="/"
+                                                                              class="nav-link">首页</a></li>
+                    <li class="<% if (active === 'problem') { %>am-active<% } %>"><a href="/problem">题库</a>
+                    </li>
+                    <li class="<% if (active.startsWith('judge')) { %>am-active<% } %>"><a href="/judge_state">评测</a></li>
+                    <li class="<% if (active === 'ranklist') { %>am-active<% } %>"><a href="/ranklist">排名</a></li>
+                    <!--li class="<% if (active === 'contest') { %>am-active<% } %>"><a href="/contest_list">比赛</a>
+                    </li-->
+                    <li class="<% if (active === 'discussion' || active === 'article') { %>am-active<% } %>"><a href="/discussion">讨论</a></li>
+                </ul>
+            </div>
+            <% if (user) { %>
+            <div class="am-topbar-right">
+                <ul class="am-nav am-nav-pills am-topbar-nav">
+                    <li class="am-dropdown" data-am-dropdown>
+                        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                            <%= user.username %> <span class="am-icon-caret-down"></span>
+                        </a>
+                        <ul class="am-dropdown-content">
+                            <li><a href="/user/<%= user.id %>"><span class="am-icon-user"></span> 资料</a></li>
+                            <li><a href="/user/<%= user.id %>/edit"><span class="am-icon-cog"></span> 设置</a></li>
+                            <li><a href="#" id="logout"><span class="am-icon-power-off"></span> 注销</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <% } else { %>
+            <div class="am-topbar-right">
+                <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm"
+                        onclick="window.location.href='/login'">登录
+                </button>
+                <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm"
+                        onclick="window.location.href='/sign_up'">注册
+                </button>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</header>
+<div style="padding-top: 20px; "></div>
