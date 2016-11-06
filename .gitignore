@@ -2,8 +2,6 @@ config.json
 yarn.lock
 *.db
 .git.*
-uploads/testdata/*
-uploads/tmp/*
 
 # Logs
 logs
