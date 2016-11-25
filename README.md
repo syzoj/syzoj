@@ -1,6 +1,9 @@
 # SYZOJ 2
 An OnlineJudge System for OI.
 
+The UI is powered by [Semantic UI](http://semantic-ui.com/).  
+Template designed & coded by @Menci and @Sengxian.
+
 # Deploying
 There's currently *no* stable version of SYZOJ 2, but you can use the unstable version from git.
 
