@@ -1,70 +1,73 @@
-<% this.title = 'Edit User'; %>
+<% this.title = '修改资料'; %>
 <% include header %>
-<div class="am-container am-g">
-	<div class="am-u-sm-12">
-		<h1>修改资料</h1>
-        <div class="am-alert <% if (error_info === 'Success') { %>am-alert-success<% } else { %>am-alert-danger<% } %>  am-u-sm-12" id="error" data-am-alert
-        <% if (!error_info) { %>hidden<% } %>>
-            <p id="error_info"><%= error_info %></p>
+<div class="padding">
+    <div class="ui <% if (error_info == 'Success') { %>success<% } else { %>error<% } %> message" id="error" <% if (!error_info) { %>hidden<% } %>>
+            <% if (error_info) {
+                if (error_info == 'Success') error_info = '修改成功';
+            %>
+            	<p id="error_info"><%= error_info %></p>
+            <% } %>
+    </div>
+		<form class="ui form" action="<%= syzoj.utils.makeUrl(['user', edited_user.id, 'edit']) %>" method="post" onsubmit="return check()">
+            <div class="field">
+		    	<label for="sex">性别</label>
+		    	<select class="ui dropdown" name="sex">
+                    <option value="0" <%= edited_user.sex == 0 ? 'selected': '' %>>其它</option>
+                    <option value="1" <%= edited_user.sex == 1 ? 'selected': '' %>>男</option>
+                    <option value="-1" <%= edited_user.sex == -1 ? 'selected': '' %>>女</option>
+                </select>
+		    </div>
+		    <div class="field">
+		    	<label for="email">Email</label>
+		    	<input type="email" id="email" name="email" value="<%= edited_user.email %>">
+		    </div>
+		    <div class="field">
+		    	<label for="information">个性签名</label>
+		    	<textarea rows="5" id="information" name="information"><%= edited_user.information %></textarea>
+		    </div>
+        <div class="field">
+        <label class="ui header">修改密码</label>
+          <input type="password" placeholder="原密码（留空则不修改）" name="old_password" id="old_password">
         </div>
-		<form class="am-form am-form-horizontal" action="<%= syzoj.utils.makeUrl(['user', edited_user.id, 'edit']) %>" method="post" onsubmit="return check()">
-		    <div class="am-form-group">
-		    	<label class="am-u-sm-2 am-form-label">邮箱</label>
-		    	<div class="am-u-sm-10">
-		    		<input type="email" name="email" value="<%= edited_user.email %>">
-		    	</div>
-		    </div>
-		    <div class="am-form-group">
-		    	<label class="am-u-sm-2 am-form-label">个性签名</label>
-		    	<div class="am-u-sm-10">
-		    		<textarea rows="5" name="information"><%= edited_user.information %></textarea>
-		    	</div>
-		    </div>
-           <div class="am-form-group">
-                <label class="am-u-sm-2 am-form-label">修改密码</label>
-                <div class="am-u-sm-10">
-                    <fieldset class="am-form-set">
-                        <% if (res.locals.user && res.locals.user.is_admin) { %>
-                        <input type="hidden" name="old_password" id="old_password" value="233">
-                        <% } else { %>
-                        <input type="password" placeholder="原密码（留空则不修改）" name="old_password" id="old_password">
-                        <% } %>
-                        <input type="password" placeholder="新密码" name="new_password" id="password1">
-                        <input type="password" placeholder="再输入一遍新密码" id="password2">
-                    </fieldset>
-                </div>
-            </div>
-            <div class="am-form-group">
-                <div class="am-u-sm-10 am-u-sm-offset-2">
-                    <button class="am-btn am-btn-default">修改</button>
-                </div>
-            </div>
+        <div class="two fields" id="new_password_field">
+          <div class="field">
+            <input type="password" placeholder="新密码" name="new_password" id="password1">
+          </div>
+          <div class="field">
+            <input type="password" placeholder="确认密码" id="password2">
+          </div>
+        </div>
+        <button type="submit" class="ui button">修改</button>
 		</form>
 	</div>
 </div>
-
 <script type="text/javascript">
-function make_md5(tag){
-	if(tag.val()){
-		tag.val($.md5(tag.val()+"syzoj2_xxx"));
+function make_md5(tag) {
+	if (tag.val()) {
+		tag.val($.md5(tag.val() + "syzoj2_xxx"));
 	}
 }
-function check(){
-	old_password=$("#old_password");
-	password1=$("#password1");
-	password2=$("#password2");
-
-	if($("#old_password").val() && password1.val()!=password2.val()){
-		$("#error_info").html("两次密码不一样");
+function check() {
+	old_password = $("#old_password");
+	password1 = $("#password1");
+	password2 = $("#password2");
+	if ($("#old_password").val() && password1.val() != password2.val()) {
+		$("#error").removeClass("success");
+		$("#error").removeClass("error");
+		$("#error").addClass("error");
+		$("#error_info").html("两次输入的密码不一致");
 		$("#error").show();
-		$("#error_info").show();
 		return false;
 	}
-
 	make_md5(old_password);
 	make_md5(password1);
 	make_md5(password2);
 	return true;
 }
+</script>
+<script>
+$(function () {
+	$('.ui.dropdown').dropdown();
+});
 </script>
 <% include footer %>

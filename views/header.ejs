@@ -1,85 +1,47 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="">
-    <meta name="keywords" content="">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <title><%= title %> - <%= syzoj.config.title %></title>
-    <link rel="shortcut icon" href="/syzoj_32.ico" />
-    <!-- For 360 browser -->
-    <meta name="renderer" content="webkit">
-    <!-- For Baidu Siteapp-->
-    <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="stylesheet" href="/amazeui.min.css">
-    <style type="text/css">
-        .am-container {
-        width: 980px !important;
-        max-width: none;
-        }
-        .nav-link{
-        color: #fff;
-        }
-        .icon-48{
-            width: 36px;
-            height: 36px;
-        }
-        textarea,body{
-            text-rendering: auto;
-        }
-    </style>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/components/dropdown.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/9.8.0/styles/tomorrow.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/tomorrow.min.css" />
+    <link href="https://cdn.moefont.com/fonts/css?family=Raleway:300" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
-
-<body class="am-with-topbar-fixed-top">
-<header class="am-topbar am-topbar-fixed-top">
-    <div class="am-container">
-        <h1 class="am-topbar-brand">
-            <a href="/"><img src="/syzoj-logo.png" class="icon-48"><%= syzoj.config.title %></a>
-        </h1>
-
-        <div class="am-topbar-collapse">
-            <div class="am-topbar-left">
-                <ul class="am-nav am-nav-pills am-topbar-nav">
-                    <li class="<% if (active === '') { %>am-active<% } %>"><a href="/"
-                                                                              class="nav-link">首页</a></li>
-                    <li class="<% if (active === 'problem') { %>am-active<% } %>"><a href="/problem">题库</a>
-                    </li>
-                    <li class="<% if (active.startsWith('judge')) { %>am-active<% } %>"><a href="/judge_state">评测</a></li>
-                    <li class="<% if (active === 'ranklist') { %>am-active<% } %>"><a href="/ranklist">排名</a></li>
-                    <!--li class="<% if (active === 'contest') { %>am-active<% } %>"><a href="/contest_list">比赛</a>
-                    </li-->
-                    <li class="<% if (active === 'discussion' || active === 'article') { %>am-active<% } %>"><a href="/discussion">讨论</a></li>
-                </ul>
+<body>
+    <div class="ui fixed borderless menu">
+        <div class="ui container">
+            <a class="header item" href="/"><span style="font-family: Raleway; font-size: 1.5em; font-weight: 500; "><%= syzoj.config.title %></span></a>
+            <a class="item<% if (active === '') { %> active<% } %>" href="/"><i class="home icon"></i> 首页</a>
+            <a class="item<% if (active === 'problem') { %> active<% } %>" href="/problem"><i class="list icon"></i> 题库</a>
+            <a class="item<% if (active.startsWith('judge')) { %> active<% } %>" href="/judge_state"><i class="tasks icon"></i> 评测</a>
+            <a class="item<% if (active === 'ranklist') { %> active<% } %>" href="/ranklist"><i class="signal icon"></i> 排名</a>
+            <a class="item<% if (active === 'discussion' || active === 'article') { %> active<% } %>" href="/discussion"><i class="comments icon"></i> 讨论</a>
+            <div class="right menu">
+              <% if (user) { %>
+              <div class="ui simple dropdown item">
+                <%= user.username %> <i class="dropdown icon"></i>
+                <div class="menu">
+                  <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><i class="user icon"></i>个人资料</a>
+                  <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="settings icon"></i>设置</a>
+                  <a class="item" href="#" id="logout"><i class="power icon"></i>注销</a>
+                </div>
+              </div>
+                <% } else { %>
+                <div class="item">
+                    <div class="ui button" style="margin-right: 0.5em" onclick="window.location.href='/login'">
+                        登录
+                    </div>
+                    <div class="ui primary button" onclick="window.location.href='/sign_up'">
+                        注册
+                    </div>
+                </div>
+                <% } %>
             </div>
-            <% if (user) { %>
-            <div class="am-topbar-right">
-                <ul class="am-nav am-nav-pills am-topbar-nav">
-                    <li class="am-dropdown" data-am-dropdown>
-                        <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
-                            <%= user.username %> <span class="am-icon-caret-down"></span>
-                        </a>
-                        <ul class="am-dropdown-content">
-                            <li><a href="/user/<%= user.id %>"><span class="am-icon-user"></span> 资料</a></li>
-                            <li><a href="/user/<%= user.id %>/edit"><span class="am-icon-cog"></span> 设置</a></li>
-                            <li><a href="#" id="logout"><span class="am-icon-power-off"></span> 注销</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <% } else { %>
-            <div class="am-topbar-right">
-                <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm"
-                        onclick="window.location.href='/login'">登录
-                </button>
-                <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm"
-                        onclick="window.location.href='/sign_up'">注册
-                </button>
-            </div>
-            <% } %>
         </div>
     </div>
-</header>
-<div style="padding-top: 20px; "></div>
+    <div class="ui main container">

@@ -21,10 +21,12 @@
 
 let User = syzoj.model('user');
 let Article = syzoj.model('article');
+let Divine = require('syzoj-divine');
 
 app.get('/', async (req, res) => {
   try {
     let ranklist = await User.query(1, 10, { is_show: true }, [['ac_num', 'desc']]);
+    await ranklist.forEachAsync(async x => x.renderInformation());
 
     let notices = await syzoj.config.notices.mapAsync(async notice => {
       if (notice.type === 'link') return notice;
@@ -39,9 +41,15 @@ app.get('/', async (req, res) => {
       }
     });
 
+    let fortune = null;
+    if (res.locals.user) {
+      fortune = Divine(res.locals.user.username, res.locals.user.sex);
+    }
+
     res.render('index', {
       ranklist: ranklist,
-      notices: notices
+      notices: notices,
+      fortune: fortune
     });
   } catch (e) {
     syzoj.log(e);

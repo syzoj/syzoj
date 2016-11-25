@@ -1,39 +1,51 @@
-<% this.title = 'Problem Set' %>
+<% this.title = '题库' %>
 <% include header %>
-<div class="am-container">
-    <h1>题库</h1>
-    <div class="am-u-sm-12">
-        <table class="am-table">
-            <thead>
-            <tr>
-                <th>编号</th>
-                <th>题目名称</th>
-                <th>通过</th>
-                <th>提交</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% for (let problem of problems) { %>
-                <% if (problem.is_public || problem.allowedEdit) { %>
-                <%
-                let style = '';
-                if (problem.status === true) style = 'background: rgba(46, 199, 46, 0.15); ';
-                else if (problem.status === false) style = 'background: rgba(255, 0, 0, 0.15); ';
-                %>
-                <tr style="<%= style %>">
-                    <td><%= problem.id %></td>
-                    <td><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
-                      <% if (!problem.is_public) { %>--[未审核] <% } %>
-                    </a></td>
-                    <td><%= problem.ac_num %></td>
-                    <td><%= problem.submit_num %></td>
-                </tr>
-                <% } %>
-            <% } %>
-            </tbody>
-        </table>
+<div class="padding">
+  <div class="ui grid">
+    <div class="row">
+      <div class="column">
+        <a href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>" class="ui mini right floated button">添加题目</a>
+      </div>
     </div>
-    </hr>
+  </div> 
+  <table class="ui very basic center aligned table">
+    <thead>
+      <tr>
+        <% if (user) { %>
+        <th class="one wide">提交状态</th>
+        <% } %>
+        <th class="one wide">编号</th>
+        <th class="left aligned">题目名称</th>
+        <th class="one wide">通过</th>
+        <th class="one wide">提交</th>
+        <th class="one wide">通过率</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% for (let problem of problems) { %>
+        <% if (problem.is_public || problem.allowedEdit) { %>
+        <tr>
+            <% if (user) { %>
+                <td>
+                <% if (problem.status === true) { %>
+                    <i class="checkmark icon"></i>
+                <% } else if (problem.status === false) { %>
+                    <i class="remove icon"></i>
+                <% } %>
+                </td>
+            <% } %>
+            <td><%= problem.id %></td>
+            <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
+                <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+            </a></td>
+            <td><%= problem.ac_num %></td>
+            <td><%= problem.submit_num %></td>
+            <td><%= ((problem.ac_num / problem.submit_num * 100) || 0).toFixed(2) %>%</td>
+        </tr>
+        <% } %>
+    <% } %>
+    </tbody>
+  </table><br>
+  <% include page  %>
 </div>
-<% include page  %>
 <% include footer %>

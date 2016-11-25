@@ -1,18 +1,15 @@
-<% this.title = 'Rank List' %>
+<% this.title = '排名' %>
 <% include header %>
-<div class="am-container am-g">
-    <h1>排名</h1>
-    <form class="am-form-inline am-u-sm-8 " role="form" method="get" action="<%= syzoj.utils.makeUrl(['find_user']) %>">
-        <div class="am-form-group am-fl">
-            <input type="text" class="am-form-field am-input-sm" name="nickname" placeholder="用户昵称">
-        </div>
-        <button type="submit" class="am-btn am-btn-primary am-input-sm am-fl">寻找用户</button>
-    </form>
-    <div class="am-u-sm-12">
-	    <table class="am-table">
+<div class="padding">
+  <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" class="ui mini form" method="get" role="form">
+    <div class="inline field">
+      <input name="nickname" placeholder="用户名" style="margin-right: 2px;" type="text" value=""><button class="ui mini button" type="submit">查找用户</button>
+    </div>
+  </form>
+	    <table class="ui very basic center aligned table">
 	        <thead>
 	        <tr>
-	            <th>排名</th>
+	            <th>#</th>
 	            <th>用户昵称</th>
 	            <th>个性签名</th>
 	            <th>通过数量</th>
@@ -20,25 +17,24 @@
 	        </thead>
 	        <tbody>
 	        <%
-          let i = (page - 1) * syzoj.config.page.ranklist;
-          for (let user of ranklist) {
-            ++i;
-          %>
+            let i = (page - 1) * syzoj.config.page.ranklist;
+            for (let user of ranklist) {
+              ++i;
+            %>
 		        <tr>
 		        	<td><%= i %></td>
 		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a>
-                <% if (user.nameplate) { %>
-                <%- user.nameplate %>
-                <% } %>
+            <% if (user.nameplate) { %>
+            <%- user.nameplate %>
+            <% } %>
               </td>
-		        	<td><%= user.information %></td>
+		        	<td><%- user.information %></td>
 		        	<td><%= user.ac_num %></td>
 		        </tr>
-		     <%
-          } %>
+		    <% } %>
 	        </tbody>
 	    </table>
-	</div>
-</div>
+    <br>
 <% include page %>
+</div>
 <% include footer %>

@@ -1,75 +1,98 @@
-<% this.title = user.nickname + ' - User'; %>
+<% this.title = show_user.nickname + ' - 用户'; %>
 <% include header %>
-<div class="am-container am-g">
-	<h1>用户信息</h1>
-	<div class="am-u-sm-8">
-		<div class="am-u-sm-6">
-			<div class="am-panel am-panel-default">
-			 	<div class="am-panel-hd">
-			 		<h3 class="am-panel-title">头像</h3>
-			 	</div>
-			 	<div class="am-panel-bd">
-			 		<img width="160" height="160" src="<%= syzoj.utils.gravatar(user.email, 320) %>">
-				</div>
-			</div>
-		</div>
-		<div class="am-u-sm-6">
-			<div class="am-panel am-panel-default">
-			 	<div class="am-panel-hd">
-			   		<h3 class="am-panel-title">用户昵称</h3>
-			 	</div>
-			 	<div class="am-panel-bd">
-					<p><%= user.username %>
-          <% if (user.nameplate) { %><%= user.nameplate %><% } %>
-          </p>
-				</div>
+<div class="padding">
+<div class="ui grid">
+    <div class="row">
+        <div class="five wide column">
+            <div class="ui card" style="width: 100%; ">
+                <div class="blurring dimmable image">
+                    <img src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
+                </div>
+                <div class="content">
+                    <div class="header"><%= show_user.username %><% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
+                    <div class="meta">
+                        <a class="group"><%= show_user.is_admin ? '管理员' : '普通用户' %></a>
+                    </div>
+                </div>
+                <div class="extra content">
+                    <a><i class="check icon"></i>通过 <%= show_user.ac_problems.length %> 题</a>
+                </div>
+            </div>
 
-			 	<div class="am-panel-hd">
-			   		<h3 class="am-panel-title">用户邮箱</h3>
-			 	</div>
-			 	<div class="am-panel-bd">
-					<p><%= user.email %></p>
-				</div>
-			</div>
-		</div>
+        </div>
+        <div class="eleven wide column">
+            <div class="ui grid">
+                <div class="row">
+                    <div class="sixteen wide column">
+                        <div class="ui grid">
+                            <div class="eight wide column">
+                                <div class="ui grid">
+                                    <div class="row">
+                                        <div class="column">
+                                            <h4 class="ui top attached block header">用户名</h4>
+                                            <div class="ui bottom attached segment"><%= show_user.username %></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="column">
+                                            <h4 class="ui top attached block header">Email</h4>
+                                            <div class="ui bottom attached segment"><%= show_user.email %></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="eight wide column">
+                                <div class="ui grid">
+                                    <div class="row">
+                                        <div class="column">
+                                            <h4 class="ui top attached block header">个性签名</h4>
+                                            <div class="ui bottom attached segment"><%- show_user.information %></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="column">
+                                            <h4 class="ui top attached block header">通过的题目</h4>
+                                            <div class="ui bottom attached segment">
+                                                <% for (let problem of show_user.ac_problems) { %>
+                                                    <a href="<%= syzoj.utils.makeUrl(['problem', problem]) %>"><%= problem %></a>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-		<div class="am-u-sm-12">
-			<div class="am-panel am-panel-default">
-			 	<div class="am-panel-hd">
-			 		<h3 class="am-panel-title">共发表了<%= user.articles_num %>篇文章</h3>
-			 	</div>
-				<div class="am-panel-bd">
-					<table class="am-table">
-						<tbody>
-						<% /*
-							<tr>
-								<td><a href="{{url_for('article',article_id=article.id)}}">{{article.title}}</a></td>
-								<td>{{tool.pretty_time(article.public_time)}}</td>
-							</tr>
-						*/ %>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="am-u-sm-4">
-		<div class="am-panel am-panel-default">
-			 	<div class="am-panel-hd">
-			   		<h3 class="am-panel-title">个性签名</h3>
-			 	</div>
-			 	<div class="am-panel-bd">
-					<p><%= user.information %></p>
-				</div>
-			</div>
-		<div class="am-panel am-panel-default">
-			<div class="am-panel-hd">一共通过了 <%= user.ac_problems.length %> 道题</div>
-			<div class="am-panel-bd">
-        <% for (let problem of user.ac_problems) { %>
-				    <a href="<%= syzoj.utils.makeUrl(['problem', problem]) %>"><%= problem %></a>
-				<% } %>
-	  		</div>
-	  	</div>
-	</div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <h4 class="ui top attached block header">帖子</h4>
+                        <div class="ui bottom attached <% if (!show_user.articles.length) { %>center aligned <% } %>segment">
+													  <% if (!show_user.articles.length) { %>该用户从未发表帖子<% } else { %>
+                            <table class="ui very basic table">
+                                <thead>
+                                    <tr>
+                                        <th>标题</th>
+                                        <th>时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let article of show_user.articles) { %>
+                                    <tr>
+																			  <td><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
+                                        <td><%= syzoj.utils.formatDate(article.public_time) %></td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+													  <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <% include footer %>

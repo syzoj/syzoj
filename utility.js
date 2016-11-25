@@ -39,17 +39,22 @@ module.exports = {
     return path.resolve.apply(null, a);
   },
   markdown(obj, keys) {
+    let replacePre = s => {
+        return s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</div>')
+    }
     return new Promise((resolve, reject) => {
       if (!keys) {
         if (!obj || !obj.trim()) resolve("");
-        else renderer(obj, resolve);
+        else renderer(obj, s => {
+            resolve(replacePre(s));
+        });
       } else {
         let res = obj, cnt = 0;
         for (let key of keys) {
           if (res[key].trim()) {
             cnt++;
             renderer(res[key], (s) => {
-              res[key] = s;
+              res[key] = replacePre(s);
               if (!--cnt) resolve(res);
             });
           }
@@ -83,12 +88,13 @@ module.exports = {
     return highlightjs.highlightAuto(code).value;
   },
   gravatar(email, size) {
-    return gravatar.url(email, { s: size, d: 'mm' });
+    return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
   },
   parseTestData(filename) {
     let zip = new AdmZip(filename);
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
     let lines = zip.readAsText('data_rule.txt').split('\n');
+	console.log(lines);
     if (lines.length < 3) throw 'Invalid data_rule.txt';
 
     let numbers = lines[0].split(' ').filter(x => x);
@@ -100,6 +106,8 @@ module.exports = {
       res[i] = {};
       res[i].input = input.replace('#', i);
       res[i].output = output.replace('#', i);
+	  console.log(list);
+	  console.log(res);
       if (!list.includes(res[i].input)) throw `Can't find file ${res[i].input}`;
       if (!list.includes(res[i].output)) throw `Can't find file ${res[i].output}`;
     }

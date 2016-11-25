@@ -1,0 +1,101 @@
+.main.container {
+    margin-top: 6em;
+}
+
+.padding {
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
+
+.ui.segment:first-child {
+    margin-top: 0;
+}
+
+.hljs {
+    background: #FFF !important;
+}
+
+.ui.footer.segment {
+    margin: 2em 0em 0em;
+    padding: 1em 0em;
+    border: none;
+}
+
+th {
+    white-space: nowrap;
+}
+
+/* status color */
+
+.status.accepted {
+    color: forestgreen;
+}
+
+.status.wrong_answer {
+    color: red;
+}
+
+.status.runtime_error {
+    color: darkorchid;
+}
+
+.status.memory_limit_exceed, .status.time_limit_exceed, .status.output_limit_exceed {
+    color: sandybrown;
+}
+
+.status.waiting, .status.system_error {
+    color: grey;
+}
+
+.status.compile_error {
+    color: rgb(0, 68, 136);
+}
+
+/* score color */
+.score_0 {
+    color: red;
+}
+
+.score_1 {
+    color: #ff4b00;
+}
+
+.score_2 {
+    color: #ff6200;
+}
+
+.score_3 {
+    color: #ffa900;
+}
+
+.score_4 {
+    color: #ffd800;
+}
+
+.score_5 {
+    color: #c8ff00;
+}
+
+.score_6 {
+    color: #a5ff00;
+}
+
+.score_7 {
+    color: #52ff00;
+}
+
+.score_8 {
+    color: #41f741;
+}
+
+.score_9 {
+    color: #34d034;
+}
+
+.score_10 {
+    color: forestgreen;
+}
+
+.score {
+    text-shadow: 0 0 0.1px;
+}

@@ -36,7 +36,9 @@ let model = db.define('user', {
   submit_num: { type: Sequelize.INTEGER },
 
   is_admin: { type: Sequelize.BOOLEAN },
-  is_show: { type: Sequelize.BOOLEAN }
+  is_show: { type: Sequelize.BOOLEAN },
+
+  sex: { type: Sequelize.INTEGER }
 }, {
   timestamps: false,
   tableName: 'user',
@@ -66,6 +68,7 @@ class User extends Model {
       is_admin: false,
       ac_num: 0,
       submit_num: 0,
+    sex: 0,
       is_show: syzoj.config.default.user.show
     }, val)));
   }
@@ -117,6 +120,27 @@ class User extends Model {
     let s = new Set();
     all.forEach(x => s.add(parseInt(x.get('problem_id'))));
     return Array.from(s).sort((a, b) => a - b);
+  }
+
+  async getArticles() {
+    let Article = syzoj.model('article');
+    
+    let all = await Article.model.findAll({
+      attributes: ['id', 'title', 'public_time'],
+      where: {
+        user_id: this.id
+      }
+    });
+    
+    return all.map(x => ({
+      id: x.get('id'),
+      title: x.get('title'),
+      public_time: x.get('public_time')
+    }));
+  }
+
+  async renderInformation() {
+    this.information = await syzoj.utils.markdown(this.information);
   }
 
   getModel() { return model; }

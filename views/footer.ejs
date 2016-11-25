@@ -1,18 +1,16 @@
-<script src="/jquery.min.js"></script>
-<script src="/amazeui.min.js"></script>
-<script src="/jquery.ext.js"></script>
+</div>
+    <div class="ui vertical footer segment">
+      <div class="ui center aligned container">
+        <span style="color: #999;"><%= syzoj.config.title %> Powered by <a href="https://github.com/syzoj/syzoj" target="_blank">SYZOJ</a>.</span>
+      </div>
+    </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/components/dropdown.min.js"></script>
 <script type="text/javascript">
-$("#logout").click(function(){
-    alert("我早已习惯你不在身边，\n人间四月天 寂寞断了弦。\n回望身后蓝天，\n跟再见说再见……\n  --《貂蝉》");
-    window.location.href="/logout";
+$("#logout").click(function () {
+    window.location.href = "/logout";
 });
 </script>
-
-<footer data-am-widget="footer" class="am-footer am-footer-default">
-    <div class="am-footer-miscs ">
-       <p><%= syzoj.config.title %> Powered by <a href="https://github.com/syzoj/syzoj" target="_blank">SYZOJ</a>.</p>
-    </div>
-</footer>
 </body>
 </html>

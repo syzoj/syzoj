@@ -40,6 +40,7 @@
     "mysql": "^2.11.1",
     "request": "^2.74.0",
     "sequelize": "^3.24.3",
-    "sqlite3": "^3.1.4"
+    "sqlite3": "^3.1.4",
+	"syzoj-divine": "^1.0.0"
   }
 }

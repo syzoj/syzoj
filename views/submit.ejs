@@ -1,24 +1,26 @@
-<% this.title = problem.title + ' - Submit'; %>
+<% this.title = problem.title + ' - 提交'; %>
 <% include header %>
-<div class="am-container am-g">
-    <div class="am-u-sm-8 am-u-sm-centered">
-    	<h1>提交 <%= problem.title %> 的代码</h1>
-	    <form class="am-form" action="<%= syzoj.utils.makeUrl(['submit', problem.id]) %>" method="post">
-		    <div class="am-form-group">
-		      <label for="doc-select-1">选择语言</label>
-		      <select id="doc-select-1" name="language">
-            <% for (lang of syzoj.config.languages) { %>
-		      		<option value="<%= lang %>"><%= lang %></option>
-            <% } %>
-		      </select>
-		      <span class="am-form-caret"></span>
-		    </div>
-	    	<div class="am-form-group">
-			      <label>代码</label>
-			      <textarea rows="15" name="code"></textarea>
-		    </div>
-		    <button type="submit" class="am-btn am-btn-primary">提交</button>
-	    </form>
+<h1>提交 <%= problem.title %></h1>
+<div class="padding">
+  <form class="ui form" action="<%= syzoj.utils.makeUrl(['submit', problem.id]) %>" method="post">
+    <div class="field">
+  	  <label for="doc-select-1">选择语言</label>
+	    <select class="ui fluid dropdown" id="doc-select-1" name="language">
+        <% for (lang of syzoj.config.languages) { %>
+            <option value="<%= lang %>"><%= lang %></option>
+        <% } %>
+	  	</select>
     </div>
+	  <div class="field">
+		  <label>代码</label>
+          <textarea rows="15" name="code" style="font-family: 'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace; "></textarea>
+		</div>
+		<button type="submit" class="ui button">提交</button>
+	</form>
 </div>
+<script>
+$(function () {
+    $('.ui.dropdown').dropdown();
+});
+</script>
 <% include footer %>

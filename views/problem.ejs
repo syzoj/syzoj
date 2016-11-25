@@ -1,62 +1,70 @@
-<% this.title = problem.title %>
+<% this.title = problem.title + ' - 题目' %>
 <% include header %>
-<style type="text/css">
-    .problem-header{
-    text-align: center;
-    }
-    .am-panel-title{
-    font-size: 1.3em;
-    }
-</style>
-<div class="am-container am-g">
-    <div class="am-u-sm-12 problem-header">
-        <h1><%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %>--[未审核]<% } %></h1>
-
-        <p>
-            <span class="am-badge am-badge-success am-text-sm">内存限制: <%= problem.memory_limit %> MB</span>
-            <span class="am-badge am-badge-warning am-text-sm">时间限制: <%= problem.time_limit %> ms</span>
-            <br>
+    <div class="ui center aligned grid">
+        <div class="row">
+          <h1 class="ui header"><%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %></h1>
+        </div>
+        <div class="row" style="margin-top: -15px">
+            <span class="ui label">内存限制: <%= problem.memory_limit %> MiB</span>
+            <span class="ui label">时间限制: <%= problem.time_limit %> ms</span>
+        </div>
+        <div class="row" style="margin-top: -23px">
             <% if (problem.file_io) { %>
-            <span class="am-badge am-badge am-text-sm">文件输入: <%= problem.file_io_input_name %></span>
-            <span class="am-badge am-badge am-text-sm">文件输出: <%= problem.file_io_output_name %></span>
+            <span class="ui label">输入文件: <%= problem.file_io_input_name %></span>
+            <span class="ui label">输出文件: <%= problem.file_io_output_name %></span>
             <% } else { %>
-            <span class="am-badge am-badge am-text-sm">标准输入输出</span>
+            <span class="ui label">标准输入输出</span>
             <% } %>
-        </p>
+        </div>
     </div>
-    <div class="am-u-sm-12">
-        <a class="am-btn am-btn-primary am-btn-sm am-fl" href="<%= syzoj.utils.makeUrl(['submit', problem.id]) %>">提交此题</a>
-        <a class="am-btn am-btn-danger am-btn-sm am-fl" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">此题提交情况</a>
+<div class="ui grid">
+  <div class="row">
+    <div class="column">
+      <div class="ui buttons">
+        <a class="small ui primary button" href="<%= syzoj.utils.makeUrl(['submit', problem.id]) %>">提交</a>
+        <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">提交记录</a>
         <% if (problem.allowedEdit) { %>
-        <a class="am-btn am-btn-success am-btn-sm am-fl" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑题面</a>
-        <a class="am-btn am-btn-secondary am-btn-sm am-fl" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">上传测试数据</a>
+        <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑题面</a>
+        <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">上传测试数据</a>
         <% } %>
-
         <% if (user && user.is_admin) { %>
-            <% if (problem.is_public) {  %>
-            <button class="am-btn am-btn-default am-btn-sm am-fr" id="dis_public">取消审核</button>
-            <% } else { %>
-            <button class="am-btn am-btn-default am-btn-sm am-fr" id="public">通过审核</button>
-            <% } %>
+          <% if (problem.is_public) {  %>
+        <button class="small ui button" id="un_public">取消公开</button>
+          <% } else { %>
+        <button class="small ui button" id="public">公开</button>
+          <% } %>
         <% } %>
+      </div>
     </div>
-    <div class="am-u-sm-12">
-        <div class="am-panel am-panel-default" id="problem-panel">
-
-            <div class="am-panel-hd"><h3 class="am-panel-title">题目描述</h3></div>
-            <div class="am-panel-bd" id="description"><%- problem.description %></div>
-
-            <div class="am-panel-hd"><h3 class="am-panel-title">输入格式</h3></div>
-            <div class="am-panel-bd" id="input"><%- problem.input_format %></div>
-
-            <div class="am-panel-hd"><h3 class="am-panel-title">输出格式</h3></div>
-            <div class="am-panel-bd" id="output"><%- problem.output_format %></div>
-
-            <div class="am-panel-hd"><h3 class="am-panel-title">测试样例</h3></div>
-            <div class="am-panel-bd" id="example"><%- problem.example %></div>
-
-            <div class="am-panel-hd"><h3 class="am-panel-title">数据范围与提示</h3></div>
-            <div class="am-panel-bd" id="hint"><%- problem.limit_and_hint %></div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <h4 class="ui top attached block header">题目描述</h4>
+      <div class="ui bottom attached segment" id="description"><%- problem.description %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+        <h4 class="ui top attached block header">输入格式</h4>
+        <div class="ui bottom attached segment" id="input"><%- problem.input_format %></div>
+    </div>
+  </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">输出格式</h4>
+          <div class="ui bottom attached segment" id="output"><%- problem.output_format %></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">测试样例</h4>
+          <div class="ui bottom attached segment" id="example"><%- problem.example %></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">数据范围与提示</h4>
+          <div class="ui bottom attached segment" id="hint"><%- problem.limit_and_hint %></div>
         </div>
     </div>
 </div>
@@ -66,14 +74,16 @@ function public_problem() {
   $.ajax({
     url: '<%= syzoj.utils.makeUrl(['api', 'problem', problem.id, 'public']) %>',
     type: 'POST',
-    complete: function () { location.reload(true) }
+    complete: function () { location.reload(true) },
+    async: true
   });
 }
 function dis_public_problem() {
   $.ajax({
     url: '<%= syzoj.utils.makeUrl(['api', 'problem', problem.id, 'public']) %>',
     type: 'DELETE',
-    complete: function () { location.reload(true) }
+    complete: function () { location.reload(true) },
+    async: true
   });
 }
 $(document).ready(function(){

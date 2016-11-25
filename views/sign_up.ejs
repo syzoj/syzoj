@@ -1,79 +1,63 @@
-<% this.title = 'Sign up' %>
+<% this.title = '注册' %>
 <% include header %>
-<div class="am-container am-g">
-    <div class="am-u-sm-8 am-u-sm-centered">
-        <h1>注册</h1>
-
-        <div class="am-alert am-alert-danger am-u-sm-12 center" id="error" data-am-alert hidden>
-            <p id="error_info">没什么可给你，但求凭这阙歌。谢谢你风雨里，都不退愿陪着我。</p>
-        </div>
-        <div class="am-u-sm-12">
-            <form class="am-form am-form-horizontal">
-                <div class="am-form-group">
-                    <label class="am-u-sm-2 am-form-label">用户名</label>
-
-                    <div class="am-u-sm-10">
-                        <input type="text" placeholder="用户名将用于登陆" id="username" onkeydown="key_login()">
+<h1>注册</h1>
+<div class="padding">
+  <div class="ui error message" id="error" data-am-alert hidden>
+    <p id="error_info"></p>
+  </div>
+          <form class="ui form">
+                <div class="field">
+                    <label for="username">用户名</label>
+                    <input type="text" placeholder="" id="username">
+                </div>
+                <div class="field">
+                    <label for="email">邮箱</label>
+                    <input type="email" placeholder="" id="email">
+                </div>
+                <!--div class="field">
+                    <label for="email">邀请码</label>
+                    <input type="text" placeholder="Invitation code" id="invitation_code">
+                </div-->
+                <div class="two fields">
+                    <div class="field">
+                    <label class="ui header">密码</label>
+                      <input type="password" placeholder="" id="password1">
+                    </div>
+                    <div class="field">
+                      <label class="ui header">确认密码</label>
+                      <input type="password" placeholder="" id="password2">
                     </div>
                 </div>
-                <div class="am-form-group">
-                    <label class="am-u-sm-2 am-form-label">邮箱</label>
-
-                    <div class="am-u-sm-10">
-                        <input type="email" placeholder="电子邮箱" id="email" onkeydown="key_login()">
-                    </div>
-                </div>
-                <div class="am-form-group">
-                    <label class="am-u-sm-2 am-form-label">密码</label>
-
-                    <div class="am-u-sm-10">
-                        <fieldset class="am-form-set">
-                            <input type="password" placeholder="设置一个密码吧" id="password1" onkeydown="key_login()">
-                            <input type="password" placeholder="再输入一遍" id="password2" onkeydown="key_login()">
-                        </fieldset>
-                    </div>
-                </div>
-
-                <div class="am-form-group">
-                    <div class="am-u-sm-10 am-u-sm-offset-2">
-                        <p id="sign_up" class="am-btn am-btn-default">注册</p>
-                    </div>
-                </div>
+                <a id="sign_up" class="ui button" onclick="submit()">注册</a>
             </form>
-        </div>
-    </div>
 </div>
 <script type="text/javascript">
-function key_login() {
-	if (event.keyCode == 13) {
-		submit();
-	}
-}
-function show_error(error){
+function show_error(error) {
     $("#error_info").text(error);
     $("#error").show();
 }
-function success(){
-    alert("注册成功了！\n没什么可给你，但求凭这阙歌。谢谢你风雨里，都不退愿陪着我。");
-    window.location.href="/";
+function success() {
+    alert("注册成功!");
+    window.location.href = "/";
 }
-function submit(){
-    if($("#password1").val()!=$("#password2").val()){
-        show_error("两次密码不同");
+function submit() {
+    if ($("#password1").val() != $("#password2").val()) {
+        show_error("两次输入的密码不一致");
         return;
     }
-    password=$.md5($("#password1").val()+"syzoj2_xxx")
-    $("#sign_up").text("请稍等 ......");
+    password = $.md5($("#password1").val() + "syzoj2_xxx")
+    $("#sign_up").addClass("loading");
     $.ajax({
-        url : '/api/sign_up',
-        type : 'POST',
+        url: '/api/sign_up',
+        type: 'POST',
+        async: true,
         data: {
           username: $("#username").val(),
           password: password,
           email: $("#email").val()
         },
-        success : function(data) {
-            error_code=data.error_code;
+        success: function(data) {
+            error_code = data.error_code;
             switch(error_code){
                 case 2001:
                     show_error("服务器未收到数据");
@@ -93,6 +77,9 @@ function submit(){
                 case 2008:
                     show_error("已经有人用过这个用户名了");
                     break;
+                case 2009:
+                    show_error("邀请码错误，请联系管理员索要");
+                    break;
                 case 1:
                     success();
                     break;
@@ -100,20 +87,14 @@ function submit(){
                     show_error("未知错误");
                     break;
             }
-            $("#sign_up").text("注册");
+            $("#sign_up").removeClass("loading");
         },
-        error :  function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert(XMLHttpRequest.responseText);
             show_error("未知错误");
-            $("#sign_up").text("注册");
+            $("#sign_up").removeClass("loading");
         }
     });
 }
-$(document).ready(function(){
-    $("#sign_up").click(function(){
-        submit();
-    });
-});
 </script>
-
 <% include footer %>

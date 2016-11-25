@@ -35,6 +35,7 @@ app.get('/ranklist', async (req, res) => {
     if (page > pageCnt) page = pageCnt;
 
     let ranklist = await User.query(page, syzoj.config.page.ranklist, { is_show: true }, [['ac_num', 'desc']]);
+    await ranklist.forEachAsync(async x => x.renderInformation());
 
     res.render('ranklist', {
       ranklist: ranklist,
@@ -96,9 +97,10 @@ app.get('/user/:id', async (req, res) => {
     let id = parseInt(req.params.id);
     let user = await User.fromID(id);
     user.ac_problems = await user.getACProblems();
+    user.articles = await user.getArticles();
 
     res.render('user', {
-      user: user
+      show_user: user
     });
   } catch (e) {
     console.log(e);
@@ -115,7 +117,7 @@ app.get('/user/:id/edit', async (req, res) => {
     if (!user) throw 'No such user.';
 
     let allowedEdit = await user.isAllowedEditBy(res.locals.user);
-    if (!user.is_public && !allowedEdit) {
+    if (!allowedEdit) {
       throw 'Permission denied';
     }
 
@@ -137,7 +139,7 @@ app.post('/user/:id/edit', async (req, res) => {
     let id = parseInt(req.params.id);
     user = await User.fromID(id);
 
-    let allowedEdit = user.isAllowedEditBy(res.locals.user);
+    let allowedEdit = await user.isAllowedEditBy(res.locals.user);
     if (!allowedEdit) throw 'Permission denied.';
 
     if (req.body.old_password && req.body.new_password) {
@@ -147,6 +149,7 @@ app.post('/user/:id/edit', async (req, res) => {
 
     user.email = req.body.email;
     user.information = req.body.information;
+    user.sex = req.body.sex;
 
     await user.save();
 

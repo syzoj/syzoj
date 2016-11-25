@@ -1,66 +1,55 @@
-<% this.title = 'Judge Detail' %>
+<% this.title = '评测详细信息' %>
 <% include header %>
-<div class="am-container am-g">
-    <div class="am-u-sm-12">
-        <table class="am-table">
-            <thead>
-                <tr>
-                    <th>编号</th>
-                    <th>题目名称</th>
-                    <th>状态</th>
-                    <th>分数</th>
-                    <th>总时间</th>
-                    <th>提交者</th>
-                    <th>提交时间</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><%= judge.id %></td>
-                    <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>"><%= judge.problem.title %></a></td>
-                    <td><%= judge.result.status %></td>
-                    <td><%= judge.result.score %></td>
-                    <td><%= judge.result.total_time %></td>
-                    <td><%= judge.user.username %></td>
-                    <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="am-u-sm-12">
-        <pre><code><%- judge.code %></code></pre>
-    </div>
-    <div class="am-u-sm-12">
-        <section class="am-accordion am-accordion-default">
-        <% for (let i = 0; i < judge.result.case_num; i++) { %>
-        <dl class="am-accordion-item">
-            <% let testcase = judge.result[i]; %>
-            <dt class="am-accordion-title" onclick="toggle_dd(this)">测试点:<%= i %> 状态:<%= testcase.status %>
-                运行时间:<%= testcase.time_used %> ms 使用内存:<%= testcase.memory_used %> kb
-            </dt>
-            <dd class="am-accordion-content am-collapse">
-                <div class="am-accordion-content">
-                    <strong>输入文件</strong>
-                    <pre><code><%= testcase.input %></code></pre>
-                    <strong>期望输出</strong>
-                    <pre><code><%= testcase.answer %></code></pre>
-                    <strong>你的输出</strong>
-                    <pre><code><%= testcase.user_out %></code></pre>
-                </div>
-            </dd>
-        </dl>
-        <% } %>
-        </section>
-    </div>
+<div class="padding">
+  <table class="ui very basic center aligned table">
+    <thead>
+      <tr>
+        <th>编号</th>
+        <th>题目名称</th>
+        <th>状态</th>
+        <th>分数</th>
+        <th>总时间</th>
+        <th>提交者</th>
+        <th>提交时间</th>
+      </tr>
+     </thead>
+     <tbody>
+       <tr>
+        <td><%= judge.id %></td>
+        <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+        <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>"><%= judge.result.status %></td>
+        <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
+        <td><%= judge.result.total_time %></td>
+        <td><%= judge.user.username %></td>
+        <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
+       </tr>
+     </tbody>
+  </table>
+    <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.code %></code></pre></div>
+<div class="ui styled fluid accordion">
+  <% for (let i = 0; i < judge.result.case_num; i++) { %>
+  <% let testcase = judge.result[i]; %>
+  <div class="title">
+    <i class="dropdown icon"></i>
+    测试点：<%= i %> 状态：<%= testcase.status %>
+                运行时间：<%= testcase.time_used %> ms 使用内存：<%= testcase.memory_used %> KiB
+  </div>
+  <div class="content">
+    <p>
+        <strong>输入文件</strong>
+        <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.input %></code></pre></div>
+        <strong>期望输出</strong>
+        <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.answer %></code></pre></div>
+        <strong>你的输出</strong>
+        <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_out %></code></pre></div>
+    </p>
+  </div>
+  <% } %>
 </div>
-
-<script type="text/javascript">
-//Maybe the bug of Amaze or zishi of mine,the panel data can't been unfloded.
-//I only able to solve it by this way.
-function toggle_dd(dt){
-    dd=$(dt).next();
-    dd.toggle();
-}
+ 
+<script>
+$(function() {
+  $('.ui.accordion').accordion();
+});
 </script>
-
 <% include footer %>
