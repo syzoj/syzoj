@@ -22,11 +22,10 @@
             <a class="item<% if (active === 'discussion' || active === 'article') { %> active<% } %>" href="/discussion"><i class="comments icon"></i> 讨论</a>
             <div class="right menu">
               <% if (user) { %>
-              <div class="ui simple dropdown item">
+              <div class="ui simple dropdown item" onclick="location.href = '<%= syzoj.utils.makeUrl(['user', user.id]) %>'">
                 <%= user.username %> <i class="dropdown icon"></i>
                 <div class="menu">
-                  <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><i class="user icon"></i>个人资料</a>
-                  <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="settings icon"></i>设置</a>
+                  <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="edit icon"></i>修改资料</a>
                   <a class="item" href="#" id="logout"><i class="power icon"></i>注销</a>
                 </div>
               </div>

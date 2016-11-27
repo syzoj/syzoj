@@ -14,13 +14,13 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="user icon"></i>
-              <input name="email" placeholder="用户名" type="text" id="username" onkeydown="key_login()">
+              <input name="email" placeholder="用户名" type="text" id="username" onkeydown="key_login(event)">
             </div>
           </div>
           <div class="field">
             <div class="ui left icon input">
               <i class="lock icon"></i>
-              <input name="password" placeholder="密码" type="password" id="password" onkeydown="key_login()">
+              <input name="password" placeholder="密码" type="password" id="password" onkeydown="key_login(event)">
             </div>
           </div>
           <div class="ui fluid large submit button" id="login">登录</div>
@@ -38,10 +38,10 @@
 </div>
 <script src="//cdn.bootcss.com/blueimp-md5/2.5.0/js/md5.min.js"></script>
 <script type="text/javascript">
-function key_login() {
-	if (event.keyCode == 13) {
-		login();
-	}
+function key_login(event) {
+    if (event.keyCode == 13) {
+        login();
+    }
 }
 function show_error(error) {
     $("#error").text(error);
@@ -65,25 +65,25 @@ function login() {
             error_code = data.error_code;
             switch (error_code) {
                 case 1001:
-                    show_error("No such user.");
+                    show_error("用户不存在");
                     break;
                 case 1002:
-                    show_error("Wrong password.");
+                    show_error("密码错误");
                     break;
                 case 1:
                     success(data.session_id);
-                    break;
+                    return;
                 default:
-                    show_error("Unknown error.");
+                    show_error("未知错误");
                     break;
             }
-            $("#login").text("Login");
+            $("#login").text("登录");
             $("#login").removeClass("loading");
         },
         error:  function(XMLHttpRequest, textStatus, errorThrown) {
             alert(XMLHttpRequest.responseText);
             show_error("未知错误");
-            $("#login").text("Login");
+            $("#login").text("登录");
         }
     });
 }

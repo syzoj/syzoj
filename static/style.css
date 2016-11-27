@@ -27,27 +27,47 @@ th {
 
 /* status color */
 
-.status.accepted {
+/*
+.accordion .status_detail {
+    transition: color .1s ease;
+}
+*/
+
+:not(.status_detail).status.accepted,
+.title:hover .status_detail.status.accepted,
+.title.active .status_detail.status.accepted {
     color: forestgreen;
 }
 
-.status.wrong_answer {
+:not(.status_detail).status.wrong_answer,
+.title:hover .status_detail.status.wrong_answer,
+.title.active .status_detail.status.wrong_answer {
     color: red;
 }
 
-.status.runtime_error {
+:not(.status_detail).status.runtime_error,
+.title:hover .status_detail.status.runtime_error,
+.title.active .status_detail.status.runtime_error {
     color: darkorchid;
 }
 
-.status.memory_limit_exceed, .status.time_limit_exceed, .status.output_limit_exceed {
+:not(.status_detail).status.memory_limit_exceed,
+.title:hover .status_detail.status.memory_limit_exceed,
+.title.active .status_detail.status.memory_limit_exceed,
+:not(.status_detail).status.time_limit_exceed,
+.title:hover .status_detail.status.time_limit_exceed,
+.title.active .status_detail.status.time_limit_exceed,
+:not(.status_detail).status.output_limit_exceed,
+.title:hover .status_detail.status.output_limit_exceed,
+.title.active .status_detail.status.output_limit_exceed {
     color: sandybrown;
 }
 
-.status.waiting, .status.system_error {
+:not(.status_detail).status.waiting, :not(.status_detail).status.system_error {
     color: grey;
 }
 
-.status.compile_error {
+:not(.status_detail).status.compile_error {
     color: rgb(0, 68, 136);
 }
 

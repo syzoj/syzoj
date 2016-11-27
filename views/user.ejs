@@ -4,12 +4,21 @@
 <div class="ui grid">
     <div class="row">
         <div class="five wide column">
-            <div class="ui card" style="width: 100%; ">
+            <div class="ui card" style="width: 100%; " id="user_card">
                 <div class="blurring dimmable image">
+                    <% if (show_user.allowedEdit) { %>
+                    <div class="ui dimmer transition hidden">
+                        <div class="content">
+                            <div class="center">
+                                <a class="ui inverted button" href="<%= syzoj.utils.makeUrl(['user', show_user.id, 'edit']) %>"><i class="edit icon"></i>修改资料</a>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
                     <img src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
                 </div>
                 <div class="content">
-                    <div class="header"><%= show_user.username %><% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
+                    <div class="header"><%= show_user.username %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
                     <div class="meta">
                         <a class="group"><%= show_user.is_admin ? '管理员' : '普通用户' %></a>
                     </div>
@@ -95,4 +104,13 @@
     </div>
 </div>
 </div>
+<% if (show_user.allowedEdit) { %>
+<script>
+$(function () {
+  $('#user_card .image').dimmer({
+    on: 'hover'
+  });
+})
+<% } %>
+</script>
 <% include footer %>
