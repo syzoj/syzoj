@@ -84,8 +84,19 @@ module.exports = {
     if (encoded) res += '?' + encoded;
     return res;
   },
-  highlight(code) {
-    return highlightjs.highlightAuto(code).value;
+  escapeHTML(s) {
+    // Code from http://stackoverflow.com/questions/5251520/how-do-i-escape-some-html-in-javascript/5251551
+    return s.replace(/[^0-9A-Za-z ]/g, (c) => {
+      return "&#" + c.charCodeAt(0) + ";";
+    });
+  },
+  highlight(code, lang) {
+    try {
+      if (!lang) return highlightjs.highlightAuto(code).value;
+      else return highlightjs.highlight(lang, code).value;
+    } catch (e) {
+      return escapeHTML(code);
+    }
   },
   gravatar(email, size) {
     return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');

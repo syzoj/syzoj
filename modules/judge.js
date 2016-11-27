@@ -66,7 +66,7 @@ app.get('/judge_detail/:id', async (req, res) => {
 
     if (!await judge.isAllowedSeeCodeBy(res.locals.user)) throw 'Permission denied';
 
-    judge.code = syzoj.utils.highlight(judge.code);
+    judge.code = syzoj.utils.highlight(judge.code, judge.language);
 
     res.render('judge_detail', {
       judge: judge
