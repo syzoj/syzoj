@@ -94,7 +94,7 @@ module.exports = {
     let zip = new AdmZip(filename);
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
     let lines = zip.readAsText('data_rule.txt').split('\n');
-	console.log(lines);
+
     if (lines.length < 3) throw 'Invalid data_rule.txt';
 
     let numbers = lines[0].split(' ').filter(x => x);
@@ -106,8 +106,7 @@ module.exports = {
       res[i] = {};
       res[i].input = input.replace('#', i);
       res[i].output = output.replace('#', i);
-	  console.log(list);
-	  console.log(res);
+
       if (!list.includes(res[i].input)) throw `Can't find file ${res[i].input}`;
       if (!list.includes(res[i].output)) throw `Can't find file ${res[i].output}`;
     }
