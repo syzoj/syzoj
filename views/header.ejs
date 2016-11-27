@@ -20,6 +20,7 @@
             <a class="item<% if (active.startsWith('judge')) { %> active<% } %>" href="/judge_state"><i class="tasks icon"></i> 评测</a>
             <a class="item<% if (active === 'ranklist') { %> active<% } %>" href="/ranklist"><i class="signal icon"></i> 排名</a>
             <a class="item<% if (active === 'discussion' || active === 'article') { %> active<% } %>" href="/discussion"><i class="comments icon"></i> 讨论</a>
+            <a class="item<% if (active === 'help') { %> active<% } %>" href="/help"><i class="help circle icon"></i> 帮助</a>
             <div class="right menu">
               <% if (user) { %>
               <div class="ui simple dropdown item" onclick="location.href = '<%= syzoj.utils.makeUrl(['user', user.id]) %>'">
