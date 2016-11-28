@@ -1,17 +1,17 @@
 <% this.title = '上传测试数据'; %>
 <% include header %>
 <div class="padding">
-	<div class="ui grid">
+    <div class="ui grid">
     <div class="row">
       <div class="seven wide column">
-	  	<% if (problem.testdata) { %>
-  			<p>数据包：<%= problem.testdata.filename %></p>
+          <% if (problem.testdata) { %>
+              <p>数据包：<%= problem.testdata.filename %></p>
             <%
             try {
                 let list = syzoj.utils.parseTestData(problem.testdata.getPath());
             %>
-  			  <table class="ui very basic table">
-	  	        <thead>
+                <table class="ui very basic table">
+                  <thead>
                 <tr>
                     <th>输入文件</th>
                     <th>输出文件</th>
@@ -25,26 +25,26 @@
                     </tr>
                 <% } %>
                 </tbody>
-  				</table>
+                  </table>
             <% } catch (e) { %>
                 <h3>数据包错误：<%= e %></h3>
             <% } %>
-	  	<% } else { %>
-		  	<h3>数据未上传</h3>
-  		<% } %>
-	    </div>
+          <% } else { %>
+              <h3>数据未上传</h3>
+          <% } %>
+        </div>
       <div class="nine wide column">
         <form class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>" method="post" enctype="multipart/form-data">
-		      <div class="two fields">
-		        <div class="field">
-		          <label for="doc-ds-ipt-1">时间限制（单位: ms）</label>
-  	  	      <input type="number" name="time_limit" value="<%= problem.time_limit %>">
-    		    </div>
-		        <div class="field">
-		          <label for="doc-ds-ipt-1">内存限制（单位: MiB）</label>
-  		        <input type="number" name="memory_limit" value="<%= problem.memory_limit %>">
-  		      </div>
-	  	    </div>
+              <div class="two fields">
+                <div class="field">
+                  <label for="doc-ds-ipt-1">时间限制（单位: ms）</label>
+                  <input type="number" name="time_limit" value="<%= problem.time_limit %>">
+                </div>
+                <div class="field">
+                  <label for="doc-ds-ipt-1">内存限制（单位: MiB）</label>
+                  <input type="number" name="memory_limit" value="<%= problem.memory_limit %>">
+                </div>
+              </div>
           <% if (!problem.file_io) { %>
           <div class="inline fields">
             <label>IO 方式</label>
@@ -99,12 +99,13 @@
           </div>
           <% } %>
           <div class="field">
-  		      <label for="testdata">测试数据</label>
-	  	      <input type="file" id="testdata" name="testdata">
+              <label for="testdata">测试数据</label>
+              <input type="file" id="testdata" name="testdata">
           </div>
-			    <button type="submit" class="ui button">提交</button>
+              <button type="submit" class="ui button">提交</button>
+              <a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui blue button">返回题目</a>
         </form>
-	  </div>
+      </div>
   </div>
 <div>
 <script>
