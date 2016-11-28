@@ -26,6 +26,10 @@
      </tbody>
   </table>
     <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.code %></code></pre></div>
+<% if (judge.result.compiler_output && judge.result.status === 'Compile Error') { %>
+  <h3 class="ui header">编译信息</h3>
+  <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= judge.result.compiler_output %></code></pre></div>
+<% } else { %>
 <div class="ui styled fluid accordion">
   <% for (let i = 0; i < judge.result.case_num; i++) { %>
   <% let testcase = judge.result[i]; %>
@@ -51,6 +55,7 @@
   </div>
   <% } %>
 </div>
+<% } %>
  
 <script>
 $(function() {
