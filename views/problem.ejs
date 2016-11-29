@@ -23,6 +23,7 @@
       <div class="ui buttons">
         <a class="small ui primary button" href="<%= syzoj.utils.makeUrl(['submit', problem.id]) %>">提交</a>
         <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">提交记录</a>
+        <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download']) %>">下载测试数据</a>
         <% if (problem.allowedEdit) { %>
         <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑题面</a>
         <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">上传测试数据</a>

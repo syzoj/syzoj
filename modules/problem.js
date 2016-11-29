@@ -241,3 +241,22 @@ app.post('/submit/:id', async (req, res) => {
     });
   }
 });
+
+app.get('/problem/:id/download', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+
+    if (!problem) throw 'No such problem';
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied';
+
+    await problem.loadRelationships();
+
+    res.download(problem.testdata.getPath(), `testdata_${id}.zip`);
+  } catch (e) {
+    syzoj.log(err);
+    res.render('error', {
+      err: err
+    });
+  }
+});
