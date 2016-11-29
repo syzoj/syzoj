@@ -104,7 +104,7 @@ module.exports = {
   parseTestData(filename) {
     let zip = new AdmZip(filename);
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
-    let lines = zip.readAsText('data_rule.txt').split('\n');
+    let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n');
 
     if (lines.length < 3) throw 'Invalid data_rule.txt';
 
