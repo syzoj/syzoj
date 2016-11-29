@@ -34,6 +34,8 @@ global.syzoj = {
     let Express = require('express');
     global.app = Express();
 
+    syzoj.production = app.get('env') === 'production';
+
     app.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
       this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
     });
@@ -66,7 +68,8 @@ global.syzoj = {
     this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
       host: this.config.db.host,
       dialect: this.config.db.dialect,
-      storage: this.config.db.storage ? this.utils.resolvePath(this.config.db.storage) : null
+      storage: this.config.db.storage ? this.utils.resolvePath(this.config.db.storage) : null,
+      logging: syzoj.production ? false : syzoj.log
     });
     global.Promise = Sequelize.Promise;
     this.db.sync();
@@ -87,14 +90,16 @@ global.syzoj = {
   },
   loadHooks() {
     let Session = require('express-session');
+    let FileStore = require('session-file-store')(Session);
     let sessionConfig = {
       secret: this.config.session_secret,
       cookie: {},
       rolling: true,
       saveUninitialized: true,
-      resave: true
+      resave: true,
+      store: new FileStore
     };
-    if (app.get('env') === 'production') {
+    if (syzoj.production) {
       app.set('trust proxy', 1);
       sessionConfig.cookie.secure = true;
     }
