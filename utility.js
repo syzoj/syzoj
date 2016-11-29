@@ -39,14 +39,16 @@ module.exports = {
     return path.resolve.apply(null, a);
   },
   markdown(obj, keys) {
-    let replacePre = s => {
-        return s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</div>')
+    let replaceUI = s => {
+        return s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</pre></div>')
+                .split('<table>').join('<table class="ui table">')
+                .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');
     }
     return new Promise((resolve, reject) => {
       if (!keys) {
         if (!obj || !obj.trim()) resolve("");
         else renderer(obj, s => {
-            resolve(replacePre(s));
+            resolve(replaceUI(s));
         });
       } else {
         let res = obj, cnt = 0;
@@ -54,7 +56,7 @@ module.exports = {
           if (res[key].trim()) {
             cnt++;
             renderer(res[key], (s) => {
-              res[key] = replacePre(s);
+              res[key] = replaceUI(s);
               if (!--cnt) resolve(res);
             });
           }
