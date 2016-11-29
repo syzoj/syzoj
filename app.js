@@ -111,14 +111,16 @@ global.syzoj = {
         let User = syzoj.model('user');
         User.fromID(req.session.user_id).then((user) => {
           res.locals.user = user;
+          next();
         }).catch((err) => {
           this.log(err);
           res.locals.user = req.session.user_id = null;
+          next();
         })
       } else {
         res.locals.user = req.session.user_id = null;
+        next();
       }
-      next();
     });
 
     // Active item on navigator bar
