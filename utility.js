@@ -123,5 +123,10 @@ module.exports = {
     }
 
     return res.filter(x => x);
+  },
+  ansiToHTML(s) {
+    let Convert = require('ansi-to-html');
+    let convert = new Convert({ escapeXML: true });
+    return convert.toHtml(s);
   }
 };

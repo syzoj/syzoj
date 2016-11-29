@@ -24,6 +24,7 @@
   "homepage": "https://github.com/syzoj/syzoj#readme",
   "dependencies": {
     "adm-zip": "^0.4.7",
+    "ansi-to-html": "^0.4.2",
     "babel-cli": "^6.18.0",
     "babel-preset-es2017": "^6.16.0",
     "body-parser": "^1.15.2",
@@ -41,6 +42,6 @@
     "request": "^2.74.0",
     "sequelize": "^3.24.3",
     "sqlite3": "^3.1.4",
-	"syzoj-divine": "^1.0.0"
+    "syzoj-divine": "^1.0.0"
   }
 }
