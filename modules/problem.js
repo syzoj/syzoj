@@ -151,9 +151,9 @@ app.get('/problem/:id/upload', async (req, res) => {
       problem: problem
     });
   } catch (e) {
-    syzoj.log(err);
+    syzoj.log(e);
     res.render('error', {
-      err: err
+      err: e
     });
   }
 });
@@ -254,9 +254,9 @@ app.get('/problem/:id/download', async (req, res) => {
 
     res.download(problem.testdata.getPath(), `testdata_${id}.zip`);
   } catch (e) {
-    syzoj.log(err);
+    syzoj.log(e);
     res.render('error', {
-      err: err
+      err: e
     });
   }
 });
