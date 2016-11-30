@@ -29,7 +29,6 @@ let moment = require('moment');
 let url = require('url');
 let querystring = require('querystring');
 let pygmentize = require('pygmentize-bundled-cached');
-let highlightjs = require('highlight.js');
 let gravatar = require('gravatar');
 let AdmZip = require('adm-zip');
 
