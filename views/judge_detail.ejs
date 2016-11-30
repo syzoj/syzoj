@@ -15,12 +15,12 @@
      </thead>
      <tbody>
        <tr>
-        <td><%= judge.id %></td>
+        <td>#<%= judge.id %></td>
         <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
         <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>"><%= judge.result.status %></td>
         <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
         <td><%= judge.result.total_time %></td>
-        <td><%= judge.user.username %></td>
+        <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a></td>
         <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
        </tr>
      </tbody>
