@@ -41,6 +41,7 @@ function escapeHTML(s) {
 }
 
 function highlightPygmentize(code, lang, cb) {
+  code = code.split('\t').join('    ');
   pygmentize({
     lang: lang,
     format: 'html',
