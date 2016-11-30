@@ -28,9 +28,36 @@ let renderer = require('moemark-renderer');
 let moment = require('moment');
 let url = require('url');
 let querystring = require('querystring');
+let pygmentize = require('pygmentize-bundled-cached');
 let highlightjs = require('highlight.js');
 let gravatar = require('gravatar');
 let AdmZip = require('adm-zip');
+
+function escapeHTML(s) {
+  // Code from http://stackoverflow.com/questions/5251520/how-do-i-escape-some-html-in-javascript/5251551
+  return s.replace(/[^0-9A-Za-z ]/g, (c) => {
+    return "&#" + c.charCodeAt(0) + ";";
+  });
+}
+
+function highlightPygmentize(code, lang, cb) {
+  pygmentize({
+    lang: lang,
+    format: 'html',
+    options: {
+      nowrap: true,
+	  classprefix: 'pl-'
+    }
+  }, code, (err, res) => {
+    if (err) {
+      cb(escapeHTML(code));
+    } else {
+      cb(res);
+    }
+  });
+}
+
+renderer.config.highlight = highlightPygmentize;
 
 module.exports = {
   resolvePath(s) {
@@ -86,19 +113,13 @@ module.exports = {
     if (encoded) res += '?' + encoded;
     return res;
   },
-  escapeHTML(s) {
-    // Code from http://stackoverflow.com/questions/5251520/how-do-i-escape-some-html-in-javascript/5251551
-    return s.replace(/[^0-9A-Za-z ]/g, (c) => {
-      return "&#" + c.charCodeAt(0) + ";";
-    });
-  },
+  escapeHTML: escapeHTML,
   highlight(code, lang) {
-    try {
-      if (!lang) return highlightjs.highlightAuto(code).value;
-      else return highlightjs.highlight(lang, code).value;
-    } catch (e) {
-      return escapeHTML(code);
-    }
+    return new Promise((resolve, reject) => {
+      highlightPygmentize(code, lang, res => {
+        resolve(res);
+      });
+    });
   },
   gravatar(email, size) {
     return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
