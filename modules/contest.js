@@ -53,9 +53,11 @@ app.get('/contest/:id/edit', async (req, res) => {
     let contest = await Contest.fromID(contest_id);
     if (!contest) {
       contest = await Contest.create();
+      contest.id = 0;
     }
 
-    let problems = await contest.problems.split('|').mapAsync(async id => await Problem.fromID(id));
+    let problems = [];
+    if (contest.problems) problems = await contest.problems.split('|').mapAsync(async id => await Problem.fromID(id));
 
     res.render('edit_contest', {
       contest: contest,
@@ -164,7 +166,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     if (!contest) throw 'No such contest.';
 
     if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw 'Permission denied';
-    
+
     await contest.loadRelationships();
 
     let players_id = [];

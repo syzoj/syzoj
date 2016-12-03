@@ -69,6 +69,7 @@ class Contest extends Model {
   static async create(val) {
     return Contest.fromRecord(Contest.model.build(Object.assign({
       title: '',
+      problems: '',
       start_time: 0,
       end_time: 0,
       holder: 0,
@@ -90,6 +91,7 @@ class Contest extends Model {
   }
 
   async getProblems() {
+    if (this.problems === '') return [];
     return this.problems.split('|').map(x => parseInt(x));
   }
 
