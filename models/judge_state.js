@@ -27,12 +27,12 @@ let Problem = syzoj.model('problem');
 
 let model = db.define('judge_state', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  code: { type: Sequelize.TEXT },
+  code: { type: Sequelize.TEXT('medium') },
   language: { type: Sequelize.STRING(20) },
 
   status: { type: Sequelize.STRING(50) },
   score: { type: Sequelize.INTEGER },
-  result: { type: Sequelize.TEXT, json: true },
+  result: { type: Sequelize.TEXT('medium'), json: true },
 
   user_id: {
     type: Sequelize.INTEGER,

@@ -49,7 +49,8 @@ global.syzoj = {
     // Use body parser
     let bodyParser = require('body-parser');
     app.use(bodyParser.urlencoded({
-      extended: true
+      extended: true,
+      limit: '10mb'
     }));
     app.use(bodyParser.json());
 
