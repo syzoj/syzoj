@@ -1,0 +1,50 @@
+<% this.title = contest.id ? '编辑比赛' : '新建比赛' %>
+<% include header %>
+<div class="padding">
+        <form class="ui form" action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>" method="post">
+            <div class="field">
+                <label>比赛名称</label>
+                <input type="text" name="title" value="<%= contest.title %>">
+            </div>
+            <div class="field">
+                <label>试题列表</label>
+                <select class="ui fluid search dropdown" multiple="" id="search_problems" name="problems">
+                <% for (let problem of problems) { %>
+                <option value="<%= problem.id %>" selected>#<%= problem.id %>. <%= problem.title %></option>
+                <% } %>
+                </select>
+            </div>
+            <div class="field">
+                <label>比赛介绍</label>
+                <textarea class="" rows="5" id="doc-ta-1" name="information"><%= contest.information %></textarea>
+            </div>
+            <div class="field">
+                <label>开始时间</label>
+                <input type="text" name="start_time" value="<%= syzoj.utils.formatDate(contest.start_time || syzoj.utils.getCurrentTime()) %>">
+            </div>
+            <div class="field">
+                <label>结束时间</label>
+                <input type="text" name="end_time" value="<%= syzoj.utils.formatDate(contest.end_time || syzoj.utils.getCurrentTime()) %>">
+            </div>
+            <button type="submit" class="ui button">提交</button>
+        </form>
+<script>
+$(function () {
+  $('#search_problems')
+    .dropdown({
+      debug: true,
+      apiSettings: {
+        url: '/api/v2/search/problem/{query}',
+        onResponse: function (response) {
+          var a = $('#search_problems').val().map(x => parseInt(x));
+          if (response.results) {
+            response.results = response.results.filter(x => !a.includes(parseInt(x.value)));
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
+});
+</script>
+<% include footer %>

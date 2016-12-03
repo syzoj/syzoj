@@ -1,11 +1,11 @@
-<% if (pageCnt) { %>
+<% if (paginate.pageCnt) { %>
 <div class="ui center aligned grid">
     <div class="ui buttons">
-        <a class="ui<% if (page === 1) { %> disabled<% } %> button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: page - 1 })) %>">
+        <a class="ui<% if (paginate.currPage === 1) { %> disabled<% } %> button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: paginate.currPage - 1 })) %>">
             <i class="left chevron icon"></i>
         </a>
         <%
-        let leftCnt = page - 1, rightCnt = pageCnt - page, omitLeft = leftCnt > 4, omitRight = rightCnt > 4;
+        let leftCnt = paginate.currPage - 1, rightCnt = paginate.pageCnt - paginate.currPage, omitLeft = leftCnt > 4, omitRight = rightCnt > 4;
         if (omitLeft) leftCnt = 3;
         if (omitRight) rightCnt = 3;
         if (omitLeft) {
@@ -13,13 +13,13 @@
         <li><span>...</span></li>
         <%
         }
-        for (let i = page - leftCnt; i < page; i++) { %>
+        for (let i = paginate.currPage - leftCnt; i < paginate.currPage; i++) { %>
             <a class="ui button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: i })) %>"><%= i %></a>
         <%
         }
         %>
-        <a class="ui primary button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: page })) %>"><%= page %></a>
-        <% for (let i = page + 1; i <= page + rightCnt; i++) { %>
+        <a class="ui primary button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: paginate.currPage })) %>"><%= paginate.currPage %></a>
+        <% for (let i = paginate.currPage + 1; i <= paginate.currPage + rightCnt; i++) { %>
           <a class="ui button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: i })) %>"><%= i %></a>
         <%
         }
@@ -27,7 +27,7 @@
         %>
         <li><span>...</span></li>
         <% } %>
-        <a class="ui<% if (page === pageCnt) { %> disabled<% } %> button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: page + 1 })) %>">
+        <a class="ui<% if (paginate.currPage === paginate.pageCnt) { %> disabled<% } %> button" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: paginate.currPage + 1 })) %>">
             <i class="right chevron icon"></i>
         </a>
     </div>

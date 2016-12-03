@@ -78,10 +78,9 @@ module.exports = {
             resolve(replaceUI(s));
         });
       } else {
-        let res = obj, cnt = 0;
+        let res = obj, cnt = keys.length;
         for (let key of keys) {
           if (res[key].trim()) {
-            cnt++;
             renderer(res[key], (s) => {
               res[key] = replaceUI(s);
               if (!--cnt) resolve(res);
@@ -95,6 +94,9 @@ module.exports = {
     let m = moment(ts * 1000);
     m.locale('zh-cn');
     return m.format(format || 'L H:mm:ss');
+  },
+  parseTime(s) {
+    return parseInt(+new Date(s) / 1000);
   },
   getCurrentTime() {
     return parseInt(+new Date / 1000);
@@ -151,5 +153,21 @@ module.exports = {
     let Convert = require('ansi-to-html');
     let convert = new Convert({ escapeXML: true });
     return convert.toHtml(s);
+  },
+  paginate(count, currPage, perPage) {
+    currPage = parseInt(currPage);
+    if (!currPage || currPage < 1) currPage = 1;
+
+    let pageCnt = Math.ceil(count / perPage);
+    if (currPage > pageCnt) currPage = pageCnt;
+
+    return {
+      currPage: currPage,
+      perPage: perPage,
+      pageCnt: pageCnt
+    };
+  },
+  removeTitleTag(s) {
+    return s.replace(/「[\S\s]+?」/, '');
   }
 };

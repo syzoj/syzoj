@@ -24,23 +24,13 @@ let User = syzoj.model('user');
 // Ranklist
 app.get('/ranklist', async (req, res) => {
   try {
-    let page = parseInt(req.query.page);
-    if (!page || page < 1) page = 1;
-
-    let count = await User.count({
-      is_show: true
-    });
-
-    let pageCnt = Math.ceil(count / syzoj.config.page.ranklist);
-    if (page > pageCnt) page = pageCnt;
-
-    let ranklist = await User.query(page, syzoj.config.page.ranklist, { is_show: true }, [['ac_num', 'desc']]);
+    let paginate = syzoj.utils.paginate(await User.count({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
+    let ranklist = await User.query(paginate, { is_show: true }, [['ac_num', 'desc']]);
     await ranklist.forEachAsync(async x => x.renderInformation());
 
     res.render('ranklist', {
       ranklist: ranklist,
-      pageCnt: pageCnt,
-      page: page
+      paginate: paginate
     });
   } catch (e) {
     console.log(e);
@@ -98,6 +88,7 @@ app.get('/user/:id', async (req, res) => {
     let user = await User.fromID(id);
     user.ac_problems = await user.getACProblems();
     user.articles = await user.getArticles();
+    user.allowedEdit = await user.isAllowedEditBy(res.locals.user);
 
     res.render('user', {
       show_user: user

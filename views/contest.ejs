@@ -1,0 +1,69 @@
+<% this.title = contest.title + ' - 比赛' %>
+<% include header %>
+<div class="padding">
+  <h1 style="margin-bottom: 30px; "><%= contest.title %></h1>
+  <div class="ui grid">
+  <% if (contest.allowedEdit || !contest.running) { %>
+    <div class="row">
+      <div class="column">
+        <div class="ui buttons">
+          <a class="ui small positive button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'ranklist']) %>">排行榜</a>
+    <% if (contest.allowedEdit) { %>
+          <a class="ui small button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>">编辑比赛</a>
+    <% } %>
+        </div>
+      </div>
+    </div>
+  <% } %>
+    <div class="row">
+      <div class="column">
+        <h4 class="ui top attached block header">描述</h4>
+        <div class="ui bottom attached segment">
+          <%- contest.information %>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column">
+         <table class="ui selectable celled table">
+            <thead>
+              <tr>
+                <th class="one wide" style="text-align: center">状态</th>
+                <th class="fourteen wide">题目</th>
+                <th class="one wide" style="text-align: center">代码</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%
+              let i = 0;
+              for (let problem of problems) {
+                i++;
+              %>
+              <tr>
+                <td class="center aligned" style="white-space: nowrap; ">
+                <% if (problem.judge_id) { %>
+                  <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_id]) %>">
+                  <% if (problem.status === true) { %>
+                  <i class="black checkmark icon"></i>
+                  <% } else if (problem.status !== false) { %>
+                    <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
+                      <%= problem.status %>
+                    </span>
+                  <% } %>
+                <% } %>
+                </td>
+                <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id, i]) %>"><%= syzoj.utils.removeTitleTag(problem.problem.title) %></a></td>
+                <td class="center aligned">
+                <% if (problem.judge_id) { %>
+                <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_id]) %>"><i style="color: #000;" class="code icon"></i></a>
+                <% } %>
+                </td>
+              </tr>
+            <% } %>
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<% include footer %>

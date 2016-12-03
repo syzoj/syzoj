@@ -17,19 +17,27 @@
        <tr>
         <td>#<%= judge.id %></td>
         <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
-        <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>"><%= judge.result.status %></td>
-        <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
+        <% if (judge.allowedSeeResult) { %>
+          <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>"><%= judge.result.status %></td>
+          <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
         <td><%= judge.result.total_time %></td>
+        <% } else { %>
+          <td>隐藏</td>
+          <td>隐藏</td>
+          <td>隐藏</td>
+        <% } %>
         <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a></td>
         <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
        </tr>
      </tbody>
   </table>
+  <% if (judge.allowedSeeCode) { %>
     <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.code %></code></pre></div>
-<% if (judge.result.compiler_output && judge.result.status === 'Compile Error') { %>
+  <% } %>
+<% if (judge.result.compiler_output && judge.result.status === 'Compile Error' && judge.allowedSeeCode) { %>
   <h3 class="ui header">编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.result.compiler_output %></code></pre></div>
-<% } else { %>
+<% } else if (judge.allowedSeeResult) { %>
 <div class="ui styled fluid accordion">
   <% for (let i = 0; i < judge.result.case_num; i++) { %>
   <% let testcase = judge.result[i]; %>
@@ -56,7 +64,7 @@
   <% } %>
 </div>
 <% } %>
- 
+
 <script>
 $(function() {
   $('.ui.accordion').accordion();

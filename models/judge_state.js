@@ -24,6 +24,7 @@ let db = syzoj.db;
 
 let User = syzoj.model('user');
 let Problem = syzoj.model('problem');
+let Contest = syzoj.model('contest');
 
 let model = db.define('judge_state', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -108,13 +109,28 @@ class JudgeState extends Model {
     if (user && (user.is_admin || user.id === this.problem.user_id)) return true;
     else if (this.type === 0) return true;
     else if (this.type === 1) {
-      // TODO: contest
-      return false;
+      let contest = await Contest.fromID(this.type_info);
+      if (await contest.isRunning()) {
+        return false;
+      } else {
+        return true;
+      }
     } else if (this.type === 2) return false;
   }
 
   async isAllowedSeeCodeBy(user) {
-    return this.isAllowedSeeResultBy(user);
+    await this.loadRelationships();
+
+    if (user && (user.is_admin || user.id === this.problem.user_id)) return true;
+    else if (this.type === 0) return true;
+    else if (this.type === 1) {
+      let contest = await Contest.fromID(this.type_info);
+      if (await contest.isRunning()) {
+        return user && this.user_id === user.id;
+      } else {
+        return true;
+      }
+    } else if (this.type === 2) return false;
   }
 
   async updateResult(result) {
@@ -131,6 +147,9 @@ class JudgeState extends Model {
       if (this.status === 'Accepted') this.problem.ac_num++;
       await this.user.save();
       await this.problem.save();
+    } else if (this.type === 1) {
+      let contest = await Contest.fromID(this.type_info);
+      await contest.newSubmission(this);
     }
   }
 

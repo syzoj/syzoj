@@ -25,7 +25,9 @@
     "judge_state": 10,
     "ranklist": 20,
     "discussion": 10,
-    "article_comment": 10
+    "article_comment": 10,
+    "contest": 10,
+    "edit_contest_problem_list": 10
   },
   "languages": [
     "C++",

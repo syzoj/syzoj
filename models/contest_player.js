@@ -23,13 +23,18 @@ let Sequelize = require('sequelize');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
+let Problem = syzoj.model('problem');
+let Contest = syzoj.model('contest');
 
-let model = db.define('article', {
+let model = db.define('contest_player', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-
-  title: { type: Sequelize.STRING(80) },
-  content: { type: Sequelize.TEXT },
-
+  contest_id: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: 'contest',
+      key: 'id'
+    }
+  },
   user_id: {
     type: Sequelize.INTEGER,
     references: {
@@ -38,58 +43,57 @@ let model = db.define('article', {
     }
   },
 
-  public_time: { type: Sequelize.INTEGER },
-  update_time: { type: Sequelize.INTEGER },
-  sort_time: { type: Sequelize.INTEGER },
-
-  comments_num: { type: Sequelize.INTEGER },
-  allow_comment: { type: Sequelize.BOOLEAN },
+  score: { type: Sequelize.INTEGER },
+  score_details: { type: Sequelize.TEXT, json: true },
+  time_spent: { type: Sequelize.INTEGER }
 }, {
   timestamps: false,
-  tableName: 'article',
+  tableName: 'contest_player',
   indexes: [
     {
-      fields: ['user_id']
+      fields: ['contest_id'],
     },
     {
-      fields: ['sort_time']
+      fields: ['user_id'],
     }
   ]
 });
 
 let Model = require('./common');
-class Article extends Model {
+class ContestPlayer extends Model {
   static async create(val) {
-    return Article.fromRecord(Article.model.build(Object.assign({
-      title: '',
-      content: '',
-
+    return ContestPlayer.fromRecord(ContestPlayer.model.build(Object.assign({
+      contest_id: 0,
       user_id: 0,
-
-      public_time: 0,
-      update_time: 0,
-      sort_time: 0,
-
-      comments_num: 0,
-      allow_comment: true
+      score: 0,
+      score_details: '{}',
+      time_spent: 0
     }, val)));
+  }
+
+  static async findInContest(where) {
+    return ContestPlayer.findOne({ where: where });
   }
 
   async loadRelationships() {
     this.user = await User.fromID(this.user_id);
+    this.contest = await Contest.fromID(this.contest_id);
   }
 
-  async isAllowedEditBy(user) {
-    return user && (user.is_admin || this.user_id === user.id);
-  }
-
-  async isAllowedCommentBy(user) {
-    return user && (this.allow_comment || user.is_admin || this.user_id === user.id);
+  async updateScore(judge_state) {
+    this.score_details[judge_state.problem_id] = {
+      score: judge_state.score,
+      judge_id: judge_state.id
+    };
+    this.score = 0;
+    for (let x in this.score_details) {
+      this.score += this.score_details[x].score;
+    }
   }
 
   getModel() { return model; }
-};
+}
 
-Article.model = model;
+ContestPlayer.model = model;
 
-module.exports = Article;
+module.exports = ContestPlayer;

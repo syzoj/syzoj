@@ -1,0 +1,81 @@
+<% this.title = syzoj.utils.removeTitleTag(problem.title) + ' - ' + contest.title + ' - 比赛' %>
+<% include header %>
+    <div class="ui center aligned grid">
+        <div class="row">
+          <h1><%= syzoj.utils.removeTitleTag(problem.title) %></h1>
+        </div>
+        <div class="row" style="margin-top: -15px">
+          <span class="ui label">内存限制: <%= problem.memory_limit %> MiB</span>
+          <span class="ui label">时间限制: <%= problem.time_limit %> ms</span>
+        </div>
+        <div class="row" style="margin-top: -23px">
+          <% if (problem.file_io) { %>
+          <span class="ui label">输入文件: <%= problem.file_io_input_name %></span>
+          <span class="ui label">输出文件: <%= problem.file_io_output_name %></span>
+          <% } else { %>
+          <span class="ui label">标准输入输出</span>
+          <% } %>
+        </div>
+    </div>
+<div class="ui grid">
+  <div class="row">
+    <div class="column">
+      <div class="ui buttons">
+        <a href="#submit_form" class="ui primary button">提交</a>
+        <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui positive button">返回比赛</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <h4 class="ui top attached block header">题目描述</h4>
+      <div class="ui bottom attached segment" id="description"><%- problem.description %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+        <h4 class="ui top attached block header">输入格式</h4>
+        <div class="ui bottom attached segment" id="input"><%- problem.input_format %></div>
+    </div>
+  </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">输出格式</h4>
+          <div class="ui bottom attached segment" id="output"><%- problem.output_format %></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">测试样例</h4>
+          <div class="ui bottom attached segment" id="example"><%- problem.example %></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+          <h4 class="ui top attached block header">数据范围与提示</h4>
+          <div class="ui bottom attached segment" id="hint"><%- problem.limit_and_hint %></div>
+        </div>
+    </div>
+</div>
+
+<h2 class="ui header">提交代码</h2>
+<form id="submit_form" class="ui form" action="<%= syzoj.utils.makeUrl(['submit', problem.id], { contest_id: contest.id }) %>" method="post">
+   <div class="field">
+   <label for="doc-select-1">选择语言</label>
+   <select class="ui fluid dropdown" name="language" id="doc-select-1">
+     <% for (lang of syzoj.config.languages) { %>
+         <option value="<%= lang %>"><%= lang %></option>
+     <% } %>
+   </select>
+   </div>
+   <div class="field">
+      <textarea rows="15" name="code" style="font-family: 'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace; "></textarea>
+   </div>
+   <button type="submit" class="ui button">提交</button>
+</form>
+<script>
+$(function () {
+    $('.ui.dropdown').dropdown();
+});
+</script>
+<% include footer %>

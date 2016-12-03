@@ -1,0 +1,63 @@
+<%= this.title = '排名 - ' + contest.title %>
+<% include header %>
+<div class="padding">
+        <table class="ui very basic center aligned table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>用户名</th>
+                <% for (let problem of problems) { %>
+                <th><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>">
+                  <%= syzoj.utils.removeTitleTag(problem.title) %>
+                </a></th>
+                <% } %>
+                <th>总分</th>
+            </tr>
+            </thead>
+            <tbody>
+            <%
+            let i = 0;
+            for (let item of ranklist) {
+              i++
+            %>
+            <tr>
+                <td>
+                  <% if (i == 1) { %>
+                    <div class="ui yellow ribbon label">
+                  <% } else if (i == 2) { %>
+                    <div class="ui ribbon label">
+                  <% } else if (i == 3) { %>
+                    <div class="ui brown ribbon label" style="background-color: #C47222 !important;">
+                  <% } else { %>
+                    <div>
+                  <% } %>
+                  <%= i %>
+                  </div>
+                </td>
+                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a>
+                <% if (item.user.nameplate) { %>
+                  <%= item.user.nameplate %>
+                <% } %>
+                </td>
+                <% for (let problem of problems) { %>
+                <% if (item.player.score_details[problem.id]) { %>
+                <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', item.player.score_details[problem.id].judge_id]) %>">
+                <span class="score score_<%= parseInt((item.player.score_details[problem.id].score / 10) || 0) %>">
+                  <%= item.player.score_details[problem.id].score %>
+                </span>
+                </a></td>
+                <% } else { %>
+                <td></td>
+                <% } %>
+                <% } %>
+                <td>
+                  <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
+                    <%= item.player.score %>
+                  </span>
+                </td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+</div>
+<% include footer %>

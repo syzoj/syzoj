@@ -32,7 +32,7 @@ let model = db.define('problem', {
   user_id: {
     type: Sequelize.INTEGER,
     references: {
-      model: User.model,
+      model: 'user',
       key: 'id'
     }
   },
@@ -49,7 +49,7 @@ let model = db.define('problem', {
   testdata_id: {
     type: Sequelize.INTEGER,
     references: {
-      model: TestData.model,
+      model: 'file',
       key: 'id'
     }
   },

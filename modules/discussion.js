@@ -25,21 +25,14 @@ let User = syzoj.model('user');
 
 app.get('/discussion', async (req, res) => {
   try {
-    let page = parseInt(req.query.page);
-    if (!page || page < 1) page = 1;
-
-    let count = await Article.count();
-    let pageCnt = Math.ceil(count / syzoj.config.page.discussion);
-    if (page > pageCnt) page = pageCnt;
-
-    let articles = await Article.query(page, syzoj.config.page.discussion, null, [['public_time', 'asc']]);
+    let paginate = syzoj.utils.paginate(await Article.count(), req.query.page, syzoj.config.page.discussion);
+    let articles = await Article.query(paginate, null, [['public_time', 'asc']]);
 
     for (let article of articles) await article.loadRelationships();
 
     res.render('discussion', {
       articles: articles,
-      pageCnt: pageCnt,
-      page: page
+      paginate: paginate
     });
   } catch (e) {
     syzoj.log(e);
@@ -62,28 +55,20 @@ app.get('/article/:id', async (req, res) => {
 
     let where = { article_id: id };
 
-    let page = parseInt(req.query.page);
-    if (!page || page < 1) page = 1;
-    let count = await ArticleComment.count(where);
-    let pageCnt = Math.ceil(count / syzoj.config.page.article_comment);
-    if (page > pageCnt) page = pageCnt;
+    let paginate = syzoj.utils.paginate(await ArticleComment.count(where), req.query.page, syzoj.config.page.article_comment);
 
-    let comments = [];
-    if (count) {
-      comments = await ArticleComment.query(page, syzoj.config.page.article_comment, where, [['public_time', 'asc']]);
+    let comments = await ArticleComment.query(paginate, where, [['public_time', 'asc']]);
 
-      for (let comment of comments) {
-        comment.content = await syzoj.utils.markdown(comment.content);
-        comment.allowedEdit = await comment.isAllowedEditBy(res.locals.user);
-        await comment.loadRelationships();
-      }
+    for (let comment of comments) {
+      comment.content = await syzoj.utils.markdown(comment.content);
+      comment.allowedEdit = await comment.isAllowedEditBy(res.locals.user);
+      await comment.loadRelationships();
     }
 
     res.render('article', {
       article: article,
       comments: comments,
-      pageCnt: pageCnt,
-      page: page
+      paginate: paginate
     });
   } catch (e) {
     syzoj.log(e);

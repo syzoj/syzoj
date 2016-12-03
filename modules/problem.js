@@ -22,17 +22,12 @@
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let WaitingJudge = syzoj.model('waiting_judge');
+let Contest = syzoj.model('contest');
 
 app.get('/problem', async (req, res) => {
   try {
-    let page = parseInt(req.query.page);
-    if (!page || page < 1) page = 1;
-
-    let count = await Problem.count();
-    let pageCnt = Math.ceil(count / syzoj.config.page.problem);
-    if (page > pageCnt) page = pageCnt;
-
-    let problems = await Problem.query(page, syzoj.config.page.problem);
+    let paginate = syzoj.utils.paginate(await Problem.count(), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.query(paginate);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -41,8 +36,7 @@ app.get('/problem', async (req, res) => {
 
     res.render('problem_set', {
       problems: problems,
-      pageCnt: pageCnt,
-      page: page
+      paginate: paginate
     });
   } catch (e) {
     syzoj.log(e);
@@ -221,11 +215,25 @@ app.post('/submit/:id', async (req, res) => {
       code: req.body.code,
       language: req.body.language,
       user_id: res.locals.user.id,
-      problem_id: req.params.id,
-      type: problem.is_public ? 0 : 2
+      problem_id: req.params.id
     });
 
-    await judge_state.save();
+    let contest_id = parseInt(req.query.contest_id);
+    if (contest_id) {
+      let contest = await Contest.fromID(contest_id);
+      if (!contest) throw 'No such contest.';
+      let problems_id = await contest.getProblems();
+      if (!problems_id.includes(id)) throw 'No such problem.';
+
+      judge_state.type = 1;
+      judge_state.type_info = contest_id;
+
+      await judge_state.save();
+      await judge_state.updateRelatedInfo();
+    } else {
+      judge_state.type = problem.is_public ? 0 : 2;
+      await judge_state.save();
+    }
 
     let waiting_judge = await WaitingJudge.create({
       judge_id: judge_state.id

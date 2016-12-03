@@ -17,6 +17,7 @@
             <a class="header item" href="/"><span style="font-family: Raleway; font-size: 1.5em; font-weight: 500; "><%= syzoj.config.title %></span></a>
             <a class="item<% if (active === '') { %> active<% } %>" href="/"><i class="home icon"></i> 首页</a>
             <a class="item<% if (active === 'problem') { %> active<% } %>" href="/problem"><i class="list icon"></i> 题库</a>
+            <a class="item<% if (active === 'contest') { %> active<% } %>" href="/contest"><i class="calendar icon"></i> 比赛</a>
             <a class="item<% if (active.startsWith('judge')) { %> active<% } %>" href="/judge_state"><i class="tasks icon"></i> 评测</a>
             <a class="item<% if (active === 'ranklist') { %> active<% } %>" href="/ranklist"><i class="signal icon"></i> 排名</a>
             <a class="item<% if (active === 'discussion' || active === 'article') { %> active<% } %>" href="/discussion"><i class="comments icon"></i> 讨论</a>

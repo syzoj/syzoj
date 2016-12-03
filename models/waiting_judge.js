@@ -29,7 +29,7 @@ let model = db.define('waiting_judge', {
   judge_id: {
     type: Sequelize.INTEGER,
     references: {
-      model: JudgeState.model,
+      model: 'judge_state',
       key: 'id'
     }
   }

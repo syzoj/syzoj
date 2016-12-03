@@ -87,13 +87,19 @@ class Model {
     return this.model.count({ where: where });
   }
 
-  static async query(page, perpage, where, order) {
-    let records = await this.model.findAll({
-      offset: (page - 1) * perpage,
-      limit: perpage,
+  static async query(paginate, where, order) {
+    let options = {
       where: where,
       order: order
-    });
+    };
+    if (Array.isArray(paginate)) {
+      options.offset = paginate[0] - 1;
+      options.limit = paginate[1] - paginate[0] + 1;
+    } else if (paginate) {
+      options.offset = (paginate.currPage - 1) * paginate.perPage;
+      options.limit = paginate.perPage;
+    }
+    let records = await this.model.findAll(options);
     return records.mapAsync(record => (this.fromRecord(record)));
   }
 }

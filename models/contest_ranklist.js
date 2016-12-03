@@ -23,67 +23,55 @@ let Sequelize = require('sequelize');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
-let Article = syzoj.model('article');
+let Problem = syzoj.model('problem');
+let ContestPlayer = syzoj.model('contest_player');
 
-let model = db.define('comment', {
+let model = db.define('contest_ranklist', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-
-  content: { type: Sequelize.TEXT },
-
-  article_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'article',
-      key: 'id'
-    }
-  },
-
-  user_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
-
-  public_time: { type: Sequelize.INTEGER }
+  ranklist: { type: Sequelize.TEXT, json: true }
 }, {
   timestamps: false,
-  tableName: 'comment',
-  indexes: [
-    {
-      fields: ['article_id']
-    },
-    {
-      fields: ['user_id']
-    }
-  ]
+  tableName: 'contest_ranklist'
 });
 
 let Model = require('./common');
-class ArticleComment extends Model {
+class ContestRanklist extends Model {
   static async create(val) {
-    return ArticleComment.fromRecord(ArticleComment.model.build(Object.assign({
-      content: '',
-      article_id: 0,
-      user_id: 0,
-      public_time: 0,
+    return ContestRanklist.fromRecord(ContestRanklist.model.build(Object.assign({
+      ranklist: '{}'
     }, val)));
   }
 
-  async loadRelationships() {
-    this.user = await User.fromID(this.user_id);
-    this.article = await Article.fromID(this.article_id);
+  async getPlayers() {
+    let a = [];
+    for (let i = 1; i <= this.ranklist.player_num; i++) {
+      a.push(await ContestPlayer.fromID(this.ranklist[i]));
+    }
+    return a;
   }
 
-  async isAllowedEditBy(user) {
-    await this.loadRelationships();
-    return user && (user.is_admin || this.user_id === user.id || user.id === this.article.user_id);
+  async updatePlayer(player) {
+    let players = await this.getPlayers(), newPlayer = true;
+    for (let x of players) {
+      if (x.user_id === player.user_id) {
+        newPlayer = false;
+        break;
+      }
+    }
+
+    if (newPlayer) {
+      players.push(player);
+    }
+
+    players.sort((a, b) => b.score - a.score);
+
+    this.ranklist = { player_num: players.length };
+    for (let i = 0; i < players.length; i++) this.ranklist[i + 1] = players[i].id;
   }
 
   getModel() { return model; }
-};
+}
 
-ArticleComment.model = model;
+ContestRanklist.model = model;
 
-module.exports = ArticleComment;
+module.exports = ContestRanklist;

@@ -25,7 +25,7 @@ let Divine = require('syzoj-divine');
 
 app.get('/', async (req, res) => {
   try {
-    let ranklist = await User.query(1, 10, { is_show: true }, [['ac_num', 'desc']]);
+    let ranklist = await User.query([1, 10], { is_show: true }, [['ac_num', 'desc']]);
     await ranklist.forEachAsync(async x => x.renderInformation());
 
     let notices = await syzoj.config.notices.mapAsync(async notice => {
