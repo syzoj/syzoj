@@ -70,6 +70,7 @@ class Contest extends Model {
     return Contest.fromRecord(Contest.model.build(Object.assign({
       title: '',
       problems: '',
+      information: '',
       start_time: 0,
       end_time: 0,
       holder: 0,
