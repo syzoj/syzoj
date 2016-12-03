@@ -241,7 +241,11 @@ app.post('/submit/:id', async (req, res) => {
 
     await waiting_judge.save();
 
-    res.redirect(syzoj.utils.makeUrl(['judge_detail', judge_state.id]));
+    if (contest_id) {
+      res.redirect(syzoj.utils.makeUrl(['contest', contest_id]));
+    } else {
+      res.redirect(syzoj.utils.makeUrl(['judge_detail', judge_state.id]));
+    }
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
