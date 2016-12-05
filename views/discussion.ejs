@@ -20,7 +20,7 @@
     <% for (let article of articles) { %>
         <tr>
             <td><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
-            <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a></td>
+            <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
             <td><%= syzoj.utils.formatDate(article.public_time) %></td>
         </tr>
     <% } %>

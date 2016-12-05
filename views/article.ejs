@@ -8,8 +8,7 @@
 <div class="padding">
   <h1><%= article.title %></h1>
  	<p style="font_size: 0.7em"><img style="vertical-align: middle;" src="<%= syzoj.utils.gravatar(article.user.email, 64) %>" width="32" height="32">
- 		<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a>
-        <% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
+ 		<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
         <% if (article.allowedEdit) { %>
         <a class="ui mini red button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">删除文章</a>
         <a class="ui mini button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>">编辑文章</a>
@@ -27,7 +26,7 @@
           <img src="<%= syzoj.utils.gravatar(comment.user.email, 120) %>">
         </a>
         <div class="content">
-          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><%= comment.user.username %></a>
+          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><%= comment.user.username %></a><% if (comment.user.nameplate) { %><%- comment.user.nameplate %><% } %>
           <div class="metadata">
             <span class="date"><%= syzoj.utils.formatDate(comment.public_time) %></span>
           </div>

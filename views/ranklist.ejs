@@ -24,11 +24,7 @@
             %>
 		        <tr>
 		        	<td><%= i %></td>
-		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a>
-            <% if (user.nameplate) { %>
-            <%- user.nameplate %>
-            <% } %>
-              </td>
+		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
 		        	<td><%- user.information %></td>
 		        	<td><%= user.ac_num %></td>
 		        </tr>

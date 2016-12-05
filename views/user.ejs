@@ -18,7 +18,7 @@
                     <img src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
                 </div>
                 <div class="content">
-                    <div class="header"><%= show_user.username %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
+                    <div class="header"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
                     <div class="meta">
                         <a class="group"><%= show_user.is_admin ? '管理员' : '普通用户' %></a>
                     </div>
@@ -39,7 +39,7 @@
                                     <div class="row">
                                         <div class="column">
                                             <h4 class="ui top attached block header">用户名</h4>
-                                            <div class="ui bottom attached segment"><%= show_user.username %></div>
+                                            <div class="ui bottom attached segment"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %></div>
                                         </div>
                                     </div>
                                     <div class="row">
