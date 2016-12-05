@@ -128,3 +128,19 @@ th {
     color: rgba(0, 0, 0, 0.6);
     font-size: 0.85em;
 }
+
+/* Animated spinner */
+@keyframes spinner-icon-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner.icon {
+  animation: spinner-icon-rotate 3s linear infinite;
+  width: 16.52px;
+  height: 16.52px;
+}

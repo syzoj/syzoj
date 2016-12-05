@@ -46,14 +46,17 @@
       <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
       <div class="four wide column status status_detail <%= testcase.status.toLowerCase().split(' ').join('_') %>">
 	  <%
-      let icon = {
-        'Accepted': 'checkmark',
-        'Wrong Answer': 'remove',
-        'Runtime Error': 'bomb',
-		'Time Limit Exceed': 'clock',
-		'Memory Limit Exceed': 'disk outline',
-		'Output Limit Exceed': 'expand'
-      }
+    let icon = {
+      'Accepted': 'checkmark',
+      'Wrong Answer': 'remove',
+      'Runtime Error': 'bomb',
+      'Time Limit Exceed': 'clock',
+      'Memory Limit Exceed': 'disk outline',
+      'Output Limit Exceed': 'expand',
+      'Waiting': 'spinner',
+      'Compile Error': 'code',
+      'System Error': 'server'
+    }
 	  %>
       <i class="<%= icon[testcase.status] || 'remove' %> icon"></i>
       <%= testcase.status %></div>

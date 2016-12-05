@@ -7,7 +7,7 @@
         <a href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>" class="ui mini right floated button">添加题目</a>
       </div>
     </div>
-  </div> 
+  </div>
   <table class="ui very basic center aligned table">
     <thead>
       <tr>
@@ -27,10 +27,23 @@
         <tr>
             <% if (user) { %>
                 <td>
-                <% if (problem.status === true) { %>
-                    <i class="checkmark icon"></i>
-                <% } else if (problem.status === false) { %>
-                    <i class="remove icon"></i>
+                <% if (problem.judge_state) { %>
+                  <%
+                    let icon = {
+                      'Accepted': 'checkmark',
+                      'Wrong Answer': 'remove',
+                      'Runtime Error': 'bomb',
+                      'Time Limit Exceed': 'clock',
+                      'Memory Limit Exceed': 'disk outline',
+                      'Output Limit Exceed': 'expand',
+                      'Waiting': 'spinner',
+                      'Compile Error': 'code',
+                      'System Error': 'server'
+                    }
+                  %>
+                  <span class="status <%= problem.judge_state.status.toLowerCase().split(' ').join('_') %>">
+                    <i class="<%= icon[problem.judge_state.status] || 'remove' %> icon"></i>
+                  </span>
                 <% } %>
                 </td>
             <% } %>

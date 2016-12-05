@@ -31,7 +31,7 @@ app.get('/problem', async (req, res) => {
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
-      problem.status = await problem.getSubmitStatus(res.locals.user);
+      problem.judge_state = await problem.getJudgeState(res.locals.user);
     });
 
     res.render('problem_set', {
