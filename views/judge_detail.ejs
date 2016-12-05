@@ -45,7 +45,17 @@
     <div class="ui grid">
       <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
       <div class="four wide column status status_detail <%= testcase.status.toLowerCase().split(' ').join('_') %>">
-      <i class="<%= testcase.status === 'Accepted' ? 'checkmark' : 'remove' %> icon"></i>
+	  <%
+      let icon = {
+        'Accepted': 'checkmark',
+        'Wrong Answer': 'remove',
+        'Runtime Error': 'bomb',
+		'Time Limit Exceed': 'clock',
+		'Memory Limit Exceed': 'disk outline',
+		'Output Limit Exceed': 'expand'
+      }
+	  %>
+      <i class="<%= icon[testcase.status] || 'remove' %> icon"></i>
       <%= testcase.status %></div>
       <div class="four wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
       <div class="four wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
