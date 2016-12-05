@@ -41,9 +41,11 @@
                       'System Error': 'server'
                     }
                   %>
-                  <span class="status <%= problem.judge_state.status.toLowerCase().split(' ').join('_') %>">
-                    <i class="<%= icon[problem.judge_state.status] || 'remove' %> icon"></i>
-                  </span>
+                  <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_state.id]) %>">
+                    <span class="status <%= problem.judge_state.status.toLowerCase().split(' ').join('_') %>">
+                      <i class="<%= icon[problem.judge_state.status] || 'remove' %> icon"></i>
+                    </span>
+                  </a>
                 <% } %>
                 </td>
             <% } %>
