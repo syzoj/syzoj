@@ -20,11 +20,11 @@
             </div>
             <div class="field">
                 <label>开始时间</label>
-                <input type="text" name="start_time" value="<%= syzoj.utils.formatDate(contest.start_time || syzoj.utils.getCurrentTime()) %>">
+                <input type="text" name="start_time" value="<%= syzoj.utils.formatDate(contest.start_time || syzoj.utils.getCurrentDate()) %>">
             </div>
             <div class="field">
                 <label>结束时间</label>
-                <input type="text" name="end_time" value="<%= syzoj.utils.formatDate(contest.end_time || syzoj.utils.getCurrentTime()) %>">
+                <input type="text" name="end_time" value="<%= syzoj.utils.formatDate(contest.end_time || syzoj.utils.getCurrentDate()) %>">
             </div>
             <button type="submit" class="ui button">提交</button>
         </form>

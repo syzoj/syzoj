@@ -111,7 +111,7 @@ app.post('/article/:id/edit', async (req, res) => {
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
 
-    let time = syzoj.utils.getCurrentTime();
+    let time = syzoj.utils.getCurrentDate();
     if (!article) {
       article = await Article.create();
       article.user_id = res.locals.user.id;
@@ -176,7 +176,7 @@ app.post('/article/:id/comment', async (req, res) => {
       content: req.body.comment,
       article_id: id,
       user_id: res.locals.user.id,
-      public_time: syzoj.utils.getCurrentTime()
+      public_time: syzoj.utils.getCurrentDate()
     });
 
     await comment.save();

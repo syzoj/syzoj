@@ -24,6 +24,7 @@ Array.prototype.forEachAsync = Array.prototype.mapAsync = async function (fn) {
 };
 
 let path = require('path');
+let util = require('util');
 let renderer = require('moemark-renderer');
 let moment = require('moment');
 let url = require('url');
@@ -95,10 +96,18 @@ module.exports = {
     m.locale('zh-cn');
     return m.format(format || 'L H:mm:ss');
   },
-  parseTime(s) {
+  formatTime(x) {
+    function toStringWithPad(x) {
+      x = parseInt(x);
+      if (x < 10) return '0' + x.toString();
+      else return x.toString();
+    }
+    return util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
+  },
+  parseDate(s) {
     return parseInt(+new Date(s) / 1000);
   },
-  getCurrentTime() {
+  getCurrentDate() {
     return parseInt(+new Date / 1000);
   },
   makeUrl(req_params, form) {

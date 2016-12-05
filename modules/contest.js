@@ -91,8 +91,8 @@ app.post('/contest/:id/edit', async (req, res) => {
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');
     contest.information = req.body.information;
-    contest.start_time = syzoj.utils.parseTime(req.body.start_time);
-    contest.end_time = syzoj.utils.parseTime(req.body.end_time);
+    contest.start_time = syzoj.utils.parseDate(req.body.start_time);
+    contest.end_time = syzoj.utils.parseDate(req.body.end_time);
 
     await contest.save();
 
@@ -174,6 +174,9 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 
     let ranklist = await players_id.mapAsync(async player_id => {
       let player = await ContestPlayer.fromID(player_id);
+      for (let i in player.score_details) {
+        player.score_details[i].judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
+      }
 
       let user = await User.fromID(player.user_id);
 

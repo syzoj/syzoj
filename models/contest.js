@@ -131,7 +131,7 @@ class Contest extends Model {
   }
 
   async isRunning(now) {
-    if (!now) now = syzoj.utils.getCurrentTime();
+    if (!now) now = syzoj.utils.getCurrentDate();
     return now >= this.start_time && now < this.end_time;
   }
 
