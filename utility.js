@@ -50,7 +50,7 @@ function highlightPygmentize(code, lang, cb) {
 	  classprefix: 'pl-'
     }
   }, code, (err, res) => {
-    if (err) {
+    if (err || res.toString() === 'undefined') {
       cb(escapeHTML(code));
     } else {
       cb(res);
