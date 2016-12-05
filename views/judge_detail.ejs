@@ -18,7 +18,23 @@
         <td>#<%= judge.id %></td>
         <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
         <% if (judge.allowedSeeResult) { %>
-          <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>"><%= judge.result.status %></td>
+          <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>">
+          <%
+          let icon = {
+            'Accepted': 'checkmark',
+            'Wrong Answer': 'remove',
+            'Runtime Error': 'bomb',
+            'Time Limit Exceed': 'clock',
+            'Memory Limit Exceed': 'disk outline',
+            'Output Limit Exceed': 'expand',
+            'Waiting': 'spinner',
+            'Compile Error': 'code',
+            'System Error': 'server'
+          }
+          %>
+          <i class="<%= icon[judge.status] || 'remove' %> icon"></i>
+          <%= judge.result.status %>
+          </td>
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
         <td><%= judge.result.total_time %></td>
         <% } else { %>
