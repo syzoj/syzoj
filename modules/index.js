@@ -21,6 +21,7 @@
 
 let User = syzoj.model('user');
 let Article = syzoj.model('article');
+let Contest = syzoj.model('contest');
 let Divine = require('syzoj-divine');
 
 app.get('/', async (req, res) => {
@@ -46,10 +47,13 @@ app.get('/', async (req, res) => {
       fortune = Divine(res.locals.user.username, res.locals.user.sex);
     }
 
+    let contests = await Contest.query([1, 5], null, [['start_time', 'desc']]);
+
     res.render('index', {
       ranklist: ranklist,
       notices: notices,
-      fortune: fortune
+      fortune: fortune,
+      contests: contests
     });
   } catch (e) {
     syzoj.log(e);
