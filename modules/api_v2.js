@@ -43,7 +43,7 @@ app.get('/api/v2/search/problem/:keyword*?', async (req, res) => {
       }
     });
 
-    result = result.map(x => ({ name: `#${x.id}. ${x.title}`, value: x.id }));
+    result = result.map(x => ({ name: `#${x.id}. ${x.title}`, value: x.id, url: syzoj.utils.makeUrl(['problem', x.id]) }));
     res.send({ success: true, results: result });
   } catch (e) {
     syzoj.log(e);
