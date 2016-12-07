@@ -81,12 +81,10 @@ module.exports = {
       } else {
         let res = obj, cnt = keys.length;
         for (let key of keys) {
-          if (res[key].trim()) {
-            renderer(res[key], (s) => {
-              res[key] = replaceUI(s);
-              if (!--cnt) resolve(res);
-            });
-          }
+          renderer(res[key], (s) => {
+            res[key] = replaceUI(s);
+            if (!--cnt) resolve(res);
+          });
         }
       }
     });
