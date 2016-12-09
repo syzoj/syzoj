@@ -18,21 +18,8 @@
         <td>#<%= judge.id %></td>
         <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
         <% if (judge.allowedSeeResult) { %>
-          <td class="status <%= judge.result.status.toLowerCase().split(' ').join('_') %>">
-          <%
-          let icon = {
-            'Accepted': 'checkmark',
-            'Wrong Answer': 'remove',
-            'Runtime Error': 'bomb',
-            'Time Limit Exceed': 'clock',
-            'Memory Limit Exceed': 'disk outline',
-            'Output Limit Exceed': 'expand',
-            'Waiting': 'spinner',
-            'Compile Error': 'code',
-            'System Error': 'server'
-          }
-          %>
-          <i class="<%= icon[judge.status] || 'remove' %> icon"></i>
+          <td class="status <%= getStatusMeta(judge.result.status).toLowerCase().split(' ').join('_') %>">
+          <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
           <%= judge.result.status %>
           </td>
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
@@ -56,30 +43,34 @@
 <% } else if (judge.allowedSeeResult) { %>
 <div class="ui styled fluid accordion">
   <% for (let i = 0; i < judge.result.case_num; i++) { %>
-  <% let testcase = judge.result[i]; %>
-  <div class="title">
+  <%
+  let testcase = judge.result[i], pending = false;
+  if (!testcase) {
+    pending = true;
+    if (i == 0 || judge.result[i - 1]) {
+      testcase = {
+        status: 'Running'
+      };
+    } else {
+      testcase = {
+        status: 'Waiting'
+      };
+    }
+  }
+  %>
+  <div class="title<% if (pending) { %> pending<% } %>"<% if (pending) { %> style="cursor: auto; "<% } %>>
     <div class="ui grid">
       <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
-      <div class="four wide column status status_detail <%= testcase.status.toLowerCase().split(' ').join('_') %>">
-	  <%
-    let icon = {
-      'Accepted': 'checkmark',
-      'Wrong Answer': 'remove',
-      'Runtime Error': 'bomb',
-      'Time Limit Exceed': 'clock',
-      'Memory Limit Exceed': 'disk outline',
-      'Output Limit Exceed': 'expand',
-      'Waiting': 'spinner',
-      'Compile Error': 'code',
-      'System Error': 'server'
-    }
-	  %>
-      <i class="<%= icon[testcase.status] || 'remove' %> icon"></i>
+      <div class="four wide column status status_detail <%= getStatusMeta(testcase.status).toLowerCase().split(' ').join('_') %>">
+      <i class="<%= icon[getStatusMeta(testcase.status)] || 'remove' %> icon"></i>
       <%= testcase.status %></div>
-      <div class="four wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
-      <div class="four wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
+      <% if (!pending) { %>
+        <div class="four wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
+        <div class="four wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
+      <% } %>
     </div>
   </div>
+  <% if (!pending) { %>
   <div class="content">
     <p>
         <strong>输入文件</strong>
@@ -91,12 +82,17 @@
     </p>
   </div>
   <% } %>
+  <% } %>
 </div>
 <% } %>
 
 <script>
 $(function() {
-  $('.ui.accordion').accordion();
+  $('.ui.accordion').accordion({
+    selector: {
+      trigger: '.title:not(.pending)'
+    }
+  });
 });
 </script>
 <% include footer %>

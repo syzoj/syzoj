@@ -47,24 +47,44 @@ th {
 
 :not(.status_detail).status.runtime_error,
 .title:hover .status_detail.status.runtime_error,
-.title.active .status_detail.status.runtime_error {
+.title.active .status_detail.status.runtime_error,
+:not(.status_detail).status.file_error,
+.title:hover .status_detail.status.file_error,
+.title.active .status_detail.status.file_error {
     color: darkorchid;
 }
 
-:not(.status_detail).status.memory_limit_exceed,
-.title:hover .status_detail.status.memory_limit_exceed,
-.title.active .status_detail.status.memory_limit_exceed,
-:not(.status_detail).status.time_limit_exceed,
-.title:hover .status_detail.status.time_limit_exceed,
-.title.active .status_detail.status.time_limit_exceed,
-:not(.status_detail).status.output_limit_exceed,
-.title:hover .status_detail.status.output_limit_exceed,
-.title.active .status_detail.status.output_limit_exceed {
+:not(.status_detail).status.memory_limit_exceeded,
+.title:hover .status_detail.status.memory_limit_exceeded,
+.title.active .status_detail.status.memory_limit_exceeded,
+:not(.status_detail).status.time_limit_exceeded,
+.title:hover .status_detail.status.time_limit_exceeded,
+.title.active .status_detail.status.time_limit_exceeded,
+:not(.status_detail).status.output_limit_exceeded,
+.title:hover .status_detail.status.output_limit_exceeded,
+.title.active .status_detail.status.output_limit_exceeded {
     color: sandybrown;
 }
 
-:not(.status_detail).status.waiting, :not(.status_detail).status.system_error {
+:not(.status_detail).status.waiting,
+.title:hover .status_detail.status.waiting,
+.title.active .status_detail.status.waiting,
+:not(.status_detail).status.system_error {
     color: grey;
+}
+
+:not(.status_detail).status.running,
+.title:hover .status_detail.status.running,
+.title.active .status_detail.status.running {
+    color: #6cf;
+}
+
+:not(.status_detail).status.compiling {
+    color: #00b5ad;
+}
+
+:not(.status_detail).status.no_testdata {
+    color: brown;
 }
 
 :not(.status_detail).status.compile_error {

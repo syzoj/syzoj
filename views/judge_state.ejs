@@ -35,21 +35,8 @@
         <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
         <% if (!judge.hidden) { %>
         <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">
-            <span class="status <%= judge.status.toLowerCase().split(' ').join('_') %>">
-            <%
-            let icon = {
-              'Accepted': 'checkmark',
-              'Wrong Answer': 'remove',
-              'Runtime Error': 'bomb',
-              'Time Limit Exceed': 'clock',
-              'Memory Limit Exceed': 'disk outline',
-              'Output Limit Exceed': 'expand',
-              'Waiting': 'spinner',
-              'Compile Error': 'code',
-              'System Error': 'server'
-            }
-            %>
-            <i class="<%= icon[judge.status] || 'remove' %> icon"></i>
+            <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
+            <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
             <%= judge.status %>
             </span>
         </a></td>

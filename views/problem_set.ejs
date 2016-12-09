@@ -28,19 +28,6 @@
             <% if (user) { %>
                 <td>
                 <% if (problem.judge_state) { %>
-                  <%
-                    let icon = {
-                      'Accepted': 'checkmark',
-                      'Wrong Answer': 'remove',
-                      'Runtime Error': 'bomb',
-                      'Time Limit Exceed': 'clock',
-                      'Memory Limit Exceed': 'disk outline',
-                      'Output Limit Exceed': 'expand',
-                      'Waiting': 'spinner',
-                      'Compile Error': 'code',
-                      'System Error': 'server'
-                    }
-                  %>
                   <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_state.id]) %>">
                     <span class="status <%= problem.judge_state.status.toLowerCase().split(' ').join('_') %>">
                       <i class="<%= icon[problem.judge_state.status] || 'remove' %> icon"></i>
