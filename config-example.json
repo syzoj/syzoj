@@ -29,12 +29,32 @@
     "contest": 10,
     "edit_contest_problem_list": 10
   },
-  "languages": [
-    "C++",
-    "C#",
-    "C",
-    "Pascal"
-  ],
+  "languages": {
+    "cpp": {
+      "show": "C++",
+      "highlight": "cpp"
+    },
+    "cpp11": {
+      "show": "C++11",
+      "highlight": "cpp"
+    },
+    "csharp": {
+      "show": "C#",
+      "highlight": "csharp"
+    },
+    "c": {
+      "show": "C",
+      "highlight": "c"
+    },
+    "pascal": {
+      "show": "Pascal",
+      "highlight": "pascal"
+    },
+    "vbnet": {
+      "show": "Visual Basic",
+      "highlight": "vbnet"
+    }
+  },
   "notices": [
     {
       "type": "// article",

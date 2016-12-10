@@ -25,7 +25,7 @@
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
           <td><%= judge.result.total_time %> ms</td>
           <td><%= judge.result.max_memory %> KiB</td>
-          <td><%= judge.language %></td>
+          <td><%= syzoj.config.languages[judge.language].show %></td>
         <% } else { %>
           <td>隐藏</td>
           <td>隐藏</td>

@@ -6,8 +6,8 @@
     <div class="field">
   	  <label for="doc-select-1">选择语言</label>
 	    <select class="ui fluid dropdown" id="doc-select-1" name="language">
-        <% for (lang of syzoj.config.languages) { %>
-            <option value="<%= lang %>"><%= lang %></option>
+        <% for (lang in syzoj.config.languages) { %>
+            <option value="<%= lang %>"><%= syzoj.config.languages[lang].show %></option>
         <% } %>
 	  	</select>
     </div>

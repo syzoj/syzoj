@@ -208,6 +208,7 @@ app.post('/submit/:id', async (req, res) => {
     let problem = await Problem.fromID(id);
 
     if (!problem) throw 'No such problem.';
+    if (!syzoj.config.languages[req.body.language]) throw 'No such language.'
     if (!res.locals.user) throw 'Please login.';
     if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
 
