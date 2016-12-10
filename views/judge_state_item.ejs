@@ -11,7 +11,7 @@
 <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
 <td><%= judge.result.total_time %> ms</td>
 <td><%= judge.result.max_memory %> KiB</td>
-<td><%= syzoj.config.languages[judge.language].show %></td>
+<td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a></td>
 <% } else { %>
     <td>隐藏</td>
     <td>隐藏</td>
@@ -21,7 +21,6 @@
 <% } %>
 <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
 <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
-<td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><i style="color: #000;" class="code icon"></i></a></td>
 <% if (isPending(judge.status)) { %>
 <script>
 function update_judge_<%= judge.id %>() {
