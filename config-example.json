@@ -50,6 +50,22 @@
       "show": "Pascal",
       "highlight": "pascal"
     },
+    "python2": {
+      "show": "Python 2",
+      "highlight": "python"
+    },
+    "python3": {
+      "show": "Python 3",
+      "highlight": "python"
+    },
+    "nodejs": {
+      "show": "Node.js",
+      "highlight": "js"
+    },
+    "ruby": {
+      "show": "Ruby",
+      "highlight": "ruby"
+    },
     "vbnet": {
       "show": "Visual Basic",
       "highlight": "vbnet"
