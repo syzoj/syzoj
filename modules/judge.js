@@ -51,6 +51,25 @@ app.get('/judge_state', async (req, res) => {
   }
 });
 
+app.get('/judge_state/:id/ajax', async (req, res) => {
+  try {
+    let judge_state = await JudgeState.fromID(req.params.id);
+    if (!judge_state) throw 'No such judge state';
+
+    judge_state.hidden = !(await judge_state.isAllowedSeeResultBy(res.locals.user));
+    judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
+
+    res.render('judge_state_item', {
+      judge: judge_state
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
 app.get('/judge_detail/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
@@ -62,6 +81,27 @@ app.get('/judge_detail/:id', async (req, res) => {
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
 
     res.render('judge_detail', {
+      judge: judge
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/judge_detail/:id/ajax', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let judge = await JudgeState.fromID(id);
+
+    judge.code = await syzoj.utils.highlight(judge.code, judge.language);
+    if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
+    judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
+    judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
+
+    res.render('judge_detail_item', {
       judge: judge
     });
   } catch (e) {

@@ -1,0 +1,31 @@
+<%
+this.getStatusMeta = (status) => {
+  if (status.startsWith('Running')) return 'Running';
+  else return status;
+}
+
+this.isPending = (status) => {
+  let pending = [
+    'Waiting',
+    'Compiling',
+    'Running'
+  ];
+  return pending.includes(this.getStatusMeta(status));
+}
+
+this.icon = {
+  'Accepted': 'checkmark',
+  'Wrong Answer': 'remove',
+  'Runtime Error': 'bomb',
+  'Time Limit Exceeded': 'clock',
+  'Memory Limit Exceeded': 'disk outline',
+  'Output Limit Exceeded': 'print',
+  'File Error': 'file outline',
+  'Waiting': 'hourglass half',
+  'Running': 'spinner',
+  'Compiling': 'spinner',
+  'Compile Error': 'code',
+  'System Error': 'server',
+  'No Testdata': 'folder open outline'
+}
+%>
