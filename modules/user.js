@@ -90,8 +90,11 @@ app.get('/user/:id', async (req, res) => {
     user.articles = await user.getArticles();
     user.allowedEdit = await user.isAllowedEditBy(res.locals.user);
 
+    let statistics = await user.getStatistics();
+
     res.render('user', {
-      show_user: user
+      show_user: user,
+      statistics: statistics
     });
   } catch (e) {
     console.log(e);

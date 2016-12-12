@@ -124,19 +124,46 @@ class User extends Model {
 
   async getArticles() {
     let Article = syzoj.model('article');
-    
+
     let all = await Article.model.findAll({
       attributes: ['id', 'title', 'public_time'],
       where: {
         user_id: this.id
       }
     });
-    
+
     return all.map(x => ({
       id: x.get('id'),
       title: x.get('title'),
       public_time: x.get('public_time')
     }));
+  }
+
+  async getStatistics() {
+    let JudgeState = syzoj.model('judge_state');
+
+    let statuses = {
+      "Accepted": ["Accepted"],
+      "Wrong Answer": ["Wrong Answer", "File Error", "Output Limit Exceeded"],
+      "Runtime Error": ["Runtime Error"],
+      "Time Limit Exceeded": ["Time Limit Exceeded"],
+      "Memory Limit Exceeded": ["Memory Limit Exceeded"],
+      "Compile Error": ["Compile Error"]
+    };
+
+    let res = {};
+    for (let status in statuses) {
+      res[status] = 0;
+      for (let s of statuses[status]) {
+        res[status] += await JudgeState.count({
+          user_id: this.id,
+          type: 0,
+          status: status
+        });
+      }
+    }
+
+    return res;
   }
 
   async renderInformation() {

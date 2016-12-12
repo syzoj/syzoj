@@ -38,8 +38,8 @@
                                 <div class="ui grid">
                                     <div class="row">
                                         <div class="column">
-                                            <h4 class="ui top attached block header">用户名</h4>
-                                            <div class="ui bottom attached segment"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %></div>
+                                           <h4 class="ui top attached block header">用户名</h4>
+                                           <div class="ui bottom attached segment"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %></div>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -48,10 +48,6 @@
                                             <div class="ui bottom attached segment"><%= show_user.email %></div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="eight wide column">
-                                <div class="ui grid">
                                     <div class="row">
                                         <div class="column">
                                             <h4 class="ui top attached block header">个性签名</h4>
@@ -68,6 +64,19 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="eight wide column">
+                                <div class="ui grid">
+                                  <div class="row">
+                                      <div class="column">
+                                          <h4 class="ui top attached block header">统计</h4>
+                                          <div class="ui bottom attached segment">
+                                            <div id="pie_chart_legend"></div>
+                                            <div style="width: 300px; height: 300px; margin-left: 13.5px; "><canvas style="width: 50%; " id="pie_chart"></canvas></div>
+                                          </div>
+                                      </div>
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -104,13 +113,76 @@
     </div>
 </div>
 </div>
-<% if (show_user.allowedEdit) { %>
 <script>
 $(function () {
+<% if (show_user.allowedEdit) { %>
   $('#user_card .image').dimmer({
     on: 'hover'
   });
-})
 <% } %>
+
+  var pie = new Chart(document.getElementById('pie_chart').getContext('2d'), {
+    type: 'pie',
+    data: {
+      datasets: [
+        {
+          data: [
+            <%= statistics["Accepted"] %>,
+            <%= statistics["Wrong Answer"] %>,
+            <%= statistics["Runtime Error"] %>,
+            <%= statistics["Time Limit Exceeded"] %>,
+            <%= statistics["Memory Limit Exceeded"] %>,
+            <%= statistics["Compile Error"] %>,
+          ],
+          backgroundColor: [
+            "green",
+            "red",
+            "darkorchid",
+            "sandybrown",
+            "#00b5ad",
+            "rgb(0, 68, 136)"
+          ]
+        }
+      ],
+      labels: [
+        "Accepted",
+        "Wrong Answer",
+        "Runtime Error",
+        "Time Limit Exceeded",
+        "Memory Limit Exceeded",
+        "Compile Error"
+      ]
+    },
+    options: {
+      responsive: true,
+      legend: {
+        display: false
+      },
+      legendCallback: function (chart) {
+  			var text = [];
+  			text.push('<ul style="list-style: none; padding-left: 20px; margin-top: 0; " class="' + chart.id + '-legend">');
+
+  			var data = chart.data;
+  			var datasets = data.datasets;
+  			var labels = data.labels;
+
+  			if (datasets.length) {
+  				for (var i = 0; i < datasets[0].data.length; ++i) {
+  					text.push('<li style="font-size: 12px; width: 50%; display: inline-block; color: #666; "><span style="width: 10px; height: 10px; display: inline-block; border-radius: 50%; margin-right: 5px; background-color: ' + datasets[0].backgroundColor[i] + '; "></span>');
+  					if (labels[i]) {
+  						text.push(labels[i]);
+  					}
+  					text.push('</li>');
+  				}
+  			}
+
+  			text.push('</ul>');
+  			return text.join('');
+  		}
+    },
+  });
+
+  document.getElementById('pie_chart_legend').innerHTML = pie.generateLegend();
+});
 </script>
 <% include footer %>
