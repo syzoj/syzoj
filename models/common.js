@@ -88,7 +88,7 @@ class Model {
   }
 
   static async query(paginate, where, order) {
-    if (paginate && !paginate.pageCnt) return [];
+    if (paginate && !Array.isArray(paginate) && !paginate.pageCnt) return [];
 
     let options = {
       where: where,
