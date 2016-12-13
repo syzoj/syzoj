@@ -28,7 +28,7 @@ let User = syzoj.model('user');
 
 app.get('/contest', async (req, res) => {
   try {
-    let paginate = syzoj.utils.paginate(Contest.count(), req.query.page, syzoj.config.page.contest);
+    let paginate = syzoj.utils.paginate(await Contest.count(), req.query.page, syzoj.config.page.contest);
     let contests = await Contest.query(paginate);
 
     await contests.forEachAsync(async x => x.information = await syzoj.utils.markdown(x.information));
