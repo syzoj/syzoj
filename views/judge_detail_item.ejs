@@ -103,7 +103,7 @@ $(function() {
 
 <% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div></div><% } %>
 <script>
-<% if (isPending(judge.status)) { %>
+<% if (isPending(judge.status) && judge.allowedSeeResult) { %>
 function update_judge_detail() {
   setTimeout(function () {
     $.get('/judge_detail/<%= judge.id %>/ajax', function (data) {
