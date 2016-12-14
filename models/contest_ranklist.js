@@ -63,7 +63,23 @@ class ContestRanklist extends Model {
       players.push(player);
     }
 
-    players.sort((a, b) => b.score - a.score);
+    let JudgeState = syzoj.model('judge_state');
+
+    for (let player of players) {
+      player.latest = 0;
+      for (let i in player.score_details) {
+        let judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
+        player.latest = Math.max(player.latest, judge_state.submit_time);
+      }
+    }
+
+    players.sort((a, b) => {
+      if (a.score > b.score) return -1;
+      if (b.score > a.score) return 1;
+      if (a.latest < b.latest) return -1;
+      if (a.latest > b.latest) return 1;
+      return 0;
+    });
 
     this.ranklist = { player_num: players.length };
     for (let i = 0; i < players.length; i++) this.ranklist[i + 1] = players[i].id;
