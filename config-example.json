@@ -46,6 +46,10 @@
       "show": "C",
       "highlight": "c"
     },
+    "java": {
+      "show": "Java",
+      "highlight": "java"
+    },
     "pascal": {
       "show": "Pascal",
       "highlight": "pascal"
@@ -65,6 +69,10 @@
     "ruby": {
       "show": "Ruby",
       "highlight": "ruby"
+    },
+    "haskell": {
+      "show": "Haskell",
+      "highlight": "haskell"
     },
     "vbnet": {
       "show": "Visual Basic",
