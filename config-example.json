@@ -32,51 +32,75 @@
   "languages": {
     "cpp": {
       "show": "C++",
-      "highlight": "cpp"
+      "highlight": "cpp",
+      "version": "GCC 5.4.0",
+      "editor": "c_cpp"
     },
     "cpp11": {
       "show": "C++11",
-      "highlight": "cpp"
+      "highlight": "cpp",
+      "version": "GCC 5.4.0",
+      "editor": "c_cpp"
     },
     "csharp": {
       "show": "C#",
-      "highlight": "csharp"
+      "highlight": "csharp",
+      "version": "MCS 4.6.2.0, Mono 4.6.2",
+      "editor": "csharp"
     },
     "c": {
       "show": "C",
-      "highlight": "c"
+      "highlight": "c",
+      "version": "GCC 5.4.0",
+      "editor": "c_cpp"
     },
     "java": {
       "show": "Java",
-      "highlight": "java"
+      "highlight": "java",
+      "version": "GCC 5.4.0",
+      "editor": "java"
     },
     "pascal": {
       "show": "Pascal",
-      "highlight": "pascal"
+      "highlight": "pascal",
+      "version": "FPC 3.0.0",
+      "editor": "pascal"
     },
     "python2": {
       "show": "Python 2",
-      "highlight": "python"
+      "highlight": "python",
+      "version": "CPython 2.7.12",
+      "editor": "python"
     },
     "python3": {
       "show": "Python 3",
-      "highlight": "python"
+      "highlight": "python",
+      "version": "CPython 3.5.2",
+      "editor": "python"
     },
     "nodejs": {
       "show": "Node.js",
-      "highlight": "js"
+      "highlight": "js",
+      "version": "7.2.1",
+      "editor": "javascript"
     },
     "ruby": {
       "show": "Ruby",
-      "highlight": "ruby"
+      "highlight": "ruby",
+      "version": "2.3.1",
+      "editor": "ruby"
     },
     "haskell": {
       "show": "Haskell",
-      "highlight": "haskell"
+      "highlight": "haskell",
+      "version": "GHC 7.10.3",
+      "editor": "haskell"
     },
     "vbnet": {
       "show": "Visual Basic",
-      "highlight": "vbnet"
+      "highlight": "vbnet",
+      "version": "VBNC 0.0.0.5943, Mono 4.6.2",
+      "editor": "vbscript"
     }
   },
   "notices": [

@@ -1,38 +1,66 @@
-<% this.title = problem.title + ' - 题目' %>
+<%
+if (typeof contest === 'undefined') contest = null;
+if (contest) {
+  this.title = syzoj.utils.removeTitleTag(problem.title) + ' - ' + contest.title + ' - 比赛';
+} else {
+  this.title = problem.title + ' - 题目';
+}
+%>
 <% include header %>
-    <div class="ui center aligned grid">
-        <div class="row">
-          <h1 class="ui header"><%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %></h1>
-        </div>
-        <div class="row" style="margin-top: -15px">
-            <span class="ui label">内存限制: <%= problem.memory_limit %> MiB</span>
-            <span class="ui label">时间限制: <%= problem.time_limit %> ms</span>
-        </div>
-        <div class="row" style="margin-top: -23px">
-            <% if (problem.file_io) { %>
-            <span class="ui label">输入文件: <%= problem.file_io_input_name %></span>
-            <span class="ui label">输出文件: <%= problem.file_io_output_name %></span>
-            <% } else { %>
-            <span class="ui label">标准输入输出</span>
-            <% } %>
-        </div>
+<style>
+.ace_cursor {
+  border-left-width: 1px !important;
+  color: #000 !important;
+}
+
+#languages-menu::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+</style>
+<div class="ui center aligned grid">
+    <div class="row">
+      <h1 class="ui header">
+        <% if (contest) { %>
+          <%= syzoj.utils.removeTitleTag(problem.title) %>
+        <% } else { %>
+          <%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %>
+        <% } %>
+      </h1>
     </div>
+    <div class="row" style="margin-top: -15px">
+        <span class="ui label">内存限制: <%= problem.memory_limit %> MiB</span>
+        <span class="ui label">时间限制: <%= problem.time_limit %> ms</span>
+    </div>
+    <div class="row" style="margin-top: -23px">
+        <% if (problem.file_io) { %>
+        <span class="ui label">输入文件: <%= problem.file_io_input_name %></span>
+        <span class="ui label">输出文件: <%= problem.file_io_output_name %></span>
+        <% } else { %>
+        <span class="ui label">标准输入输出</span>
+        <% } %>
+    </div>
+</div>
 <div class="ui grid">
   <div class="row">
     <div class="column">
       <div class="ui buttons">
-        <a class="small ui primary button" href="<%= syzoj.utils.makeUrl(['submit', problem.id]) %>">提交</a>
-        <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">提交记录</a>
-        <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download']) %>">下载测试数据</a>
-        <% if (problem.allowedEdit) { %>
-        <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑题面</a>
-        <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">上传测试数据</a>
-        <% } %>
-        <% if (user && user.is_admin) { %>
-          <% if (problem.is_public) {  %>
-        <button class="small ui button" id="dis_public">取消公开</button>
-          <% } else { %>
-        <button class="small ui button" id="public">公开</button>
+        <a class="small ui primary button" href="#submit_code">提交</a>
+        <% if (contest) { %>
+          <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui positive button">返回比赛</a>
+        <% } else { %>
+          <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">提交记录</a>
+          <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download']) %>">下载测试数据</a>
+          <% if (problem.allowedEdit) { %>
+            <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑题面</a>
+            <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">上传测试数据</a>
+          <% } %>
+          <% if (user && user.is_admin) { %>
+            <% if (problem.is_public) {  %>
+              <button class="small ui button" id="dis_public">取消公开</button>
+            <% } else { %>
+              <button class="small ui button" id="public">公开</button>
+            <% } %>
           <% } %>
         <% } %>
       </div>
@@ -68,9 +96,77 @@
           <div class="ui bottom attached segment" id="hint"><%- problem.limit_and_hint %></div>
         </div>
     </div>
+    <div class="row">
+        <div class="column">
+          <%
+          let formUrl;
+          if (contest) formUrl = syzoj.utils.makeUrl(['submit', problem.id], { contest_id: contest.id });
+          else formUrl = syzoj.utils.makeUrl(['submit', problem.id]);
+          %>
+          <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code">
+            <input name="language" type="hidden" id="form">
+            <input name="code" type="hidden">
+            <div class="ui grid">
+              <div class="four wide column" style="margin-right: -25px; ">
+                <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="max-height: 370px; overflow-y: scroll; overflow-x: hidden; ">
+                  <%
+                  let language = Object.getOwnPropertyNames(syzoj.config.languages).shift();
+                  if (state) {
+                    language = state.language;
+                  }
+                  %>
+                  <% for (lang in syzoj.config.languages) { %>
+                    <a class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.config.languages[lang].editor %>">
+                      <%= syzoj.config.languages[lang].show %>
+                      <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= syzoj.config.languages[lang].version %></div>
+                    </a>
+                  <% } %>
+                </div>
+              </div>
+              <div class="twelve wide stretched column" style="padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 1px + 25px) !important; ">
+                <div id="editor" style="border: 1px solid #D4D4D5; "><% if (state) { %><%= state.code %><% } %></div>
+              </div>
+            </div>
+            <div class="ui center aligned vertical segment" style="padding-bottom: 0; "><button type="submit" class="ui button">提交</button></div>
+        	</form>
+        </div>
+    </div>
 </div>
 
+<script src="https://cdn.bootcss.com/ace/1.2.6/ace.js"></script>
 <script type="text/javascript">
+var editor = ace.edit("editor");
+
+editor.setTheme("ace/theme/tomorrow");
+editor.getSession().setMode("ace/mode/" + $('#languages-menu .item.active').data('mode'));
+
+editor.container.style.lineHeight = 1.6;
+editor.container.style.fontSize = '14px';
+editor.container.style.fontFamily = "'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace";
+editor.setShowPrintMargin(false);
+editor.renderer.updateFontSize();
+
+function submit_code() {
+  $('#submit_code input[name=language]').val($('#languages-menu .item.active').data('value'));
+  $('#submit_code input[name=code]').val(editor.getValue());
+  return true;
+}
+
+$('#languages-menu')[0].scrollTop = $('#languages-menu .active')[0].offsetTop - $('#languages-menu')[0].firstElementChild.offsetTop;
+
+$(function () {
+  $('#languages-menu .item').click(function() {
+    $(this)
+      .addClass('active')
+      .closest('.ui.menu')
+      .find('.item')
+        .not($(this))
+        .removeClass('active')
+    ;
+    editor.getSession().setMode("ace/mode/" + $(this).data('mode'));
+  });
+});
+<% if (!contest) { %>
 function public_problem() {
   $.ajax({
     url: '<%= syzoj.utils.makeUrl(['api', 'problem', problem.id, 'public']) %>',
@@ -95,6 +191,6 @@ $(document).ready(function(){
     dis_public_problem();
   });
 });
-
+<% } %>
 </script>
 <% include footer %>

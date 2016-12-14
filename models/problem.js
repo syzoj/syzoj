@@ -129,23 +129,33 @@ class Problem extends Model {
     this.testdata_id = file.id;
   }
 
-  async getJudgeState(user) {
+  async getJudgeState(user, acFirst) {
     if (!user) return null;
 
     let JudgeState = syzoj.model('judge_state');
 
-    let states = await JudgeState.query(null, {
+    let where = {
       user_id: user.id,
       problem_id: this.id
-    }, [['submit_time', 'desc']]);
+    };
 
-    if (!states || states.length === 0) return null;
+    if (acFirst) {
+      where.status = 'Accepted';
 
-    for (let x of states) {
-      if (x.status === 'Accepted') return x;
+      let state = await JudgeState.findOne({
+        where: where,
+        order: [['submit_time', 'desc']]
+      });
+
+      if (state) return state;
     }
 
-    return states[0];
+    if (where.status) delete where.status;
+
+    return await JudgeState.findOne({
+      where: where,
+      order: [['submit_time', 'desc']]
+    });
   }
 
   getModel() { return model; }

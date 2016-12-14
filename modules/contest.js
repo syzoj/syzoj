@@ -218,9 +218,12 @@ app.get('/contest/:id/:pid', async (req, res) => {
 
     await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
 
-    res.render('contest_problem', {
+    let state = await problem.getJudgeState(res.locals.user, false);
+
+    res.render('problem', {
       contest: contest,
-      problem: problem
+      problem: problem,
+      state: state
     });
   } catch (e) {
     syzoj.log(e);

@@ -31,7 +31,7 @@ app.get('/problem', async (req, res) => {
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
-      problem.judge_state = await problem.getJudgeState(res.locals.user);
+      problem.judge_state = await problem.getJudgeState(res.locals.user, true);
     });
 
     res.render('problem_set', {
@@ -64,8 +64,11 @@ app.get('/problem/:id', async (req, res) => {
       throw 'Permission denied';
     }
 
+    let state = await problem.getJudgeState(res.locals.user, false);
+
     res.render('problem', {
-      problem: problem
+      problem: problem,
+      state: state
     });
   } catch (e) {
     syzoj.log(e);
