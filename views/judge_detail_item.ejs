@@ -1,5 +1,5 @@
 <div class="padding">
-  <table class="ui very basic center aligned table">
+  <table class="ui very basic center aligned table" id="status_table">
     <thead>
       <tr>
         <th>编号</th>
@@ -45,7 +45,7 @@
   <h3 class="ui header">编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.result.compiler_output %></code></pre></div>
 <% } else if (judge.allowedSeeResult) { %>
-<div class="ui styled fluid accordion">
+<div class="ui styled fluid accordion" id="testcases_list">
   <% for (let i = 0; i < judge.result.case_num; i++) { %>
   <%
   let testcase = judge.result[i], pending = false;
@@ -74,8 +74,8 @@
       <% } %>
     </div>
   </div>
-  <% if (!pending) { %>
   <div class="content">
+  <% if (!pending) { %>
     <p>
         <strong>输入文件</strong>
         <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.input %></code></pre></div>
@@ -84,8 +84,8 @@
         <strong>你的输出</strong>
         <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_out %></code></pre></div>
     </p>
+    <% } %>
   </div>
-  <% } %>
   <% } %>
 </div>
 <% } %>
@@ -101,22 +101,36 @@ $(function() {
 });
 </script>
 
-<% if (isPending(judge.status)) { %>
+<% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div></div><% } %>
 <script>
-function get_status_from_html(html) {
-  var x = $.parseHTML(html);
-  return $(x).find('td.status').text().trim();
-}
-
+<% if (isPending(judge.status)) { %>
 function update_judge_detail() {
   setTimeout(function () {
     $.get('/judge_detail/<%= judge.id %>/ajax', function (data) {
-      var e = $('#judge_detail_item');
-      if (e.find('td.status').text().trim() != get_status_from_html(data)) e.html(data);
-      else update_judge_detail();
+      var e = $('#judge_detail_item'), x = $($.parseHTML(data));
+      if (e.find('td.status').text().trim() != x.find('td.status').text().trim()) {
+        var a = e.find('#testcases_list > div');
+        if (!a.length) {
+          e.html(data);
+        } else {
+          e.find('#status_table').html(x.find('#status_table'));
+          var b = x.find('#testcases_list > div');
+          console.log(a);
+          console.log(b);
+          console.log(233);
+          for (var i = 0; i < a.length; i++) {
+            a[i].innerHTML = b[i].innerHTML;
+            if (!$(b[i]).hasClass('pending')) $(a[i]).removeClass('pending');
+            if (!$(b[i]).attr('style')) $(a[i]).attr('style', '');
+          }
+
+          if (!x.find('#stop_ajax').length) update_judge_detail();
+        }
+      }
+      else if (!x.find('#stop_ajax').length) update_judge_detail();
     });
   }, 500);
 }
 update_judge_detail();
-</script>
 <% } %>
+</script>
