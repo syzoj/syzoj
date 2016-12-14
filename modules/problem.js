@@ -213,7 +213,6 @@ app.post('/submit/:id', async (req, res) => {
     if (!problem) throw 'No such problem.';
     if (!syzoj.config.languages[req.body.language]) throw 'No such language.'
     if (!res.locals.user) throw 'Please login.';
-    if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
 
     let judge_state = await JudgeState.create({
       code: req.body.code,
@@ -235,6 +234,7 @@ app.post('/submit/:id', async (req, res) => {
       await judge_state.save();
       await judge_state.updateRelatedInfo();
     } else {
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
       judge_state.type = problem.is_public ? 0 : 2;
       await judge_state.save();
     }
