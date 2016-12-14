@@ -122,7 +122,7 @@ class JudgeState extends Model {
     await this.loadRelationships();
 
     if (user && (user.is_admin || user.id === this.problem.user_id)) return true;
-    else if (this.type === 0) return true;
+    else if (this.type === 0) return this.problem.public;
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
