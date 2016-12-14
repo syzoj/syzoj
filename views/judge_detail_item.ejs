@@ -115,9 +115,6 @@ function update_judge_detail() {
         } else {
           e.find('#status_table').html(x.find('#status_table'));
           var b = x.find('#testcases_list > div');
-          console.log(a);
-          console.log(b);
-          console.log(233);
           for (var i = 0; i < a.length; i++) {
             a[i].innerHTML = b[i].innerHTML;
             if (!$(b[i]).hasClass('pending')) $(a[i]).removeClass('pending');
