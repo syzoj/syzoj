@@ -32,6 +32,7 @@ let querystring = require('querystring');
 let pygmentize = require('pygmentize-bundled-cached');
 let gravatar = require('gravatar');
 let AdmZip = require('adm-zip');
+let filesize = require('file-size');
 
 function escapeHTML(s) {
   // Code from http://stackoverflow.com/questions/5251520/how-do-i-escape-some-html-in-javascript/5251551
@@ -101,6 +102,13 @@ module.exports = {
       else return x.toString();
     }
     return util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
+  },
+  formatSize(x) {
+    let res = filesize(x, { fixed: 1 }).calculate();
+    if (res.result === parseInt(res.result)) res.fixed = res.result.toString();
+    if (res.suffix === 'Bytes') res.suffix = 'B';
+    else res.suffix = res.suffix.replace('iB', '');
+    return res.fixed + ' ' + res.suffix;
   },
   parseDate(s) {
     return parseInt(+new Date(s) / 1000);

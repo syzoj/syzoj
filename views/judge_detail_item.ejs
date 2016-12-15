@@ -8,7 +8,7 @@
         <th>分数</th>
         <th>总时间</th>
         <th>内存</th>
-        <th>语言</th>
+        <th>代码</th>
         <th>提交者</th>
         <th>提交时间</th>
       </tr>
@@ -24,8 +24,8 @@
           </td>
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
           <td><%= judge.result.total_time %> ms</td>
-          <td><%= judge.result.max_memory %> KiB</td>
-          <td><%= syzoj.config.languages[judge.language].show %></td>
+          <td><%= judge.result.max_memory %> K</td>
+          <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
         <% } else { %>
           <td>隐藏</td>
           <td>隐藏</td>
