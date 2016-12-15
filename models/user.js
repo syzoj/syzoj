@@ -91,7 +91,10 @@ class User extends Model {
       attributes: ['problem_id'],
       where: {
         user_id: this.id,
-        status: 'Accepted'
+        status: 'Accepted',
+        type: {
+          $ne: 1 // Not a contest submissio
+        }
       }
     });
 
@@ -100,7 +103,10 @@ class User extends Model {
     this.ac_num = s.size;
 
     let cnt = await JudgeState.count({
-      user_id: this.id
+      user_id: this.id,
+      type: {
+        $ne: 1 // Not a contest submissio
+      }
     });
 
     this.submit_num = cnt;
@@ -113,7 +119,10 @@ class User extends Model {
       attributes: ['problem_id'],
       where: {
         user_id: this.id,
-        status: 'Accepted'
+        status: 'Accepted',
+        type: {
+          $ne: 1 // Not a contest submissio
+        }
       }
     });
 
