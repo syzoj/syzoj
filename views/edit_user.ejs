@@ -42,10 +42,11 @@
 		</form>
 	</div>
 </div>
+<script src="//cdn.bootcss.com/blueimp-md5/2.5.0/js/md5.min.js"></script>
 <script type="text/javascript">
 function make_md5(tag) {
 	if (tag.val()) {
-		tag.val($.md5(tag.val() + "syzoj2_xxx"));
+		tag.val(md5(tag.val() + "syzoj2_xxx"));
 	}
 }
 function check() {
