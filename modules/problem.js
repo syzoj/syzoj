@@ -232,12 +232,12 @@ app.post('/submit/:id', async (req, res) => {
       judge_state.type_info = contest_id;
 
       await judge_state.save();
-      await judge_state.updateRelatedInfo();
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
       judge_state.type = problem.is_public ? 0 : 2;
       await judge_state.save();
     }
+    await judge_state.updateRelatedInfo(true);
 
     let waiting_judge = await WaitingJudge.create({
       judge_id: judge_state.id

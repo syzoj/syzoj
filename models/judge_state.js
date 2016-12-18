@@ -139,14 +139,21 @@ class JudgeState extends Model {
     this.result = result;
   }
 
-  async updateRelatedInfo() {
+  async updateRelatedInfo(newSubmission) {
     if (this.type === 0) {
-      await this.loadRelationships()
-      await this.user.refreshSubmitInfo();
-      this.problem.submit_num++;
-      if (this.status === 'Accepted') this.problem.ac_num++;
-      await this.user.save();
-      await this.problem.save();
+      if (newSubmission) {
+        await this.loadRelationships();
+        await this.user.refreshSubmitInfo();
+        this.problem.submit_num++;
+        await this.user.save();
+        await this.problem.save();
+      } else if (this.status === 'Accepted') {
+        await this.loadRelationships();
+        await this.user.refreshSubmitInfo();
+        this.problem.ac_num++;
+        await this.user.save();
+        await this.problem.save();
+      }
     } else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       await contest.newSubmission(this);
