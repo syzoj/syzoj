@@ -75,6 +75,7 @@ app.get('/judge_detail/:id', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
+    judge.codeLength = judge.code.length;
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
@@ -96,6 +97,7 @@ app.get('/judge_detail/:id/ajax', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
+    judge.codeLength = judge.code.length;
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
