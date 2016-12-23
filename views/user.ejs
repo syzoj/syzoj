@@ -1,11 +1,18 @@
 <% this.title = show_user.username + ' - 用户'; %>
 <% include header %>
+<style>
+#avatar_container:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+</style>
 <div class="padding">
 <div class="ui grid">
     <div class="row">
         <div class="five wide column">
             <div class="ui card" style="width: 100%; " id="user_card">
-                <div class="blurring dimmable image">
+                <div class="blurring dimmable image" id="avatar_container">
                     <% if (show_user.allowedEdit) { %>
                     <div class="ui dimmer transition hidden">
                         <div class="content">
@@ -15,7 +22,7 @@
                         </div>
                     </div>
                     <% } %>
-                    <img src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
+                    <img style="margin-top: -100%; " src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
                 </div>
                 <div class="content">
                     <div class="header"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
