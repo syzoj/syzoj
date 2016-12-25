@@ -50,9 +50,9 @@ global.syzoj = {
     let bodyParser = require('body-parser');
     app.use(bodyParser.urlencoded({
       extended: true,
-      limit: '10mb'
+      limit: '50mb'
     }));
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({ limit: '50mb' }));
 
     // Use cookie parser
     app.use(require('cookie-parser')());
