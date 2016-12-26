@@ -144,6 +144,40 @@ module.exports = {
   parseTestData(filename) {
     let zip = new AdmZip(filename);
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
+    if (!list.includes('data_rule.txt')) {
+      let testcases = [];
+      for (let file of list) {
+        let parsedName = path.parse(file);
+        if (parsedName.ext === '.in') {
+          if (list.includes(`${parsedName.name}.out`)) {
+            testcases.push({
+              input: file,
+              output: `${parsedName.name}.out`
+            });
+          }
+
+          if (list.includes(`${parsedName.name}.ans`)) {
+            testcases.push({
+              input: file,
+              output: `${parsedName.name}.ans`
+            });
+          }
+        }
+      }
+
+      testcases.sort((a, b) => {
+        function getLastInteger(s) {
+          let re = /(\d+)\D*$/;
+          let x = re.exec(s);
+          if (x) return parseInt(x[1]);
+          else return -1;
+        }
+
+        return getLastInteger(a.input) - getLastInteger(b.input);
+      });
+
+      return testcases;
+    }
     let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n');
 
     if (lines.length < 3) throw 'Invalid data_rule.txt';
