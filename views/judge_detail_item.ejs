@@ -69,6 +69,7 @@
       <i class="<%= icon[getStatusMeta(testcase.status)] || 'remove' %> icon"></i>
       <%= testcase.status %></div>
       <% if (!pending) { %>
+        <% if (!testcase.score) testcase.score = testcase.status === 'Accepted' ? 100 : 0; %>
         <div class="three wide column">得分：<span style="font-weight: normal; "><%= parseFloat((testcase.score / judge.result.case_num).toFixed(2)).toString() %></span></div>
         <div class="three wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
         <div class="three wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
