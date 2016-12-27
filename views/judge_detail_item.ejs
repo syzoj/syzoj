@@ -69,8 +69,9 @@
       <i class="<%= icon[getStatusMeta(testcase.status)] || 'remove' %> icon"></i>
       <%= testcase.status %></div>
       <% if (!pending) { %>
-        <div class="four wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
-        <div class="four wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
+        <div class="three wide column">得分：<span style="font-weight: normal; "><%= parseFloat((testcase.score / judge.result.case_num).toFixed(2)).toString() %></span></div>
+        <div class="three wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
+        <div class="three wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
       <% } %>
     </div>
   </div>
@@ -83,6 +84,10 @@
         <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.answer %></code></pre></div>
         <strong>你的输出</strong>
         <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_out %></code></pre></div>
+        <% if (testcase.spj_message) { %>
+          <strong>Special Judge 信息</strong>
+          <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.spj_message %></code></pre></div>
+        <% } %>
     </p>
     <% } %>
   </div>

@@ -79,6 +79,18 @@ th {
     color: #6cf;
 }
 
+:not(.status_detail).status.partially_correct,
+.title:hover .status_detail.status.partially_correct,
+.title.active .status_detail.status.partially_correct {
+  color: #01bab2;
+}
+
+:not(.status_detail).status.judgement_failed,
+.title:hover .status_detail.status.judgement_failed,
+.title.active .status_detail.status.judgement_failed {
+  color: #78909C;
+}
+
 :not(.status_detail).status.compiling {
     color: #00b5ad;
 }

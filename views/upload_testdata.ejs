@@ -10,6 +10,11 @@
             try {
                 let list = syzoj.utils.parseTestData(problem.testdata.getPath());
             %>
+                <% if (list.spj) { %>
+                  <p>评测方式：Special Judge</p>
+                <% } else { %>
+                  <p>评测方式：文本比较</p>
+                <% } %>
                 <table class="ui very basic table">
                   <thead>
                 <tr>
@@ -59,7 +64,7 @@
                 <input name="io_method" value="file-io" id="file-io" type="radio" onclick="goEnable()">
                 <label for="file-io">文件 IO</label>
               </div>
-            </div>    
+            </div>
           </div>
           <div class="two fields">
             <div class="field">
@@ -85,7 +90,7 @@
                 <input name="io_method" value="file-io" id="file-io" type="radio" onclick="goEnable()" checked>
                 <label for="file-io">文件 IO</label>
               </div>
-            </div>    
+            </div>
           </div>
           <div class="two fields">
             <div class="field">

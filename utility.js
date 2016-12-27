@@ -144,20 +144,20 @@ module.exports = {
   parseTestData(filename) {
     let zip = new AdmZip(filename);
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
+    let res = [];
     if (!list.includes('data_rule.txt')) {
-      let testcases = [];
       for (let file of list) {
         let parsedName = path.parse(file);
         if (parsedName.ext === '.in') {
           if (list.includes(`${parsedName.name}.out`)) {
-            testcases.push({
+            res.push({
               input: file,
               output: `${parsedName.name}.out`
             });
           }
 
           if (list.includes(`${parsedName.name}.ans`)) {
-            testcases.push({
+            res.push({
               input: file,
               output: `${parsedName.name}.ans`
             });
@@ -165,7 +165,7 @@ module.exports = {
         }
       }
 
-      testcases.sort((a, b) => {
+      res.sort((a, b) => {
         function getLastInteger(s) {
           let re = /(\d+)\D*$/;
           let x = re.exec(s);
@@ -175,28 +175,29 @@ module.exports = {
 
         return getLastInteger(a.input) - getLastInteger(b.input);
       });
+    } else {
+      let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n');
 
-      return testcases;
+      if (lines.length < 3) throw 'Invalid data_rule.txt';
+
+      let numbers = lines[0].split(' ').filter(x => x);
+      let input = lines[1];
+      let output = lines[2];
+
+      for (let i of numbers) {
+        res[i] = {};
+        res[i].input = input.replace('#', i);
+        res[i].output = output.replace('#', i);
+
+        if (!list.includes(res[i].input)) throw `Can't find file ${res[i].input}`;
+        if (!list.includes(res[i].output)) throw `Can't find file ${res[i].output}`;
+      }
+
+      res = res.filter(x => x);
     }
-    let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n');
-
-    if (lines.length < 3) throw 'Invalid data_rule.txt';
-
-    let numbers = lines[0].split(' ').filter(x => x);
-    let input = lines[1];
-    let output = lines[2];
-
-    let res = [];
-    for (let i of numbers) {
-      res[i] = {};
-      res[i].input = input.replace('#', i);
-      res[i].output = output.replace('#', i);
-
-      if (!list.includes(res[i].input)) throw `Can't find file ${res[i].input}`;
-      if (!list.includes(res[i].output)) throw `Can't find file ${res[i].output}`;
-    }
-
-    return res.filter(x => x);
+    
+    res.spj = list.includes('spj.js');
+    return res;
   },
   ansiToHTML(s) {
     let Convert = require('ansi-to-html');
