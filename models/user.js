@@ -167,7 +167,7 @@ class User extends Model {
         res[status] += await JudgeState.count({
           user_id: this.id,
           type: 0,
-          status: status
+          status: s
         });
       }
     }
