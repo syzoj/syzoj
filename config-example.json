@@ -54,6 +54,12 @@
       "version": "GCC 5.4.0",
       "editor": "c_cpp"
     },
+    "vala": {
+      "show": "Vala",
+      "highlight": "vala",
+      "version": "Vala 0.34.4, GCC 5.4.0",
+      "editor": "vala"
+    },
     "java": {
       "show": "Java",
       "highlight": "java",
