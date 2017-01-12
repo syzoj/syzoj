@@ -30,6 +30,4 @@ In the database, the `is_admin` field in `user` table describes whether a user i
 To make a user be an admin, the only way is via database.
 
 # Judge
-There's no judger for SYZOJ 2 currently. But SYZOJ 2 has API compatibility with the old SYZOJ, so we can use its judger.
-
-Please go to [syzoj-judge](https://github.com/syzoj/syzoj-judge).
+SYZOJ 2 uses a Docker-based sandboxed judger. Please go to [syzoj-judge](https://github.com/syzoj/syzoj-judge).
