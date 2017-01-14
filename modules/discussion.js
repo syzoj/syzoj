@@ -26,7 +26,7 @@ let User = syzoj.model('user');
 app.get('/discussion', async (req, res) => {
   try {
     let paginate = syzoj.utils.paginate(await Article.count(), req.query.page, syzoj.config.page.discussion);
-    let articles = await Article.query(paginate, null, [['public_time', 'asc']]);
+    let articles = await Article.query(paginate, null, [['public_time', 'desc']]);
 
     for (let article of articles) await article.loadRelationships();
 
