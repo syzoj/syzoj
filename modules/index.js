@@ -49,11 +49,20 @@ app.get('/', async (req, res) => {
 
     let contests = await Contest.query([1, 5], null, [['start_time', 'desc']]);
 
+    let hitokoto;
+    try {
+      hitokoto = await syzoj.utils.hitokoto();
+    } catch (e) {
+      syzoj.log(e);
+      hitokoto = null;
+    }
+
     res.render('index', {
       ranklist: ranklist,
       notices: notices,
       fortune: fortune,
-      contests: contests
+      contests: contests,
+      hitokoto: hitokoto
     });
   } catch (e) {
     syzoj.log(e);

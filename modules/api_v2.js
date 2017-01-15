@@ -50,3 +50,12 @@ app.get('/api/v2/search/problem/:keyword*?', async (req, res) => {
     res.send({ success: false });
   }
 });
+
+app.get('/api/v2/hitokoto', async (req, res) => {
+  try {
+    res.send(await syzoj.utils.hitokoto());
+  } catch (e) {
+    syzoj.log(e);
+    res.status(500).send({ e: e });
+  }
+});

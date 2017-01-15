@@ -50,6 +50,13 @@
       </div>
     </div>
     <div class="right floated five wide column">
+        <% if (hitokoto) { %>
+        <h4 class="ui top attached block header">一言（ヒトコト）</h4>
+        <div class="ui bottom attached center aligned segment">
+          <div style="margin-top: 5px; font-size: 1em; line-height: 1.5em; "><%= hitokoto.hitokoto %></div>
+          <% if (hitokoto.source) { %><div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; ">——<%= hitokoto.source %></div><% } %>
+        </div>
+        <% } %>
         <%
         if (fortune) {
             let color;

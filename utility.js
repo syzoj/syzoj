@@ -195,7 +195,7 @@ module.exports = {
 
       res = res.filter(x => x);
     }
-    
+
     res.spj = list.includes('spj.js');
     return res;
   },
@@ -219,5 +219,15 @@ module.exports = {
   },
   removeTitleTag(s) {
     return s.replace(/「[\S\s]+?」/, '');
+  },
+  async hitokoto() {
+    let request = require('request-promise');
+    return await request({
+      uri: 'http://api.hitokoto.us/rand',
+      qs: {
+        encode: 'json'
+      },
+      json: true
+    });
   }
 };
