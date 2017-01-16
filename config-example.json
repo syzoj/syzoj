@@ -72,6 +72,12 @@
       "version": "FPC 3.0.0",
       "editor": "pascal"
     },
+    "lua": {
+      "show": "Lua",
+      "highlight": "lua",
+      "version": "Lua 5.2.4",
+      "editor": "lua"
+    },
     "python2": {
       "show": "Python 2",
       "highlight": "python",
