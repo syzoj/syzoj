@@ -220,6 +220,12 @@ module.exports = {
   removeTitleTag(s) {
     return s.replace(/「[\S\s]+?」/, '');
   },
+  md5(data) {
+    let crypto = require('crypto');
+    let md5 = crypto.createHash('md5');
+    md5.update(data);
+    return md5.digest('hex');
+  },
   async hitokoto() {
     let request = require('request-promise');
     return await request({

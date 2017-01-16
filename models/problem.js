@@ -117,8 +117,7 @@ class Problem extends Model {
     let fs = Promise.promisifyAll(require('fs'));
 
     let buf = await fs.readFileAsync(path);
-    let md5 = require('md5');
-    let key = md5(buf);
+    let key = syzoj.utils.md5(buf);
     await fs.rename(path, TestData.resolvePath(key));
 
     let file = await TestData.create({
