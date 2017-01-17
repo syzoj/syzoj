@@ -185,26 +185,6 @@ app.post('/problem/:id/upload', app.multer.single('testdata'), async (req, res) 
   }
 });
 
-app.get('/submit/:id', async (req, res) => {
-  try {
-    let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
-
-    if (!problem) throw 'No such problem.';
-    if (!res.locals.user) throw 'Please login.';
-    if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
-
-    res.render('submit', {
-      problem: problem
-    });
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
-});
-
 app.post('/submit/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
