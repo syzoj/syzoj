@@ -91,6 +91,7 @@ app.get('/user/:id', async (req, res) => {
     user.allowedEdit = await user.isAllowedEditBy(res.locals.user);
 
     let statistics = await user.getStatistics();
+    await user.renderInformation();
 
     res.render('user', {
       show_user: user,
