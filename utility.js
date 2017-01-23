@@ -48,7 +48,7 @@ function highlightPygmentize(code, lang, cb) {
     format: 'html',
     options: {
       nowrap: true,
-	  classprefix: 'pl-'
+      classprefix: 'pl-'
     }
   }, code, (err, res) => {
     if (err || res.toString() === 'undefined') {
@@ -67,8 +67,9 @@ module.exports = {
     a.unshift(__dirname);
     return path.resolve.apply(null, a);
   },
-  markdown(obj, keys) {
+  markdown(obj, keys, noReplaceUI) {
     let replaceUI = s => {
+        if (noReplaceUI) return s;
         return s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</pre></div>')
                 .split('<table>').join('<table class="ui table">')
                 .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');

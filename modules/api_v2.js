@@ -59,3 +59,13 @@ app.get('/api/v2/hitokoto', async (req, res) => {
     res.status(500).send({ e: e });
   }
 });
+
+app.post('/api/v2/markdown', async (req, res) => {
+  try {
+    let s = await syzoj.utils.markdown(req.body.s.toString(), null, req.body.noReplaceUI === 'true');
+    res.send(s);
+  } catch (e) {
+    syzoj.log(e);
+    res.send(e);
+  }
+});
