@@ -32,7 +32,7 @@
     "express-session": "^1.14.1",
     "file-size": "^1.0.0",
     "gravatar": "^1.5.2",
-    "moemark-renderer": "^1.2.4",
+    "moemark-renderer": "^1.2.5",
     "moment": "^2.15.0",
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
