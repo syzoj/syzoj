@@ -1,0 +1,175 @@
+<%
+this.title = '统计';
+let types = {
+  fastest: '最快',
+  slowest: '最慢',
+  shortest: '最短',
+  longest: '最长',
+  earliest: '最早'
+};
+%>
+<% include header %>
+<script src="//cdn.bootcss.com/raphael/2.2.7/raphael.min.js"></script>
+<script src="//cdn.bootcss.com/morris.js/0.5.1/morris.min.js"></script>
+<script>
+function getColorOfScore(score) {
+  let color = [];
+  color[0] = 'red';
+  color[1] = '#ff4b00';
+  color[2] = '#ff6200';
+  color[3] = '#ffa900';
+  color[4] = '#ffd800';
+  color[5] = '#c8ff00';
+  color[6] = '#a5ff00';
+  color[7] = '#52ff00';
+  color[8] = '#41f741';
+  color[9] = '#34d034';
+  color[10] = 'forestgreen';
+  return color[parseInt(score / 10)];
+}
+</script>
+<div class="padding">
+  <h1 style="text-align: center; margin-bottom: 30px; ">
+    满分提交
+    <span class="ui header" style="margin-left: 10px; ">
+      <div class="ui compact menu">
+        <div class="ui simple dropdown item">
+          <%= types[statistics.type] %>
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <% for (let type in types) { %>
+              <% if (type !== statistics.type) { %>
+                <a class="item" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', type]) %>"><%= types[type] %></a>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </span>
+  </h1>
+  <table class="ui very basic center aligned table" style="white-space: nowrap; ">
+    <thead>
+      <tr>
+          <th>编号</th>
+          <th>题目</th>
+          <th>状态</th>
+          <th>分数</th>
+          <th>总时间</th>
+          <th>内存</th>
+          <th>代码</th>
+          <th>提交者</th>
+          <th>提交时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let judge of statistics.judge_state) { %>
+          <% include util %>
+          <tr>
+              <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">#<%= judge.id %></a></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">
+                  <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
+                  <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
+                  <%= judge.status %>
+                  </span>
+              </a></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
+              <td><%= judge.result.total_time %> ms</td>
+              <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
+              <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
+              <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
+          </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <br>
+  <% include page %>
+  <br>
+  <h1 style="text-align: center; ">
+    得分分布
+  </h1>
+  <div id="score-distribution-chart" style="height: 250px;"></div>
+  <script type="text/javascript">
+  new Morris.Bar({
+  	element: 'score-distribution-chart',
+  	data: <%- JSON.stringify(statistics.scoreDistribution) %>,
+  	barColors: function(r, s, type) {
+  		return getColorOfScore(r.label);
+  	},
+  	xkey: 'score',
+  	ykeys: ['count'],
+  	labels: ['number'],
+  	hoverCallback: function(index, options, content, row) {
+  		var scr = row.score;
+  		return '<div class="morris-hover-row-label">分数：' + scr + '</div><div class="morris-hover-point">数量：' + row.count + '</div>';
+  	},
+  	resize: true
+  });
+  </script>
+  <h1 style="text-align: center; ">
+    前缀和
+  </h1>
+  <div id="score-distribution-chart-pre" style="height: 250px;"></div>
+  <script type="text/javascript">
+  <%
+  for (let i in statistics.prefixSum) {
+    statistics.prefixSum[i].score *= 100;
+  }
+  %>
+  new Morris.Line({
+  	element: 'score-distribution-chart-pre',
+    data: <%- JSON.stringify(statistics.prefixSum) %>,
+  	xkey: 'score',
+  	ykeys: ['count'],
+  	labels: ['number'],
+  	lineColors: function(row, sidx, type) {
+  		if (type == 'line') {
+  			return '#0b62a4';
+  		}
+  		return getColorOfScore(row.src.score / 100);
+  	},
+  	xLabelFormat: function(x) {
+  		return (x.getTime() / 100).toString();
+  	},
+  	hoverCallback: function(index, options, content, row) {
+  		var scr = row.score / 100;
+      return '<div class="morris-hover-row-label">分数：≤ ' + scr + '</div><div class="morris-hover-point">数量：' + row.count + '</div>';
+  	},
+  	resize: true
+  });
+  </script>
+  <h1 style="text-align: center; ">
+    后缀和
+  </h1>
+  <div id="score-distribution-chart-suf" style="height: 250px;"></div>
+  <script type="text/javascript">
+  <%
+  for (let i in statistics.suffixSum) {
+    statistics.suffixSum[i].score *= 100;
+  }
+  %>
+  new Morris.Line({
+  	element: 'score-distribution-chart-suf',
+    data: <%- JSON.stringify(statistics.suffixSum) %>,
+  	xkey: 'score',
+  	ykeys: ['count'],
+  	labels: ['number'],
+  	lineColors: function(row, sidx, type) {
+  		if (type == 'line') {
+  			return '#0b62a4';
+  		}
+  		return getColorOfScore(row.src.score / 100);
+  	},
+  	xLabelFormat: function(x) {
+  		return (x.getTime() / 100).toString();
+  	},
+  	hoverCallback: function(index, options, content, row) {
+  		var scr = row.score / 100;
+      return '<div class="morris-hover-row-label">分数：≥ ' + scr + '</div><div class="morris-hover-point">数量：' + row.count + '</div>';
+  	},
+  	resize: true
+  });
+  </script>
+</div>
+<% include footer %>

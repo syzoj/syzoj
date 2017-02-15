@@ -256,3 +256,32 @@ app.get('/problem/:id/download', async (req, res) => {
     });
   }
 });
+
+app.get('/problem/:id/statistics/:type', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+
+    if (!problem) throw 'No such problem';
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied';
+
+    let count = await problem.countStatistics(req.params.type);
+    if (count === null) throw 'No such type';
+
+    let paginate = syzoj.utils.paginate(count, req.query.page, syzoj.config.page.problem_statistics);
+    let statistics = await problem.getStatistics(req.params.type, paginate);
+
+    await statistics.judge_state.forEachAsync(async x => x.loadRelationships());
+
+    res.render('statistics', {
+      statistics: statistics,
+      paginate: paginate,
+      problem: problem
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});

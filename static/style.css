@@ -1,5 +1,5 @@
 .main.container {
-    margin-top: 6em;
+    margin-top: 5.5em;
 }
 
 .padding {
@@ -23,6 +23,10 @@
 
 th {
     white-space: nowrap;
+}
+
+pre {
+    tab-size: 4;
 }
 
 /* status color */

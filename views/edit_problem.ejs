@@ -53,7 +53,7 @@
 $(function () {
     function render(output, input) {
       $.post('/api/markdown', { s: input.val() }, function (s) {
-        console.log(s);
+        // console.log(s);
         output.html(s);
       });
     }

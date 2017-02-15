@@ -19,6 +19,124 @@
 
 'use strict';
 
+let statisticsStatements = {
+  fastest:
+'\
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `total_time` ASC \
+	) AS `id`, \
+	( \
+		SELECT \
+			`total_time` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `total_time` ASC \
+	) AS `total_time` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `total_time` ASC \
+',
+  slowest:
+' \
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `total_time` DESC \
+	) AS `id`, \
+	( \
+		SELECT \
+			`total_time` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `total_time` DESC \
+	) AS `total_time` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `total_time` DESC \
+',
+  shortest:
+' \
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY LENGTH(`code`) ASC \
+	) AS `id`, \
+	( \
+		SELECT \
+			LENGTH(`code`) \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY LENGTH(`code`) ASC \
+	) AS `code_length` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `code_length` ASC \
+',
+  longest:
+' \
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY LENGTH(`code`) DESC \
+	) AS `id`, \
+	( \
+		SELECT \
+			LENGTH(`code`) \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY LENGTH(`code`) DESC \
+	) AS `code_length` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `code_length` DESC \
+',
+  earliest:
+' \
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `submit_time` ASC \
+	) AS `id`, \
+	( \
+		SELECT \
+			`submit_time` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `submit_time` ASC \
+	) AS `submit_time` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `submit_time` ASC \
+'
+};
+
 let Sequelize = require('sequelize');
 let db = syzoj.db;
 
@@ -155,6 +273,63 @@ class Problem extends Model {
       where: where,
       order: [['submit_time', 'desc']]
     });
+  }
+
+  // type: fastest / slowest / shortest / longest / earliest
+  async countStatistics(type) {
+    let statement = statisticsStatements[type];
+    if (!statement) return null;
+
+    statement = statement.replace('__PROBLEM_ID__', this.id);
+    return await db.countQuery(statement);
+  }
+
+  // type: fastest / slowest / shortest / longest / earliest
+  async getStatistics(type, paginate) {
+    let statistics = {
+      type: type,
+      judge_state: null,
+      scoreDistribution: null,
+      prefixSum: null,
+      suffixSum: null
+    };
+
+    let statement = statisticsStatements[type];
+    if (!statement) return null;
+
+    statement = statement.replace('__PROBLEM_ID__', this.id);
+    let a = (await db.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`))[0];
+
+    let JudgeState = syzoj.model('judge_state');
+    statistics.judge_state = await a.mapAsync(async x => JudgeState.fromID(x.id));
+
+    a = (await db.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id)))[0];
+
+    let scoreCount = [];
+    for (let score of a) {
+      score.score = Math.min(Math.round(score.score), 100);
+      scoreCount[score.score] = score.count;
+    }
+    if (scoreCount[0] === undefined) scoreCount[0] = 0;
+    if (scoreCount[100] === undefined) scoreCount[100] = 0;
+
+    statistics.scoreDistribution = [];
+    for (let i = 0; i < scoreCount.length; i++) {
+      if (scoreCount[i] !== undefined) statistics.scoreDistribution.push({ score: i, count: scoreCount[i] });
+    }
+
+    statistics.prefixSum = JSON.parse(JSON.stringify(statistics.scoreDistribution));
+    statistics.suffixSum = JSON.parse(JSON.stringify(statistics.scoreDistribution));
+
+    for (let i = 1; i < statistics.prefixSum.length; i++) {
+      statistics.prefixSum[i].count += statistics.prefixSum[i - 1].count;
+    }
+
+    for (let i = statistics.prefixSum.length - 1; i >= 1; i--) {
+      statistics.suffixSum[i - 1].count += statistics.suffixSum[i].count;
+    }
+
+    return statistics;
   }
 
   getModel() { return model; }

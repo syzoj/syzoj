@@ -33,6 +33,10 @@ let model = db.define('judge_state', {
 
   status: { type: Sequelize.STRING(50) },
   score: { type: Sequelize.INTEGER },
+  total_time: { type: Sequelize.INTEGER },
+  pending: { type: Sequelize.BOOLEAN },
+  max_memory: { type: Sequelize.INTEGER },
+
   result: { type: Sequelize.TEXT('medium'), json: true },
 
   user_id: {
@@ -92,9 +96,13 @@ class JudgeState extends Model {
       type: 0,
       type_info: '',
 
+      pending: true,
+
       score: 0,
+      total_time: 0,
+      max_memory: 0,
       status: 'Waiting',
-      result: '{ "status": "Waiting", "total_time": 0, "total_memory": 0, "score": 0, "case_num": 0, "compiler_output": "" }'
+      result: '{ "status": "Waiting", "total_time": 0, "max_memory": 0, "score": 0, "case_num": 0, "compiler_output": "", "pending": true }'
     }, val)));
   }
 
@@ -135,7 +143,10 @@ class JudgeState extends Model {
 
   async updateResult(result) {
     this.score = result.score;
+    this.pending = result.pending;
     this.status = result.status;
+    this.total_time = result.total_time;
+    this.max_memory = result.max_memory;
     this.result = result;
   }
 

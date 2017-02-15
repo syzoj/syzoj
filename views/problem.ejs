@@ -50,7 +50,12 @@ if (contest) {
           <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui positive button">返回比赛</a>
         <% } else { %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">提交记录</a>
+          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', 'fastest']) %>">统计</a>
           <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download']) %>">下载测试数据</a>
+        <% } %>
+      </div>
+      <% if (!contest) { %>
+        <div class="ui buttons right floated">
           <% if (problem.allowedEdit) { %>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑题面</a>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">上传测试数据</a>
@@ -62,38 +67,38 @@ if (contest) {
               <button class="small ui button" id="public">公开</button>
             <% } %>
           <% } %>
-        <% } %>
-      </div>
+        </div>
+      <% } %>
     </div>
   </div>
   <div class="row">
     <div class="column">
       <h4 class="ui top attached block header">题目描述</h4>
-      <div class="ui bottom attached segment" id="description"><%- problem.description %></div>
+      <div class="ui bottom attached segment"><%- problem.description %></div>
     </div>
   </div>
   <div class="row">
     <div class="column">
         <h4 class="ui top attached block header">输入格式</h4>
-        <div class="ui bottom attached segment" id="input"><%- problem.input_format %></div>
+        <div class="ui bottom attached segment"><%- problem.input_format %></div>
     </div>
   </div>
     <div class="row">
         <div class="column">
           <h4 class="ui top attached block header">输出格式</h4>
-          <div class="ui bottom attached segment" id="output"><%- problem.output_format %></div>
+          <div class="ui bottom attached segment"><%- problem.output_format %></div>
         </div>
     </div>
     <div class="row">
         <div class="column">
-          <h4 class="ui top attached block header">测试样例</h4>
-          <div class="ui bottom attached segment" id="example"><%- problem.example %></div>
+          <h4 class="ui top attached block header">样例</h4>
+          <div class="ui bottom attached segment"><%- problem.example %></div>
         </div>
     </div>
     <div class="row">
         <div class="column">
           <h4 class="ui top attached block header">数据范围与提示</h4>
-          <div class="ui bottom attached segment" id="hint"><%- problem.limit_and_hint %></div>
+          <div class="ui bottom attached segment"><%- problem.limit_and_hint %></div>
         </div>
     </div>
     <div class="row">
@@ -139,6 +144,7 @@ var editor = ace.edit("editor");
 
 editor.setTheme("ace/theme/tomorrow");
 editor.getSession().setMode("ace/mode/" + $('#languages-menu .item.active').data('mode'));
+editor.getSession().setUseSoftTabs(false);
 
 editor.container.style.lineHeight = 1.6;
 editor.container.style.fontSize = '14px';

@@ -19,7 +19,7 @@
         <textarea rows="15" id="content" name="content"><%= article.content %></textarea>
       </div>
     </div>
-    <div class="ui bottom attached tab segment" data-tab="preview"> 
+    <div class="ui bottom attached tab segment" data-tab="preview">
       <div class="ui header" id="pv-title"></div>
       <div id="pv-content"></div>
     </div>
@@ -33,7 +33,7 @@
 $(function () {
     function render(output, input) {
       $.post('/api/markdown', { s: input.val() }, function (s) {
-        console.log(s);
+        // console.log(s);
         output.html(s);
       });
     }

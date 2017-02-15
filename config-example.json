@@ -22,6 +22,7 @@
   },
   "page": {
     "problem": 50,
+    "problem_statistics": 10,
     "judge_state": 10,
     "ranklist": 20,
     "discussion": 10,

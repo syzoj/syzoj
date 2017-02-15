@@ -76,7 +76,6 @@ app.post('/api/sign_up', async (req, res) => {
 app.post('/api/markdown', async (req, res) => {
   try {
     let s = await syzoj.utils.markdown(req.body.s.toString());
-    console.log(s);
     res.send(s);
   } catch (e) {
     syzoj.log(e);

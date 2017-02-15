@@ -33,7 +33,7 @@ app.get('/ranklist', async (req, res) => {
       paginate: paginate
     });
   } catch (e) {
-    console.log(e);
+    syzoj.log(e);
     res.render('error', {
       err: e
     });
@@ -46,7 +46,7 @@ app.get('/find_user', async (req, res) => {
     if (!user) throw `Can't find user ${req.query.nickname}`;
     res.redirect(syzoj.utils.makeUrl(['user', user.id]));
   } catch (e) {
-    console.log(e);
+    syzoj.log(e);
     res.render('error', {
       err: e
     });
@@ -98,7 +98,7 @@ app.get('/user/:id', async (req, res) => {
       statistics: statistics
     });
   } catch (e) {
-    console.log(e);
+    syzoj.log(e);
     res.render('error', {
       err: e
     });
@@ -121,7 +121,7 @@ app.get('/user/:id/edit', async (req, res) => {
       error_info: null
     });
   } catch (e) {
-    console.log(e);
+    syzoj.log(e);
     res.render('error', {
       err: e
     });
