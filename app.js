@@ -73,7 +73,7 @@ global.syzoj = {
       logging: syzoj.production ? false : syzoj.log
     });
     global.Promise = Sequelize.Promise;
-    this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql})`, options))[0][0]['COUNT(*)'];
+    this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];
     this.db.sync();
   },
   loadModules() {

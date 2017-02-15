@@ -30,6 +30,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY `total_time` ASC \
+    LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
@@ -37,6 +38,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY `total_time` ASC \
+    LIMIT 1 \
 	) AS `total_time` \
 FROM `judge_state` `outer_table` \
 WHERE  \
@@ -53,6 +55,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY `total_time` DESC \
+    LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
@@ -60,6 +63,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY `total_time` DESC \
+    LIMIT 1 \
 	) AS `total_time` \
 FROM `judge_state` `outer_table` \
 WHERE  \
@@ -76,6 +80,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY LENGTH(`code`) ASC \
+    LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
@@ -83,6 +88,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY LENGTH(`code`) ASC \
+    LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
 WHERE  \
@@ -99,6 +105,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY LENGTH(`code`) DESC \
+    LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
@@ -106,6 +113,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY LENGTH(`code`) DESC \
+    LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
 WHERE  \
@@ -122,6 +130,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY `submit_time` ASC \
+    LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
@@ -129,6 +138,7 @@ SELECT \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
 		ORDER BY `submit_time` ASC \
+    LIMIT 1 \
 	) AS `submit_time` \
 FROM `judge_state` `outer_table` \
 WHERE  \
