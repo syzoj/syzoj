@@ -146,18 +146,20 @@ module.exports = {
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
     let res = [];
     if (!list.includes('data_rule.txt')) {
+      res[0] = {};
+      res[0].cases = [];
       for (let file of list) {
         let parsedName = path.parse(file);
         if (parsedName.ext === '.in') {
           if (list.includes(`${parsedName.name}.out`)) {
-            res.push({
+            res[0].cases.push({
               input: file,
               output: `${parsedName.name}.out`
             });
           }
 
           if (list.includes(`${parsedName.name}.ans`)) {
-            res.push({
+            res[0].cases.push({
               input: file,
               output: `${parsedName.name}.ans`
             });
@@ -165,7 +167,9 @@ module.exports = {
         }
       }
 
-      res.sort((a, b) => {
+      res[0].type = 'sum';
+      res[0].score = 100;
+      res[0].cases.sort((a, b) => {
         function getLastInteger(s) {
           let re = /(\d+)\D*$/;
           let x = re.exec(s);
@@ -176,24 +180,39 @@ module.exports = {
         return getLastInteger(a.input) - getLastInteger(b.input);
       });
     } else {
-      let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n');
+      let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n').filter(x => x.length !== 0);
 
       if (lines.length < 3) throw 'Invalid data_rule.txt';
 
-      let numbers = lines[0].split(' ').filter(x => x);
-      let input = lines[1];
-      let output = lines[2];
+      let input = lines[lines.length - 2];
+      let output = lines[lines.length - 1];
 
-      for (let i of numbers) {
-        res[i] = {};
-        res[i].input = input.replace('#', i);
-        res[i].output = output.replace('#', i);
+      for (let s = 0; s < lines.length - 2; ++s) {
+        res[s] = {};
+        res[s].cases = [];
+        let numbers = lines[s].split(' ').filter(x => x);
+        if (numbers[0].includes(':')) {
+          let tokens = numbers[0].split(':');
+          res[s].type = tokens[0] || 'sum';
+          res[s].score = parseInt(tokens[1]);
+          numbers.shift();
+        } else {
+          res[s].type = 'sum';
+          res[s].score = 100;
+        }
+        for (let i of numbers) {
+          let testcase = {
+            input: input.replace('#', i),
+            output: output.replace('#', i)
+          };
 
-        if (!list.includes(res[i].input)) throw `Can't find file ${res[i].input}`;
-        if (!list.includes(res[i].output)) throw `Can't find file ${res[i].output}`;
+          if (!list.includes(testcase.input)) throw `Can't find file ${testcase.input}`;
+          if (!list.includes(testcase.output)) throw `Can't find file ${testcase.output}`;
+          res[s].cases.push(testcase);
+        }
       }
 
-      res = res.filter(x => x);
+      res = res.filter(x => x.cases && x.cases.length !== 0);
     }
 
     res.spj = list.includes('spj.js');

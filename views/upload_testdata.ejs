@@ -23,11 +23,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% for (let testcase of list) { %>
+                <% for (let subtask of list) { %>
+                  <% if (list.length !== 1) { %>
                     <tr>
-                        <td><%= testcase.input %></td>
-                        <td><%= testcase.output %></td>
+                      <td colspan='2'><strong>→ 子任务评分方式：<%= subtask.type %>，分值：<%= subtask.score %></strong></td>
                     </tr>
+                  <% } %>
+                  <% for (let testcase of subtask.cases) { %>
+                    <tr>
+                      <td><%= testcase.input %></td>
+                      <td><%= testcase.output %></td>
+                    </tr>
+                  <% } %>
                 <% } %>
                 </tbody>
                   </table>

@@ -39,7 +39,10 @@ pre {
 
 :not(.status_detail).status.accepted,
 .title:hover .status_detail.status.accepted,
-.title.active .status_detail.status.accepted {
+.title.active .status_detail.status.accepted,
+:not(.status_detail).status.passed,
+.title:hover .status_detail.status.passed,
+.title.active .status_detail.status.passed {
     color: forestgreen;
 }
 
