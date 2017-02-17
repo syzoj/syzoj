@@ -1,11 +1,17 @@
 <% this.title = '上传测试数据'; %>
 <% include header %>
+<%
+let subtaskType = {
+  sum: '测试点分数按百分比相加',
+  min: '取各测试点最低分',
+  mul: '测试点分数按百分比相乘'
+};
+%>
 <div class="padding">
     <div class="ui grid">
     <div class="row">
       <div class="seven wide column">
           <% if (problem.testdata) { %>
-              <p>数据包：<%= problem.testdata.filename %></p>
             <%
             try {
                 let list = syzoj.utils.parseTestData(problem.testdata.getPath());
@@ -17,26 +23,27 @@
                 <% } %>
                 <table class="ui very basic table">
                   <thead>
-                <tr>
+                  <tr>
                     <th>输入文件</th>
                     <th>输出文件</th>
-                </tr>
-                </thead>
-                <tbody>
-                <% for (let subtask of list) { %>
-                  <% if (list.length !== 1) { %>
-                    <tr>
-                      <td colspan='2'><strong>→ 子任务评分方式：<%= subtask.type %>，分值：<%= subtask.score %></strong></td>
-                    </tr>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <% let i = 0; %>
+                  <% for (let subtask of list) { %>
+                    <% if (list.length !== 1) { %>
+                      <tr>
+                        <td colspan='2'><h4 style="margin-bottom: 5px; "><strong>子任务 <%= ++i %></strong></h4><%= subtaskType[subtask.type] %>，总分值 <%= subtask.score %></td>
+                      </tr>
+                    <% } %>
+                    <% for (let testcase of subtask.cases) { %>
+                      <tr>
+                        <td><%= testcase.input %></td>
+                        <td><%= testcase.output %></td>
+                      </tr>
+                    <% } %>
                   <% } %>
-                  <% for (let testcase of subtask.cases) { %>
-                    <tr>
-                      <td><%= testcase.input %></td>
-                      <td><%= testcase.output %></td>
-                    </tr>
-                  <% } %>
-                <% } %>
-                </tbody>
+                  </tbody>
                   </table>
             <% } catch (e) { %>
                 <h3>数据包错误：<%= e %></h3>
