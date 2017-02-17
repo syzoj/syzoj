@@ -308,7 +308,10 @@ class Problem extends Model {
     if (!statement) return null;
 
     statement = statement.replace('__PROBLEM_ID__', this.id);
-    let a = (await db.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`))[0];
+
+    let a;
+    if (!paginate.pageCnt) a = [];
+    else a = (await db.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`))[0];
 
     let JudgeState = syzoj.model('judge_state');
     statistics.judge_state = await a.mapAsync(async x => JudgeState.fromID(x.id));
