@@ -16,6 +16,7 @@ for (let s of judge.result.subtasks) {
       pending: true,
       status: runningFound ? 'Waiting' : 'Running'
     };
+    if (!runningFound) s.isActiveSubtask = true;
     runningFound = true;
   }
 }
@@ -80,11 +81,11 @@ for (let s of judge.result.subtasks) {
   <h3 class="ui header">编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.result.compiler_output %></code></pre></div>
 <% } else if (judge.allowedSeeResult) { %>
-<div class="ui styled fluid accordion" id="testcases_list">
+<div class="ui styled fluid accordion" id="subtasks_list">
   <% let subtask_count = 0; %>
   <% for (let subtask_cases of (judge.result.subtasks || [])) { %>
     <% if (judge.result.subtasks.length !== 1) { %>
-      <div class="title">
+      <div class="title auto_update auto_update_activation<% if (subtask_cases.isActiveSubtask) { %> active<% } %>">
         <div class="ui grid">
           <div class="three wide column"><i class="dropdown icon"></i>子任务 #<%= ++subtask_count %></div>
           <div class="four wide column status status_detail <%= getStatusMeta(subtask_cases.status).toLowerCase().split(' ').join('_') %>">
@@ -95,12 +96,12 @@ for (let s of judge.result.subtasks) {
           <% } %>
         </div>
       </div>
-      <div class="content">
-        <div class="accordion" id="testcases_list_subtask<%= subtask_count %>">
+      <div class="content auto_update_activation<% if (subtask_cases.isActiveSubtask) { %> active<% } %>">
+        <div class="accordion">
     <% } %>
     <% for (let i = 0; i < subtask_cases.case_num; i++) { %>
     <% let testcase = subtask_cases[i]; %>
-    <div class="title<% if (testcase.pending) { %> testcase.pending<% } %>"<% if (testcase.pending) { %> style="cursor: auto; "<% } %>>
+    <div class="title<% if (testcase.pending) { %> testcase.pending<% } %> auto_update"<% if (testcase.pending) { %> style="cursor: auto; "<% } %>>
       <div class="ui grid">
         <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
         <div class="four wide column status status_detail <%= getStatusMeta(testcase.status).toLowerCase().split(' ').join('_') %>">
@@ -114,7 +115,7 @@ for (let s of judge.result.subtasks) {
         <% } %>
       </div>
     </div>
-    <div class="content">
+    <div class="content auto_update">
     <% if (!testcase.pending) { %>
       <p>
           <strong>输入文件</strong>
@@ -152,21 +153,32 @@ $(function() {
 <% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div></div><% } %>
 <script>
 <% if (isPending(judge.status) && judge.allowedSeeResult) { %>
+document.addEventListener('mousedown', function (event) {
+  var list = $('#judge_detail_item').find('div.auto_update_activation');
+  for (var i = 0; i < list.length; ++i) {
+    $(list[i]).removeClass('auto_update_activation');
+  }
+});
 function update_judge_detail() {
   setTimeout(function () {
     $.get('/judge_detail/<%= judge.id %>/ajax', function (data) {
       var e = $('#judge_detail_item'), x = $($.parseHTML(data));
       if (e.find('td.status').text().trim() != x.find('td.status').text().trim()) {
-        var a = e.find('#testcases_list > div');
+        var a = e.find('div.auto_update');
         if (!a.length) {
           e.html(data);
         } else {
           e.find('#status_table').html(x.find('#status_table'));
-          var b = x.find('#testcases_list > div');
+          var b = x.find('div.auto_update');
           for (var i = 0; i < a.length; i++) {
             a[i].innerHTML = b[i].innerHTML;
             if (!$(b[i]).hasClass('pending')) $(a[i]).removeClass('pending');
             if (!$(b[i]).attr('style')) $(a[i]).attr('style', '');
+          }
+          a = e.find('div.auto_update_activation');
+          b = x.find('div.auto_update_activation');
+          for (var i = 0; i < a.length; i++) {
+            if ($(b[i]).hasClass('active')) $(a[i]).addClass('active'); else $(a[i]).removeClass('active');
           }
 
           if (!x.find('#stop_ajax').length) update_judge_detail();
@@ -176,6 +188,6 @@ function update_judge_detail() {
     });
   }, 500);
 }
-//update_judge_detail();
+update_judge_detail();
 <% } %>
 </script>
