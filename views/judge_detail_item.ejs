@@ -39,7 +39,19 @@
      </tbody>
   </table>
   <% if (judge.allowedSeeCode) { %>
-    <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.code %></code></pre></div>
+    <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code id="code"><%- judge.code %></code></pre></div>
+    <script>
+      document.addEventListener('keydown', function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+          var sel = window.getSelection();
+          var rg = document.createRange()
+          rg.selectNodeContents(document.getElementById('code'));
+          sel.removeAllRanges();
+          sel.addRange(rg);
+          event.preventDefault();
+        }
+      });
+    </script>
   <% } %>
 <% if (judge.result.compiler_output && judge.result.status === 'Compile Error' && judge.allowedSeeCode) { %>
   <h3 class="ui header">编译信息</h3>
