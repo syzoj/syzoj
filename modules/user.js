@@ -116,7 +116,7 @@ app.get('/user/:id/edit', async (req, res) => {
       throw 'Permission denied';
     }
 
-    res.render('edit_user', {
+    res.render('user_edit', {
       edited_user: user,
       error_info: null
     });
@@ -148,12 +148,12 @@ app.post('/user/:id/edit', async (req, res) => {
 
     await user.save();
 
-    res.render('edit_user', {
+    res.render('user_edit', {
       edited_user: user,
       error_info: 'Success'
     });
   } catch (e) {
-    res.render('edit_user', {
+    res.render('user_edit', {
       edited_user: user,
       error_info: e
     });

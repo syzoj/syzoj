@@ -28,7 +28,7 @@
             <% if (user) { %>
                 <td>
                 <% if (problem.judge_state) { %>
-                  <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_state.id]) %>">
+                  <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_state.id]) %>">
                     <span class="status <%= problem.judge_state.status.toLowerCase().split(' ').join('_') %>">
                       <i class="<%= icon[problem.judge_state.status] || 'remove' %> icon"></i>
                     </span>

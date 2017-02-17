@@ -159,10 +159,10 @@ document.addEventListener('mousedown', function (event) {
     $(list[i]).removeClass('auto_update_activation');
   }
 });
-function update_judge_detail() {
+function update_submission() {
   setTimeout(function () {
-    $.get('/judge_detail/<%= judge.id %>/ajax', function (data) {
-      var e = $('#judge_detail_item'), x = $($.parseHTML(data));
+    $.get('/submission/<%= judge.id %>/ajax', function (data) {
+      var e = $('#submission_content'), x = $($.parseHTML(data));
       if (e.find('td.status').text().trim() != x.find('td.status').text().trim()) {
         var a = e.find('div.auto_update');
         if (!a.length) {
@@ -181,13 +181,13 @@ function update_judge_detail() {
             if ($(b[i]).hasClass('active')) $(a[i]).addClass('active'); else $(a[i]).removeClass('active');
           }
 
-          if (!x.find('#stop_ajax').length) update_judge_detail();
+          if (!x.find('#stop_ajax').length) update_submission();
         }
       }
-      else if (!x.find('#stop_ajax').length) update_judge_detail();
+      else if (!x.find('#stop_ajax').length) update_submission();
     });
   }, 500);
 }
-update_judge_detail();
+update_submission();
 <% } %>
 </script>

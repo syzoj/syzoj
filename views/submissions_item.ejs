@@ -1,17 +1,17 @@
 <% include util %>
-<td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">#<%= judge.id %></a></td>
+<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">#<%= judge.id %></a></td>
 <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
 <% if (!judge.hidden) { %>
-<td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>">
+<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">
     <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
     <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
     <%= judge.status %>
     </span>
 </a></td>
-<td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
+<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
 <td><%= judge.result.total_time %> ms</td>
 <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
-<td><a href="<%= syzoj.utils.makeUrl(['judge_detail', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
 <% } else { %>
     <td>隐藏</td>
     <td>隐藏</td>
@@ -25,8 +25,8 @@
 <script>
 function update_judge_<%= judge.id %>() {
   setTimeout(function () {
-    $.get('/judge_state/<%= judge.id %>/ajax', function (data) {
-      var e = $('#judge_state_<%= judge.id %>');
+    $.get('/submissions/<%= judge.id %>/ajax', function (data) {
+      var e = $('#submissions_<%= judge.id %>');
       if (e.html() != data) e.html(data);
       else update_judge_<%= judge.id %>();
     });
