@@ -49,7 +49,7 @@ if (contest) {
         <% if (contest) { %>
           <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui positive button">返回比赛</a>
         <% } else { %>
-          <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['judge_state'], { problem_id: problem.id }) %>">提交记录</a>
+          <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', 'fastest']) %>">统计</a>
           <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download']) %>">下载测试数据</a>
         <% } %>
@@ -58,7 +58,7 @@ if (contest) {
         <div class="ui buttons right floated">
           <% if (problem.allowedEdit) { %>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑</a>
-            <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'upload']) %>">管理测试数据</a>
+            <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'data']) %>">管理测试数据</a>
           <% } %>
           <% if (user && user.is_admin) { %>
             <% if (problem.is_public) {  %>
@@ -105,8 +105,8 @@ if (contest) {
         <div class="column">
           <%
           let formUrl;
-          if (contest) formUrl = syzoj.utils.makeUrl(['submit', problem.id], { contest_id: contest.id });
-          else formUrl = syzoj.utils.makeUrl(['submit', problem.id]);
+          if (contest) formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest.id });
+          else formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit', problem.id]);
           %>
           <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code">
             <input name="language" type="hidden" id="form">

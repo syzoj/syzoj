@@ -42,7 +42,7 @@
               <tr>
                 <td class="center aligned" style="white-space: nowrap; ">
                 <% if (problem.judge_id) { %>
-                  <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_id]) %>">
+                  <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_id]) %>">
                   <% if (problem.status === true) { %>
                   <i class="black checkmark icon"></i>
                   <% } else if (problem.status !== false) { %>
@@ -55,7 +55,7 @@
                 <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id, i]) %>"><%= syzoj.utils.removeTitleTag(problem.problem.title) %></a></td>
                 <td class="center aligned">
                 <% if (problem.judge_id) { %>
-                <a href="<%= syzoj.utils.makeUrl(['judge_detail', problem.judge_id]) %>"><i style="color: #000;" class="code icon"></i></a>
+                <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_id]) %>"><i style="color: #000;" class="code icon"></i></a>
                 <% } %>
                 </td>
               </tr>

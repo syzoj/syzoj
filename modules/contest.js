@@ -26,14 +26,14 @@ let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
 
-app.get('/contest', async (req, res) => {
+app.get('/contests', async (req, res) => {
   try {
     let paginate = syzoj.utils.paginate(await Contest.count(), req.query.page, syzoj.config.page.contest);
     let contests = await Contest.query(paginate);
 
     await contests.forEachAsync(async x => x.information = await syzoj.utils.markdown(x.information));
 
-    res.render('contest_list', {
+    res.render('contests', {
       contests: contests,
       paginate: paginate
     })
@@ -59,7 +59,7 @@ app.get('/contest/:id/edit', async (req, res) => {
     let problems = [];
     if (contest.problems) problems = await contest.problems.split('|').mapAsync(async id => await Problem.fromID(id));
 
-    res.render('edit_contest', {
+    res.render('contest_edit', {
       contest: contest,
       problems: problems
     });

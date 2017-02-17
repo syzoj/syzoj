@@ -31,7 +31,7 @@
     </thead>
     <tbody>
       <% for (let judge of judge_state) { %>
-        <tr id="judge_state_<%= judge.id %>"><% include judge_state_item %></tr>
+        <tr id="submissions_<%= judge.id %>"><% include submissions_item %></tr>
       <% } %>
     </tbody>
   </table>

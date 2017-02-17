@@ -24,7 +24,7 @@ let JudgeState = syzoj.model('judge_state');
 let WaitingJudge = syzoj.model('waiting_judge');
 let Contest = syzoj.model('contest');
 
-app.get('/problem', async (req, res) => {
+app.get('/problems', async (req, res) => {
   try {
     let paginate = syzoj.utils.paginate(await Problem.count(), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.query(paginate);
@@ -34,7 +34,7 @@ app.get('/problem', async (req, res) => {
       problem.judge_state = await problem.getJudgeState(res.locals.user, true);
     });
 
-    res.render('problem_set', {
+    res.render('problems', {
       problems: problems,
       paginate: paginate
     });
@@ -92,7 +92,7 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
     }
 
-    res.render('edit_problem', {
+    res.render('problem_edit', {
       problem: problem
     });
   } catch (e) {
@@ -134,7 +134,7 @@ app.post('/problem/:id/edit', async (req, res) => {
   }
 });
 
-app.get('/problem/:id/upload', async (req, res) => {
+app.get('/problem/:id/data', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -144,7 +144,7 @@ app.get('/problem/:id/upload', async (req, res) => {
 
     await problem.loadRelationships();
 
-    res.render('upload_testdata', {
+    res.render('problem_data', {
       problem: problem
     });
   } catch (e) {
@@ -155,7 +155,7 @@ app.get('/problem/:id/upload', async (req, res) => {
   }
 });
 
-app.post('/problem/:id/upload', app.multer.single('testdata'), async (req, res) => {
+app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -176,7 +176,7 @@ app.post('/problem/:id/upload', app.multer.single('testdata'), async (req, res) 
 
     await problem.save();
 
-    res.redirect(syzoj.utils.makeUrl(['problem', id, 'upload']));
+    res.redirect(syzoj.utils.makeUrl(['problem', id, 'data']));
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
@@ -185,7 +185,7 @@ app.post('/problem/:id/upload', app.multer.single('testdata'), async (req, res) 
   }
 });
 
-app.post('/submit/:id', async (req, res) => {
+app.post('/problem/:id/submit', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -228,7 +228,7 @@ app.post('/submit/:id', async (req, res) => {
     if (contest_id) {
       res.redirect(syzoj.utils.makeUrl(['contest', contest_id]));
     } else {
-      res.redirect(syzoj.utils.makeUrl(['judge_detail', judge_state.id]));
+      res.redirect(syzoj.utils.makeUrl(['submissions', judge_state.id]));
     }
   } catch (e) {
     syzoj.log(e);

@@ -22,7 +22,7 @@
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
 
-app.get('/judge_state', async (req, res) => {
+app.get('/submissions', async (req, res) => {
   try {
     let user = await User.fromName(req.query.submitter || '');
     let where = {};
@@ -35,7 +35,7 @@ app.get('/judge_state', async (req, res) => {
     await judge_state.forEachAsync(async obj => obj.hidden = !(await obj.isAllowedSeeResultBy(res.locals.user)));
     await judge_state.forEachAsync(async obj => obj.allowedSeeCode = await obj.isAllowedSeeCodeBy(res.locals.user));
 
-    res.render('judge_state', {
+    res.render('submissions', {
       judge_state: judge_state,
       paginate: paginate,
       form: {
@@ -51,7 +51,7 @@ app.get('/judge_state', async (req, res) => {
   }
 });
 
-app.get('/judge_state/:id/ajax', async (req, res) => {
+app.get('/submissions/:id/ajax', async (req, res) => {
   try {
     let judge_state = await JudgeState.fromID(req.params.id);
     if (!judge_state) throw 'No such judge state';
@@ -59,7 +59,7 @@ app.get('/judge_state/:id/ajax', async (req, res) => {
     judge_state.hidden = !(await judge_state.isAllowedSeeResultBy(res.locals.user));
     judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
 
-    res.render('judge_state_item', {
+    res.render('submissions_item', {
       judge: judge_state
     });
   } catch (e) {
@@ -70,7 +70,7 @@ app.get('/judge_state/:id/ajax', async (req, res) => {
   }
 });
 
-app.get('/judge_detail/:id', async (req, res) => {
+app.get('/submission/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
@@ -81,7 +81,7 @@ app.get('/judge_detail/:id', async (req, res) => {
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
 
-    res.render('judge_detail', {
+    res.render('submission', {
       judge: judge
     });
   } catch (e) {
@@ -92,7 +92,7 @@ app.get('/judge_detail/:id', async (req, res) => {
   }
 });
 
-app.get('/judge_detail/:id/ajax', async (req, res) => {
+app.get('/submission/:id/ajax', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
@@ -103,7 +103,7 @@ app.get('/judge_detail/:id/ajax', async (req, res) => {
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
 
-    res.render('judge_detail_item', {
+    res.render('submission_content', {
       judge: judge
     });
   } catch (e) {

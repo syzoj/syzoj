@@ -1,4 +1,4 @@
-<%= this.title = '排名 - ' + contest.title %>
+<% this.title = '排名 - ' + contest.title %>
 <% include header %>
 <style>
 .submit_time {
@@ -44,7 +44,7 @@
                 <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a><% if (item.user.nameplate) { %><%- item.user.nameplate %><% } %></td>
                 <% for (let problem of problems) { %>
                 <% if (item.player.score_details[problem.id]) { %>
-                <td><a href="<%= syzoj.utils.makeUrl(['judge_detail', item.player.score_details[problem.id].judge_id]) %>">
+                <td><a href="<%= syzoj.utils.makeUrl(['submission', item.player.score_details[problem.id].judge_id]) %>">
                 <span class="score score_<%= parseInt((item.player.score_details[problem.id].score / 10) || 0) %>">
                   <%= item.player.score_details[problem.id].score %>
                 </span>

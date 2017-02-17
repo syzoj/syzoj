@@ -122,10 +122,10 @@ $(function() {
 <% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div></div><% } %>
 <script>
 <% if (isPending(judge.status) && judge.allowedSeeResult) { %>
-function update_judge_detail() {
+function update_submission() {
   setTimeout(function () {
-    $.get('/judge_detail/<%= judge.id %>/ajax', function (data) {
-      var e = $('#judge_detail_item'), x = $($.parseHTML(data));
+    $.get('/submission/<%= judge.id %>/ajax', function (data) {
+      var e = $('#submission_content'), x = $($.parseHTML(data));
       if (e.find('td.status').text().trim() != x.find('td.status').text().trim()) {
         var a = e.find('#testcases_list > div');
         if (!a.length) {
@@ -139,13 +139,13 @@ function update_judge_detail() {
             if (!$(b[i]).attr('style')) $(a[i]).attr('style', '');
           }
 
-          if (!x.find('#stop_ajax').length) update_judge_detail();
+          if (!x.find('#stop_ajax').length) update_submission();
         }
       }
-      else if (!x.find('#stop_ajax').length) update_judge_detail();
+      else if (!x.find('#stop_ajax').length) update_submission();
     });
   }, 500);
 }
-update_judge_detail();
+update_submission();
 <% } %>
 </script>
