@@ -3,7 +3,7 @@
 <div class="padding">
   <div class="ui two column grid">
     <div class="twelve wide column">
-      <form action="<%= syzoj.utils.makeUrl(['judge_state']) %>" class="ui mini form" method="get" role="form">
+      <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form">
         <div class="inline field">
           <input name="submitter" placeholder="提交者" style="margin: 0px;" type="text" value="<%= form.submitter %>"> <input name="problem_id" placeholder="题目编号" type="text" value="<%= form.problem_id %>"> <button class="ui mini button" type="submit">搜索</button>
         </div>
@@ -11,7 +11,7 @@
     </div>
     <% if (user) { %>
     <div class="four wide column padding">
-      <a class="ui mini button right floated" href="<%= syzoj.utils.makeUrl(['judge_state'], { submitter: user.username }) %>">我的提交</a>
+      <a class="ui mini button right floated" href="<%= syzoj.utils.makeUrl(['submissions'], { submitter: user.username }) %>">我的提交</a>
     </div>
     <% } %>
   </div><br>
