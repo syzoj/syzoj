@@ -228,7 +228,7 @@ app.post('/problem/:id/submit', async (req, res) => {
     if (contest_id) {
       res.redirect(syzoj.utils.makeUrl(['contest', contest_id]));
     } else {
-      res.redirect(syzoj.utils.makeUrl(['submissions', judge_state.id]));
+      res.redirect(syzoj.utils.makeUrl(['submission', judge_state.id]));
     }
   } catch (e) {
     syzoj.log(e);

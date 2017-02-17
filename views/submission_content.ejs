@@ -154,7 +154,7 @@ $(function() {
 <script>
 <% if (isPending(judge.status) && judge.allowedSeeResult) { %>
 document.addEventListener('mousedown', function (event) {
-  var list = $('#judge_detail_item').find('div.auto_update_activation');
+  var list = $('#submission_content').find('div.auto_update_activation');
   for (var i = 0; i < list.length; ++i) {
     $(list[i]).removeClass('auto_update_activation');
   }

@@ -106,7 +106,7 @@ if (contest) {
           <%
           let formUrl;
           if (contest) formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest.id });
-          else formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit', problem.id]);
+          else formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit']);
           %>
           <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code">
             <input name="language" type="hidden" id="form">
