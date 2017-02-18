@@ -63,7 +63,12 @@ for (let s of judge.result.subtasks) {
      </tbody>
   </table>
   <% if (judge.allowedSeeCode) { %>
-    <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code id="code"><%- judge.code %></code></pre></div>
+    <div class="ui existing segment" style="position: relative; ">
+      <% if (judge.allowedRejudge) { %>
+        <a id="rejudge-button" href="<%= syzoj.utils.makeUrl(['submission', judge.id, 'rejudge']) %>" class="ui button" style="position: absolute; right: 10px; <% if (judge.pending) { %>display: none; <% } %>">重新评测</a>
+      <% } %>
+      <pre style="margin-top: 0; margin-bottom: 0; "><code id="code"><%- judge.code %></code></pre>
+    </div>
     <script>
       document.addEventListener('keydown', function (event) {
         if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
@@ -150,7 +155,7 @@ $(function() {
 });
 </script>
 
-<% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div></div><% } %>
+<% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div><div id="show_rejudge"></div></div><% } %>
 <script>
 <% if (isPending(judge.status) && judge.allowedSeeResult) { %>
 document.addEventListener('mousedown', function (event) {
@@ -163,6 +168,12 @@ function update_submission() {
   setTimeout(function () {
     $.get('/submission/<%= judge.id %>/ajax', function (data) {
       var e = $('#submission_content'), x = $($.parseHTML(data));
+      if (x.find('#show_rejudge').length) {
+        try {
+          document.getElementById('rejudge-button').style.display = '';
+        } catch (e) {}
+      }
+
       if (e.find('td.status').text().trim() != x.find('td.status').text().trim()) {
         var a = e.find('div.auto_update');
         if (!a.length) {

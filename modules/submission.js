@@ -32,6 +32,7 @@ app.get('/submissions', async (req, res) => {
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
 
+    await judge_state.forEachAsync(async obj => obj.loadRelationships());
     await judge_state.forEachAsync(async obj => obj.hidden = !(await obj.isAllowedSeeResultBy(res.locals.user)));
     await judge_state.forEachAsync(async obj => obj.allowedSeeCode = await obj.isAllowedSeeCodeBy(res.locals.user));
 
@@ -56,6 +57,8 @@ app.get('/submissions/:id/ajax', async (req, res) => {
     let judge_state = await JudgeState.fromID(req.params.id);
     if (!judge_state) throw 'No such judge state';
 
+    await judge_state.loadRelationships();
+
     judge_state.hidden = !(await judge_state.isAllowedSeeResultBy(res.locals.user));
     judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
 
@@ -75,11 +78,14 @@ app.get('/submission/:id', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
+    await judge.loadRelationships();
+
     judge.codeLength = judge.code.length;
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
+    judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
 
     res.render('submission', {
       judge: judge
@@ -97,15 +103,41 @@ app.get('/submission/:id/ajax', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
+    await judge.loadRelationships();
+
     judge.codeLength = judge.code.length;
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
+    judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
 
     res.render('submission_content', {
       judge: judge
     });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/submission/:id/rejudge', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let judge = await JudgeState.fromID(id);
+
+    if (judge.pending) throw 'Can\'t rejudge a pending submission';
+
+    await judge.loadRelationships();
+
+    let allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
+    if (!allowedRejudge) throw 'Permission denied';
+
+    await judge.rejudge();
+
+    res.redirect(syzoj.utils.makeUrl(['submission', id]));
   } catch (e) {
     syzoj.log(e);
     res.render('error', {

@@ -171,6 +171,40 @@ class JudgeState extends Model {
     }
   }
 
+  async rejudge() {
+    await this.loadRelationships();
+
+    let oldStatus = this.status;
+
+    this.status = 'Waiting';
+    this.score = 0;
+    this.total_time = 0;
+    this.max_memory = 0;
+    this.pending = true;
+    this.result = { status: "Waiting", total_time: 0, max_memory: 0, score: 0, case_num: 0, compiler_output: "", pending: true };
+    await this.save();
+
+    let WaitingJudge = syzoj.model('waiting_judge');
+    let waiting_judge = await WaitingJudge.create({
+      judge_id: this.id
+    });
+
+    await waiting_judge.save();
+
+    if (this.type === 0) {
+      if (oldStatus === 'Accepted') {
+        this.problem.ac_num--;
+        await this.user.refreshSubmitInfo();
+        await this.user.save();
+      }
+
+      await this.problem.save();
+    } else if (this.type === 1) {
+      let contest = await Contest.fromID(this.type_info);
+      await contest.newSubmission(this);
+    }
+  }
+
   getModel() { return model; }
 }
 
