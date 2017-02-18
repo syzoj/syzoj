@@ -248,6 +248,14 @@ class Problem extends Model {
     let key = syzoj.utils.md5(buf);
     await fs.rename(path, TestData.resolvePath(key));
 
+    if (this.testdata_id) {
+      let tmp = this.testdata_id;
+      this.testdata_id = null;
+      await this.save();
+      let file = await TestData.fromID(tmp);
+      await file.destroy();
+    }
+
     let file = await TestData.create({
       filename: `test_data_${this.id}.zip`,
       md5: key
