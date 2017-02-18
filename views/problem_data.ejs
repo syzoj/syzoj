@@ -134,5 +134,18 @@ function goDisable() {
   document.getElementById('file-io-input-name').disabled = true;
   document.getElementById('file-io-output-name').disabled = true;
 }
+
+$(document).ready(function () {
+  $('#file-io-input-name').on('input keyup change', function (e) {
+    var prob = $('#file-io-input-name').val();
+    if (prob.lastIndexOf('.') !== -1) prob = prob.substring(0, prob.lastIndexOf('.'));
+    $('#file-io-output-name').attr('placeholder', prob + '.out');
+  });
+  $('#file-io-output-name').focus(function (e) {
+    if (!$('#file-io-output-name').val()) {
+      $('#file-io-output-name').val($('#file-io-output-name').attr('placeholder'));
+    }
+  });
+});
 </script>
 <% include footer %>
