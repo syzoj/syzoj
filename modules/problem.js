@@ -84,6 +84,7 @@ app.get('/problem/:id/edit', async (req, res) => {
     let problem = await Problem.fromID(id);
 
     if (!problem) {
+      if (!res.locals.user) throw 'Permission denied.';
       problem = await Problem.create();
       problem.id = id;
       problem.allowedEdit = true;
