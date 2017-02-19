@@ -116,7 +116,7 @@ let subtaskType = {
           </div>
           <% } %>
           <div class="field">
-              <label for="testdata">更新测试数据</label>
+              <label for="testdata"><% if (!problem.testdata_id) { %>上传测试数据<% } else { %>更新测试数据<% } %></label>
               <input type="file" id="testdata" name="testdata">
           </div>
               <button type="submit" class="ui button">提交</button>
