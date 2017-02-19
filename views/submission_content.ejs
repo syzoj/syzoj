@@ -106,7 +106,7 @@ for (let s of judge.result.subtasks) {
     <% } %>
     <% for (let i = 0; i < subtask_cases.case_num; i++) { %>
     <% let testcase = subtask_cases[i]; %>
-    <div class="title<% if (testcase.pending) { %> testcase.pending<% } %> auto_update"<% if (testcase.pending) { %> style="cursor: auto; "<% } %>>
+    <div class="title<% if (testcase.pending) { %> pending<% } %> auto_update"<% if (testcase.pending) { %> style="cursor: auto; "<% } %>>
       <div class="ui grid">
         <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
         <div class="four wide column status status_detail <%= getStatusMeta(testcase.status).toLowerCase().split(' ').join('_') %>">
