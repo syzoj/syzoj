@@ -223,8 +223,8 @@ class Problem extends Model {
       is_public: false,
 
       file_io: false,
-      file_io_input_name: 'data.in',
-      file_io_output_name: 'data.out'
+      file_io_input_name: '',
+      file_io_output_name: ''
     }, val)));
   }
 
