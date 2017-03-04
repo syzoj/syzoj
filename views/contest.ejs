@@ -19,7 +19,7 @@
     <%= end %>
   </div>
   <% let timePercentage = Math.floor(Math.min(1, (syzoj.utils.getCurrentDate() - contest.start_time) / (contest.end_time - contest.start_time)) * 100); %>
-  <div id="timer-progress" class="ui indicating progress<% if (timePercentage == 100) { %> success<% } %>" data-percent="<%= timePercentage %>">
+  <div id="timer-progress" class="ui tiny indicating progress<% if (timePercentage == 100) { %> success<% } %>" data-percent="<%= timePercentage %>">
     <div class="bar" style="width: <%= timePercentage %>%;"></div>
   </div>
   <div class="ui grid">
