@@ -1,7 +1,27 @@
 <% this.title = contest.title + ' - 比赛' %>
+<style>
+.ui.label.pointing.below.left::before { left: 12%; }
+.ui.label.pointing.below.right::before { left: 88%; }
+.ui.label.pointing.below.left { margin-bottom: 0; }
+.ui.label.pointing.below.right { margin-bottom: 0; float: right; }
+</style>
 <% include header %>
 <div class="padding">
   <h1 style="margin-bottom: 30px; "><%= contest.title %></h1>
+  <% let start = syzoj.utils.formatDate(contest.start_time), end = syzoj.utils.formatDate(contest.end_time); %>
+  <% if (syzoj.utils.getCurrentDate() >= contest.start_time && syzoj.utils.getCurrentDate() < contest.end_time && start.split(' ')[0] === end.split(' ')[0]) {
+    start = start.split(' ')[1]; end = end.split(' ')[1];
+  } %>
+  <div class="ui pointing below left label">
+    <%= start %>
+  </div>
+  <div class="ui pointing below right label">
+    <%= end %>
+  </div>
+  <% let timePercentage = Math.floor(Math.min(1, (syzoj.utils.getCurrentDate() - contest.start_time) / (contest.end_time - contest.start_time)) * 100); %>
+  <div id="timer-progress" class="ui indicating progress<% if (timePercentage == 100) { %> success<% } %>" data-percent="<%= timePercentage %>">
+    <div class="bar" style="width: <%= timePercentage %>%;"></div>
+  </div>
   <div class="ui grid">
   <% if (contest.allowedEdit || !contest.running) { %>
     <div class="row">
@@ -66,4 +86,15 @@
     </div>
   </div>
 </div>
+
+<script>
+$(function () {
+  setInterval(function () {
+    $('#timer-progress').progress({
+      value: Date.now() / 1000 - <%= contest.start_time %>,
+      total: <%= contest.end_time - contest.start_time %>
+    });
+  }, 5000);
+});
+</script>
 <% include footer %>
