@@ -250,7 +250,8 @@ module.exports = {
     return await request({
       uri: 'http://api.hitokoto.us/rand',
       qs: {
-        encode: 'json'
+        encode: 'json',
+        cat: 'a'
       },
       json: true
     });
