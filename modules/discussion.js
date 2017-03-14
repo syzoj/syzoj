@@ -93,7 +93,7 @@ app.get('/article/:id/edit', async (req, res) => {
       article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
     }
 
-    res.render('edit_article', {
+    res.render('article_edit', {
       article: article
     });
   } catch (e) {
