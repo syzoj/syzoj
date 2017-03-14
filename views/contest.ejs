@@ -1,9 +1,26 @@
 <% this.title = contest.title + ' - 比赛' %>
+<style>
+.ui.label.pointing.below.left::before { left: 12%; }
+.ui.label.pointing.below.right::before { left: 88%; }
+.ui.label.pointing.below.left { margin-bottom: 0; }
+.ui.label.pointing.below.right { margin-bottom: 0; float: right; }
+</style>
 <% include header %>
 <div class="padding">
   <h1 style="margin-bottom: 30px; "><%= contest.title %></h1>
+  <% let unveiled = (contest.allowedEdit || syzoj.utils.getCurrentDate() >= contest.start_time); %>
+  <% let start = syzoj.utils.formatDate(contest.start_time), end = syzoj.utils.formatDate(contest.end_time); %>
+  <% if (contest.running && start.split(' ')[0] === end.split(' ')[0]) {
+    start = start.split(' ')[1]; end = end.split(' ')[1];
+  } %>
+  <div class="ui pointing below left label"><%= start %></div>
+  <div class="ui pointing below right label"><%= end %></div>
+  <% let timePercentage = Math.floor(Math.min(1, (syzoj.utils.getCurrentDate() - contest.start_time) / (contest.end_time - contest.start_time)) * 100); %>
+  <div id="timer-progress" class="ui tiny indicating progress<% if (timePercentage == 100) { %> success<% } %>" data-percent="<%= timePercentage %>">
+    <div class="bar" style="width: <%= timePercentage %>%;"></div>
+  </div>
   <div class="ui grid">
-  <% if (contest.allowedEdit || !contest.running) { %>
+  <% if (contest.allowedEdit || (unveiled && !contest.running)) { %>
     <div class="row">
       <div class="column">
         <div class="ui buttons">
@@ -23,6 +40,7 @@
         </div>
       </div>
     </div>
+  <% if (unveiled) { %>
     <div class="row">
       <div class="column">
          <table class="ui selectable celled table">
@@ -64,6 +82,18 @@
         </table>
       </div>
     </div>
+  <% } %>
   </div>
 </div>
+
+<script>
+$(function () {
+  setInterval(function () {
+    $('#timer-progress').progress({
+      value: Date.now() / 1000 - <%= contest.start_time %>,
+      total: <%= contest.end_time - contest.start_time %>
+    });
+  }, 5000);
+});
+</script>
 <% include footer %>
