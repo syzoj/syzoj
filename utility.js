@@ -194,7 +194,7 @@ module.exports = {
         if (numbers[0].includes(':')) {
           let tokens = numbers[0].split(':');
           res[s].type = tokens[0] || 'sum';
-          res[s].score = parseInt(tokens[1]) || (100 / (lines.length - 2));
+          res[s].score = parseFloat(tokens[1]) || (100 / (lines.length - 2));
           numbers.shift();
         } else {
           res[s].type = 'sum';
