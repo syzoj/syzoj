@@ -29,6 +29,10 @@ pre {
     tab-size: 4;
 }
 
+img {
+	max-width: 100%;
+}
+
 /* status color */
 
 /*
