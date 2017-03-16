@@ -71,36 +71,46 @@ if (contest) {
       <% } %>
     </div>
   </div>
+  <% if (problem.description) { %>
   <div class="row">
     <div class="column">
       <h4 class="ui top attached block header">题目描述</h4>
       <div class="ui bottom attached segment"><%- problem.description %></div>
     </div>
   </div>
+  <% } %>
+  <% if (problem.input_format) { %>
   <div class="row">
     <div class="column">
         <h4 class="ui top attached block header">输入格式</h4>
         <div class="ui bottom attached segment"><%- problem.input_format %></div>
     </div>
   </div>
+  <% } %>
+  <% if (problem.output_format) { %>
     <div class="row">
         <div class="column">
           <h4 class="ui top attached block header">输出格式</h4>
           <div class="ui bottom attached segment"><%- problem.output_format %></div>
         </div>
     </div>
+  <% } %>
+  <% if (problem.example) { %>
     <div class="row">
         <div class="column">
           <h4 class="ui top attached block header">样例</h4>
           <div class="ui bottom attached segment"><%- problem.example %></div>
         </div>
     </div>
+  <% } %>
+  <% if (problem.limit_and_hint) { %>
     <div class="row">
         <div class="column">
           <h4 class="ui top attached block header">数据范围与提示</h4>
           <div class="ui bottom attached segment"><%- problem.limit_and_hint %></div>
         </div>
     </div>
+  <% } %>
     <div class="row">
         <div class="column">
           <%
