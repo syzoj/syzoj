@@ -135,6 +135,11 @@ class Contest extends Model {
     return now >= this.start_time && now < this.end_time;
   }
 
+  async isEnded(now) {
+    if (!now) now = syzoj.utils.getCurrentDate();
+    return now >= this.end_time;
+  }
+
   getModel() { return model; }
 }
 

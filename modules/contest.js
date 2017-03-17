@@ -250,7 +250,9 @@ app.get('/contest/:id/:pid', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-    if (!await contest.isRunning()) throw 'The contest has ended or not started.'
+
+    contest.ended = await contest.isEnded();
+    if (!(await contest.isRunning() || contest.ended)) throw 'The contest has not started.'
 
     let problems_id = await contest.getProblems();
 
