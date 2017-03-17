@@ -1,0 +1,41 @@
+<% this.title = '提交记录 - ' + contest.title %>
+<% include header %>
+<div class="padding">
+  <div class="ui two column grid">
+    <div class="twelve wide column">
+      <form action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions']) %>" class="ui mini form" method="get" role="form">
+        <div class="inline field">
+          <input name="submitter" placeholder="提交者" style="margin: 0px;" type="text" value="<%= form.submitter %>"> <input name="problem_id" placeholder="题目编号" type="text" value="<%= form.problem_id %>"> <button class="ui mini button" type="submit">搜索</button>
+        </div>
+      </form>
+    </div>
+    <% if (user) { %>
+    <div class="four wide column padding">
+      <a class="ui mini button right floated" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions'], { submitter: user.username }) %>">我的提交</a>
+    </div>
+    <% } %>
+  </div><br>
+  <table class="ui very basic center aligned table" style="white-space: nowrap; ">
+    <thead>
+      <tr>
+        <th>编号</th>
+        <th>题目</th>
+        <th>状态</th>
+        <th>分数</th>
+        <th>总时间</th>
+        <th>内存</th>
+        <th>代码</th>
+        <th>提交者</th>
+        <th>提交时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let judge of judge_state) { %>
+        <tr id="submissions_<%= judge.id %>"><% include submissions_item %></tr>
+      <% } %>
+    </tbody>
+  </table>
+  <br>
+  <% include page %>
+</div>
+<% include footer %>

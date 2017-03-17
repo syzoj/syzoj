@@ -24,10 +24,11 @@
     <div class="row">
       <div class="column">
         <div class="ui buttons">
-          <a class="ui small positive button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'ranklist']) %>">排行榜</a>
-    <% if (contest.allowedEdit) { %>
-          <a class="ui small button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>">编辑比赛</a>
-    <% } %>
+          <a class="ui small blue button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'ranklist']) %>">排行榜</a>
+          <a class="ui small positive button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions']) %>">提交记录</a>
+          <% if (contest.allowedEdit) { %>
+            <a class="ui small button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>">编辑比赛</a>
+          <% } %>
         </div>
       </div>
     </div>

@@ -22,6 +22,12 @@ for (let s of judge.result.subtasks) {
 }
 %>
 
+<%
+let problemUrl;
+if (typeof contest !== 'undefined') problemUrl = syzoj.utils.makeUrl(['contest', contest.id, judge.problem_id]);
+else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
+%>
+
 <div class="padding">
   <table class="ui very basic center aligned table" id="status_table">
     <thead>
@@ -40,7 +46,7 @@ for (let s of judge.result.subtasks) {
      <tbody>
        <tr>
         <td>#<%= judge.id %></td>
-        <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+        <td><a href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
         <% if (judge.allowedSeeResult) { %>
           <td class="status <%= getStatusMeta(judge.result.status).toLowerCase().split(' ').join('_') %>">
           <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>

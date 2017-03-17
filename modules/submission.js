@@ -21,6 +21,7 @@
 
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
+let Contest = syzoj.model('contest');
 
 app.get('/submissions', async (req, res) => {
   try {
@@ -28,6 +29,7 @@ app.get('/submissions', async (req, res) => {
     let where = {};
     if (user) where.user_id = user.id;
     if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id);
+    where.type = { $ne: 1 };
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
@@ -78,6 +80,9 @@ app.get('/submission/:id', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
+    let contest;
+    if (judge.type === 1) contest = await Contest.fromID(judge.type_info);
+
     await judge.loadRelationships();
 
     judge.codeLength = judge.code.length;
@@ -87,7 +92,14 @@ app.get('/submission/:id', async (req, res) => {
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
 
+    if (contest) {
+      let problems_id = await contest.getProblems();
+      judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
+      judge.problem.title = syzoj.utils.removeTitleTag(judge.problem.title);
+    }
+
     res.render('submission', {
+      contest: contest,
       judge: judge
     });
   } catch (e) {
@@ -103,6 +115,9 @@ app.get('/submission/:id/ajax', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
+    let contest;
+    if (judge.type === 1) contest = await Contest.fromID(judge.type_info);
+
     await judge.loadRelationships();
 
     judge.codeLength = judge.code.length;
@@ -112,7 +127,14 @@ app.get('/submission/:id/ajax', async (req, res) => {
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
 
+    if (contest) {
+      let problems_id = await contest.getProblems();
+      judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
+      judge.problem.title = syzoj.utils.removeTitleTag(judge.problem.title);
+    }
+
     res.render('submission_content', {
+      contest: contest,
       judge: judge
     });
   } catch (e) {

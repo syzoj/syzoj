@@ -1,6 +1,11 @@
 <% include util %>
+<%
+let problemUrl;
+if (typeof contest !== 'undefined' && contest) problemUrl = syzoj.utils.makeUrl(['contest', contest.id, judge.problem_id]);
+else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
+%>
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">#<%= judge.id %></a></td>
-<td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+<td><a href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
 <% if (!judge.hidden) { %>
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">
     <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
@@ -25,7 +30,12 @@
 <script>
 function update_judge_<%= judge.id %>() {
   setTimeout(function () {
-    $.get('/submissions/<%= judge.id %>/ajax', function (data) {
+<%
+let url;
+if (typeof contest !== 'undefined' && contest) url = syzoj.utils.makeUrl(['contest', contest.id, 'submissions', judge.id, 'ajax']);
+else url = syzoj.utils.makeUrl(['submissions', judge.id, 'ajax']);
+%>
+    $.get('<%= url %>', function (data) {
       var e = $('#submissions_<%= judge.id %>');
       if (e.html() != data) e.html(data);
       else update_judge_<%= judge.id %>();

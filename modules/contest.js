@@ -202,6 +202,50 @@ app.get('/contest/:id/ranklist', async (req, res) => {
   }
 });
 
+app.get('/contest/:id/submissions', async (req, res) => {
+  try {
+    let contest_id = parseInt(req.params.id);
+    let contest = await Contest.fromID(contest_id);
+
+    if (!contest) throw 'No such contest.';
+
+    let problems_id = await contest.getProblems();
+
+    let user = await User.fromName(req.query.submitter || '');
+    let where = {};
+    if (user) where.user_id = user.id;
+    if (req.query.problem_id) where.problem_id = problems_id[parseInt(req.query.problem_id) - 1];
+    where.type = 1;
+    where.type_info = contest_id;
+
+    let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
+    let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
+
+    await judge_state.forEachAsync(async obj => obj.hidden = !(await obj.isAllowedSeeResultBy(res.locals.user)));
+    await judge_state.forEachAsync(async obj => obj.allowedSeeCode = await obj.isAllowedSeeCodeBy(res.locals.user));
+    await judge_state.forEachAsync(async obj => {
+      await obj.loadRelationships();
+      obj.problem_id = problems_id.indexOf(obj.problem_id) + 1;
+      obj.problem.title = syzoj.utils.removeTitleTag(obj.problem.title);
+    });
+
+    res.render('contest_submissions', {
+      contest: contest,
+      judge_state: judge_state,
+      paginate: paginate,
+      form: {
+        submitter: req.query.submitter || '',
+        problem_id: req.query.problem_id || ''
+      }
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
 app.get('/contest/:id/:pid', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
@@ -221,6 +265,7 @@ app.get('/contest/:id/:pid', async (req, res) => {
     let state = await problem.getJudgeState(res.locals.user, false);
 
     res.render('problem', {
+      pid: pid,
       contest: contest,
       problem: problem,
       state: state

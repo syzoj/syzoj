@@ -47,7 +47,8 @@ if (contest) {
       <div class="ui buttons">
         <a class="small ui primary button" href="#submit_code">提交</a>
         <% if (contest) { %>
-          <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui positive button">返回比赛</a>
+          <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions'], { problem_id: pid }) %>">提交记录</a>
+          <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui orange button">返回比赛</a>
         <% } else { %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', 'fastest']) %>">统计</a>
