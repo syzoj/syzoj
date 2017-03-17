@@ -28,7 +28,8 @@ app.get('/submissions', async (req, res) => {
     let user = await User.fromName(req.query.submitter || '');
     let where = {};
     if (user) where.user_id = user.id;
-    if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id);
+    else if (req.query.submitter) where.user_id = -1;
+    if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id) || -1;
     where.type = { $ne: 1 };
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
