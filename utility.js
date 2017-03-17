@@ -96,12 +96,14 @@ module.exports = {
     return m.format(format || 'L H:mm:ss');
   },
   formatTime(x) {
+    let sgn = x < 0 ? '?' : '';
+    x = Math.abs(x);
     function toStringWithPad(x) {
       x = parseInt(x);
       if (x < 10) return '0' + x.toString();
       else return x.toString();
     }
-    return util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
+    return sgn + util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
   },
   formatSize(x) {
     let res = filesize(x, { fixed: 1 }).calculate();
