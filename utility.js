@@ -257,5 +257,8 @@ module.exports = {
       },
       json: true
     });
+  },
+  isValidUsername(s) {
+    return /^[a-zA-Z0-9\-\_]+$/.test(s);
   }
 };

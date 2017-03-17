@@ -142,11 +142,18 @@ app.post('/user/:id/edit', async (req, res) => {
       user.password = req.body.new_password;
     }
 
+    if (res.locals.user.is_admin) {
+      if (!syzoj.utils.isValidUsername(req.body.username)) throw 'Invalid username.';
+      user.username = req.body.username;
+    }
+
     user.email = req.body.email;
     user.information = req.body.information;
     user.sex = req.body.sex;
 
     await user.save();
+
+    if (user.id === res.locals.user.id) res.locals.user = user;
 
     res.render('user_edit', {
       edited_user: user,

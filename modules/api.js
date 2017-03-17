@@ -55,7 +55,7 @@ app.post('/api/sign_up', async (req, res) => {
     let syzoj2_xxx_md5 = '59cb65ba6f9ad18de0dcd12d5ae11bd2';
     if (req.body.password === syzoj2_xxx_md5) throw 2007;
     if (!(req.body.email = req.body.email.trim())) throw 2006;
-    if (!/^[a-zA-Z0-9\-\_]+$/.test(req.body.username)) throw 2002;
+    if (!syzoj.utils.isValidUsername(req.body.username)) throw 2002;
 
     user = await User.create({
       username: req.body.username,
