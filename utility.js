@@ -96,7 +96,7 @@ module.exports = {
     return m.format(format || 'L H:mm:ss');
   },
   formatTime(x) {
-    let sgn = x < 0 ? '?' : '';
+    let sgn = x < 0 ? '-' : '';
     x = Math.abs(x);
     function toStringWithPad(x) {
       x = parseInt(x);
