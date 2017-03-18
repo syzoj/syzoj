@@ -248,15 +248,20 @@ module.exports = {
     return md5.digest('hex');
   },
   async hitokoto() {
-    let request = require('request-promise');
-    return await request({
-      uri: 'http://api.hitokoto.us/rand',
-      qs: {
-        encode: 'json',
-        cat: 'a'
-      },
-      json: true
-    });
+    try {
+      let request = require('request-promise');
+      return await request({
+        uri: 'http://api.hitokoto.us/rand',
+        timeout: 1500,
+        qs: {
+          encode: 'json',
+          cat: 'a'
+        },
+        json: true
+      });
+    } catch (e) {
+      return null;
+    }
   },
   isValidUsername(s) {
     return /^[a-zA-Z0-9\-\_]+$/.test(s);
