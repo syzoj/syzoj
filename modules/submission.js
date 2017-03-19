@@ -88,7 +88,6 @@ app.get('/submission/:id', async (req, res) => {
 
     judge.codeLength = judge.code.length;
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
-    if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
@@ -123,7 +122,6 @@ app.get('/submission/:id/ajax', async (req, res) => {
 
     judge.codeLength = judge.code.length;
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
-    if (judge.result.compiler_output) judge.result.compiler_output = syzoj.utils.ansiToHTML(judge.result.compiler_output);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);

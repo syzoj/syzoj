@@ -90,7 +90,10 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
   <% } %>
 <% if (judge.result.compiler_output && judge.result.status === 'Compile Error' && judge.allowedSeeCode) { %>
   <h3 class="ui header">编译信息</h3>
-  <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- judge.result.compiler_output %></code></pre></div>
+  <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.compiler_output) %></code></pre></div>
+<% } else if (judge.result.spj_compiler_output) { %>
+  <h3 class="ui header">Special Judge 编译信息</h3>
+  <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.spj_compiler_output) %></code></pre></div>
 <% } else if (judge.allowedSeeResult) { %>
 <div class="ui styled fluid accordion" id="subtasks_list">
   <% let subtask_count = 0; %>
