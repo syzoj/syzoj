@@ -1,48 +1,70 @@
 <% this.title = '帮助' %>
 <% include header %>
 <div class="padding">
-  <h1 class="ui center aligned header">帮助</h1>
-  <div>
-    <h2 class="ui header">评测</h2>
-    <p>
-      C++ 使用 <code>g++</code> 编译，命令为 &nbsp;<code>g++ source_file.cpp -o exec_file -O2 -lm -DONLINE_JUDGE</code>；
-      <br> C 使用 <code>gcc</code> 编译，命令为 &nbsp;<code>gcc source_file.c -o exec_file -O2 -lm -DONLINE_JUDGE</code>；
-      <br> Pascal 使用 <code>fpc</code> 编译，命令为 &nbsp;<code>fpc source_file.pas -O2</code>。
-      <br>
-    </p>
-    <p>请根据题目中的说明选择使用<strong>标准输入输出</strong>或<strong>文件输入输出</strong>。</p>
-
-    <h2 class="ui header">个人资料<br></h2>
-    <p>本站不提供头像存储服务，而是使用 Gravatar 进行头像显示。请使用邮箱注册 <a href="https://zh-cn.wordpress.com/">WordPress.com</a>，登录 <a href="https://cn.gravatar.com/">Gravatar</a> 并上传头像。同样使用 Gravatar 的 OJ 有 Vijos、COGS、UOJ 等。</p>
-    <p>个性签名可以使用 Markdown 与 HTML，请不要在其中添加恶意代码。</p>
-    <h2 class="ui header">添加题目</h2>
+    <h1 class="ui center aligned header">帮助</h1>
     <div>
-      <p>在<a href="/problem/0/edit">添加题目页面</a>填写题面，题目内容使用 Markdown 与 TeX 公式。</p>
-      <p>在添加好的题目页面选择「上传测试数据」，可以调整时间和内存限制。数据包是一个 <code>zip</code> 压缩包：</p>
-      <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>xxx.zip
-  <span class="hljs-string">|</span>
-  <span class="hljs-string">|--data_rule.txt</span>
-  <span class="hljs-string">|--input1.in</span>
-  <span class="hljs-string">|--output1.out</span>
-  <span class="hljs-string">|--input2.in</span>
-  <span class="hljs-string">|--output2.out</span>
-  <span class="hljs-string">|--......</span>
+        <h2 class="ui header">评测</h2>
+        <p>
+            C++ 使用 <code>g++</code> 编译，命令为 &nbsp;<code>g++ source_file.cpp -o exec_file -O2 -lm -DONLINE_JUDGE</code>；
+            <br> C 使用 <code>gcc</code> 编译，命令为 &nbsp;<code>gcc source_file.c -o exec_file -O2 -lm -DONLINE_JUDGE</code>；
+            <br> Pascal 使用 <code>fpc</code> 编译，命令为 &nbsp;<code>fpc source_file.pas -O2</code>。
+            <br> C# 与 Visual Basic 使用 Mono 平台的编译器与运行环境。
+            <br>
+        </p>
+        <p>请根据题目中的说明选择使用<strong>标准输入输出</strong>或<strong>文件输入输出</strong>。</p>
+
+        <h2 class="ui header">个人资料<br></h2>
+        <p>本站不提供头像存储服务，而是使用 Gravatar 进行头像显示。请使用邮箱注册 <a href="https://zh-cn.wordpress.com/">WordPress.com</a>，登录 <a href="https://cn.gravatar.com/">Gravatar</a> 并上传头像。同样使用 Gravatar 的 OJ 有 Vijos、COGS、UOJ 等。</p>
+        <p>个性签名可以使用 Markdown 与 HTML，请不要在其中添加恶意代码。</p>
+        <h2 class="ui header">添加题目</h2>
+        <h3 class="ui header">题面</h3>
+        <div>
+            <p>在<a href="/problem/0/edit">添加题目页面</a>填写题面，题目内容使用 Markdown 与 TeX 公式。</p>
+            <h3 class="ui header">测试数据</h3>
+            <p>在添加好的题目页面选择「上传测试数据」，可以调整时间和内存限制。数据包是一个 <code>zip</code> 压缩包：</p>
+            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>xxx.zip
+<span class="hljs-string">|</span>
+<span class="hljs-string">|--data_rule.txt</span>
+<span class="hljs-string">|--input1.in</span>
+<span class="hljs-string">|--output1.out</span>
+<span class="hljs-string">|--input2.in</span>
+<span class="hljs-string">|--output2.out</span>
+<span class="hljs-string">|--......</span>
 </code></pre>
-      </div>
-      <p>其中&nbsp;<code>data_rule.txt</code>&nbsp;格式类似这样三行：</p>
-      <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code><span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span> <span class="hljs-number">7</span> <span class="hljs-number">8</span> <span class="hljs-number">9</span> <span class="hljs-number">10</span>
+            </div>
+            <p>其中&nbsp;<code>data_rule.txt</code>&nbsp;格式类似这样三行：</p>
+            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>1 2 3 4 5 6 7 8 9 10
 input#.in
 output#.out
 </code></pre>
-      </div>
-      <ol>
-        <li>第一行表示有哪些测试点，用空格分开；</li>
-        <li>第二行表示输入文件名字，其中&nbsp;<code>#</code>&nbsp;会被替换成相应的测试点编号；</li>
-        <li>第三行表示输出文件名字，其中&nbsp;<code>#</code>&nbsp;会被替换成相应的测试点编号。</li>
-      </ol>
-      <p>注意：<span><code>zip</code> 包内<strong>没有</strong>一层文件夹，直接是上述文件。</span>
-      </p>
+            </div>
+            <ul>
+                <li>第一行表示有哪些测试点，用空格分开；</li>
+                <li>第二行表示输入文件名字，其中&nbsp;<code>#</code>&nbsp;会被替换成相应的测试点编号；</li>
+                <li>第三行表示输出文件名字，其中&nbsp;<code>#</code>&nbsp;会被替换成相应的测试点编号。</li>
+            </ul>
+            <p>如果需要配置<strong>子任务</strong>，则需要改为以下格式：</p>
+            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>sum:30  1 2 3
+min:20  4 5 6
+mul:50  7 8 9 10
+
+input#.in
+output#.out
+</code></pre></div>
+            原有的第一行改为若干行（空白行将被忽略），每行表示一个子任务，冒号前面为评分方式，后面为该子任务的总分数，之后若干个整数表示测试点编号。支持的评分方式有：
+            <ul>
+                <li><code>sum</code>：测试点分数按百分比相加；</li>
+                <li><code>mul</code>：测试点分数按百分比相乘；</li>
+                <li><code>min</code>：取各测试点最低分；</li>
+            </ul>
+            <p>注意：<span><code>zip</code> 包内<strong>没有</strong>一层文件夹，直接是上述文件。</span>
+            </p>
+            <p>如果没有 <code>data_rule.txt</code>，则评测系统会自动将 <code>.in</code> 文件与同名的 <code>.out</code> 或 <code>.ans</code> 匹配。</p>
+            <h3 class="ui header">Special Judge</h3>
+            <p>如果需要使用 Special Judge 评分，请在数据包中添加 <code>spj_LANG.xxx</code>，其中 <code>xxx</code> 为任意后缀名，<code>LANG</code> 为所用语言的简称，可为 <code>c</code>、<code>cpp</code>、<code>cpp11</code>、<code>csharp</code>、<code>haskell</code>、<code>java</code>、<code>lua</code>、<code>nodejs</code>、<code>pascal</code>、<code>python2</code>、<code>python3</code>、<code>ruby</code>、<code>vala</code>、<code>vbnet</code>。</p>
+            <p>Special Judge 程序运行时，其目录下会有四个文件 <code>input</code>、<code>user_out</code>、<code>answer</code>、<code>code</code>，分别对应该测试点的输入文件、用户输出、该测试点的输出文件、用户的代码。</p>
+            <p>Special Judge 程序运行完成后，应将该测试点的得分输出到<strong>标准输出</strong>（<code>stdout</code>）中（范围为 0 到 100，将自动折合为测试点分数），并将提供给用户的额外信息输出到<strong>标准错误输出</strong>（<code>stderr</code>）中。</p>
+        </div>
     </div>
-  </div>
 </div>
 <% include footer %>
