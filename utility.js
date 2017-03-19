@@ -217,7 +217,7 @@ module.exports = {
       res = res.filter(x => x.cases && x.cases.length !== 0);
     }
 
-    res.spj = list.includes('spj.js');
+    res.spj = list.includes('spj.js') || list.some(s => s.startsWith('spj_'));
     return res;
   },
   ansiToHTML(s) {
