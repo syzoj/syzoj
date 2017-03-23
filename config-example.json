@@ -46,7 +46,7 @@
     "csharp": {
       "show": "C#",
       "highlight": "csharp",
-      "version": "MCS 4.6.2.0, Mono 4.6.2",
+      "version": "MCS 4.8.0.0, Mono 4.8.0",
       "editor": "csharp"
     },
     "c": {
@@ -58,7 +58,7 @@
     "vala": {
       "show": "Vala",
       "highlight": "vala",
-      "version": "Vala 0.34.4, GCC 5.4.0",
+      "version": "Vala 0.30.1, GCC 5.4.0",
       "editor": "vala"
     },
     "java": {
@@ -94,7 +94,7 @@
     "nodejs": {
       "show": "Node.js",
       "highlight": "js",
-      "version": "7.2.1",
+      "version": "7.7.3",
       "editor": "javascript"
     },
     "ruby": {
@@ -112,7 +112,7 @@
     "vbnet": {
       "show": "Visual Basic",
       "highlight": "vbnet",
-      "version": "VBNC 0.0.0.5943, Mono 4.6.2",
+      "version": "VBNC 0.0.0.5943, Mono 4.8.0",
       "editor": "vbscript"
     }
   },
