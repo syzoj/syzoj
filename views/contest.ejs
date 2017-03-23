@@ -66,6 +66,7 @@
                   <i class="black checkmark icon"></i>
                   <% } else if (problem.status !== false) { %>
                     <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
+                      <i class="<%= icon[getStatusMeta(problem.status)] || 'remove' %> icon"></i>
                       <%= problem.status %>
                     </span>
                   <% } %>

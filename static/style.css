@@ -33,6 +33,11 @@ img {
 	max-width: 100%;
 }
 
+table.center.aligned ul, table.center.aligned ol {
+	display: inline-block;
+	text-align: left;
+}
+
 /* status color */
 
 /*
@@ -179,8 +184,7 @@ img {
   }
 }
 
-.spinner.icon {
+.spinner.icon:before {
   animation: spinner-icon-rotate 3s linear infinite;
-  width: 16.52px;
-  height: 16.52px;
+  display: block;
 }
