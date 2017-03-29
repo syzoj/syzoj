@@ -250,7 +250,7 @@ module.exports = {
   async hitokoto() {
     try {
       let request = require('request-promise');
-      return await request({
+      let res = await request({
         uri: 'http://api.hitokoto.us/rand',
         timeout: 1500,
         qs: {
@@ -259,6 +259,8 @@ module.exports = {
         },
         json: true
       });
+      if (!res.hitokoto) return null;
+      else return res;
     } catch (e) {
       return null;
     }
