@@ -40,9 +40,11 @@
   </div>
   <% } %>
   <br>
-  <% include page %>
+  <div style="margin-bottom: 50px; ">
+    <% include page %>
+  </div>
    <% if (article.allowedComment) { %>
-   <form style="margin-top: 50px" class="ui reply form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>">
+   <form class="ui reply form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>">
       <div class="field">
         <textarea name="comment"></textarea>
       </div>
