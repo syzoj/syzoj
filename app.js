@@ -74,7 +74,8 @@ global.syzoj = {
     });
     global.Promise = Sequelize.Promise;
     this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];
-    this.db.sync();
+
+    this.loadModels();
   },
   loadModules() {
     fs.readdir('./modules/', (err, files) => {
@@ -86,9 +87,20 @@ global.syzoj = {
            .forEach((file) => this.modules.push(require(`./modules/${file}`)));
     });
   },
+  loadModels() {
+    fs.readdir('./models/', (err, files) => {
+      if (err) {
+        this.log(err);
+        return;
+      }
+      files.filter((file) => file.endsWith('.js'))
+           .forEach((file) => require(`./models/${file}`));
+
+      this.db.sync();
+    });
+  },
   model(name) {
-    if (this.models[name] !== undefined) return this.models[name];
-    else return this.models[name] = require(`./models/${name}`);
+    return require(`./models/${name}`);
   },
   loadHooks() {
     let Session = require('express-session');

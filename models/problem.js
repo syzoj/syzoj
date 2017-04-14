@@ -353,6 +353,24 @@ class Problem extends Model {
     return statistics;
   }
 
+  async getTags() {
+    let ProblemTagMap = syzoj.model('problem_tag_map');
+    let maps = await ProblemTagMap.query(null, {
+      problem_id: this.id
+    });
+
+    let ProblemTag = syzoj.model('problem_tag');
+    let res = await maps.mapAsync(async map => {
+      return ProblemTag.fromID(map.tag_id);
+    });
+
+    res.sort((a, b) => {
+      return a.name > b.name ? 1 : -1;
+    });
+
+    return res;
+  }
+
   getModel() { return model; }
 }
 

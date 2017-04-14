@@ -84,24 +84,41 @@ class Model {
   }
 
   static async count(where) {
+    // count(sql)
+    if (typeof where === 'string') {
+      let sql = where;
+      return syzoj.db.countQuery(sql);
+    }
+
+    // count(where)
     return this.model.count({ where: where });
   }
 
   static async query(paginate, where, order) {
-    if (paginate && !Array.isArray(paginate) && !paginate.pageCnt) return [];
+    let records = [];
 
-    let options = {
-      where: where,
-      order: order
-    };
-    if (Array.isArray(paginate)) {
-      options.offset = paginate[0] - 1;
-      options.limit = paginate[1] - paginate[0] + 1;
-    } else if (paginate) {
-      options.offset = (paginate.currPage - 1) * paginate.perPage;
-      options.limit = paginate.perPage;
+    if (typeof paginate === 'string') {
+      // query(sql)
+      let sql = paginate;
+      records = await syzoj.db.query(sql, { model: this.model });
+    } else {
+      if (paginate && !Array.isArray(paginate) && !paginate.pageCnt) return [];
+
+      let options = {
+        where: where,
+        order: order
+      };
+      if (Array.isArray(paginate)) {
+        options.offset = paginate[0] - 1;
+        options.limit = paginate[1] - paginate[0] + 1;
+      } else if (paginate) {
+        options.offset = (paginate.currPage - 1) * paginate.perPage;
+        options.limit = paginate.perPage;
+      }
+
+      records = await this.model.findAll(options);
     }
-    let records = await this.model.findAll(options);
+
     return records.mapAsync(record => (this.fromRecord(record)));
   }
 }

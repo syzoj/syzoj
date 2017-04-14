@@ -117,6 +117,31 @@ if (contest) {
         </div>
     </div>
   <% } %>
+  <% if (problem.tags && problem.tags.length) { %>
+    <div class="row">
+      <div class="column">
+        <h4 class="ui block header" id="show_tag_title_div" style="margin-bottom: 0; margin-left: -1px; margin-right: -1px; "><a href="#" id="show_tag_button" style="color: #000; ">显示分类标签</a></h4>
+        <div class="ui bottom attached segment" style="display: none; " id="show_tag_div">
+          <% for (let tag of problem.tags) { %>
+            <a href="<%= syzoj.utils.makeUrl(['problems', 'tag', tag.id]) %>" class="ui medium <%= tag.color %> label">
+              <%= tag.name %>
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <script>
+    $(function () {
+      $('#show_tag_button').click(function (e) {
+        e.preventDefault();
+        $('#show_tag_title_div').addClass('top');
+        $('#show_tag_title_div').addClass('top attached');
+        $('#show_tag_title_div').text('分类标签');
+        $('#show_tag_div').css('display', '');
+      })
+    });
+    </script>
+  <% } %>
     <% let noSubmit = false; %>
     <%
     if (typeof contest !== 'undefined' && contest && contest.ended) {

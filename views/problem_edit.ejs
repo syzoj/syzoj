@@ -1,8 +1,4 @@
-<% if (problem.id) {
-    this.title = '修改题目';
-} else {
-    this.title = '添加题目';
-} %>
+<% this.title = '编辑题目'; %>
 <% include header %>
 <style type="text/css">
   .problem_header{
@@ -19,16 +15,22 @@
         <div class="field">
           <label for="title">题目名称</label>
           <input type="text" id="title" name="title" value="<%= problem.title %>">
-          <label for="description">题目描述</label>
+          <label style="margin-top: 15px; " for="description">题目描述</label>
           <textarea rows="15" id="description" name="description"><%= problem.description %></textarea>
-          <label for="input_format">输入格式</label>
+          <label style="margin-top: 15px; " for="input_format">输入格式</label>
           <textarea rows="3" id="input" name="input_format"><%= problem.input_format %></textarea>
-          <label for="output_format">输出格式</label>
+          <label style="margin-top: 15px; " for="output_format">输出格式</label>
           <textarea rows="3" id="output" name="output_format"><%= problem.output_format %></textarea>
-          <label>样例</label>
+          <label style="margin-top: 15px; ">样例</label>
           <textarea rows="15" id="example" name="example"><%= problem.example %></textarea>
-          <label>数据范围与提示</label>
+          <label style="margin-top: 15px; ">数据范围与提示</label>
           <textarea rows="10" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
+          <label style="margin-top: 15px; ">标签</label>
+          <select class="ui fluid search dropdown" multiple="" id="search_tags" name="tags">
+            <% for (let tag of problem.tags) { %>
+              <option value="<%= tag.id %>" selected><%= tag.name %></option>
+            <% } %>
+          </select>
         </div>
       </div>
       <div class="ui bottom attached tab segment" data-tab="preview" id="preview">
@@ -67,6 +69,25 @@ $(function () {
       render($("#pv-hint"), $("#hint"));
     });
     $('.tabular.menu .item').tab();
+});
+</script>
+<script>
+$(function () {
+  $('#search_tags')
+    .dropdown({
+      debug: true,
+      apiSettings: {
+        url: '/api/v2/search/tags/{query}',
+        onResponse: function (response) {
+          var a = $('#search_tags').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(x => !a.includes(parseInt(x.value)));
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
 });
 </script>
 <% include footer %>

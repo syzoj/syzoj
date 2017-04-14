@@ -1,15 +1,72 @@
 <% this.title = '题库' %>
 <% include header %>
+<%
+let tagIDs = [];
+if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
+%>
+<script src="//cdn.bootcss.com/js-cookie/2.1.4/js.cookie.min.js"></script>
 <div class="padding">
-  <% if (user) { %>
-    <div class="ui grid">
-      <div class="row">
-        <div class="column">
-          <a href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>" class="ui mini right floated button">添加题目</a>
+  <div class="ui grid">
+    <div class="row">
+      <div class="eight wide column">
+        <% if (typeof tags !== 'undefined') { %>
+          <%
+          tags.sort((a, b) => {
+            return a.name > b.name ? 1 : -1;
+          });
+          %>
+          <% for (let tag of tags) { %>
+              <% let tagListRemovedThisTag = tagIDs.filter(x => x != tag.id).sort().join(','); %>
+              <% let url = tagListRemovedThisTag ? syzoj.utils.makeUrl(['problems', 'tag', tagListRemovedThisTag]) : syzoj.utils.makeUrl(['problems']); %>
+              <a href="<%= url %>" class="ui tiny <%= tag.color %> label">
+                <%= tag.name %>
+              </a>
+          <% } %>
+        <% } %>
+      </div>
+      <div class="eight wide right aligned column">
+        <div class="ui toggle checkbox" id="show_tag">
+          <style id="show_tag_style"></style>
+          <script>
+          if (Cookies.get('show_tag') === '1') {
+            document.write('<input type="checkbox" checked>');
+            document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { visibility: visible; }';
+          } else {
+            document.write('<input type="checkbox">');
+            document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { visibility: hidden; }';
+          }
+          </script>
+
+          <script>
+          $(function () {
+            $('#show_tag').checkbox('setting', 'onChange', function () {
+              let checked = $('#show_tag').checkbox('is checked');
+              Cookies.set('show_tag', checked ? '1' : '0');
+              if (checked) {
+                document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { visibility: visible; }';
+              } else {
+                document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { visibility: hidden; }';
+              }
+            });
+          });
+          </script>
+          <label>显示分类标签</label>
+        </div>
+        <div style="margin-left: 10px; display: inline-block; ">
+          <% if (user && user.is_admin) { %>
+            <% if (typeof tags !== 'undefined' && tags.length === 1) { %>
+              <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', tags[0].id, 'edit']) %>" class="ui mini blue button">编辑标签</a>
+            <% } %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', 0, 'edit']) %>" class="ui mini green button">添加标签</a>
+          <% } %>
+          <% if (user) { %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>" class="ui mini button">添加题目</a>
+          <% } %>
         </div>
       </div>
     </div>
-  <% } %>
+  </div>
+
   <table class="ui very basic center aligned table">
     <thead>
       <tr>
@@ -18,6 +75,7 @@
         <% } %>
         <th class="one wide">编号</th>
         <th class="left aligned">题目名称</th>
+        <th class="right aligned">&nbsp;</th>
         <th class="one wide">通过</th>
         <th class="one wide">提交</th>
         <th class="one wide">通过率</th>
@@ -40,8 +98,31 @@
             <% } %>
             <td><%= problem.id %></td>
             <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
-                <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+              <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
             </a></td>
+            <td class="right aligned">
+              <div class="show_tag_controled">
+                <%
+                if (problem.tags) {
+                  for (let tag of problem.tags) {
+                    let tagListToggledThisTag;
+                    if (!tagIDs.includes(tag.id)) tagListToggledThisTag = tagIDs.concat([tag.id]);
+                    else tagListToggledThisTag = tagIDs.filter(x => x != tag.id);
+                    tagListToggledThisTag = tagListToggledThisTag.sort().join(',');
+
+                    let url = tagListToggledThisTag ? syzoj.utils.makeUrl(['problems', 'tag', tagListToggledThisTag]) : syzoj.utils.makeUrl(['problems']);
+                  %>
+                  <span class="ui header">
+                    <a href="<%= url %>" class="ui tiny <%= tag.color %> label">
+                      <%= tag.name %>
+                    </a>
+                  </span>
+                  <%
+                  }
+                }
+                %>
+              </div>
+            </td>
             <td><%= problem.ac_num %></td>
             <td><%= problem.submit_num %></td>
             <td><%= ((problem.ac_num / problem.submit_num * 100) || 0).toFixed(2) %>%</td>

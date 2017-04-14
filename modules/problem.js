@@ -23,6 +23,8 @@ let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let WaitingJudge = syzoj.model('waiting_judge');
 let Contest = syzoj.model('contest');
+let ProblemTag = syzoj.model('problem_tag');
+let ProblemTagMap = syzoj.model('problem_tag_map');
 
 app.get('/problems', async (req, res) => {
   try {
@@ -32,10 +34,54 @@ app.get('/problems', async (req, res) => {
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+      problem.tags = await problem.getTags();
     });
 
     res.render('problems', {
       problems: problems,
+      paginate: paginate
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/problems/tag/:tagIDs', async (req, res) => {
+  try {
+    let tagIDs = Array.from(new Set(req.params.tagIDs.split(',').map(x => parseInt(x))));
+    let tags = await tagIDs.mapAsync(async tagID => ProblemTag.fromID(tagID));
+
+    // Validate the tagIDs
+    for (let tag of tags) {
+      if (!tag) {
+        return res.redirect(syzoj.utils.makeUrl(['problems']));
+      }
+    }
+
+    let sql = 'SELECT * FROM `problem` WHERE\n';
+    for (let tagID of tagIDs) {
+      if (tagID !== tagIDs[0]) {
+        sql += 'AND\n';
+      }
+
+      sql += '`problem`.`id` IN (SELECT `problem_id` FROM `problem_tag_map` WHERE `tag_id` = ' + tagID + ')';
+    }
+
+    let paginate = syzoj.utils.paginate(await Problem.count(sql), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.query(sql);
+
+    await problems.forEachAsync(async problem => {
+      problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+      problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+      problem.tags = await problem.getTags();
+    });
+
+    res.render('problems', {
+      problems: problems,
+      tags: tags,
       paginate: paginate
     });
   } catch (e) {
@@ -66,6 +112,8 @@ app.get('/problem/:id', async (req, res) => {
 
     let state = await problem.getJudgeState(res.locals.user, false);
 
+    problem.tags = await problem.getTags();
+
     res.render('problem', {
       problem: problem,
       state: state
@@ -80,7 +128,7 @@ app.get('/problem/:id', async (req, res) => {
 
 app.get('/problem/:id/edit', async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
+    let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
 
     if (!problem) {
@@ -88,9 +136,11 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem = await Problem.create();
       problem.id = id;
       problem.allowedEdit = true;
+      problem.tags = [];
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+      problem.tags = await problem.getTags();
     }
 
     res.render('problem_edit', {
@@ -124,7 +174,38 @@ app.post('/problem/:id/edit', async (req, res) => {
     problem.example = req.body.example;
     problem.limit_and_hint = req.body.limit_and_hint;
 
+    // Save the problem first, to have the `id` allocated
     await problem.save();
+
+    if (!req.body.tags) {
+      req.body.tags = [];
+    } else if (!Array.isArray(req.body.tags)) {
+      req.body.tags = [req.body.tags];
+    }
+
+    let oldTagIDs = (await problem.getTags()).map(x => x.id);
+    let newTagIDs = await req.body.tags.map(x => parseInt(x)).filterAsync(async x => ProblemTag.fromID(x));
+
+    let delTagIDs = oldTagIDs.filter(x => !newTagIDs.includes(x));
+    let addTagIDs = newTagIDs.filter(x => !oldTagIDs.includes(x));
+
+    for (let tagID of delTagIDs) {
+      let map = await ProblemTagMap.findOne({ where: {
+        problem_id: id,
+        tag_id: tagID
+      } });
+
+      await map.destroy();
+    }
+
+    for (let tagID of addTagIDs) {
+      let map = await ProblemTagMap.create({
+        problem_id: id,
+        tag_id: tagID
+      });
+
+      await map.save();
+    }
 
     res.redirect(syzoj.utils.makeUrl(['problem', problem.id]));
   } catch (e) {

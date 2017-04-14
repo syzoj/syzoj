@@ -23,6 +23,11 @@ Array.prototype.forEachAsync = Array.prototype.mapAsync = async function (fn) {
   return Promise.all(this.map(fn));
 };
 
+Array.prototype.filterAsync = async function (fn) {
+  let a = await this.mapAsync(fn);
+  return this.filter((x, i) => a[i]);
+};
+
 let path = require('path');
 let util = require('util');
 let renderer = require('moemark-renderer');

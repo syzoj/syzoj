@@ -34,9 +34,9 @@ $(function () {
     .dropdown({
       debug: true,
       apiSettings: {
-        url: '/api/v2/search/problem/{query}',
+        url: '/api/v2/search/problems/{query}',
         onResponse: function (response) {
-          var a = $('#search_problems').val().map(x => parseInt(x));
+          var a = $('#search_problems').val().map(function (x) { return parseInt(x) });
           if (response.results) {
             response.results = response.results.filter(x => !a.includes(parseInt(x.value)));
           }

@@ -20,8 +20,9 @@
 'use strict';
 
 let Problem = syzoj.model('problem');
+let ProblemTag = syzoj.model('problem_tag');
 
-app.get('/api/v2/search/problem/:keyword*?', async (req, res) => {
+app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
   try {
     let keyword = req.params.keyword || '';
     let problems = await Problem.query(null, {
@@ -44,6 +45,23 @@ app.get('/api/v2/search/problem/:keyword*?', async (req, res) => {
     });
 
     result = result.map(x => ({ name: `#${x.id}. ${x.title}`, value: x.id, url: syzoj.utils.makeUrl(['problem', x.id]) }));
+    res.send({ success: true, results: result });
+  } catch (e) {
+    syzoj.log(e);
+    res.send({ success: false });
+  }
+});
+
+app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
+  try {
+    let keyword = req.params.keyword || '';
+    let tags = await ProblemTag.query(null, {
+      name: { like: `%${req.params.keyword}%` }
+    }, [['name', 'asc']]);
+
+    let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);
+
+    result = result.map(x => ({ name: x.name, value: x.id }));
     res.send({ success: true, results: result });
   } catch (e) {
     syzoj.log(e);
