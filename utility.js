@@ -92,7 +92,7 @@ module.exports = {
   },
   formatDate(ts, format) {
     let m = moment(ts * 1000);
-    m.locale('zh-cn');
+    m.locale('eu');
     return m.format(format || 'L H:mm:ss');
   },
   formatTime(x) {
