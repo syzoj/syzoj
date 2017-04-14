@@ -1,0 +1,70 @@
+<% this.title = '编辑标签' %>
+<% include header %>
+<div class="padding">
+  <form class="ui form" action="<%= syzoj.utils.makeUrl(['problems', 'tag', tag.id, 'edit']) %>" method="post">
+      <div class="field">
+          <label>标签名称</label>
+          <input type="text" name="name" value="<%= tag.name %>">
+      </div>
+      <div class="field">
+          <label>标签颜色</label>
+          <div class="ui fluid selection dropdown" id="tag_color">
+            <input type="hidden" name="color" value="<%= tag.color %>">
+            <i class="dropdown icon"></i>
+            <div class="default text">选择颜色</div>
+            <div class="menu">
+              <div class="item" data-value="red">
+                <div class="ui red empty circular label"></div>
+                Red
+              </div>
+              <div class="item" data-value="blue">
+                <div class="ui blue empty circular label"></div>
+                Blue
+              </div>
+              <div class="item" data-value="black">
+                <div class="ui black empty circular label"></div>
+                Black
+              </div>
+              <div class="item" data-value="purple">
+                <div class="ui purple empty circular label"></div>
+                Purple
+              </div>
+              <div class="item" data-value="orange">
+                <div class="ui orange empty circular label"></div>
+                Orange
+              </div>
+              <div class="item" data-value="yellow">
+                <div class="ui yellow empty circular label"></div>
+                Yellow
+              </div>
+              <div class="item" data-value="pink">
+                <div class="ui pink empty circular label"></div>
+                Pink
+              </div>
+              <div class="item" data-value="green">
+                <div class="ui green empty circular label"></div>
+                Green
+              </div>
+              <div class="item" data-value="olive">
+                <div class="ui olive empty circular label"></div>
+                Olive
+              </div>
+              <div class="item" data-value="teal">
+                <div class="ui teal empty circular label"></div>
+                Teal
+              </div>
+              <div class="item" data-value="violet">
+                <div class="ui violet empty circular label"></div>
+                Violet
+              </div>
+            </div>
+          </div>
+      </div>
+      <button type="submit" class="ui button">提交</button>
+  </form>
+<script>
+$(function () {
+  $('#tag_color').dropdown();
+});
+</script>
+<% include footer %>
