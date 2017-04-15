@@ -72,23 +72,27 @@ module.exports = {
     return path.resolve.apply(null, a);
   },
   markdown(obj, keys, noReplaceUI) {
+    let xssfilter = new (require('xssfilter'))();
+    let replaceXSS = s => {
+      return xssfilter.filter(s);
+    };
     let replaceUI = s => {
         if (noReplaceUI) return s;
         return s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</pre></div>')
                 .split('<table>').join('<table class="ui table">')
                 .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');
-    }
+    };
     return new Promise((resolve, reject) => {
       if (!keys) {
         if (!obj || !obj.trim()) resolve("");
         else renderer(obj, s => {
-            resolve(replaceUI(s));
+            resolve(replaceUI(replaceXSS(s)));
         });
       } else {
         let res = obj, cnt = keys.length;
         for (let key of keys) {
           renderer(res[key], (s) => {
-            res[key] = replaceUI(s);
+            res[key] = replaceUI(replaceXSS(s));
             if (!--cnt) resolve(res);
           });
         }
