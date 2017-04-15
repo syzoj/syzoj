@@ -388,7 +388,7 @@ class Problem extends Model {
     });
 
     res.sort((a, b) => {
-      return a.name > b.name ? 1 : -1;
+      return a.color > b.color ? 1 : -1;
     });
 
     return res;

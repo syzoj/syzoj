@@ -12,7 +12,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
         <% if (typeof tags !== 'undefined') { %>
           <%
           tags.sort((a, b) => {
-            return a.name > b.name ? 1 : -1;
+            return a.color > b.color ? 1 : -1;
           });
           %>
           <% for (let tag of tags) { %>
