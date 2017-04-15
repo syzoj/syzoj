@@ -22,10 +22,14 @@
             for (let user of ranklist) {
               ++i;
             %>
-		        <tr>
+            <tr>
 		        	<td><%= i %></td>
 		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
-		        	<td><%- user.information %></td>
+		        	<td>
+                <div style="max-height: 70px; overflow: hidden; ">
+                  <%- user.information %>
+                </div>
+              </td>
 		        	<td><%= user.ac_num %></td>
 		        </tr>
 		    <% } %>
