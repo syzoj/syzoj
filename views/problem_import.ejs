@@ -1,11 +1,15 @@
 <% this.title = '导入题目'; %>
 <% include header %>
 <div class="padding">
-  <h1 style="margin-bottom: 30px; ">导入题目</h1>
+  <div style="margin-bottom: 30px; ">
+    <h1 style="margin-bottom: 10px; ">导入题目</h1>
+    从另一个运行 SYZOJ 的网站导入题目。
+  </div>
+
   <form class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'import']) %>" method="post">
       <div class="field">
-          <label>题目 ID</label>
-          <input type="text" value="<%= problem.id ? problem.id : '新题目' %>" disabled>
+          <label>题目编号</label>
+          <input type="text" name="id" value="<%= problem.id ? problem.id : '' %>" placeholder="留空则自动延伸" <%= problem.new ? '' : 'disabled' %>>
       </div>
       <div class="field">
           <label>题目链接</label>

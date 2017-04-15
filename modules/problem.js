@@ -169,6 +169,7 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem.id = id;
       problem.allowedEdit = true;
       problem.tags = [];
+      problem.new = true;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -192,7 +193,13 @@ app.post('/problem/:id/edit', async (req, res) => {
     let problem = await Problem.fromID(id);
     if (!problem) {
       problem = await Problem.create();
-      if (id) problem.id = id;
+
+      let customID = parseInt(req.body.id);
+      if (customID) {
+        if (await Problem.fromID(customID)) throw 'The ID has been used.';
+        problem.id = customID;
+      } else if (id) problem.id = id;
+
       problem.user_id = res.locals.user.id;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
@@ -234,6 +241,7 @@ app.get('/problem/:id/import', async (req, res) => {
     if (!problem) {
       problem = await Problem.create();
       problem.id = id;
+      problem.new = true;
       problem.user_id = res.locals.user.id;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
@@ -257,7 +265,13 @@ app.post('/problem/:id/import', async (req, res) => {
     let problem = await Problem.fromID(id);
     if (!problem) {
       problem = await Problem.create();
-      if (id) problem.id = id;
+
+      let customID = parseInt(req.body.id);
+      if (customID) {
+        if (await Problem.fromID(customID)) throw 'The ID has been used.';
+        problem.id = customID;
+      } else if (id) problem.id = id;
+
       problem.user_id = res.locals.user.id;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';

@@ -13,7 +13,9 @@
       </div>
       <div class="ui bottom attached tab segment active" data-tab="edit">
         <div class="field">
-          <label for="title">题目名称</label>
+          <label for="id">题目编号</label>
+          <input type="text" id="id" name="id" placeholder="留空则自动延伸" value="<%= problem.id ? problem.id : '' %>" <%= problem.new ? '' : 'disabled' %>>
+          <label style="margin-top: 15px; " for="title">题目名称</label>
           <input type="text" id="title" name="title" value="<%= problem.title %>">
           <label style="margin-top: 15px; " for="description">题目描述</label>
           <textarea rows="15" id="description" name="description"><%= problem.description %></textarea>
