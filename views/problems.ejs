@@ -82,7 +82,6 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
         <% } %>
         <th class="one wide">编号</th>
         <th class="left aligned">题目名称</th>
-        <th class="right aligned">&nbsp;</th>
         <th class="one wide">通过</th>
         <th class="one wide">提交</th>
         <th class="one wide">通过率</th>
@@ -104,11 +103,11 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
                 </td>
             <% } %>
             <td><%= problem.id %></td>
-            <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
-              <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
-            </a></td>
-            <td class="right aligned">
-              <div class="show_tag_controled">
+            <td class="left aligned">
+              <a style="vertical-align: middle; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
+                <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+              </a>
+              <div class="show_tag_controled" style="float: right; ">
                 <%
                 if (problem.tags) {
                   for (let tag of problem.tags) {
