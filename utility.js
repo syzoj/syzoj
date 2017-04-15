@@ -72,9 +72,20 @@ module.exports = {
     return path.resolve.apply(null, a);
   },
   markdown(obj, keys, noReplaceUI) {
-    let xssfilter = new (require('xssfilter'))();
+    let cheerio = require('cheerio');
     let replaceXSS = s => {
-      return xssfilter.filter(s);
+      let $ = cheerio.load(s);
+      $('script').remove();
+      $('style').remove();
+      $('*').each((i, elem) => {
+        let a = Object.getOwnPropertyNames(elem.attribs);
+        for (let key of a) {
+          if (key.startsWith('on')) {
+            $(elem).removeAttr(key);
+          }
+        }
+      });
+      return $.html();
     };
     let replaceUI = s => {
         if (noReplaceUI) return s;
