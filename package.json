@@ -28,6 +28,7 @@
     "body-parser": "^1.15.2",
     "cheerio": "^0.22.0",
     "cookie-parser": "^1.4.3",
+    "cssfilter": "0.0.10",
     "download": "^5.0.3",
     "ejs": "^2.5.2",
     "express": "^4.14.0",

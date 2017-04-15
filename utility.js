@@ -73,6 +73,16 @@ module.exports = {
   },
   markdown(obj, keys, noReplaceUI) {
     let cheerio = require('cheerio');
+    let CSSFilter = require('cssfilter');
+    let cssfilter = new CSSFilter.FilterCSS({
+      whiteList: Object.assign({}, require('cssfilter/lib/default').whiteList, {
+        'vertical-align': true,
+        top: true,
+        bottom: true,
+        left: true,
+        right: true
+      })
+    });
     let replaceXSS = s => {
       let $ = cheerio.load(s);
       $('script').remove();
@@ -84,6 +94,10 @@ module.exports = {
           if (key.startsWith('on')) {
             $(elem).removeAttr(key);
           }
+        }
+
+        if ($(elem).attr('style')) {
+          $(elem).attr('style', cssfilter.process($(elem).attr('style')));
         }
       });
       return $.html();
