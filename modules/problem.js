@@ -268,7 +268,7 @@ app.post('/problem/:id/import', async (req, res) => {
     let url = require('url');
 
     let json = await request({
-      uri: url.resolve(req.body.url, 'export'),
+      uri: req.body.url + (req.body.url.endsWith('/') ? 'export' : '/export'),
       timeout: 1500,
       json: true
     });
@@ -301,7 +301,7 @@ app.post('/problem/:id/import', async (req, res) => {
     let fs = require('bluebird').promisifyAll(require('fs'));
 
     try {
-      let data = await download(url.resolve(req.body.url, 'download'));
+      let data = await download(req.body.url + (req.body.url.endsWith('/') ? 'download' : '/download'));
       await fs.writeFileAsync(tmpFile.path, data);
       await problem.updateTestdata(tmpFile.path);
     } catch (e) {
