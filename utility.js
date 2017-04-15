@@ -77,6 +77,7 @@ module.exports = {
       let $ = cheerio.load(s);
       $('script').remove();
       $('style').remove();
+      $('link').remove();
       $('*').each((i, elem) => {
         let a = Object.getOwnPropertyNames(elem.attribs);
         for (let key of a) {
