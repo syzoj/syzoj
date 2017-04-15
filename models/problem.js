@@ -259,8 +259,12 @@ class Problem extends Model {
       await file.destroy();
     }
 
-    let file = await TestData.create({
-      filename: `test_data_${this.id}.zip`,
+    let filename = `test_data_${this.id}.zip`;
+    let file = await TestData.findOne({ where: { filename: filename } });
+    if (file) await file.destroy();
+
+    file = await TestData.create({
+      filename: filename,
       md5: key
     });
     await file.save();
