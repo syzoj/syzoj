@@ -126,6 +126,38 @@ app.get('/problem/:id', async (req, res) => {
   }
 });
 
+app.get('/problem/:id/export', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+    if (!problem || !problem.is_public) throw 'No such problem.';
+
+    let obj = {
+      title: problem.title,
+      description: problem.description,
+      input_format: problem.input_format,
+      output_format: problem.output_format,
+      example: problem.example,
+      limit_and_hint: problem.limit_and_hint,
+      time_limit: problem.time_limit,
+      memory_limit: problem.memory_limit,
+      file_io: problem.file_io,
+      file_io_input_name: problem.file_io_input_name,
+      file_io_output_name: problem.file_io_output_name,
+      tags: []
+    };
+
+    let tags = await problem.getTags();
+
+    obj.tags = tags.map(tag => tag.name);
+
+    res.send({ success: true, obj: obj });
+  } catch (e) {
+    syzoj.log(e);
+    res.send({ success: false, error: e });
+  }
+});
+
 app.get('/problem/:id/edit', async (req, res) => {
   try {
     let id = parseInt(req.params.id) || 0;
@@ -156,7 +188,7 @@ app.get('/problem/:id/edit', async (req, res) => {
 
 app.post('/problem/:id/edit', async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
+    let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
     if (!problem) {
       problem = await Problem.create();
@@ -183,28 +215,97 @@ app.post('/problem/:id/edit', async (req, res) => {
       req.body.tags = [req.body.tags];
     }
 
-    let oldTagIDs = (await problem.getTags()).map(x => x.id);
     let newTagIDs = await req.body.tags.map(x => parseInt(x)).filterAsync(async x => ProblemTag.fromID(x));
+    await problem.setTags(newTagIDs);
 
-    let delTagIDs = oldTagIDs.filter(x => !newTagIDs.includes(x));
-    let addTagIDs = newTagIDs.filter(x => !oldTagIDs.includes(x));
+    res.redirect(syzoj.utils.makeUrl(['problem', problem.id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
 
-    for (let tagID of delTagIDs) {
-      let map = await ProblemTagMap.findOne({ where: {
-        problem_id: id,
-        tag_id: tagID
-      } });
-
-      await map.destroy();
+app.get('/problem/:id/import', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id) || 0;
+    let problem = await Problem.fromID(id);
+    if (!problem) {
+      problem = await Problem.create();
+      problem.id = id;
+      problem.user_id = res.locals.user.id;
+    } else {
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
     }
 
-    for (let tagID of addTagIDs) {
-      let map = await ProblemTagMap.create({
-        problem_id: id,
-        tag_id: tagID
-      });
+    res.render('problem_import', {
+      problem: problem
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
 
-      await map.save();
+app.post('/problem/:id/import', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id) || 0;
+    let problem = await Problem.fromID(id);
+    if (!problem) {
+      problem = await Problem.create();
+      if (id) problem.id = id;
+      problem.user_id = res.locals.user.id;
+    } else {
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+    }
+
+    let request = require('request-promise');
+    let url = require('url');
+
+    let json = await request({
+      uri: url.resolve(req.body.url, 'export'),
+      timeout: 1500,
+      json: true
+    });
+
+    if (!json.success) throw `Failed to load problem: ${json.error}`;
+
+    problem.title = json.obj.title;
+    problem.description = json.obj.description;
+    problem.input_format = json.obj.input_format;
+    problem.output_format = json.obj.output_format;
+    problem.example = json.obj.example;
+    problem.limit_and_hint = json.obj.limit_and_hint;
+    problem.time_limit = json.obj.time_limit;
+    problem.memory_limit = json.obj.memory_limit;
+    problem.file_io = json.obj.file_io;
+    problem.file_io_input_name = json.obj.file_io_input_name;
+    problem.file_io_output_name = json.obj.file_io_output_name;
+
+    let validateMsg = await problem.validate();
+    if (validateMsg) throw 'Invalid problem: ' + validateMsg;
+
+    await problem.save();
+
+    let tagIDs = (await json.obj.tags.mapAsync(name => ProblemTag.findOne({ where: { name: name } }))).filter(x => x).map(tag => tag.id);
+    await problem.setTags(tagIDs);
+
+    let download = require('download');
+    let tmp = require('tmp-promise');
+    let tmpFile = await tmp.file();
+    let fs = require('bluebird').promisifyAll(require('fs'));
+
+    try {
+      let data = await download(url.resolve(req.body.url, 'download'));
+      await fs.writeFileAsync(tmpFile.path, data);
+      await problem.updateTestdata(tmpFile.path);
+    } catch (e) {
+      syzoj.log(e);
     }
 
     res.redirect(syzoj.utils.makeUrl(['problem', problem.id]));
@@ -252,6 +353,10 @@ app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) =>
     problem.file_io = req.body.io_method === 'file-io';
     problem.file_io_input_name = req.body.file_io_input_name;
     problem.file_io_output_name = req.body.file_io_output_name;
+
+    let validateMsg = await problem.validate();
+    if (validateMsg) throw 'Invalid problem: ' + validateMsg;
+
     if (req.file) {
       await problem.updateTestdata(req.file.path);
     }
@@ -330,9 +435,12 @@ app.get('/problem/:id/download', async (req, res) => {
 
     await problem.loadRelationships();
 
+    if (!problem.testdata) throw 'No testdata';
+
     res.download(problem.testdata.getPath(), `testdata_${id}.zip`);
   } catch (e) {
     syzoj.log(e);
+    res.status(404);
     res.render('error', {
       err: e
     });

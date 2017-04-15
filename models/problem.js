@@ -242,11 +242,14 @@ class Problem extends Model {
   }
 
   async updateTestdata(path) {
-    let fs = Promise.promisifyAll(require('fs'));
+    let fs = Promise.promisifyAll(require('fs-extra'));
 
     let buf = await fs.readFileAsync(path);
+
+    if (buf.length > syzoj.config.limit.data_size) throw 'Testdata too large.'
+
     let key = syzoj.utils.md5(buf);
-    await fs.rename(path, TestData.resolvePath(key));
+    await fs.moveAsync(path, TestData.resolvePath(key), { overwrite: true });
 
     if (this.testdata_id) {
       let tmp = this.testdata_id;
@@ -262,6 +265,26 @@ class Problem extends Model {
     });
     await file.save();
     this.testdata_id = file.id;
+
+    await this.save();
+  }
+
+  async validate() {
+    if (this.time_limit <= 0) return 'Invalid time limit';
+    if (this.time_limit > syzoj.config.limit.time_limit) return 'Time limit too large';
+    if (this.memory_limit <= 0) return 'Invalid memory limit';
+    if (this.memory_limit > syzoj.config.limit.memory_limit) return 'Memory limit too large';
+
+    let filenameRE = /^[\w \-\+\.]*$/;
+    if (this.file_io_input_name && !filenameRE.test(this.file_io_input_name)) return 'Invalid input file name';
+    if (this.file_io_output_name && !filenameRE.test(this.file_io_output_name)) return 'Invalid output file name';
+
+    if (this.file_io) {
+      if (!this.file_io_input_name) return 'No input file name';
+      if (!this.file_io_output_name) return 'No output file name';
+    }
+
+    return null;
   }
 
   async getJudgeState(user, acFirst) {
@@ -369,6 +392,33 @@ class Problem extends Model {
     });
 
     return res;
+  }
+
+  async setTags(newTagIDs) {
+    let ProblemTagMap = syzoj.model('problem_tag_map');
+
+    let oldTagIDs = (await this.getTags()).map(x => x.id);
+
+    let delTagIDs = oldTagIDs.filter(x => !newTagIDs.includes(x));
+    let addTagIDs = newTagIDs.filter(x => !oldTagIDs.includes(x));
+
+    for (let tagID of delTagIDs) {
+      let map = await ProblemTagMap.findOne({ where: {
+        problem_id: this.id,
+        tag_id: tagID
+      } });
+
+      await map.destroy();
+    }
+
+    for (let tagID of addTagIDs) {
+      let map = await ProblemTagMap.create({
+        problem_id: this.id,
+        tag_id: tagID
+      });
+
+      await map.save();
+    }
   }
 
   getModel() { return model; }

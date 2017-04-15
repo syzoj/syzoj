@@ -1,0 +1,16 @@
+<% this.title = '导入题目'; %>
+<% include header %>
+<div class="padding">
+  <h1 style="margin-bottom: 30px; ">导入题目</h1>
+  <form class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'import']) %>" method="post">
+      <div class="field">
+          <label>题目 ID</label>
+          <input type="text" value="<%= problem.id ? problem.id : '新题目' %>" disabled>
+      </div>
+      <div class="field">
+          <label>题目链接</label>
+          <input type="text" name="url" placeholder="如：http://example.com/problem/1">
+      </div>
+      <button type="submit" class="ui button">提交</button>
+  </form>
+<% include footer %>

@@ -20,6 +20,11 @@
       "show": true
     }
   },
+  "limit": {
+    "time_limit": 10000,
+    "memory_limit": 1024,
+    "data_size": 209715200
+  },
   "page": {
     "problem": 50,
     "problem_statistics": 10,
