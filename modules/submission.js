@@ -34,7 +34,7 @@ app.get('/submissions', async (req, res) => {
     let minScore = parseInt(req.query.min_score);
     if (isNaN(minScore)) minScore = 0;
     let maxScore = parseInt(req.query.max_score);
-    if (isNaN(maxScore)) maxScore = 0;
+    if (isNaN(maxScore)) maxScore = 100;
 
     where.score = {
       $and: {
