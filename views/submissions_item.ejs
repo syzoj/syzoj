@@ -16,7 +16,11 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
 <td><%= judge.result.total_time %> ms</td>
 <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
-<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+<% if (judge.allowedSeeCode) { %>
+  <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+<% } else { %>
+  <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / 隐藏</td>
+<% } %>
 <% } else { %>
     <td>隐藏</td>
     <td>隐藏</td>

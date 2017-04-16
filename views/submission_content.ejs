@@ -55,7 +55,11 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
           <td><%= judge.result.total_time %> ms</td>
           <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
-          <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
+          <% if (judge.allowedSeeCode) { %>
+            <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
+          <% } else { %>
+            <td><%= syzoj.config.languages[judge.language].show %> / 隐藏 %></td>
+          <% } %>
         <% } else { %>
           <td>隐藏</td>
           <td>隐藏</td>

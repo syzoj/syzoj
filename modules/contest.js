@@ -209,6 +209,8 @@ app.get('/contest/:id/submissions', async (req, res) => {
 
     if (!contest) throw 'No such contest.';
 
+    contest.ended = await contest.isEnded();
+
     let problems_id = await contest.getProblems();
 
     let user = await User.fromName(req.query.submitter || '');
@@ -217,6 +219,23 @@ app.get('/contest/:id/submissions', async (req, res) => {
     if (req.query.problem_id) where.problem_id = problems_id[parseInt(req.query.problem_id) - 1];
     where.type = 1;
     where.type_info = contest_id;
+
+    if (contest.ended || (res.locals.user && res.locals.user.is_admin)) {
+      let minScore = parseInt(req.query.min_score);
+      if (isNaN(minScore)) minScore = 0;
+      let maxScore = parseInt(req.query.max_score);
+      if (isNaN(maxScore)) maxScore = 0;
+
+      where.score = {
+        $and: {
+          $gte: parseInt(minScore),
+          $lte: parseInt(maxScore)
+        }
+      };
+
+      if (req.query.language) where.language = req.query.language;
+      if (req.query.status) where.status = req.query.status;
+    }
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
@@ -233,10 +252,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
       contest: contest,
       judge_state: judge_state,
       paginate: paginate,
-      form: {
-        submitter: req.query.submitter || '',
-        problem_id: req.query.problem_id || ''
-      }
+      form: req.query
     });
   } catch (e) {
     syzoj.log(e);

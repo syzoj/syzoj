@@ -111,7 +111,7 @@ class JudgeState extends Model {
       } else {
         return true;
       }
-    } else if (this.type === 2) return false;
+    } else if (this.type === 2) return true;
   }
 
   async isAllowedSeeCodeBy(user) {
