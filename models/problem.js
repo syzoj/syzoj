@@ -428,7 +428,6 @@ class Problem extends Model {
 
   async changeID(id) {
     id = parseInt(id);
-    await db.workAroundForeignKeyChecks();
     await db.query('UPDATE `problem`         SET `id`         = ' + id                      + ' WHERE `id`         = ' + this.id);
     await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
     await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);

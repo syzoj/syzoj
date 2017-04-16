@@ -17,7 +17,7 @@ Install dependencies with `npm install` or `yarn`.
 Copy the `config-example.json` file to `config.json`, and change the configures.
 
 ## Database
-SYZOJ 2 uses [Sequelize](http://sequelizejs.com), which supports many database systems, including MySQL and Sqlite. But SYZOJ 2 supports **only** MySQL and Sqlite.
+SYZOJ 2 uses [Sequelize](http://sequelizejs.com), which supports many database systems, including MySQL and Sqlite.
 
 By default it use the Sqlite database `syzoj.db`, you can change it in `config.json`
 
