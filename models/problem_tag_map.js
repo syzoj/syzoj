@@ -26,11 +26,7 @@ let model = db.define('problem_tag_map', {
   problem_id: { type: Sequelize.INTEGER, primaryKey: true },
   tag_id: {
     type: Sequelize.INTEGER,
-    primaryKey: true,
-    references: {
-      model: 'problem_tag',
-      key: 'id'
-    }
+    primaryKey: true
   }
 }, {
   timestamps: false,

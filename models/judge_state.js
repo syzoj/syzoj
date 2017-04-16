@@ -39,21 +39,9 @@ let model = db.define('judge_state', {
 
   result: { type: Sequelize.TEXT('medium'), json: true },
 
-  user_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: User.model,
-      key: 'id'
-    }
-  },
+  user_id: { type: Sequelize.INTEGER },
 
-  problem_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: Problem.model,
-      key: 'id'
-    }
-  },
+  problem_id: { type: Sequelize.INTEGER },
 
   submit_time: { type: Sequelize.INTEGER },
   /*

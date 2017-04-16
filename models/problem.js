@@ -255,8 +255,9 @@ class Problem extends Model {
       let tmp = this.testdata_id;
       this.testdata_id = null;
       await this.save();
+
       let file = await TestData.fromID(tmp);
-      await file.destroy();
+      if (file) await file.destroy();
     }
 
     let filename = `test_data_${this.id}.zip`;
@@ -423,6 +424,36 @@ class Problem extends Model {
 
       await map.save();
     }
+  }
+
+  async changeID(id) {
+    id = parseInt(id);
+    await db.query('UPDATE `problem`         SET `id`         = ' + id                      + ' WHERE `id`         = ' + this.id);
+    await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
+    await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
+    await db.query('UPDATE `file`            SET `filename`   = ' + `"test_data_${id}.zip"` + ' WHERE `filename`   = ' + `"test_data_${this.id}.zip"`);
+
+    let Contest = syzoj.model('contest');
+    let contests = await Contest.all();
+    for (let contest of contests) {
+      let problemIDs = await contest.getProblems();
+
+      let flag = false;
+      for (let i in problemIDs) {
+        if (problemIDs[i] === this.id) {
+          problemIDs[i] = id;
+          flag = true;
+        }
+      }
+
+      if (flag) {
+        await contest.setProblemsNoCheck(problemIDs);
+        await contest.save();
+      }
+    }
+
+    this.id = id;
+    this.save();
   }
 
   getModel() { return model; }

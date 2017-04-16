@@ -30,13 +30,7 @@ let model = db.define('article', {
   title: { type: Sequelize.STRING(80) },
   content: { type: Sequelize.TEXT },
 
-  user_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
+  user_id: { type: Sequelize.INTEGER },
 
   public_time: { type: Sequelize.INTEGER },
   update_time: { type: Sequelize.INTEGER },

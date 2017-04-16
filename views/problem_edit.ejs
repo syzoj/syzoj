@@ -13,9 +13,19 @@
       </div>
       <div class="ui bottom attached tab segment active" data-tab="edit">
         <div class="field">
-          <label for="id">题目编号</label>
-          <input type="text" id="id" name="id" placeholder="留空则自动延伸" value="<%= problem.id ? problem.id : '' %>" <%= problem.new ? '' : 'disabled' %>>
-          <label style="margin-top: 15px; " for="title">题目名称</label>
+          <% if (problem.new || user.is_admin) { %>
+            <label for="id">
+              <% if (problem.new) { %>
+                题目编号
+              <% } else { %>
+                修改题目编号
+              <% } %>
+            </label>
+            <input type="text" id="id" name="id" placeholder="<% if (problem.new) { %>留空则自动延伸<% } else { %>留空则不修改<% } %>" value="<%= problem.id ? problem.id : '' %>">
+
+            <div style="margin-top: 15px; "></div>
+          <% } %>
+          <label for="title">题目名称</label>
           <input type="text" id="title" name="title" value="<%= problem.title %>">
           <label style="margin-top: 15px; " for="description">题目描述</label>
           <textarea rows="15" id="description" name="description"><%= problem.description %></textarea>

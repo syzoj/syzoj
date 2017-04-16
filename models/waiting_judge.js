@@ -26,13 +26,7 @@ let JudgeState = syzoj.model('judge_state');
 
 let model = db.define('waiting_judge', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  judge_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'judge_state',
-      key: 'id'
-    }
-  }
+  judge_id: { type: Sequelize.INTEGER }
 }, {
   timestamps: false,
   tableName: 'waiting_judge',

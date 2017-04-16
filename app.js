@@ -30,7 +30,7 @@ global.syzoj = {
   log(obj) {
     console.log(obj);
   },
-  run() {
+  async run() {
     let Express = require('express');
     global.app = Express();
 
@@ -60,11 +60,11 @@ global.syzoj = {
     let multer = require('multer');
     app.multer = multer({ dest: syzoj.utils.resolvePath(syzoj.config.upload_dir, 'tmp') });
 
-    this.connectDatabase();
+    await this.connectDatabase();
     this.loadHooks();
     this.loadModules();
   },
-  connectDatabase() {
+  async connectDatabase() {
     let Sequelize = require('sequelize');
     this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
       host: this.config.db.host,
@@ -74,6 +74,15 @@ global.syzoj = {
     });
     global.Promise = Sequelize.Promise;
     this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];
+
+    if (this.config.db.dialect.toLowerCase() === 'mysql') {
+      await this.db.query('SET foreign_key_checks = 0;');
+    } else if (this.config.db.dialect.toLowerCase() === 'sqlite') {
+      await this.db.query('PRAGMA foreign_keys = OFF;');
+    } else {
+      this.log('Unsupported database: ' + this.config.db.dialect);
+      process.exit();
+    }
 
     this.loadModels();
   },

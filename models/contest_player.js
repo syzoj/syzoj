@@ -28,20 +28,8 @@ let Contest = syzoj.model('contest');
 
 let model = db.define('contest_player', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  contest_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'contest',
-      key: 'id'
-    }
-  },
-  user_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
+  contest_id: { type: Sequelize.INTEGER },
+  user_id: { type: Sequelize.INTEGER },
 
   score: { type: Sequelize.INTEGER },
   score_details: { type: Sequelize.TEXT, json: true },

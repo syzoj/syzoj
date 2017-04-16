@@ -92,8 +92,12 @@ class Contest extends Model {
   }
 
   async getProblems() {
-    if (this.problems === '') return [];
+    if (!this.problems) return [];
     return this.problems.split('|').map(x => parseInt(x));
+  }
+
+  async setProblemsNoCheck(problemIDs) {
+    this.problems = problemIDs.join('|');
   }
 
   async setProblems(s) {

@@ -30,21 +30,9 @@ let model = db.define('comment', {
 
   content: { type: Sequelize.TEXT },
 
-  article_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'article',
-      key: 'id'
-    }
-  },
+  article_id: { type: Sequelize.INTEGER },
 
-  user_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
+  user_id: { type: Sequelize.INTEGER },
 
   public_time: { type: Sequelize.INTEGER }
 }, {

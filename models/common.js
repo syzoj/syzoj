@@ -83,6 +83,10 @@ class Model {
     return this.fromRecord(this.model.findOne(options));
   }
 
+  static async all() {
+    return (await this.model.findAll()).mapAsync(record => (this.fromRecord(record)));
+  }
+
   static async count(where) {
     // count(sql)
     if (typeof where === 'string') {

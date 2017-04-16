@@ -204,6 +204,14 @@ app.post('/problem/:id/edit', async (req, res) => {
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
       if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+
+      if (res.locals.user.is_admin) {
+        let customID = parseInt(req.body.id);
+        if (customID && customID !== id) {
+          if (await Problem.fromID(customID)) throw 'The ID has been used.';
+          await problem.changeID(customID);
+        }
+      }
     }
 
     problem.title = req.body.title;
