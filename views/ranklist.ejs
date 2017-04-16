@@ -1,8 +1,8 @@
 <% this.title = '排名' %>
 <% include header %>
 <div class="padding">
-  <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" class="ui mini form" method="get" role="form">
-    <div class="ui action left icon input inline" style="width: 180px; ">
+  <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" class="ui mini form" method="get" role="form" style="margin-bottom: 25px; text-align: right; ">
+    <div class="ui action left icon input inline" style="width: 180px; margin-right: 77px; ">
       <i class="search icon"></i><input name="nickname" placeholder="用户名" type="text">
       <button class="ui mini button" type="submit">查找用户</button>
     </div>

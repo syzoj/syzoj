@@ -1,20 +1,65 @@
 <% this.title = '评测记录' %>
 <% include header %>
+<% include util %>
 <div class="padding">
-  <div class="ui two column grid">
-    <div class="twelve wide column">
-      <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form">
-        <div class="inline field">
-          <input name="submitter" placeholder="提交者" style="margin: 0px;" type="text" value="<%= form.submitter %>"> <input name="problem_id" placeholder="题目编号" type="text" value="<%= form.problem_id %>"> <button class="ui mini button" type="submit">搜索</button>
+  <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form" id="form">
+    <div class="inline fields" style="margin-bottom: 25px; ">
+      <label style="font-size: 1.2em; margin-right: 3px; ">题目 ID：</label>
+      <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%= form.problem_id %>"></div>
+      <label style="font-size: 1.2em; margin-right: 3px; ">提交者：</label>
+      <div class="field"><input name="submitter" style="width: 100px; " type="text" value="<%= form.submitter %>"></div>
+      <label style="font-size: 1.2em; margin-right: 3px; ">分数：</label>
+      <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="<%= form.min_score || 0 %>"></div>
+      <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
+      <div class="field"><input name="max_score" style="width: 45px; " type="text" value="<%= form.max_score || 100 %>"></div>
+      <label style="font-size: 1.2em; margin-right: 3px; ">语言：</label>
+      <div class="field">
+        <div class="ui fluid selection dropdown" id="select_language" style="width: 110px; ">
+          <input type="hidden" name="language" value="<%= form.language %>">
+          <i class="dropdown icon"></i>
+          <div class="default text"></div>
+          <div class="menu">
+            <div class="item" data-value="">不限</div>
+            <% for (let lang in syzoj.config.languages) { %>
+              <div class="item" data-value="<%= lang %>"><%= syzoj.config.languages[lang].show %></div>
+            <% } %>
+          </div>
         </div>
-      </form>
+      </div>
+      <label style="font-size: 1.2em; margin-right: 3px; ">状态：</label>
+      <div class="field">
+        <div class="ui fluid selection dropdown" id="select_status" style="width: 210px; ">
+          <input type="hidden" name="status" value="<%= form.status %>">
+          <i class="dropdown icon"></i>
+          <div class="default text"></div>
+          <div class="menu">
+            <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
+            <% for (let status in this.icon) { %>
+              <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <button class="ui labeled icon mini button" type="submit">
+        <i class="search icon"></i>
+        搜索
+      </button>
+      <% if (user) { %>
+      <a class="ui mini labeled icon blue button" style="margin-left: auto; " id="my_submit">
+        <i class="user icon"></i>
+        我的提交
+      </a>
+      <script>
+      $(function () {
+        $('#my_submit').click(function () {
+          $('[name=submitter]').val(<%- JSON.stringify(user.username) %>);
+          $('#form').submit();
+        });
+      });
+      </script>
+      <% } %>
     </div>
-    <% if (user) { %>
-    <div class="four wide column padding">
-      <a class="ui mini button right floated" href="<%= syzoj.utils.makeUrl(['submissions'], { submitter: user.username }) %>">我的提交</a>
-    </div>
-    <% } %>
-  </div><br>
+  </form>
   <table class="ui very basic center aligned table" style="white-space: nowrap; ">
     <thead>
       <tr>
@@ -38,4 +83,10 @@
   <br>
   <% include page %>
 </div>
+<script>
+$(function () {
+  $('#select_language').dropdown();
+  $('#select_status').dropdown();
+});
+</script>
 <% include footer %>

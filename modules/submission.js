@@ -30,6 +30,22 @@ app.get('/submissions', async (req, res) => {
     if (user) where.user_id = user.id;
     else if (req.query.submitter) where.user_id = -1;
     if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id) || -1;
+
+    let minScore = parseInt(req.query.min_score);
+    if (isNaN(minScore)) minScore = 0;
+    let maxScore = parseInt(req.query.max_score);
+    if (isNaN(maxScore)) maxScore = 0;
+
+    where.score = {
+      $and: {
+        $gte: parseInt(minScore),
+        $lte: parseInt(maxScore)
+      }
+    };
+
+    if (req.query.language) where.language = req.query.language;
+    if (req.query.status) where.status = req.query.status;
+
     where.type = { $ne: 1 };
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
@@ -42,10 +58,7 @@ app.get('/submissions', async (req, res) => {
     res.render('submissions', {
       judge_state: judge_state,
       paginate: paginate,
-      form: {
-        submitter: req.query.submitter || '',
-        problem_id: req.query.problem_id || ''
-      }
+      form: req.query
     });
   } catch (e) {
     syzoj.log(e);
