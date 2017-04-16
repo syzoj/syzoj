@@ -99,6 +99,14 @@ module.exports = {
         if ($(elem).attr('style')) {
           $(elem).attr('style', cssfilter.process($(elem).attr('style')));
         }
+
+        if ($(elem).attr('href') && $(elem).attr('href').startsWith('javascript:')) {
+          $(elem).attr('href', '');
+        }
+
+        if ($(elem).attr('src') && $(elem).attr('src').startsWith('javascript:')) {
+          $(elem).attr('src', '');
+        }
       });
       return $.html();
     };
