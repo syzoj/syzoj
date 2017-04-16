@@ -75,11 +75,15 @@ global.syzoj = {
     global.Promise = Sequelize.Promise;
     this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];
 
-    if (this.config.db.dialect.toLowerCase() === 'mysql') {
-      await this.db.query('SET foreign_key_checks = 0;');
-    } else if (this.config.db.dialect.toLowerCase() === 'sqlite') {
-      await this.db.query('PRAGMA foreign_keys = OFF;');
-    } else {
+    this.db.workAroundForeignKeyChecks = async () => {
+      if (this.config.db.dialect.toLowerCase() === 'mysql') {
+        await this.db.query('SET foreign_key_checks = 0;');
+      } else if (this.config.db.dialect.toLowerCase() === 'sqlite') {
+        await this.db.query('PRAGMA foreign_keys = OFF;');
+      }
+    }
+
+    if (!['mysql', 'sqlite'].includes(this.config.db.dialect.toLowerCase())) {
       this.log('Unsupported database: ' + this.config.db.dialect);
       process.exit();
     }
