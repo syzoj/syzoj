@@ -26,7 +26,6 @@
     "adm-zip": "^0.4.7",
     "ansi-to-html": "^0.4.2",
     "body-parser": "^1.15.2",
-    "cheerio": "^0.22.0",
     "cookie-parser": "^1.4.3",
     "cssfilter": "0.0.10",
     "download": "^5.0.3",
@@ -36,7 +35,7 @@
     "file-size": "^1.0.0",
     "fs-extra": "^2.1.2",
     "gravatar": "^1.5.2",
-    "moemark-renderer": "^1.2.5",
+    "moemark-renderer": "^1.2.6",
     "moment": "^2.15.0",
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
@@ -47,6 +46,7 @@
     "session-file-store": "^1.0.0",
     "sqlite3": "^3.1.4",
     "syzoj-divine": "^1.0.0",
-    "tmp-promise": "^1.0.3"
+    "tmp-promise": "^1.0.3",
+    "xss": "^0.3.3"
   }
 }

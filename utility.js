@@ -72,43 +72,26 @@ module.exports = {
     return path.resolve.apply(null, a);
   },
   markdown(obj, keys, noReplaceUI) {
-    let cheerio = require('cheerio');
+    let XSS = require('xss');
     let CSSFilter = require('cssfilter');
-    let cssfilter = new CSSFilter.FilterCSS({
-      whiteList: Object.assign({}, require('cssfilter/lib/default').whiteList, {
-        'vertical-align': true,
-        top: true,
-        bottom: true,
-        left: true,
-        right: true
-      })
+    let whiteList = Object.assign({}, require('xss/lib/default').whiteList);
+    whiteList['marquee'] = [];
+    for (let tag in whiteList) whiteList[tag] = whiteList[tag].concat(['id', 'style', 'class']);
+    let xss = new XSS.FilterXSS({
+      css: {
+        whiteList: Object.assign({}, require('cssfilter/lib/default').whiteList, {
+          'vertical-align': true,
+          top: true,
+          bottom: true,
+          left: true,
+          right: true
+        })
+      },
+      whiteList: whiteList,
+      stripIgnoreTag: true
     });
     let replaceXSS = s => {
-      let $ = cheerio.load(s);
-      $('script').remove();
-      $('style').remove();
-      $('link').remove();
-      $('*').each((i, elem) => {
-        let a = Object.getOwnPropertyNames(elem.attribs);
-        for (let key of a) {
-          if (key.startsWith('on')) {
-            $(elem).removeAttr(key);
-          }
-        }
-
-        if ($(elem).attr('style')) {
-          $(elem).attr('style', cssfilter.process($(elem).attr('style')));
-        }
-
-        if ($(elem).attr('href') && $(elem).attr('href').trim().toLowerCase().startsWith('javascript:')) {
-          $(elem).attr('href', '');
-        }
-
-        if ($(elem).attr('src') && $(elem).attr('src').trim().toLowerCase().startsWith('javascript:')) {
-          $(elem).attr('src', '');
-        }
-      });
-      return $.html();
+      return xss.process(s);
     };
     let replaceUI = s => {
         if (noReplaceUI) return s;
@@ -119,13 +102,13 @@ module.exports = {
     return new Promise((resolve, reject) => {
       if (!keys) {
         if (!obj || !obj.trim()) resolve("");
-        else renderer(obj, s => {
+        else renderer(obj, { mathjaxUseHtml: true }, s => {
             resolve(replaceUI(replaceXSS(s)));
         });
       } else {
         let res = obj, cnt = keys.length;
         for (let key of keys) {
-          renderer(res[key], (s) => {
+          renderer(res[key], { mathjaxUseHtml: true }, (s) => {
             res[key] = replaceUI(replaceXSS(s));
             if (!--cnt) resolve(res);
           });
