@@ -100,11 +100,11 @@ module.exports = {
           $(elem).attr('style', cssfilter.process($(elem).attr('style')));
         }
 
-        if ($(elem).attr('href') && $(elem).attr('href').startsWith('javascript:')) {
+        if ($(elem).attr('href') && $(elem).attr('href').trim().toLowerCase().startsWith('javascript:')) {
           $(elem).attr('href', '');
         }
 
-        if ($(elem).attr('src') && $(elem).attr('src').startsWith('javascript:')) {
+        if ($(elem).attr('src') && $(elem).attr('src').trim().toLowerCase().startsWith('javascript:')) {
           $(elem).attr('src', '');
         }
       });
