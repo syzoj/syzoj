@@ -46,7 +46,7 @@
                       (function () {
                         var html = <%- JSON.stringify(user.information) %>;
                         var elem = document.createElement('div');
-                        elem.style = 'max-height: 50px; overflow: hidden; width: 100%; ';
+                        elem.style = 'max-height: 50px; overflow: hidden; width: 100%; max-width: 480px; ';
                         elem.innerHTML = html;
                         var script = document.getElementById('user-infomation-script-<%= i %>');
                         script.parentNode.replaceChild(elem, script);
