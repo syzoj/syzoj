@@ -24,7 +24,7 @@ if (contest) {
         <% if (contest) { %>
           <%= syzoj.utils.removeTitleTag(problem.title) %>
         <% } else { %>
-          <%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %>
+          #<%= problem.id %>. <%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %>
         <% } %>
       </h1>
     </div>
