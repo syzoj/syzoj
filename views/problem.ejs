@@ -22,7 +22,7 @@ if (contest) {
     <div class="row">
       <h1 class="ui header">
         <% if (contest) { %>
-          <%= syzoj.utils.removeTitleTag(problem.title) %>
+          #<%= pid %>. <%= syzoj.utils.removeTitleTag(problem.title) %>
         <% } else { %>
           #<%= problem.id %>. <%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %>
         <% } %>
