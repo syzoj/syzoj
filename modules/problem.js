@@ -49,6 +49,40 @@ app.get('/problems', async (req, res) => {
   }
 });
 
+app.get('/problems/search', async (req, res) => {
+  try {
+    let id = parseInt(req.query.keyword) || 0;
+
+    let where = {
+      $or: {
+        title: { like: `%${req.query.keyword}%` },
+        id: id
+      }
+    };
+
+    let order = [syzoj.db.literal('`id` = ' + id + ' DESC')];
+
+    let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.query(paginate, where, order);
+
+    await problems.forEachAsync(async problem => {
+      problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+      problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+      problem.tags = await problem.getTags();
+    });
+
+    res.render('problems', {
+      problems: problems,
+      paginate: paginate
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
 app.get('/problems/tag/:tagIDs', async (req, res) => {
   try {
     let tagIDs = Array.from(new Set(req.params.tagIDs.split(',').map(x => parseInt(x))));

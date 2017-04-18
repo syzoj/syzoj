@@ -123,13 +123,15 @@
         <% } %>
       <h4 class="ui top attached block header">搜索题目</h4>
       <div class="ui bottom attached segment">
-        <div class="ui search" style="width: 100%; ">
-          <div class="ui left icon input" style="width: 100%; ">
-            <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …">
-            <i class="search icon"></i>
+        <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
+          <div class="ui search" style="width: 100%; ">
+            <div class="ui left icon input" style="width: 100%; ">
+              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
+              <i class="search icon"></i>
+            </div>
+            <div class="results" style="width: 100%; "></div>
           </div>
-          <div class="results" style="width: 100%; "></div>
-        </div>
+        </form>
       </div>
       <h4 class="ui top attached block header">近期比赛</h4>
       <div class="ui bottom attached <% if (!contests || !contests.length) { %>center aligned <% } %>segment">

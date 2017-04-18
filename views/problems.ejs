@@ -22,6 +22,16 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
                 <%= tag.name %>
               </a>
           <% } %>
+        <% } else { %>
+          <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
+            <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+              <div class="ui left icon input" style="width: 100%; ">
+                <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
+                <i class="search icon"></i>
+              </div>
+              <div class="results" style="width: 100%; "></div>
+            </div>
+          </form>
         <% } %>
       </div>
       <div class="nine wide right aligned column">
@@ -146,6 +156,20 @@ document.addEventListener('keydown', function (event) {
 
 $(function () {
   $('#add_problem_dropdown').dropdown();
+});
+</script>
+<script>
+$(function () {
+  $('.ui.search').search({
+    debug: true,
+    apiSettings: {
+      url: '/api/v2/search/problems/{query}',
+      cache: false
+    },
+    fields: {
+      title: 'name'
+    }
+  });
 });
 </script>
 </div>
