@@ -134,7 +134,7 @@ module.exports = {
   formatSize(x) {
     let res = filesize(x, { fixed: 1 }).calculate();
     if (res.result === parseInt(res.result)) res.fixed = res.result.toString();
-    if (res.suffix === 'Bytes') res.suffix = 'B';
+    if (res.suffix.startsWith('Byte')) res.suffix = 'B';
     else res.suffix = res.suffix.replace('iB', '');
     return res.fixed + ' ' + res.suffix;
   },
