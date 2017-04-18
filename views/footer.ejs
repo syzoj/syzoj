@@ -9,7 +9,7 @@
 <script src="//cdn.bootcss.com/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 <script type="text/javascript">
 $("#logout").click(function () {
-    window.location.href = "/logout";
+    window.location.href = <%- JSON.stringify(syzoj.utils.makeUrl(['logout'], { url: req.originalUrl })) %>;
 });
 </script>
 </body>

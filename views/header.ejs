@@ -38,12 +38,12 @@
               </a>
                 <% } else { %>
                 <div class="item">
-                    <div class="ui button" style="margin-right: 0.5em" onclick="window.location.href='/login'">
+                    <a class="ui button" style="margin-right: 0.5em; " href="<%= syzoj.utils.makeUrl(['login'], { url: req.originalUrl }) %>">
                         登录
-                    </div>
-                    <div class="ui primary button" onclick="window.location.href='/sign_up'">
+                    </a>
+                    <a class="ui primary button" href="<%= syzoj.utils.makeUrl(['sign_up'], { url: req.originalUrl }) %>">
                         注册
-                    </div>
+                    </a>
                 </div>
                 <% } %>
             </div>

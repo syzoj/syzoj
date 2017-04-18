@@ -48,7 +48,7 @@ function show_error(error) {
     $("#error").show();
 }
 function success(session_id) {
-    window.location.href = "/";
+    window.location.href = <%- JSON.stringify(req.query.url || '/') %>;
 }
 function login() {
     password = md5($("#password").val() + "syzoj2_xxx");

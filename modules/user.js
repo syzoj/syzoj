@@ -78,7 +78,7 @@ app.get('/sign_up', async (req, res) => {
 // Logout
 app.get('/logout', async (req, res) => {
   req.session.user_id = null;
-  res.redirect(syzoj.utils.makeUrl());
+  res.redirect(req.query.url || '/');
 });
 
 // User page
