@@ -10,7 +10,7 @@ if (!(err instanceof ErrorMessage)) {
   <i class="remove icon"></i>
   <div class="content">
     <div class="header" style="margin-bottom: 10px; ">
-      错误：<%= err.message %>
+      <%= err.message %>
     </div>
     <% if (err.details) { %>
       <p><%= err.details %></p>
