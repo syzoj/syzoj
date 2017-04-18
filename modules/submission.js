@@ -71,7 +71,7 @@ app.get('/submissions', async (req, res) => {
 app.get('/submissions/:id/ajax', async (req, res) => {
   try {
     let judge_state = await JudgeState.fromID(req.params.id);
-    if (!judge_state) throw 'No such judge state';
+    if (!judge_state) throw new ErrorMessage('无此提交记录。');
 
     await judge_state.loadRelationships();
 
@@ -162,12 +162,12 @@ app.get('/submission/:id/rejudge', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
-    if (judge.pending) throw 'Can\'t rejudge a pending submission';
+    if (judge.pending && !req.query.force) throw new ErrorMessage('无法重新评测一个评测中的提交。');
 
     await judge.loadRelationships();
 
     let allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
-    if (!allowedRejudge) throw 'Permission denied';
+    if (!allowedRejudge) throw new ErrorMessage('您没有权限进行此操作。');
 
     await judge.rejudge();
 

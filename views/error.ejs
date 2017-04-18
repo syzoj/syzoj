@@ -1,21 +1,27 @@
 <% this.title = '错误' %>
 <% include header %>
-<style type="text/css">
-    .down{
-    margin-top: 150px;
-    font-size:2em;
-    }
-</style>
-<div class="am-container down">
-    <p><%= err %></p>
-</div>
 
-<% if (typeof next !== 'undefined') { %>
-<script type="text/javascript">
-$(document).ready(function() {
-	setTimeout("window.location.href='<%- next %>'", 2000);
-});
-</script>
-<% } %>
+<%
+if (!(err instanceof ErrorMessage)) {
+  err = new ErrorMessage(err.toString());
+}
+%>
+<div class="ui negative icon message">
+  <i class="remove icon"></i>
+  <div class="content">
+    <div class="header" style="margin-bottom: 10px; ">
+      错误：<%= err.message %>
+    </div>
+    <% if (err.details) { %>
+      <p><%= err.details %></p>
+    <% } %>
+    <p>
+      <% for (let text in err.nextUrls) { %>
+        <a href="<%= err.nextUrls[text] %>" style="margin-right: 5px; "><%= text %></a>
+      <% } %>
+      <a href="javascript:history.go(-1)">返回上一页</a>
+    </p>
+  </div>
+</div>
 
 <% include footer %>

@@ -68,9 +68,9 @@ if (contest) {
           <% } %>
           <% if (user && user.is_admin) { %>
             <% if (problem.is_public) {  %>
-              <button class="small ui button" id="dis_public">取消公开</button>
+              <a class="small ui button" id="dis_public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
             <% } else { %>
-              <button class="small ui button" id="public">公开</button>
+              <a class="small ui button" id="public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'public']) %>">公开</a>
             <% } %>
           <% } %>
         </div>
@@ -221,31 +221,5 @@ $(function () {
     editor.getSession().setMode("ace/mode/" + $(this).data('mode'));
   });
 });
-<% if (!contest) { %>
-function public_problem() {
-  $.ajax({
-    url: '<%= syzoj.utils.makeUrl(['api', 'problem', problem.id, 'public']) %>',
-    type: 'POST',
-    complete: function () { location.reload(true) },
-    async: true
-  });
-}
-function dis_public_problem() {
-  $.ajax({
-    url: '<%= syzoj.utils.makeUrl(['api', 'problem', problem.id, 'public']) %>',
-    type: 'DELETE',
-    complete: function () { location.reload(true) },
-    async: true
-  });
-}
-$(document).ready(function(){
-  $("#public").click(function(){
-    public_problem();
-  });
-  $("#dis_public").click(function(){
-    dis_public_problem();
-  });
-});
-<% } %>
 </script>
 <% include footer %>

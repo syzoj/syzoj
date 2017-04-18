@@ -1,9 +1,9 @@
 <% this.title = '修改资料'; %>
 <% include header %>
 <div class="padding">
-    <div class="ui <% if (error_info == 'Success') { %>success<% } else { %>error<% } %> message" id="error" <% if (!error_info) { %>hidden<% } %>>
-      <% if (error_info) {
-          if (error_info == 'Success') error_info = '修改成功';
+    <div class="ui <% if (error_info === '') { %>success<% } else { %>error<% } %> message" id="error" <% if (error_info === null) { %>hidden<% } %>>
+      <% if (error_info !== null) {
+          if (error_info === '') error_info = '修改成功。';
       %>
       	<p id="error_info"><%= error_info %></p>
       <% } %>

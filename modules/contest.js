@@ -47,7 +47,7 @@ app.get('/contests', async (req, res) => {
 
 app.get('/contest/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user || !res.locals.user.is_admin) throw 'Permission denied.';
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
@@ -73,7 +73,7 @@ app.get('/contest/:id/edit', async (req, res) => {
 
 app.post('/contest/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user || !res.locals.user.is_admin) throw 'Permission denied.';
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
@@ -110,7 +110,7 @@ app.get('/contest/:id', async (req, res) => {
     let contest_id = parseInt(req.params.id);
 
     let contest = await Contest.fromID(contest_id);
-    if (!contest) throw 'No such contest.';
+    if (!contest) throw new ErrorMessage('无此比赛。');
 
     contest.allowedEdit = await contest.isAllowedEditBy(res.locals.user);
     contest.running = await contest.isRunning();
@@ -163,9 +163,9 @@ app.get('/contest/:id/ranklist', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-    if (!contest) throw 'No such contest.';
+    if (!contest) throw new ErrorMessage('无此比赛。');
 
-    if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw 'Permission denied';
+    if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await contest.loadRelationships();
 
@@ -207,7 +207,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
 
-    if (!contest) throw 'No such contest.';
+    if (!contest) throw new ErrorMessage('无此比赛。');
 
     contest.ended = await contest.isEnded();
 
@@ -268,12 +268,12 @@ app.get('/contest/:id/:pid', async (req, res) => {
     let contest = await Contest.fromID(contest_id);
 
     contest.ended = await contest.isEnded();
-    if (!(await contest.isRunning() || contest.ended)) throw 'The contest has not started.'
+    if (!(await contest.isRunning() || contest.ended)) throw new ErrorMessage('比赛尚未开始或已结束。');
 
     let problems_id = await contest.getProblems();
 
     let pid = parseInt(req.params.pid);
-    if (!pid || pid < 1 || pid > problems_id.length) throw 'No such problem.';
+    if (!pid || pid < 1 || pid > problems_id.length) throw new ErrorMessage('无此题目。');
 
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.fromID(problem_id);

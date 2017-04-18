@@ -130,10 +130,10 @@ app.get('/problem/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
-    if (!problem) throw 'No such problem.';
+    if (!problem) throw new ErrorMessage('无此题目。');
 
     if (!await problem.isAllowedUseBy(res.locals.user)) {
-      throw 'Permission denied.';
+      throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -141,7 +141,7 @@ app.get('/problem/:id', async (req, res) => {
     if (problem.is_public || problem.allowedEdit) {
       await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
     } else {
-      throw 'Permission denied';
+      throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     let state = await problem.getJudgeState(res.locals.user, false);
@@ -164,7 +164,7 @@ app.get('/problem/:id/export', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
-    if (!problem || !problem.is_public) throw 'No such problem.';
+    if (!problem || !problem.is_public) throw new ErrorMessage('无此题目。');
 
     let obj = {
       title: problem.title,
@@ -198,14 +198,14 @@ app.get('/problem/:id/edit', async (req, res) => {
     let problem = await Problem.fromID(id);
 
     if (!problem) {
-      if (!res.locals.user) throw 'Permission denied.';
+      if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
       problem = await Problem.create();
       problem.id = id;
       problem.allowedEdit = true;
       problem.tags = [];
       problem.new = true;
     } else {
-      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.tags = await problem.getTags();
     }
@@ -226,23 +226,25 @@ app.post('/problem/:id/edit', async (req, res) => {
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
     if (!problem) {
+      if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
+
       problem = await Problem.create();
 
       let customID = parseInt(req.body.id);
       if (customID) {
-        if (await Problem.fromID(customID)) throw 'The ID has been used.';
+        if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
         problem.id = customID;
       } else if (id) problem.id = id;
 
       problem.user_id = res.locals.user.id;
     } else {
-      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
-      if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+      if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
       if (res.locals.user.is_admin) {
         let customID = parseInt(req.body.id);
         if (customID && customID !== id) {
-          if (await Problem.fromID(customID)) throw 'The ID has been used.';
+          if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
           await problem.changeID(customID);
         }
       }
@@ -280,14 +282,17 @@ app.get('/problem/:id/import', async (req, res) => {
   try {
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
+
     if (!problem) {
+      if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
+
       problem = await Problem.create();
       problem.id = id;
       problem.new = true;
       problem.user_id = res.locals.user.id;
     } else {
-      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
-      if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+      if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     res.render('problem_import', {
@@ -306,18 +311,20 @@ app.post('/problem/:id/import', async (req, res) => {
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
     if (!problem) {
+      if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
+
       problem = await Problem.create();
 
       let customID = parseInt(req.body.id);
       if (customID) {
-        if (await Problem.fromID(customID)) throw 'The ID has been used.';
+        if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
         problem.id = customID;
       } else if (id) problem.id = id;
 
       problem.user_id = res.locals.user.id;
     } else {
-      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
-      if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+      if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     let request = require('request-promise');
@@ -329,7 +336,7 @@ app.post('/problem/:id/import', async (req, res) => {
       json: true
     });
 
-    if (!json.success) throw `Failed to load problem: ${json.error}`;
+    if (!json.success) throw new ErrorMessage('题目加载失败。', null, json.error);
 
     problem.title = json.obj.title;
     problem.description = json.obj.description;
@@ -344,7 +351,7 @@ app.post('/problem/:id/import', async (req, res) => {
     problem.file_io_output_name = json.obj.file_io_output_name;
 
     let validateMsg = await problem.validate();
-    if (validateMsg) throw 'Invalid problem: ' + validateMsg;
+    if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
 
     await problem.save();
 
@@ -378,8 +385,8 @@ app.get('/problem/:id/data', async (req, res) => {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
 
-    if (!problem) throw 'No such problem';
-    if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied';
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await problem.loadRelationships();
 
@@ -399,8 +406,8 @@ app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) =>
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
 
-    if (!problem) throw 'No such problem';
-    if (!await problem.isAllowedEditBy(res.locals.user)) throw 'Permission denied';
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await problem.loadRelationships();
 
@@ -411,7 +418,7 @@ app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) =>
     problem.file_io_output_name = req.body.file_io_output_name;
 
     let validateMsg = await problem.validate();
-    if (validateMsg) throw 'Invalid problem: ' + validateMsg;
+    if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
 
     if (req.file) {
       await problem.updateTestdata(req.file.path);
@@ -428,14 +435,44 @@ app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) =>
   }
 });
 
+// Set problem public
+async function setPublic(req, res, is_public) {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+    if (!problem) throw new ErrorMessage('无此题目。');
+
+    let allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+    if (!allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
+
+    problem.is_public = is_public;
+    await problem.save();
+
+    res.redirect(syzoj.utils.makeUrl(['problem', id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+}
+
+app.get('/problem/:id/public', async (req, res) => {
+  await setPublic(req, res, true);
+});
+
+app.get('/problem/:id/dis_public', async (req, res) => {
+  await setPublic(req, res, false);
+});
+
 app.post('/problem/:id/submit', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
 
-    if (!problem) throw 'No such problem.';
-    if (!syzoj.config.languages[req.body.language]) throw 'No such language.'
-    if (!res.locals.user) throw 'Please login.';
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!syzoj.config.languages[req.body.language]) throw new ErrorMessage('不支持该语言。');
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let judge_state = await JudgeState.create({
       code: req.body.code,
@@ -447,16 +484,16 @@ app.post('/problem/:id/submit', async (req, res) => {
     let contest_id = parseInt(req.query.contest_id);
     if (contest_id) {
       let contest = await Contest.fromID(contest_id);
-      if (!contest) throw 'No such contest.';
+      if (!contest) throw new ErrorMessage('无此比赛。');
       let problems_id = await contest.getProblems();
-      if (!problems_id.includes(id)) throw 'No such problem.';
+      if (!problems_id.includes(id)) throw new ErrorMessage('无此题目。');
 
       judge_state.type = 1;
       judge_state.type_info = contest_id;
 
       await judge_state.save();
     } else {
-      if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied.';
+      if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       judge_state.type = problem.is_public ? 0 : 2;
       await judge_state.save();
     }
@@ -486,12 +523,12 @@ app.get('/problem/:id/download', async (req, res) => {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
 
-    if (!problem) throw 'No such problem';
-    if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied';
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await problem.loadRelationships();
 
-    if (!problem.testdata) throw 'No testdata';
+    if (!problem.testdata) throw new ErrorMessage('无测试数据。');
 
     res.download(problem.testdata.getPath(), `testdata_${id}.zip`);
   } catch (e) {
@@ -508,11 +545,11 @@ app.get('/problem/:id/statistics/:type', async (req, res) => {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
 
-    if (!problem) throw 'No such problem';
-    if (!await problem.isAllowedUseBy(res.locals.user)) throw 'Permission denied';
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let count = await problem.countStatistics(req.params.type);
-    if (count === null) throw 'No such type';
+    if (count === null) throw new ErrorMessage('无此统计类型。');
 
     let paginate = syzoj.utils.paginate(count, req.query.page, syzoj.config.page.problem_statistics);
     let statistics = await problem.getStatistics(req.params.type, paginate);

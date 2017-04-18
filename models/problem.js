@@ -246,7 +246,7 @@ class Problem extends Model {
 
     let buf = await fs.readFileAsync(path);
 
-    if (buf.length > syzoj.config.limit.data_size) throw 'Testdata too large.'
+    if (buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('测试数据太大。');
 
     let key = syzoj.utils.md5(buf);
     await fs.moveAsync(path, TestData.resolvePath(key), { overwrite: true });

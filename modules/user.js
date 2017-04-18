@@ -43,7 +43,7 @@ app.get('/ranklist', async (req, res) => {
 app.get('/find_user', async (req, res) => {
   try {
     let user = await User.fromName(req.query.nickname);
-    if (!user) throw `Can't find user ${req.query.nickname}`;
+    if (!user) throw new ErrorMessage('无此用户。');
     res.redirect(syzoj.utils.makeUrl(['user', user.id]));
   } catch (e) {
     syzoj.log(e);
@@ -57,7 +57,7 @@ app.get('/find_user', async (req, res) => {
 app.get('/login', async (req, res) => {
   if (res.locals.user) {
     res.render('error', {
-      err: 'Please logout first'
+      err: new ErrorMessage('您已经登录了，请先注销。', { '注销': syzoj.utils.makeUrl(['logout'], { 'url': req.originalUrl }) })
     });
   } else {
     res.render('login');
@@ -68,7 +68,7 @@ app.get('/login', async (req, res) => {
 app.get('/sign_up', async (req, res) => {
   if (res.locals.user) {
     res.render('error', {
-      err: 'Please logout first'
+      err: new ErrorMessage('您已经登录了，请先注销。', { '注销': syzoj.utils.makeUrl(['logout'], { 'url': req.originalUrl }) })
     });
   } else {
     res.render('sign_up');
@@ -109,11 +109,11 @@ app.get('/user/:id/edit', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let user = await User.fromID(id);
-    if (!user) throw 'No such user.';
+    if (!user) throw new ErrorMessage('无此用户。');
 
     let allowedEdit = await user.isAllowedEditBy(res.locals.user);
     if (!allowedEdit) {
-      throw 'Permission denied';
+      throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     res.render('user_edit', {
@@ -135,15 +135,15 @@ app.post('/user/:id/edit', async (req, res) => {
     user = await User.fromID(id);
 
     let allowedEdit = await user.isAllowedEditBy(res.locals.user);
-    if (!allowedEdit) throw 'Permission denied.';
+    if (!allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
 
     if (req.body.old_password && req.body.new_password) {
-      if (user.password !== req.body.old_password && !res.locals.user.is_admin) throw 'Old password wrong.';
+      if (user.password !== req.body.old_password && !res.locals.user.is_admin) throw new ErrorMessage('旧密码错误。');
       user.password = req.body.new_password;
     }
 
     if (res.locals.user.is_admin) {
-      if (!syzoj.utils.isValidUsername(req.body.username)) throw 'Invalid username.';
+      if (!syzoj.utils.isValidUsername(req.body.username)) throw new ErrorMessage('无效的用户名。');
       user.username = req.body.username;
     }
 
@@ -157,12 +157,12 @@ app.post('/user/:id/edit', async (req, res) => {
 
     res.render('user_edit', {
       edited_user: user,
-      error_info: 'Success'
+      error_info: ''
     });
   } catch (e) {
     res.render('user_edit', {
       edited_user: user,
-      error_info: e
+      error_info: e.message
     });
   }
 });

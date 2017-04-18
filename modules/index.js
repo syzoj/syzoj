@@ -33,7 +33,7 @@ app.get('/', async (req, res) => {
       if (notice.type === 'link') return notice;
       else if (notice.type === 'article') {
         let article = await Article.fromID(notice.id);
-        if (!article) throw `No such article ${notice.id}`;
+        if (!article) throw new ErrorMessage(`无此帖子：${notice.id}`);
         return {
           title: article.title,
           url: syzoj.utils.makeUrl(['article', article.id]),

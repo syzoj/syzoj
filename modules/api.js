@@ -83,36 +83,6 @@ app.post('/api/markdown', async (req, res) => {
   }
 });
 
-// Set problem public
-async function setPublic(req, res, is_public) {
-  try {
-    let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
-    if (!problem) throw 'No such problem';
-
-    let allowedEdit = await problem.isAllowedEditBy(res.locals.user);
-    if (!allowedEdit) throw 'Permission denied';
-
-    problem.is_public = is_public;
-    await problem.save();
-
-    res.send({});
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
-}
-
-app.post('/api/problem/:id/public', async (req, res) => {
-  await setPublic(req, res, true);
-});
-
-app.delete('/api/problem/:id/public', async (req, res) => {
-  await setPublic(req, res, false);
-});
-
 // APIs for judge client
 app.get('/api/waiting_judge', async (req, res) => {
   try {

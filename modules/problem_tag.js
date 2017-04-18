@@ -23,7 +23,7 @@ let ProblemTag = syzoj.model('problem_tag');
 
 app.get('/problems/tag/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user && !res.locals.user.is_admin) throw 'Permission denied.';
+    if (!res.locals.user && !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     let id = parseInt(req.params.id) || 0;
     let tag = await ProblemTag.fromID(id);
@@ -46,7 +46,7 @@ app.get('/problems/tag/:id/edit', async (req, res) => {
 
 app.post('/problems/tag/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user || !res.locals.user.is_admin) throw 'Permission denied.';
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     let id = parseInt(req.params.id) || 0;
     let tag = await ProblemTag.fromID(id);
@@ -59,7 +59,7 @@ app.post('/problems/tag/:id/edit', async (req, res) => {
     req.body.name = req.body.name.trim();
     if (tag.name !== req.body.name) {
       if (await ProblemTag.findOne({ where: { name: req.body.name } })) {
-        throw 'There is already a tag with that name.';
+        throw new ErrorMessage('标签名称已被使用。');
       }
     }
 

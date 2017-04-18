@@ -46,7 +46,7 @@ app.get('/article/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
-    if (!article) throw 'No such article';
+    if (!article) throw new ErrorMessage('无此帖子。');
 
     await article.loadRelationships();
     article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
@@ -80,7 +80,7 @@ app.get('/article/:id', async (req, res) => {
 
 app.get('/article/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user) throw 'Please login.';
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
@@ -106,7 +106,7 @@ app.get('/article/:id/edit', async (req, res) => {
 
 app.post('/article/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user) throw 'Please login.';
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
@@ -117,7 +117,7 @@ app.post('/article/:id/edit', async (req, res) => {
       article.user_id = res.locals.user.id;
       article.public_time = article.sort_time = time;
     } else {
-      if (!await article.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+      if (!await article.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     article.title = req.body.title;
@@ -137,15 +137,15 @@ app.post('/article/:id/edit', async (req, res) => {
 
 app.get('/article/:id/delete', async (req, res) => {
   try {
-    if (!res.locals.user) throw 'Please login.';
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
 
     if (!article) {
-      throw 'No such article.';
+      throw new ErrorMessage('无此帖子。');
     } else {
-      if (!await article.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+      if (!await article.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     await article.destroy();
@@ -161,15 +161,15 @@ app.get('/article/:id/delete', async (req, res) => {
 
 app.post('/article/:id/comment', async (req, res) => {
   try {
-    if (!res.locals.user) throw 'Please login.';
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
 
     if (!article) {
-      throw 'No such article.';
+      throw new ErrorMessage('无此帖子。');
     } else {
-      if (!await article.isAllowedCommentBy(res.locals.user)) throw 'Permission denied.';
+      if (!await article.isAllowedCommentBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     let comment = await ArticleComment.create({
@@ -192,15 +192,15 @@ app.post('/article/:id/comment', async (req, res) => {
 
 app.get('/article/:article_id/comment/:id/delete', async (req, res) => {
   try {
-    if (!res.locals.user) throw 'Please login.';
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
     let comment = await ArticleComment.fromID(id);
 
     if (!comment) {
-      throw 'No such comment.';
+      throw new ErrorMessage('无此评论。');
     } else {
-      if (!await comment.isAllowedEditBy(res.locals.user)) throw 'Permission denied.';
+      if (!await comment.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     await comment.destroy();

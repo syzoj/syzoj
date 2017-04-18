@@ -28,6 +28,14 @@ Array.prototype.filterAsync = async function (fn) {
   return this.filter((x, i) => a[i]);
 };
 
+global.ErrorMessage = class ErrorMessage {
+  constructor(message, nextUrls, details) {
+    this.message = message;
+    this.nextUrls = nextUrls || {};
+    this.details = details;
+  }
+};
+
 let path = require('path');
 let util = require('util');
 let renderer = require('moemark-renderer');
@@ -210,7 +218,7 @@ module.exports = {
     } else {
       let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n').filter(x => x.length !== 0);
 
-      if (lines.length < 3) throw 'Invalid data_rule.txt';
+      if (lines.length < 3) throw '无效的数据配置文件（data_rule.txt）。';
 
       let input = lines[lines.length - 2];
       let output = lines[lines.length - 1];
@@ -234,8 +242,8 @@ module.exports = {
             output: output.replace('#', i)
           };
 
-          if (!list.includes(testcase.input)) throw `Can't find file ${testcase.input}`;
-          if (!list.includes(testcase.output)) throw `Can't find file ${testcase.output}`;
+          if (!list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
+          if (!list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
           res[s].cases.push(testcase);
         }
       }
