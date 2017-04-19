@@ -4,15 +4,15 @@
 <div class="padding">
   <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form" id="form">
     <div class="inline fields" style="margin-bottom: 25px; ">
-      <label style="font-size: 1.2em; margin-right: 3px; ">题目 ID：</label>
+      <label style="font-size: 1.2em; margin-right: 1px; ">题目：</label>
       <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%= form.problem_id %>"></div>
-      <label style="font-size: 1.2em; margin-right: 3px; ">提交者：</label>
+      <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
       <div class="field"><input name="submitter" style="width: 100px; " type="text" value="<%= form.submitter %>"></div>
-      <label style="font-size: 1.2em; margin-right: 3px; ">分数：</label>
-      <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="<%= form.min_score || 0 %>"></div>
+      <label style="font-size: 1.2em; margin-right: 1px; ">分数：</label>
+      <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 48px; " type="text" value="<%= form.min_score || 0 %>"></div>
       <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
-      <div class="field"><input name="max_score" style="width: 45px; " type="text" value="<%= form.max_score || 100 %>"></div>
-      <label style="font-size: 1.2em; margin-right: 3px; ">语言：</label>
+      <div class="field"><input name="max_score" style="width: 48px; " type="text" value="<%= form.max_score || 100 %>"></div>
+      <label style="font-size: 1.2em; margin-right: 1px; ">语言：</label>
       <div class="field">
         <div class="ui fluid selection dropdown" id="select_language" style="width: 110px; ">
           <input type="hidden" name="language" value="<%= form.language %>">
@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      <label style="font-size: 1.2em; margin-right: 3px; ">状态：</label>
+      <label style="font-size: 1.2em; margin-right: 1px; ">状态：</label>
       <div class="field">
         <div class="ui fluid selection dropdown" id="select_status" style="width: 210px; ">
           <input type="hidden" name="status" value="<%= form.status %>">
