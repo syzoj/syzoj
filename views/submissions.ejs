@@ -3,7 +3,7 @@
 <% include util %>
 <div class="padding">
   <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form" id="form">
-    <div class="inline fields" style="margin-bottom: 25px; ">
+    <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
       <label style="font-size: 1.2em; margin-right: 1px; ">题目：</label>
       <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%= form.problem_id %>"></div>
       <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
