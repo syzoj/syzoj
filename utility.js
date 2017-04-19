@@ -83,6 +83,8 @@ module.exports = {
     let XSS = require('xss');
     let CSSFilter = require('cssfilter');
     let whiteList = Object.assign({}, require('xss/lib/default').whiteList);
+    delete whiteList.audio;
+    delete whiteList.video;
     for (let tag in whiteList) whiteList[tag] = whiteList[tag].concat(['id', 'style', 'class']);
     let xss = new XSS.FilterXSS({
       css: {
