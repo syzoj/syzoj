@@ -121,19 +121,48 @@ global.syzoj = {
 
     app.use((req, res, next) => {
       // req.session.user_id = 1;
+      let User = syzoj.model('user');
       if (req.session.user_id) {
-        let User = syzoj.model('user');
         User.fromID(req.session.user_id).then((user) => {
           res.locals.user = user;
           next();
         }).catch((err) => {
           this.log(err);
-          res.locals.user = req.session.user_id = null;
+          res.locals.user = null;
+          req.session.user_id = null;
           next();
         })
       } else {
-        res.locals.user = req.session.user_id = null;
-        next();
+        if (req.cookies.login) {
+          let obj;
+          try {
+            obj = JSON.parse(req.cookies.login);
+            User.findOne({
+              where: {
+                username: obj[0],
+                password: obj[1]
+              }
+            }).then(user => {
+              if (!user) throw null;
+              res.locals.user = user;
+              req.session.user_id = user.id;
+              next();
+            }).catch(err => {
+              console.log(err);
+              res.locals.user = null;
+              req.session.user_id = null;
+              next();
+            });
+          } catch (e) {
+            res.locals.user = null;
+            req.session.user_id = null;
+            next();
+          }
+        } else {
+          res.locals.user = null;
+          req.session.user_id = null;
+          next();
+        }
       }
     });
 

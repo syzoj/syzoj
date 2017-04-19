@@ -25,6 +25,10 @@ let WaitingJudge = syzoj.model('waiting_judge');
 let JudgeState = syzoj.model('judge_state');
 let TestData = syzoj.model('testdata');
 
+function setLoginCookie(username, password, res) {
+  res.cookie('login', JSON.stringify([username, password]));
+}
+
 // Login
 app.post('/api/login', async (req, res) => {
   try {
@@ -35,6 +39,7 @@ app.post('/api/login', async (req, res) => {
     else if (user.password !== req.body.password) res.send({ error_code: 1002 });
     else {
       req.session.user_id = user.id;
+      setLoginCookie(user.username, user.password, res);
       res.send({ error_code: 1 });
     }
   } catch (e) {
@@ -65,6 +70,8 @@ app.post('/api/sign_up', async (req, res) => {
     await user.save();
 
     req.session.user_id = user.id;
+    setLoginCookie(user.username, user.password, res);
+
     res.send(JSON.stringify({ error_code: 1 }));
   } catch (e) {
     syzoj.log(e);
