@@ -453,7 +453,7 @@ class Problem extends Model {
     }
 
     this.id = id;
-    this.save();
+    await this.save();
   }
 
   getModel() { return model; }
