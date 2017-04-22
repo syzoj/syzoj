@@ -306,7 +306,7 @@
 }
 
 .font-content {
-  font-family: 'Open Sans';
+  font-family: 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
 
 .main.container {
