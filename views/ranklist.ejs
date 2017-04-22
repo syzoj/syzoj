@@ -25,7 +25,7 @@
             <tr>
 		        	<td><%= i %></td>
 		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
-		        	<td>
+		        	<td class="font-content">
               <script id="user-infomation-script-<%= i %>">
               (function () {
                 var html = <%- JSON.stringify(user.information) %>;

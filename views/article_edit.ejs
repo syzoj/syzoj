@@ -16,12 +16,12 @@
         <label for="title">标题</label>
         <input type="text" id="title" name="title" value="<%= article.title %>">
         <label for="content">内容</label>
-        <textarea rows="15" id="content" name="content"><%= article.content %></textarea>
+        <textarea rows="15" id="content" name="content" class="font-content"><%= article.content %></textarea>
       </div>
     </div>
     <div class="ui bottom attached tab segment" data-tab="preview">
       <div class="ui header" id="pv-title"></div>
-      <div id="pv-content"></div>
+      <div id="pv-content" class="font-content"></div>
     </div>
     <button type="submit" class="ui labeled submit icon button">
       <i class="icon edit"></i> 提交

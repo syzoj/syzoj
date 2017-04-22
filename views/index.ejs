@@ -41,7 +41,7 @@
                 <tr>
                     <td><%= i %></td>
                     <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
-                    <td>
+                    <td style="font-content">
                       <script id="user-infomation-script-<%= i %>">
                       (function () {
                         var html = <%- JSON.stringify(user.information) %>;
@@ -167,7 +167,7 @@
         </table>
         <% } %>
       </div>
-      <h4 class="ui top attached block header">信息栏</h4>
+      <h4 class="ui top attached block header font-content">信息栏</h4>
       <div class="ui bottom attached <% if (!syzoj.config.announcement) { %>center aligned <% } %>segment">
         <% if (!syzoj.config.announcement) { %>
         无任何信息

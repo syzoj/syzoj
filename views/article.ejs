@@ -15,7 +15,7 @@
         <% } %>
  	</p>
   <div class="ui existing segment">
-	  <div id="content"><%- article.content %></div>
+	  <div id="content" class="font-content"><%- article.content %></div>
   </div>
   <% if (comments.length) { %>
   <div class="ui comments" style="max-width: none;">
@@ -30,7 +30,7 @@
           <div class="metadata">
             <span class="date"><%= syzoj.utils.formatDate(comment.public_time) %></span>
           </div>
-          <div class="text"><%- comment.content %></div>
+          <div class="text font-content"><%- comment.content %></div>
           <% if (comment.allowedEdit) { %>
             <div class="actions"><a href="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">删除</a></div>
           <% } %>
