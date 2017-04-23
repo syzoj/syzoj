@@ -32,6 +32,8 @@
                 var elem = document.createElement('div');
                 elem.style = 'max-height: 50px; overflow: hidden; width: 100%; max-width: 840px; ';
                 elem.innerHTML = html;
+                var imgs = Array.from(elem.getElementsByTagName('img'));
+                for (var i in imgs) imgs[i].parentNode.removeChild(imgs[i]);
                 var script = document.getElementById('user-infomation-script-<%= i %>');
                 script.parentNode.replaceChild(elem, script);
               })();
