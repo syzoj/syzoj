@@ -66,7 +66,7 @@ if (contest) {
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑</a>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'data']) %>">管理测试数据</a>
           <% } %>
-          <% if (user && user.is_admin) { %>
+          <% if (problem.allowedManage) { %>
             <% if (problem.is_public) {  %>
               <a class="small ui button" id="dis_public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
             <% } else { %>

@@ -62,7 +62,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
           <label>显示分类标签</label>
         </div>
         <div style="margin-left: 10px; display: inline-block; ">
-          <% if (user && user.is_admin) { %>
+          <% if (allowedManageTag) { %>
             <% if (typeof tags !== 'undefined' && tags.length === 1) { %>
               <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', tags[0].id, 'edit']) %>" class="ui labeled icon mini blue button"><i class="write icon"></i> 编辑标签</a>
             <% } %>

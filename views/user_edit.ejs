@@ -8,10 +8,10 @@
       	<p id="error_info"><%= error_info %></p>
       <% } %>
     </div>
-		<form class="ui form" action="<%= syzoj.utils.makeUrl(['user', edited_user.id, 'edit']) %>" method="post" onsubmit="return check()">
+		<form id="form" class="ui form" action="<%= syzoj.utils.makeUrl(['user', edited_user.id, 'edit']) %>" method="post" onsubmit="return check()">
       <div class="field">
 	    	<label for="username">用户名</label>
-	    	<input type="text" id="username" name="username" value="<%= edited_user.username %>"<% if (!user.is_admin) { %> readonly<% } %>>
+	    	<input type="text" id="username" name="username" value="<%= edited_user.username %>"<% if (!user.allowedManage) { %> readonly<% } %>>
 	    </div>
       <div class="field">
 	    	<label for="sex">性别</label>
@@ -30,7 +30,7 @@
 	    	<textarea class="font-content" rows="5" id="information" name="information"><%= edited_user.information %></textarea>
 	    </div>
       <div class="field">
-      <label class="ui header">修改密码</label>
+      <label class="ui header">密码</label>
         <input type="password" placeholder="原密码（留空则不修改）" name="old_password" id="old_password">
       </div>
       <div class="two fields" id="new_password_field">
@@ -41,8 +41,32 @@
           <input type="password" placeholder="确认密码" id="password2">
         </div>
       </div>
-      <button type="submit" class="ui button">修改</button>
-      <a href="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>" class="ui blue button">返回个人资料</a>
+      <%
+      let allowedManagePrivilege = user && user.is_admin;
+      %>
+      <div class="inline field">
+        <label class="ui header">权限</label>
+        <div class="ui toggle disabled checkbox" style="margin-right: 20px; ">
+          <input disabled="disabled" type="checkbox" <% if (edited_user.is_admin) { %> checked<% } %>>
+          <label>全站管理员</label>
+        </div>
+        <div class="ui toggle <% if (!allowedManagePrivilege) { %>disabled <% } %>checkbox checkbox_privilege" data-name="manage_problem" style="margin-right: 20px; ">
+          <input <% if (!allowedManagePrivilege) { %>disabled="disabled" <% } %>type="checkbox"<% if (edited_user.privileges.includes('manage_problem')) { %> checked<% } %>>
+          <label>管理题目</label>
+        </div>
+        <div class="ui toggle <% if (!allowedManagePrivilege) { %>disabled <% } %>checkbox checkbox_privilege" data-name="manage_problem_tag" style="margin-right: 20px; ">
+          <input <% if (!allowedManagePrivilege) { %>disabled="disabled" <% } %>type="checkbox"<% if (edited_user.privileges.includes('manage_problem_tag')) { %> checked<% } %>>
+          <label>管理题目标签</label>
+        </div>
+        <div class="ui toggle <% if (!allowedManagePrivilege) { %>disabled <% } %>checkbox checkbox_privilege" data-name="manage_user">
+          <input <% if (!allowedManagePrivilege) { %>disabled="disabled" <% } %>type="checkbox"<% if (edited_user.privileges.includes('manage_user')) { %> checked<% } %>>
+          <label>管理用户</label>
+        </div>
+      </div>
+      <div style="text-align: center; ">
+        <button type="submit" class="ui button">修改</button>
+        <a href="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>" class="ui blue button">返回个人资料</a>
+      </div>
 		</form>
 	</div>
 </div>
@@ -61,13 +85,28 @@ function check() {
 		$("#error").removeClass("success");
 		$("#error").removeClass("error");
 		$("#error").addClass("error");
-		$("#error_info").html("两次输入的密码不一致");
+		$("#error_info").html("两次输入的密码不一致。");
 		$("#error").show();
 		return false;
 	}
 	make_md5(old_password);
 	make_md5(password1);
 	make_md5(password2);
+
+<% if (allowedManagePrivilege) { %>
+  $('.checkbox_privilege').each(function () {
+    if ($(this).checkbox('is checked')) {
+      var name = $(this).data('name');
+
+      var elem = document.createElement('input');
+      elem.type = 'hidden';
+      elem.value = name;
+      elem.name = 'privileges';
+      document.getElementById('form').appendChild(elem);
+    }
+  });
+<% } %>
+
 	return true;
 }
 </script>

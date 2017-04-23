@@ -82,6 +82,8 @@ class User extends Model {
   }
 
   async isAllowedEditBy(user) {
+    if (!user) return false;
+    if (await user.hasPrivilege('manage_user')) return true;
     return user && (user.is_admin || this.id === user.id);
   }
 
@@ -177,6 +179,52 @@ class User extends Model {
 
   async renderInformation() {
     this.information = await syzoj.utils.markdown(this.information);
+  }
+
+  async getPrivileges() {
+    let UserPrivilege = syzoj.model('user_privilege');
+    let privileges = await UserPrivilege.query(null, {
+      user_id: this.id
+    });
+
+    return privileges.map(x => x.privilege);
+  }
+
+  async setPrivileges(newPrivileges) {
+    let UserPrivilege = syzoj.model('user_privilege');
+
+    let oldPrivileges = await this.getPrivileges();
+
+    console.log(newPrivileges);
+
+    let delPrivileges = oldPrivileges.filter(x => !newPrivileges.includes(x));
+    let addPrivileges = newPrivileges.filter(x => !oldPrivileges.includes(x));
+
+    for (let privilege of delPrivileges) {
+      let obj = await UserPrivilege.findOne({ where: {
+        user_id: this.id,
+        privilege: privilege
+      } });
+
+      await obj.destroy();
+    }
+
+    for (let privilege of addPrivileges) {
+      let obj = await UserPrivilege.create({
+        user_id: this.id,
+        privilege: privilege
+      });
+
+      await obj.save();
+    }
+  }
+
+  async hasPrivilege(privilege) {
+    if (this.is_admin) return true;
+
+    let UserPrivilege = syzoj.model('user_privilege');
+    let x = await UserPrivilege.findOne({ where: { user_id: this.id, privilege: privilege } });
+    return !(!x);
   }
 
   getModel() { return model; }

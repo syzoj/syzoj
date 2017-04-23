@@ -102,7 +102,7 @@ class JudgeState extends Model {
   async isAllowedSeeResultBy(user) {
     await this.loadRelationships();
 
-    if (user && (user.is_admin || user.id === this.problem.user_id)) return true;
+    if (user && (await user.hasPrivilege('manage_problem') || user.id === this.problem.user_id)) return true;
     else if (this.type === 0) return true;
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
@@ -117,7 +117,7 @@ class JudgeState extends Model {
   async isAllowedSeeCodeBy(user) {
     await this.loadRelationships();
 
-    if (user && (user.is_admin || user.id === this.problem.user_id)) return true;
+    if (user && (await user.hasPrivilege('manage_problem') || user.id === this.problem.user_id)) return true;
     else if (this.type === 0) return this.problem.is_public;
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);

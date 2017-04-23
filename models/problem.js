@@ -234,11 +234,21 @@ class Problem extends Model {
   }
 
   async isAllowedEditBy(user) {
-    return user && (user.is_admin || this.user_id === user.id);
+    if (!user) return false;
+    if (await user.hasPrivilege('manage_problem')) return true;
+    return this.user_id === user.id;
   }
 
   async isAllowedUseBy(user) {
-    return this.is_public || (user && (user.is_admin || this.user_id === user.id));
+    if (!user) return false;
+    if (await user.hasPrivilege('manage_problem')) return true;
+    return this.is_public || this.user_id === user.id;
+  }
+
+  async isAllowedManageBy(user) {
+    if (!user) return false;
+    if (await user.hasPrivilege('manage_problem')) return true;
+    return user.is_admin;
   }
 
   async updateTestdata(path) {

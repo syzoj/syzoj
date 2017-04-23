@@ -38,6 +38,7 @@ app.get('/problems', async (req, res) => {
     });
 
     res.render('problems', {
+      allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
       paginate: paginate
     });
@@ -72,6 +73,7 @@ app.get('/problems/search', async (req, res) => {
     });
 
     res.render('problems', {
+      allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
       paginate: paginate
     });
@@ -114,6 +116,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
     });
 
     res.render('problems', {
+      allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
       tags: tags,
       paginate: paginate
@@ -137,6 +140,7 @@ app.get('/problem/:id', async (req, res) => {
     }
 
     problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+    problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
 
     if (problem.is_public || problem.allowedEdit) {
       await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
@@ -210,6 +214,8 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem.tags = await problem.getTags();
     }
 
+    problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
+
     res.render('problem_edit', {
       problem: problem
     });
@@ -241,7 +247,7 @@ app.post('/problem/:id/edit', async (req, res) => {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
-      if (res.locals.user.is_admin) {
+      if (await res.locals.user.hasPrivilege('manage_problem')) {
         let customID = parseInt(req.body.id);
         if (customID && customID !== id) {
           if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
@@ -442,8 +448,8 @@ async function setPublic(req, res, is_public) {
     let problem = await Problem.fromID(id);
     if (!problem) throw new ErrorMessage('无此题目。');
 
-    let allowedEdit = await problem.isAllowedEditBy(res.locals.user);
-    if (!allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
+    let allowedManage = await problem.isAllowedManageBy(res.locals.user);
+    if (!allowedManage) throw new ErrorMessage('您没有权限进行此操作。');
 
     problem.is_public = is_public;
     await problem.save();
