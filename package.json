@@ -45,7 +45,7 @@
     "sequelize": "^3.24.3",
     "session-file-store": "^1.0.0",
     "sqlite3": "^3.1.4",
-    "syzoj-divine": "^1.0.1",
+    "syzoj-divine": "^1.0.2",
     "tmp-promise": "^1.0.3",
     "xss": "^0.3.3"
   }
