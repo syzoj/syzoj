@@ -240,9 +240,10 @@ class Problem extends Model {
   }
 
   async isAllowedUseBy(user) {
+    if (this.is_public) return true;
     if (!user) return false;
     if (await user.hasPrivilege('manage_problem')) return true;
-    return this.is_public || this.user_id === user.id;
+    return this.user_id === user.id;
   }
 
   async isAllowedManageBy(user) {
