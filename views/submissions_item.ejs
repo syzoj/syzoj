@@ -5,7 +5,11 @@ if (typeof contest !== 'undefined' && contest) problemUrl = syzoj.utils.makeUrl(
 else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 %>
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">#<%= judge.id %></a></td>
-<td><a href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+<td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; " id="text-fit-<%= judge.id %>" href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+<script>
+var e = document.getElementById('text-fit-<%= judge.id %>');
+textFit(e, { maxFontSize: 14 });
+</script>
 <% if (!judge.hidden) { %>
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">
     <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
@@ -29,7 +33,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
     <td>隐藏</td>
 <% } %>
 <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
-<td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
+<td><%= syzoj.utils.formatDate(judge.submit_time) %>
 <% if (isPending(judge.status)) { %>
 <script>
 function update_judge_<%= judge.id %>() {
@@ -49,3 +53,4 @@ else url = syzoj.utils.makeUrl(['submissions', judge.id, 'ajax']);
 update_judge_<%= judge.id %>();
 </script>
 <% } %>
+</td>

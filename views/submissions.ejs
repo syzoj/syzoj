@@ -1,4 +1,5 @@
 <% this.title = '提交记录' %>
+<script src="https://cdn.staticfile.org/textfit/2.3.1/textFit.min.js"></script>
 <% include header %>
 <% include util %>
 <div class="padding">
@@ -60,7 +61,7 @@
       <% } %>
     </div>
   </form>
-  <table class="ui very basic center aligned table" style="white-space: nowrap; ">
+  <table class="ui very basic center aligned table" style="white-space: nowrap; visibility: hidden; " id="table">
     <thead>
       <tr>
         <th>编号</th>
@@ -80,6 +81,9 @@
       <% } %>
     </tbody>
   </table>
+  <script>
+  document.getElementById('table').style.visibility = '';
+  </script>
   <br>
   <% include page %>
 </div>

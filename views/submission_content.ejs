@@ -29,7 +29,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 %>
 
 <div class="padding">
-  <table class="ui very basic center aligned table" id="status_table">
+  <table class="ui very basic center aligned table" id="status_table" style="visibility: hidden; ">
     <thead>
       <tr>
         <th>编号</th>
@@ -46,7 +46,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
      <tbody>
        <tr>
         <td>#<%= judge.id %></td>
-        <td><a href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+        <td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; " id="text-fit" href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
         <% if (judge.allowedSeeResult) { %>
           <td class="status <%= getStatusMeta(judge.result.status).toLowerCase().split(' ').join('_') %>">
           <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
@@ -72,6 +72,11 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
        </tr>
      </tbody>
   </table>
+  <script>
+  var e = document.getElementById('text-fit');
+  textFit(e, { maxFontSize: 14 });
+  document.getElementById('status_table').style.visibility = '';
+  </script>
   <% if (judge.allowedSeeCode) { %>
     <div class="ui existing segment" style="position: relative; ">
       <% if (judge.allowedRejudge) { %>
