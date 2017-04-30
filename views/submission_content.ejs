@@ -197,7 +197,7 @@ function update_submission() {
         if (!a.length) {
           e.html(data);
         } else {
-          e.find('#status_table').html(x.find('#status_table'));
+          e.find('#status_table').html(x.find('#status_table').html());
           var b = x.find('div.auto_update');
           for (var i = 0; i < a.length; i++) {
             a[i].innerHTML = b[i].innerHTML;
