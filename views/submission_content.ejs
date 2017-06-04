@@ -73,9 +73,12 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
      </tbody>
   </table>
   <script>
-  var e = document.getElementById('text-fit');
-  textFit(e, { maxFontSize: 14 });
-  document.getElementById('status_table').style.visibility = '';
+  window.applyTextFit = function () {
+    var e = document.getElementById('text-fit');
+    textFit(e, { maxFontSize: 14 });
+    document.getElementById('status_table').style.visibility = '';
+  }
+  window.applyTextFit();
   </script>
   <% if (judge.allowedSeeCode) { %>
     <div class="ui existing segment" style="position: relative; ">
@@ -196,6 +199,7 @@ function update_submission() {
         var a = e.find('div.auto_update');
         if (!a.length) {
           e.html(data);
+          window.applyTextFit();
         } else {
           e.find('#status_table').html(x.find('#status_table').html());
           var b = x.find('div.auto_update');
@@ -210,6 +214,7 @@ function update_submission() {
             if ($(b[i]).hasClass('active')) $(a[i]).addClass('active'); else $(a[i]).removeClass('active');
           }
 
+          window.applyTextFit();
           if (!x.find('#stop_ajax').length) update_submission();
         }
       }
