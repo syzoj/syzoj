@@ -1,4 +1,5 @@
 <% this.title = '提交记录 - ' + contest.title %>
+<script src="https://cdn.staticfile.org/textfit/2.3.1/textFit.min.js"></script>
 <% include header %>
 <div class="padding">
   <form action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions']) %>" class="ui mini form" method="get" role="form" id="form">
