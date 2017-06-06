@@ -120,6 +120,7 @@ app.post('/article/:id/edit', async (req, res) => {
       if (!await article.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
+    if (!req.body.title.trim()) throw new ErrorMessage('标题不能为空。');
     article.title = req.body.title;
     article.content = req.body.content;
     article.update_time = time;
