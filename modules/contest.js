@@ -87,6 +87,7 @@ app.post('/contest/:id/edit', async (req, res) => {
       contest.ranklist_id = ranklist.id;
     }
 
+    if (!req.body.trim()) throw new ErrorMessage('比赛名不能为空。');
     contest.title = req.body.title;
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');

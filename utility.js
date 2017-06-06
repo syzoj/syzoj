@@ -270,7 +270,11 @@ module.exports = {
     return {
       currPage: currPage,
       perPage: perPage,
-      pageCnt: pageCnt
+      pageCnt: pageCnt,
+      toSQL: () => {
+        if (!pageCnt) return '';
+        else return ` LIMIT ${(currPage - 1) * perPage},${perPage}`
+      }
     };
   },
   removeTitleTag(s) {
