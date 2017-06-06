@@ -107,7 +107,7 @@ class JudgeState extends Model {
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
-        return false;
+        return contest.type === 'acm' || contest.type === 'ioi';
       } else {
         return true;
       }
@@ -127,6 +127,21 @@ class JudgeState extends Model {
         return true;
       }
     } else if (this.type === 2) return false;
+  }
+
+  async isAllowedSeeDataBy(user) {
+    await this.loadRelationships();
+
+    if (user && (await user.hasPrivilege('manage_problem') || user.id === this.problem.user_id)) return true;
+    else if (this.type === 0) return this.problem.is_public;
+    else if (this.type === 1) {
+      let contest = await Contest.fromID(this.type_info);
+      if (await contest.isRunning()) {
+        return false;
+      } else {
+        return true;
+      }
+    } else if (this.type === 2) return true;
   }
 
   async updateResult(result) {

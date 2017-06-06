@@ -54,6 +54,7 @@ app.get('/submissions', async (req, res) => {
     await judge_state.forEachAsync(async obj => obj.loadRelationships());
     await judge_state.forEachAsync(async obj => obj.hidden = !(await obj.isAllowedSeeResultBy(res.locals.user)));
     await judge_state.forEachAsync(async obj => obj.allowedSeeCode = await obj.isAllowedSeeCodeBy(res.locals.user));
+    await judge_state.forEachAsync(async obj => obj.allowedSeeData = await obj.isAllowedSeeDataBy(res.locals.user));
 
     res.render('submissions', {
       judge_state: judge_state,
@@ -77,6 +78,7 @@ app.get('/submissions/:id/ajax', async (req, res) => {
 
     judge_state.hidden = !(await judge_state.isAllowedSeeResultBy(res.locals.user));
     judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
+    judge_state.allowedSeeData = await judge_state.isAllowedSeeDataBy(res.locals.user);
 
     res.render('submissions_item', {
       judge: judge_state
@@ -103,6 +105,7 @@ app.get('/submission/:id', async (req, res) => {
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
+    judge.allowedSeeData = await judge.isAllowedSeeDataBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
 
     if (contest) {
@@ -137,6 +140,7 @@ app.get('/submission/:id/ajax', async (req, res) => {
     judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     judge.allowedSeeResult = await judge.isAllowedSeeResultBy(res.locals.user);
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
+    judge.allowedSeeData = await judge.isAllowedSeeDataBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
 
     if (contest) {

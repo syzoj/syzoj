@@ -14,6 +14,27 @@
                 <% } %>
                 </select>
             </div>
+            <div class="inline fields">
+              <label>赛制</label>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="type" id="type-noi" value="noi"<% if (contest.type === 'noi') { %> checked="checked"<% } %>>
+                  <label for="type-noi">NOI</label>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="type" id="type-ioi" value="ioi"<% if (contest.type === 'ioi') { %> checked="checked"<% } %>>
+                  <label for="type-ioi">IOI</label>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="type" id="type-acm" value="acm"<% if (contest.type === 'acm') { %> checked="checked"<% } %>>
+                  <label for="type-acm">ACM</label>
+                </div>
+              </div>
+            </div>
             <div class="field">
                 <label>比赛介绍</label>
                 <textarea class="" rows="5" id="doc-ta-1" name="information" class="font-content"><%= contest.information %></textarea>

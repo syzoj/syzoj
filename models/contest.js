@@ -40,6 +40,8 @@ let model = db.define('contest', {
       key: 'id'
     }
   },
+  // type: noi, ioi, acm
+  type: { type: Sequelize.STRING(10) },
 
   information: { type: Sequelize.TEXT },
   problems: { type: Sequelize.TEXT },
@@ -71,6 +73,7 @@ class Contest extends Model {
       title: '',
       problems: '',
       information: '',
+      type: 'noi',
       start_time: 0,
       end_time: 0,
       holder: 0,
@@ -88,6 +91,7 @@ class Contest extends Model {
   }
 
   async isAllowedSeeResultBy(user) {
+    if (this.type === 'acm' || this.type === 'ioi') return true;
     return (user && (user.is_admin || this.holder_id === user.id)) || !(await this.isRunning());
   }
 
@@ -111,6 +115,8 @@ class Contest extends Model {
   }
 
   async newSubmission(judge_state) {
+    if (judge_state.pending) return;
+
     let problems = await this.getProblems();
     if (!problems.includes(judge_state.problem_id)) throw new ErrorMessage('当前比赛中无此题目。');
 
@@ -130,7 +136,7 @@ class Contest extends Model {
     await player.save();
 
     await this.loadRelationships();
-    await this.ranklist.updatePlayer(player);
+    await this.ranklist.updatePlayer(this, player);
     await this.ranklist.save();
   }
 

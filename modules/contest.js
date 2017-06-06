@@ -91,6 +91,8 @@ app.post('/contest/:id/edit', async (req, res) => {
     contest.title = req.body.title;
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');
+    if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
+    contest.type = req.body.type;
     contest.information = req.body.information;
     contest.start_time = syzoj.utils.parseDate(req.body.start_time);
     contest.end_time = syzoj.utils.parseDate(req.body.end_time);
@@ -132,17 +134,35 @@ app.get('/contest/:id', async (req, res) => {
     problems = problems.map(x => ({ problem: x, status: null, judge_id: null }));
     if (player) {
       for (let problem of problems) {
-        if (player.score_details[problem.problem.id]) {
-          if (await contest.isRunning()) {
-            problem.status = true;
+        if (contest.type === 'noi') {
+          if (player.score_details[problem.problem.id]) {
+            if (await contest.isRunning()) {
+              problem.status = true;
+            } else {
+              let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
+              problem.status = judge_state.status;
+            }
+            problem.judge_id = player.score_details[problem.problem.id].judge_id;
           } else {
+            if (contest.isRunning()) {
+              problem.status = false;
+            }
+          }
+        } else if (contest.type === 'ioi') {
+          if (player.score_details[problem.problem.id]) {
             let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
             problem.status = judge_state.status;
+            problem.judge_id = player.score_details[problem.problem.id].judge_id;
           }
-          problem.judge_id = player.score_details[problem.problem.id].judge_id;
-        } else {
-          if (contest.isRunning()) {
-            problem.status = false;
+        } else if (contest.type === 'acm') {
+          if (player.score_details[problem.problem.id]) {
+            problem.status = {
+              accepted: player.score_details[problem.problem.id].accepted,
+              unacceptedCount: player.score_details[problem.problem.id].unacceptedCount
+            };
+            problem.judge_id = player.score_details[problem.problem.id].judge_id;
+          } else {
+            problem.status = null;
           }
         }
       }
@@ -221,7 +241,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
     where.type = 1;
     where.type_info = contest_id;
 
-    if (contest.ended || (res.locals.user && res.locals.user.is_admin)) {
+    if (contest.ended || contest.type !== 'noi' || (res.locals.user && res.locals.user.is_admin)) {
       let minScore = parseInt(req.query.min_score);
       if (isNaN(minScore)) minScore = 0;
       let maxScore = parseInt(req.query.max_score);

@@ -4,6 +4,7 @@
 .ui.label.pointing.below.right::before { left: 88%; }
 .ui.label.pointing.below.left { margin-bottom: 0; }
 .ui.label.pointing.below.right { margin-bottom: 0; float: right; }
+#back_to_contest { display: none;  }
 </style>
 <% include header %>
 <div class="padding">
@@ -20,7 +21,7 @@
     <div class="bar" style="width: <%= timePercentage %>%;"></div>
   </div>
   <div class="ui grid">
-  <% if (contest.allowedEdit || (unveiled && !contest.running)) { %>
+  <% if (contest.allowedEdit || (unveiled && (!contest.running || contest.type !== 'noi'))) { %>
     <div class="row">
       <div class="column">
         <div class="ui buttons">
@@ -49,7 +50,6 @@
               <tr>
                 <th class="one wide" style="text-align: center">状态</th>
                 <th class="fourteen wide">题目</th>
-                <th class="one wide" style="text-align: center">代码</th>
               </tr>
             </thead>
             <tbody>
@@ -64,20 +64,31 @@
                   <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_id]) %>">
                   <% if (problem.status === true) { %>
                   <i class="black checkmark icon"></i>
-                  <% } else if (problem.status !== false) { %>
+                  <% } else if (typeof problem.status === 'string') { %>
                     <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
                       <i class="<%= icon[getStatusMeta(problem.status)] || 'remove' %> icon"></i>
                       <%= problem.status %>
                     </span>
+                  <% } else if (typeof problem.status === 'object') { %>
+                    <% if (problem.status.accepted) { %>
+                      <span class="score score_10">
+                        <% if (problem.status.unacceptedCount === 0) { %>
+                          +
+                        <% } else { %>
+                          +<%= problem.status.unacceptedCount %>
+                        <% } %>
+                      </span>
+                    <% } else { %>
+                      <span class="score score_0">
+                        <% if (problem.status.unacceptedCount !== 0) { %>
+                          -<%= problem.status.unacceptedCount %>
+                        <% } %>
+                      </span>
+                    <% } %>
                   <% } %>
                 <% } %>
                 </td>
                 <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id, i]) %>"><%= syzoj.utils.removeTitleTag(problem.problem.title) %></a></td>
-                <td class="center aligned">
-                <% if (problem.judge_id) { %>
-                <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_id]) %>"><i style="color: #000;" class="code icon"></i></a>
-                <% } %>
-                </td>
               </tr>
             <% } %>
             </tbody>
