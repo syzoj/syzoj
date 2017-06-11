@@ -28,8 +28,24 @@ let ProblemTagMap = syzoj.model('problem_tag_map');
 
 app.get('/problems', async (req, res) => {
   try {
-    let paginate = syzoj.utils.paginate(await Problem.count(), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(paginate);
+    let where = {};
+    if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
+      if (res.locals.user) {
+        where = {
+          $or: {
+            is_public: 1,
+            user_id: res.locals.user.id
+          }
+        };
+      } else {
+        where = {
+          is_public: 1
+        };
+      }
+    }
+
+    let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.query(paginate, where);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -60,6 +76,31 @@ app.get('/problems/search', async (req, res) => {
         id: id
       }
     };
+
+    if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
+      if (res.locals.user) {
+        where = {
+          $and: [
+            where,
+            {
+              $or: {
+                is_public: 1,
+                user_id: res.locals.user.id
+              }
+            }
+          ]
+        };
+      } else {
+        where = {
+          $and: [
+            where,
+            {
+              is_public: 1
+            }
+          ]
+        };
+      }
+    }
 
     let order = [syzoj.db.literal('`id` = ' + id + ' DESC')];
 
@@ -104,6 +145,14 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
       }
 
       sql += '`problem`.`id` IN (SELECT `problem_id` FROM `problem_tag_map` WHERE `tag_id` = ' + tagID + ')';
+    }
+
+    if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
+      if (res.locals.user) {
+        sql += 'AND (`problem`.`is_public` = 1 OR `problem`.`user_id` = ' + res.locals.user.id + ')';
+      } else {
+        sql += 'AND (`problem`.`is_public` = 1)';
+      }
     }
 
     let paginate = syzoj.utils.paginate(await Problem.count(sql), req.query.page, syzoj.config.page.problem);

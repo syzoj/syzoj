@@ -48,6 +48,12 @@ app.get('/submissions', async (req, res) => {
 
     where.type = { $ne: 1 };
 
+    if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
+      where.problem_id = {
+        $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1' + (res.locals.user ? (' OR `user_id` = ' + res.locals.user.id) : '') + ')')
+      };
+    }
+
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
 
