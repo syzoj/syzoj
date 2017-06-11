@@ -17,7 +17,9 @@ textFit(e, { maxFontSize: 14 });
     <%= judge.status %>
     </span>
 </a></td>
-<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
+<% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+  <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
+<% } %>
 <td><%= judge.result.total_time %> ms</td>
 <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
 <% if (judge.allowedSeeCode) { %>
@@ -27,7 +29,9 @@ textFit(e, { maxFontSize: 14 });
 <% } %>
 <% } else { %>
     <td>隐藏</td>
-    <td>隐藏</td>
+    <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+      <td>隐藏</td>
+    <% } %>
     <td>隐藏</td>
     <td>隐藏</td>
     <td>隐藏</td>
@@ -39,9 +43,7 @@ textFit(e, { maxFontSize: 14 });
 function update_judge_<%= judge.id %>() {
   setTimeout(function () {
 <%
-let url;
-if (typeof contest !== 'undefined' && contest) url = syzoj.utils.makeUrl(['contest', contest.id, 'submissions', judge.id, 'ajax']);
-else url = syzoj.utils.makeUrl(['submissions', judge.id, 'ajax']);
+let url = syzoj.utils.makeUrl(['submissions', judge.id, 'ajax']);
 %>
     $.get('<%= url %>', function (data) {
       var e = $('#submissions_<%= judge.id %>');

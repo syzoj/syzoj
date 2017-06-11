@@ -242,17 +242,19 @@ app.get('/contest/:id/submissions', async (req, res) => {
     where.type_info = contest_id;
 
     if (contest.ended || contest.type !== 'noi' || (res.locals.user && res.locals.user.is_admin)) {
-      let minScore = parseInt(req.query.min_score);
-      if (isNaN(minScore)) minScore = 0;
-      let maxScore = parseInt(req.query.max_score);
-      if (isNaN(maxScore)) maxScore = 100;
+      if (!((!res.locals.user || !res.locals.user.is_admin) && !contest.ended && contest.type === 'acm')) {
+        let minScore = parseInt(req.query.min_score);
+        if (isNaN(minScore)) minScore = 0;
+        let maxScore = parseInt(req.query.max_score);
+        if (isNaN(maxScore)) maxScore = 100;
 
-      where.score = {
-        $and: {
-          $gte: parseInt(minScore),
-          $lte: parseInt(maxScore)
-        }
-      };
+        where.score = {
+          $and: {
+            $gte: parseInt(minScore),
+            $lte: parseInt(maxScore)
+          }
+        };
+      }
 
       if (req.query.language) where.language = req.query.language;
       if (req.query.status) where.status = req.query.status;

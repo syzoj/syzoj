@@ -35,7 +35,9 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <th>编号</th>
         <th>题目名称</th>
         <th>状态</th>
-        <th>分数</th>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+          <th>分数</th>
+        <% } %>
         <th>总时间</th>
         <th>内存</th>
         <th>代码</th>
@@ -52,7 +54,9 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
           <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
           <%= judge.result.status %>
           </td>
-          <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
+          <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+            <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
+          <% } %>
           <td><%= judge.result.total_time %> ms</td>
           <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
           <% if (judge.allowedSeeCode) { %>
@@ -106,7 +110,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 <% } else if (judge.result.spj_compiler_output) { %>
   <h3 class="ui header">Special Judge 编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.spj_compiler_output) %></code></pre></div>
-<% } else if (judge.allowedSeeResult && judge.result.subtasks && (judge.result.subtasks.length !== 1 || judge.result.subtasks[0].case_num)) { %>
+<% } else if (judge.allowedSeeResult && judge.allowedSeeCase && judge.result.subtasks && (judge.result.subtasks.length !== 1 || judge.result.subtasks[0].case_num)) { %>
 <div class="ui styled fluid accordion" id="subtasks_list">
   <% let subtask_count = 0; %>
   <% for (let subtask_cases of (judge.result.subtasks || [])) { %>
