@@ -87,7 +87,12 @@ app.get('/submissions/:id/ajax', async (req, res) => {
     judge_state.allowedSeeData = await judge_state.isAllowedSeeDataBy(res.locals.user);
 
     let contest;
-    if (judge_state.type === 1) contest = await Contest.fromID(judge_state.type_info);
+    if (judge_state.type === 1) {
+      contest = await Contest.fromID(judge_state.type_info);
+      let problems_id = await contest.getProblems();
+      judge_state.problem_id = problems_id.indexOf(judge_state.problem_id) + 1;
+      judge_state.problem.title = syzoj.utils.removeTitleTag(judge_state.problem.title);
+    }
 
     res.render('submissions_item', {
       contest: contest,
