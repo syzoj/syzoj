@@ -71,6 +71,8 @@ class ContestPlayer extends Model {
   async updateScore(judge_state) {
     await this.loadRelationships();
     if (this.contest.type === 'ioi') {
+      if (judge_state.pending) return;
+
       if (!this.score_details[judge_state.problem_id]) {
         this.score_details[judge_state.problem_id] = {
           score: judge_state.score,
@@ -113,6 +115,8 @@ class ContestPlayer extends Model {
         this.score += this.score_details[x].score;
       }
     } else if (this.contest.type === 'acm') {
+      if (judge_state.pending) return;
+
       if (!this.score_details[judge_state.problem_id]) {
         this.score_details[judge_state.problem_id] = {
           accepted: false,

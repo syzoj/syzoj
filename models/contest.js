@@ -115,8 +115,6 @@ class Contest extends Model {
   }
 
   async newSubmission(judge_state) {
-    if (judge_state.pending) return;
-
     let problems = await this.getProblems();
     if (!problems.includes(judge_state.problem_id)) throw new ErrorMessage('当前比赛中无此题目。');
 
