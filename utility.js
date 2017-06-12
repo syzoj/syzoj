@@ -103,10 +103,24 @@ module.exports = {
       return xss.process(s);
     };
     let replaceUI = s => {
-        if (noReplaceUI) return s;
-        return s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</pre></div>')
-                .split('<table>').join('<table class="ui table">')
-                .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');
+      if (noReplaceUI) return s;
+
+      s = s.split('<pre>').join('<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">').split('</pre>').join('</pre></div>')
+           .split('<table>').join('<table class="ui table">')
+           .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');
+
+      let cheerio = require('cheerio');
+      let $ = cheerio.load(s);
+
+      let a = $('img:only-child');
+      for (let img of Array.from(a)) {
+        if (!img.prev && !img.next) {
+          $(img).css('display', 'block');
+          $(img).css('margin', '0 auto');
+        }
+      }
+
+      return $.html();
     };
     return new Promise((resolve, reject) => {
       if (!keys) {
