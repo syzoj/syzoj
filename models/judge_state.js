@@ -186,6 +186,12 @@ class JudgeState extends Model {
     } else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       await contest.newSubmission(this);
+    } else if (this.type === 2) {
+      if (newSubmission || this.status === 'Accepted') {
+        await this.loadRelationships();
+        await this.user.refreshSubmitInfo();
+        await this.user.save();
+      }
     }
   }
 
@@ -209,14 +215,16 @@ class JudgeState extends Model {
 
     await waiting_judge.save();
 
+    if (oldStatus === 'Accepted') {
+      await this.user.refreshSubmitInfo();
+      await this.user.save();
+    }
+
     if (this.type === 0) {
       if (oldStatus === 'Accepted') {
         this.problem.ac_num--;
-        await this.user.refreshSubmitInfo();
-        await this.user.save();
+        await this.problem.save();
       }
-
-      await this.problem.save();
     } else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       await contest.newSubmission(this);
