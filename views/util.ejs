@@ -2,7 +2,7 @@
 this.getStatusMeta = (status) => {
   if (status.startsWith('Running')) return 'Running';
   else return status;
-}
+};
 
 this.isPending = (status) => {
   let pending = [
@@ -11,7 +11,11 @@ this.isPending = (status) => {
     'Running'
   ];
   return pending.includes(this.getStatusMeta(status));
-}
+};
+
+this.alpha = number => {
+  if (number && parseInt(number) == number && parseInt(number) > 0) return String.fromCharCode('A'.charCodeAt(0) + parseInt(number) - 1);
+};
 
 this.icon = {
   'Accepted': 'checkmark',
@@ -29,5 +33,5 @@ this.icon = {
   'No Testdata': 'folder open outline',
   'Partially Correct': 'minus',
   'Judgement Failed': 'ban'
-}
+};
 %>

@@ -48,7 +48,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
      <tbody>
        <tr>
         <td>#<%= judge.id %></td>
-        <td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; line-height: 22px; " id="text-fit" href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+        <td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; line-height: 22px; " id="text-fit" href="<%= problemUrl %>"><%= (typeof contest !== 'undefined' && contest) ? this.alpha(judge.problem_id) : ('#' + judge.problem_id) %>. <%= judge.problem.title %></a></td>
         <% if (judge.allowedSeeResult) { %>
           <td class="status <%= getStatusMeta(judge.result.status).toLowerCase().split(' ').join('_') %>">
           <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>

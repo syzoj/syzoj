@@ -131,7 +131,7 @@ app.get('/contest/:id', async (req, res) => {
       });
     }
 
-    problems = problems.map(x => ({ problem: x, status: null, judge_id: null }));
+    problems = problems.map(x => ({ problem: x, status: null, judge_id: null, statistics: null }));
     if (player) {
       for (let problem of problems) {
         if (contest.type === 'noi') {
@@ -168,9 +168,38 @@ app.get('/contest/:id', async (req, res) => {
       }
     }
 
+    let hasStatistics = false;
+    if (contest.type === 'ioi' || contest.type === 'acm' || (contest.type === 'noi' && (contest.ended || (res.locals.user && res.locals.user.is_admin)))) {
+      hasStatistics = true;
+
+      await contest.loadRelationships();
+      let players = await contest.ranklist.getPlayers();
+      for (let problem of problems) {
+        problem.statistics = { attempt: 0, accepted: 0 };
+
+        if (contest.type === 'ioi' || contest.type === 'noi') {
+          problem.statistics.partially = 0;
+        }
+
+        for (let player of players) {
+          if (player.score_details[problem.problem.id]) {
+            problem.statistics.attempt++;
+            if ((contest.type === 'acm' && player.score_details[problem.problem.id].accepted) || ((contest.type === 'noi' || contest.type === 'ioi') && player.score_details[problem.problem.id].score === 100)) {
+              problem.statistics.accepted++;
+            }
+
+            if ((contest.type === 'noi' || contest.type === 'ioi') && player.score_details[problem.problem.id].score > 0) {
+              problem.statistics.partially++;
+            }
+          }
+        }
+      }
+    }
+
     res.render('contest', {
       contest: contest,
-      problems: problems
+      problems: problems,
+      hasStatistics: hasStatistics
     });
   } catch (e) {
     syzoj.log(e);

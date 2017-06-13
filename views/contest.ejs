@@ -49,7 +49,10 @@
             <thead>
               <tr>
                 <th class="one wide" style="text-align: center">状态</th>
-                <th class="fourteen wide">题目</th>
+                <th>题目</th>
+                <% if (hasStatistics) { %>
+                  <th class="one wide center aligned">统计</th>
+                <% } %>
               </tr>
             </thead>
             <tbody>
@@ -89,6 +92,17 @@
                 <% } %>
                 </td>
                 <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id, i]) %>"><%= syzoj.utils.removeTitleTag(problem.problem.title) %></a></td>
+                <% if (hasStatistics) { %>
+                  <td class="center aligned" style="white-space: nowrap; ">
+                  <a href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions'], { problem_id: i, status: 'Accepted' }) %>"><%= problem.statistics.accepted %></a>
+                  /
+                    <a href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions'], { problem_id: i, min_score: 1 }) %>"><%= problem.statistics.partially %></a>
+                    <% if (contest.type === 'noi' || contest.type === 'ioi') { %>
+                    /
+                  <% } %>
+                  <a href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions'], { problem_id: i }) %>"><%= problem.statistics.attempt %></a>
+                  </td>
+                <% } %>
               </tr>
             <% } %>
             </tbody>

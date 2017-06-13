@@ -5,7 +5,7 @@ if (typeof contest !== 'undefined' && contest) problemUrl = syzoj.utils.makeUrl(
 else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 %>
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">#<%= judge.id %></a></td>
-<td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; line-height: 22px; " id="text-fit-<%= judge.id %>" href="<%= problemUrl %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+<td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; line-height: 22px; " id="text-fit-<%= judge.id %>" href="<%= problemUrl %>"><%= (typeof contest !== 'undefined' && contest) ? this.alpha(judge.problem_id) : ('#' + judge.problem_id) %>. <%= judge.problem.title %></a></td>
 <script>
 var e = document.getElementById('text-fit-<%= judge.id %>');
 textFit(e, { maxFontSize: 14 });
