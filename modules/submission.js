@@ -29,7 +29,6 @@ app.get('/submissions', async (req, res) => {
     let where = {};
     if (user) where.user_id = user.id;
     else if (req.query.submitter) where.user_id = -1;
-    if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id) || -1;
 
     let minScore = parseInt(req.query.min_score);
     if (isNaN(minScore)) minScore = 0;
@@ -49,9 +48,20 @@ app.get('/submissions', async (req, res) => {
     where.type = { $ne: 1 };
 
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
-      where.problem_id = {
-        $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1' + (res.locals.user ? (' OR `user_id` = ' + res.locals.user.id) : '') + ')')
-      };
+      if (req.query.problem_id) {
+        where.problem_id = {
+          $and: [
+            { $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1' + (res.locals.user ? (' OR `user_id` = ' + res.locals.user.id) : '') + ')') },
+            { $eq: where.problem_id = parseInt(req.query.problem_id) || -1 }
+          ]
+        };
+      } else {
+        where.problem_id = {
+          $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1' + (res.locals.user ? (' OR `user_id` = ' + res.locals.user.id) : '') + ')'),
+        };
+      }
+    } else {
+      if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id) || -1;
     }
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
