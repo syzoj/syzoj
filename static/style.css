@@ -314,8 +314,8 @@
 }
 
 .padding {
-    padding-left: 1.5em;
-    padding-right: 1.5em;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 .ui.segment:first-child {
