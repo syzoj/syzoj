@@ -85,6 +85,12 @@
       "version": "Lua 5.2.4",
       "editor": "lua"
     },
+    "luajit": {
+      "show": "LuaJIT",
+      "highlight": "lua",
+      "version": "LuaJIT 2.0.4",
+      "editor": "lua"
+    },
     "python2": {
       "show": "Python 2",
       "highlight": "python",
