@@ -171,6 +171,7 @@ let model = db.define('problem', {
       key: 'id'
     }
   },
+  is_anonymous: { type: Sequelize.BOOLEAN },
 
   description: { type: Sequelize.TEXT },
   input_format: { type: Sequelize.TEXT },
@@ -216,6 +217,7 @@ class Problem extends Model {
       title: '',
       user_id: '',
       publicizer_id: '',
+      is_anonymous: false,
       description: '',
 
       input_format: '',

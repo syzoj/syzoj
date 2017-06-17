@@ -85,25 +85,27 @@ if (contest) {
           <% } %>
         </div>
         <div class="ui large labels" style="float: right; vertical-align: middle">
-          <div class="ui basic image label" style="font-size: 1.1em; margin-right: 0;">
-            <img src="<%= syzoj.utils.gravatar(problem.user.email, 64) %>">
-            <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><%= problem.user.username %></a>
+          <div class="ui basic image label" style="font-size: 1.1em; margin-right: 0.3em;">
+            <% if (problem.is_anonymous) { %>
+              <img src="<%= syzoj.utils.gravatar('', 64) %>">
+              <a>匿名用户</a>
+            <% } else { %>
+              <img src="<%= syzoj.utils.gravatar(problem.user.email, 64) %>">
+              <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><%= problem.user.username %></a>
+            <% } %>
             <div class="detail">上传</div>
           </div>
           <% if (problem.is_public) {  %>
-            <% if (problem.publicizer) { %>
-              <div class="ui basic image label" style="font-size: 1.1em; margin-left: 0.3em; margin-right: 0;">
+            <div class="ui basic image label" style="font-size: 1.1em; margin-right: <% if (problem.allowedEdit || problem.allowedManage) { %>0.3em<% } else { %>0<% } %>;">
+              <% if (problem.publicizer) { %>
                 <img src="<%= syzoj.utils.gravatar(problem.publicizer.email, 64) %>">
                 <a href="<%= syzoj.utils.makeUrl(['user', problem.publicizer_id]) %>"><%= problem.publicizer.username %></a>
-                <div class="detail">公开</div>
-              </div>
-            <% } else { %>
-              <div class="ui basic image label" style="font-size: 1.1em; margin-left: 0.3em; margin-right: 0;">
+              <% } else { %>
                 <img src="<%= syzoj.utils.gravatar('', 64) %>">
                 <a>LibreOJ 管理员</a>
-                <div class="detail">公开</div>
-              </div>
-            <% } %>
+              <% } %>
+              <div class="detail">公开</div>
+            </div>
           <% } %>
         </div>
       <% } %>

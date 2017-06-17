@@ -43,6 +43,11 @@
               <option value="<%= tag.id %>" selected><%= tag.name %></option>
             <% } %>
           </select>
+          <div class="ui <% if (problem.is_anonymous) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
+            <input <% if (problem.is_anonymous) { %>checked=""<% } %> name="is_anonymous" type="checkbox">
+            <label><strong>匿名上传</strong></label>
+            <p style="margin-top: 5px; ">选择后，上传者的用户名将不在题目页面中显示。</p>
+          </div>
         </div>
       </div>
       <div class="ui bottom attached tab segment" data-tab="preview" id="preview">
