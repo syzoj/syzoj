@@ -86,7 +86,7 @@ if (contest) {
         </div>
         <div class="ui large labels" style="float: right; vertical-align: middle">
           <div class="ui basic image label" style="font-size: 1.1em; margin-right: 0.3em;">
-            <% if (problem.is_anonymous) { %>
+            <% if (problem.is_anonymous && !problem.allowedManage) { %>
               <img src="<%= syzoj.utils.gravatar('', 64) %>">
               <a>匿名用户</a>
             <% } else { %>
