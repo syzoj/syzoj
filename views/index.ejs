@@ -177,6 +177,16 @@
         <p><%- syzoj.config.announcement %></p>
         <% } %>
       </div>
+      <% if (links) { %>
+      <h4 class="ui top attached block header font-content">友情链接</h4>
+      <div class="ui bottom attached <% if (!syzoj.config.announcement) { %>center aligned <% } %>segment">
+        <ul style="margin: 0; padding-left: 20px; ">
+          <% for (let link of links) { %>
+            <li><a href="<%= link.url %>"><%= link.title %></a></li>
+          <% } %>
+        </ul>
+      </div>
+      <% } %>
     </div>
   </div>
 </div>

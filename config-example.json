@@ -141,6 +141,12 @@
       "comment": "Specify the url and date if you want to show any link"
     }
   ],
+  "links": [
+    {
+      "title": "LibreOJ",
+      "url": "https://loj.ac/"
+    }
+  ],
   "announcement": "Here is the announcement",
   "session_secret": "233",
   "judge_token": "233"

@@ -62,7 +62,8 @@ app.get('/', async (req, res) => {
       notices: notices,
       fortune: fortune,
       contests: contests,
-      hitokoto: hitokoto
+      hitokoto: hitokoto,
+      links: syzoj.config.links
     });
   } catch (e) {
     syzoj.log(e);
