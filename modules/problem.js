@@ -203,7 +203,8 @@ app.get('/problem/:id', async (req, res) => {
 
     res.render('problem', {
       problem: problem,
-      state: state
+      state: state,
+      lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null
     });
   } catch (e) {
     syzoj.log(e);

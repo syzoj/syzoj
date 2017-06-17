@@ -227,6 +227,15 @@ class User extends Model {
     return !(!x);
   }
 
+  async getLastSubmitLanguage() {
+    let JudgeState = syzoj.model('judge_state');
+
+    let a = await JudgeState.query([1, 1], { user_id: this.id }, [['submit_time', 'desc']]);
+    if (a[0]) return a[0].language;
+
+    return null;
+  }
+
   getModel() { return model; }
 }
 

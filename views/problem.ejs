@@ -166,7 +166,7 @@ if (contest) {
                   let language = Object.getOwnPropertyNames(syzoj.config.languages).shift();
                   if (state) {
                     language = state.language;
-                  }
+                  } else if (lastLanguage) language = lastLanguage;
                   %>
                   <% for (lang in syzoj.config.languages) { %>
                     <a class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.config.languages[lang].editor %>">

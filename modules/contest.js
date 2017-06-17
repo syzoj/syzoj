@@ -338,7 +338,8 @@ app.get('/contest/:id/:pid', async (req, res) => {
       pid: pid,
       contest: contest,
       problem: problem,
-      state: state
+      state: state,
+      lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null
     });
   } catch (e) {
     syzoj.log(e);
