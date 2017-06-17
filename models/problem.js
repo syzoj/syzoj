@@ -164,6 +164,13 @@ let model = db.define('problem', {
       key: 'id'
     }
   },
+  publicizer_id: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: 'user',
+      key: 'id'
+    }
+  },
 
   description: { type: Sequelize.TEXT },
   input_format: { type: Sequelize.TEXT },
@@ -208,6 +215,7 @@ class Problem extends Model {
     return Problem.fromRecord(Problem.model.build(Object.assign({
       title: '',
       user_id: '',
+      publicizer_id: '',
       description: '',
 
       input_format: '',
@@ -230,6 +238,7 @@ class Problem extends Model {
 
   async loadRelationships() {
     this.user = await User.fromID(this.user_id);
+    this.publicizer = await User.fromID(this.publicizer_id);
     this.testdata = await TestData.fromID(this.testdata_id);
   }
 

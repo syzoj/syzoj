@@ -41,6 +41,16 @@ if (contest) {
         <% } %>
     </div>
 </div>
+<!--<p>
+  由
+    <img style="vertical-align: middle;" src="//cn.gravatar.com/avatar/098be10e0980598d81978267ac70c1fd?s=64&amp;d=mm" width="32" height="32">
+    <a href="/user/1">Menci</a>
+  上传
+  ，由
+    <img style="vertical-align: middle;" src="//cn.gravatar.com/avatar/7d3767f80c1d98af3197062a55d1a6ee?s=64&amp;d=mm" width="32" height="32">
+    <a href="/user/1">samzhang</a>
+  公开
+</p>-->
 <div class="ui grid">
   <div class="row">
     <div class="column">
@@ -71,6 +81,28 @@ if (contest) {
               <a class="small ui button" id="dis_public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
             <% } else { %>
               <a class="small ui button" id="public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'public']) %>">公开</a>
+            <% } %>
+          <% } %>
+        </div>
+        <div class="ui large labels" style="float: right; vertical-align: middle">
+          <div class="ui basic image label" style="font-size: 1.1em; margin-right: 0;">
+            <img src="<%= syzoj.utils.gravatar(problem.user.email, 64) %>">
+            <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><%= problem.user.username %></a>
+            <div class="detail">上传</div>
+          </div>
+          <% if (problem.is_public) {  %>
+            <% if (problem.publicizer) { %>
+              <div class="ui basic image label" style="font-size: 1.1em; margin-left: 0.3em; margin-right: 0;">
+                <img src="<%= syzoj.utils.gravatar(problem.publicizer.email, 64) %>">
+                <a href="<%= syzoj.utils.makeUrl(['user', problem.publicizer_id]) %>"><%= problem.publicizer.username %></a>
+                <div class="detail">公开</div>
+              </div>
+            <% } else { %>
+              <div class="ui basic image label" style="font-size: 1.1em; margin-left: 0.3em; margin-right: 0;">
+                <img src="<%= syzoj.utils.gravatar('', 64) %>">
+                <a>LibreOJ 管理员</a>
+                <div class="detail">公开</div>
+              </div>
             <% } %>
           <% } %>
         </div>

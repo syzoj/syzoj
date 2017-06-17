@@ -200,6 +200,7 @@ app.get('/problem/:id', async (req, res) => {
     let state = await problem.getJudgeState(res.locals.user, false);
 
     problem.tags = await problem.getTags();
+    await problem.loadRelationships();
 
     res.render('problem', {
       problem: problem,
@@ -293,6 +294,7 @@ app.post('/problem/:id/edit', async (req, res) => {
       } else if (id) problem.id = id;
 
       problem.user_id = res.locals.user.id;
+      problem.publicizer_id = res.locals.user.id;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -347,6 +349,7 @@ app.get('/problem/:id/import', async (req, res) => {
       problem.id = id;
       problem.new = true;
       problem.user_id = res.locals.user.id;
+      problem.publicizer_id = res.locals.user.id;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -379,6 +382,7 @@ app.post('/problem/:id/import', async (req, res) => {
       } else if (id) problem.id = id;
 
       problem.user_id = res.locals.user.id;
+      problem.publicizer_id = res.locals.user.id;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -504,6 +508,7 @@ async function setPublic(req, res, is_public) {
     if (!allowedManage) throw new ErrorMessage('您没有权限进行此操作。');
 
     problem.is_public = is_public;
+    problem.publicizer_id = res.locals.user.id;
     await problem.save();
 
     res.redirect(syzoj.utils.makeUrl(['problem', id]));
