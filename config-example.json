@@ -121,6 +121,12 @@
       "version": "GHC 7.10.3",
       "editor": "haskell"
     },
+    "ocaml": {
+      "show": "OCaml",
+      "highlight": "ocaml",
+      "version": "Ocamlbuild 4.02.3",
+      "editor": "ocaml"
+    },
     "vbnet": {
       "show": "Visual Basic",
       "highlight": "vbnet",
