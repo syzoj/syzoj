@@ -43,7 +43,7 @@ app.get('/submissions', async (req, res) => {
     };
 
     if (req.query.language) where.language = req.query.language;
-    if (req.query.status) where.status = req.query.status;
+    if (req.query.status) where.status = { $like: req.query.status + '%' };
 
     where.type = { $ne: 1 };
 

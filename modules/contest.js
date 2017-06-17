@@ -286,7 +286,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
       }
 
       if (req.query.language) where.language = req.query.language;
-      if (req.query.status) where.status = req.query.status;
+      if (req.query.status) where.status = { $like: req.query.status + '%' };
     }
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
