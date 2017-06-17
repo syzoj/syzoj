@@ -150,13 +150,17 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
           <p>
               <strong>输入文件</strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.input %></code></pre></div>
-              <strong>期望输出</strong>
+              <strong>输出文件</strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.answer %></code></pre></div>
-              <strong>你的输出</strong>
+              <strong>程序输出</strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_out %></code></pre></div>
               <% if (testcase.spj_message) { %>
                 <strong>Special Judge 信息</strong>
                 <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.spj_message %></code></pre></div>
+              <% } %>
+              <% if (testcase.user_err) { %>
+                <strong>标准错误</strong>
+                <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_err %></code></pre></div>
               <% } %>
           </p>
         <% } %>
