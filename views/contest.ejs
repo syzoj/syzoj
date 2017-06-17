@@ -8,7 +8,8 @@
 </style>
 <% include header %>
 <div class="padding">
-  <h1 style="margin-bottom: 30px; "><%= contest.title %></h1>
+  <h1><%= contest.title %></h1>
+  <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
   <% let unveiled = (contest.allowedEdit || syzoj.utils.getCurrentDate() >= contest.start_time); %>
   <% let start = syzoj.utils.formatDate(contest.start_time), end = syzoj.utils.formatDate(contest.end_time); %>
   <% if (contest.running && start.split(' ')[0] === end.split(' ')[0]) {
@@ -36,7 +37,7 @@
   <% } %>
     <div class="row">
       <div class="column">
-        <h4 class="ui top attached block header">描述</h4>
+        <h4 class="ui top attached block header">信息与公告</h4>
         <div class="ui bottom attached segment font-content">
           <%- contest.information %>
         </div>

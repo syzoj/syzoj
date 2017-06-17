@@ -30,6 +30,7 @@ let ContestPlayer = syzoj.model('contest_player');
 let model = db.define('contest', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   title: { type: Sequelize.STRING(80) },
+  subtitle: { type: Sequelize.TEXT },
   start_time: { type: Sequelize.INTEGER },
   end_time: { type: Sequelize.INTEGER },
 
@@ -71,6 +72,7 @@ class Contest extends Model {
   static async create(val) {
     return Contest.fromRecord(Contest.model.build(Object.assign({
       title: '',
+      subtitle: '',
       problems: '',
       information: '',
       type: 'noi',

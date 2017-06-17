@@ -31,7 +31,7 @@ app.get('/contests', async (req, res) => {
     let paginate = syzoj.utils.paginate(await Contest.count(), req.query.page, syzoj.config.page.contest);
     let contests = await Contest.query(paginate, null, [['start_time', 'desc']]);
 
-    await contests.forEachAsync(async x => x.information = await syzoj.utils.markdown(x.information));
+    await contests.forEachAsync(async x => x.subtitle = await syzoj.utils.markdown(x.subtitle));
 
     res.render('contests', {
       contests: contests,
@@ -89,6 +89,7 @@ app.post('/contest/:id/edit', async (req, res) => {
 
     if (!req.body.title.trim()) throw new ErrorMessage('比赛名不能为空。');
     contest.title = req.body.title;
+    contest.subtitle = req.body.subtitle;
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');
     if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
@@ -117,6 +118,7 @@ app.get('/contest/:id', async (req, res) => {
 
     contest.allowedEdit = await contest.isAllowedEditBy(res.locals.user);
     contest.running = await contest.isRunning();
+    contest.subtitle = await syzoj.utils.markdown(contest.subtitle);
     contest.information = await syzoj.utils.markdown(contest.information);
 
     let problems_id = await contest.getProblems();
