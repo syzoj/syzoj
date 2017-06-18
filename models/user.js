@@ -88,34 +88,32 @@ class User extends Model {
   }
 
   async refreshSubmitInfo() {
-    await syzoj.utils.lock('User::refreshSubmitInfo', this.id);
+    await syzoj.utils.lock(['User::refreshSubmitInfo', this.id], async () => {
+      let JudgeState = syzoj.model('judge_state');
+      let all = await JudgeState.model.findAll({
+        attributes: ['problem_id'],
+        where: {
+          user_id: this.id,
+          status: 'Accepted',
+          type: {
+            $ne: 1 // Not a contest submission
+          }
+        }
+      });
 
-    let JudgeState = syzoj.model('judge_state');
-    let all = await JudgeState.model.findAll({
-      attributes: ['problem_id'],
-      where: {
+      let s = new Set();
+      all.forEach(x => s.add(parseInt(x.get('problem_id'))));
+      this.ac_num = s.size;
+
+      let cnt = await JudgeState.count({
         user_id: this.id,
-        status: 'Accepted',
         type: {
           $ne: 1 // Not a contest submission
         }
-      }
+      });
+
+      this.submit_num = cnt;
     });
-
-    let s = new Set();
-    all.forEach(x => s.add(parseInt(x.get('problem_id'))));
-    this.ac_num = s.size;
-
-    let cnt = await JudgeState.count({
-      user_id: this.id,
-      type: {
-        $ne: 1 // Not a contest submission
-      }
-    });
-
-    this.submit_num = cnt;
-
-    syzoj.utils.unlock('User::refreshSubmitInfo', this.id);
   }
 
   async getACProblems() {

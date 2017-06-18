@@ -95,35 +95,36 @@ app.get('/api/waiting_judge', async (req, res) => {
   try {
     if (req.query.session_id !== syzoj.config.judge_token) return res.status(404).send({ err: 'Permission denied' });
 
-    await syzoj.utils.lock('/api/waiting_judge');
+    let judge_state;
+    await syzoj.utils.lock('/api/waiting_judge', async () => {
+      let waiting_judge = await WaitingJudge.findOne();
+      if (!waiting_judge) {
+        return;
+      }
 
-    let waiting_judge = await WaitingJudge.findOne();
-    if (!waiting_judge) {
-      syzoj.utils.unlock('/api/waiting_judge');
-      return res.send({ have_task: 0 });
-    }
-
-    let judge_state = await waiting_judge.getJudgeState();
-    await judge_state.loadRelationships();
-    await judge_state.problem.loadRelationships();
-    await waiting_judge.destroy();
-
-    syzoj.utils.unlock('/api/waiting_judge');
-
-    res.send({
-      have_task: 1,
-      judge_id: judge_state.id,
-      code: judge_state.code,
-      language: judge_state.language,
-      testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
-      time_limit: judge_state.problem.time_limit,
-      memory_limit: judge_state.problem.memory_limit,
-      file_io: judge_state.problem.file_io,
-      file_io_input_name: judge_state.problem.file_io_input_name,
-      file_io_output_name: judge_state.problem.file_io_output_name
+      judge_state = await waiting_judge.getJudgeState();
+      await judge_state.loadRelationships();
+      await judge_state.problem.loadRelationships();
+      await waiting_judge.destroy();
     });
+
+    if (judge_state) {
+      res.send({
+        have_task: 1,
+        judge_id: judge_state.id,
+        code: judge_state.code,
+        language: judge_state.language,
+        testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
+        time_limit: judge_state.problem.time_limit,
+        memory_limit: judge_state.problem.memory_limit,
+        file_io: judge_state.problem.file_io,
+        file_io_input_name: judge_state.problem.file_io_input_name,
+        file_io_output_name: judge_state.problem.file_io_output_name
+      });
+    } else {
+      res.send({ have_task: 0 });
+    }
   } catch (e) {
-    syzoj.log(e);
     res.status(500).send(e);
   }
 });

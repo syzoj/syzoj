@@ -74,30 +74,6 @@ function highlightPygmentize(code, lang, cb) {
 
 renderer.config.highlight = highlightPygmentize;
 
-let locks = {};
-let lock = function () {
-  let s = JSON.stringify(Array.from(arguments));
-  return new Promise((resolve, reject) => {
-    if (!locks[s]) {
-      locks[s] = {
-        lock: new AsyncLock(),
-        done: null
-      };
-    }
-
-    locks[s].lock.acquire('', done => {
-      locks[s].done = done;
-      resolve();
-    });
-  });
-};
-
-let unlock = function () {
-  let s = JSON.stringify(Array.from(arguments));
-  locks[s].done();
-  locks[s].done = null;
-}
-
 module.exports = {
   resolvePath(s) {
     let a = Array.from(arguments);
@@ -346,6 +322,10 @@ module.exports = {
   isValidUsername(s) {
     return /^[a-zA-Z0-9\-\_]+$/.test(s);
   },
-  lock: lock,
-  unlock: unlock
+  locks: [],
+  lock(key, cb) {
+    let s = JSON.stringify(key);
+    if (!this.locks[s]) this.locks[s] = new AsyncLock();
+    return this.locks[s].acquire(s, cb);
+  }
 };
