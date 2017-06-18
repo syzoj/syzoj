@@ -25,6 +25,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "ansi-to-html": "^0.4.2",
+    "async-lock": "^0.3.9",
     "body-parser": "^1.15.2",
     "cheerio": "^1.0.0-rc.1",
     "cookie-parser": "^1.4.3",

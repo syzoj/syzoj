@@ -68,7 +68,7 @@ class User extends Model {
       is_admin: false,
       ac_num: 0,
       submit_num: 0,
-    sex: 0,
+      sex: 0,
       is_show: syzoj.config.default.user.show
     }, val)));
   }
@@ -88,6 +88,8 @@ class User extends Model {
   }
 
   async refreshSubmitInfo() {
+    await syzoj.utils.lock('User::refreshSubmitInfo', this.id);
+
     let JudgeState = syzoj.model('judge_state');
     let all = await JudgeState.model.findAll({
       attributes: ['problem_id'],
@@ -95,7 +97,7 @@ class User extends Model {
         user_id: this.id,
         status: 'Accepted',
         type: {
-          $ne: 1 // Not a contest submissio
+          $ne: 1 // Not a contest submission
         }
       }
     });
@@ -107,11 +109,13 @@ class User extends Model {
     let cnt = await JudgeState.count({
       user_id: this.id,
       type: {
-        $ne: 1 // Not a contest submissio
+        $ne: 1 // Not a contest submission
       }
     });
 
     this.submit_num = cnt;
+
+    syzoj.utils.unlock('User::refreshSubmitInfo', this.id);
   }
 
   async getACProblems() {

@@ -46,6 +46,7 @@ let pygmentize = require('pygmentize-bundled-cached');
 let gravatar = require('gravatar');
 let AdmZip = require('adm-zip');
 let filesize = require('file-size');
+let AsyncLock = require('async-lock');
 
 function escapeHTML(s) {
   // Code from http://stackoverflow.com/questions/5251520/how-do-i-escape-some-html-in-javascript/5251551
@@ -72,6 +73,30 @@ function highlightPygmentize(code, lang, cb) {
 }
 
 renderer.config.highlight = highlightPygmentize;
+
+let locks = {};
+let lock = function () {
+  let s = JSON.stringify(Array.from(arguments));
+  return new Promise((resolve, reject) => {
+    if (!locks[s]) {
+      locks[s] = {
+        lock: new AsyncLock(),
+        done: null
+      };
+    }
+
+    locks[s].lock.acquire('', done => {
+      locks[s].done = done;
+      resolve();
+    });
+  });
+};
+
+let unlock = function () {
+  let s = JSON.stringify(Array.from(arguments));
+  locks[s].done();
+  locks[s].done = null;
+}
 
 module.exports = {
   resolvePath(s) {
@@ -320,5 +345,7 @@ module.exports = {
   },
   isValidUsername(s) {
     return /^[a-zA-Z0-9\-\_]+$/.test(s);
-  }
+  },
+  lock: lock,
+  unlock: unlock
 };

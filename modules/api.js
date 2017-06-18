@@ -95,13 +95,20 @@ app.get('/api/waiting_judge', async (req, res) => {
   try {
     if (req.query.session_id !== syzoj.config.judge_token) return res.status(404).send({ err: 'Permission denied' });
 
+    await syzoj.utils.lock('/api/waiting_judge');
+
     let waiting_judge = await WaitingJudge.findOne();
-    if (!waiting_judge) return res.send({ have_task: 0 });
+    if (!waiting_judge) {
+      syzoj.utils.unlock('/api/waiting_judge');
+      return res.send({ have_task: 0 });
+    }
 
     let judge_state = await waiting_judge.getJudgeState();
     await judge_state.loadRelationships();
     await judge_state.problem.loadRelationships();
     await waiting_judge.destroy();
+
+    syzoj.utils.unlock('/api/waiting_judge');
 
     res.send({
       have_task: 1,
@@ -143,4 +150,4 @@ app.get('/static/uploads/:md5', async (req, res) => {
   } catch (e) {
     res.status(500).send(e);
   }
-})
+});

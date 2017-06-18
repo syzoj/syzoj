@@ -196,6 +196,8 @@ class JudgeState extends Model {
   }
 
   async rejudge() {
+    await syzoj.utils.lock('JudgeState::rejudge', this.id);
+
     await this.loadRelationships();
 
     let oldStatus = this.status;
@@ -229,6 +231,8 @@ class JudgeState extends Model {
       let contest = await Contest.fromID(this.type_info);
       await contest.newSubmission(this);
     }
+
+    syzoj.utils.unlock('JudgeState::rejudge', this.id);
   }
 
   getModel() { return model; }
