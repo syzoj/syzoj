@@ -93,7 +93,7 @@ class Contest extends Model {
   }
 
   async isAllowedSeeResultBy(user) {
-    if (this.type === 'acm' || this.type === 'ioi') return true;
+    if (this.type === 'acm') return true;
     return (user && (user.is_admin || this.holder_id === user.id)) || !(await this.isRunning());
   }
 

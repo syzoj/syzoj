@@ -10,14 +10,13 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 var e = document.getElementById('text-fit-<%= judge.id %>');
 textFit(e, { maxFontSize: 14 });
 </script>
-<% if (!judge.hidden) { %>
 <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">
     <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
     <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
     <%= judge.status %>
     </span>
 </a></td>
-<% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+<% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
   <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
 <% } %>
 <td><%= judge.result.total_time %> ms</td>
@@ -26,15 +25,6 @@ textFit(e, { maxFontSize: 14 });
   <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
 <% } else { %>
   <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / 隐藏</td>
-<% } %>
-<% } else { %>
-    <td>隐藏</td>
-    <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
-      <td>隐藏</td>
-    <% } %>
-    <td>隐藏</td>
-    <td>隐藏</td>
-    <td>隐藏</td>
 <% } %>
 <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
 <td><%= syzoj.utils.formatDate(judge.submit_time) %>

@@ -131,6 +131,7 @@ class ContestPlayer extends Model {
         this.score_details[judge_state.problem_id].submissions[judge_state.id] = {
           judge_id: judge_state.id,
           accepted: judge_state.status === 'Accepted',
+          compiled: judge_state.status !== 'Compile Error',
           time: judge_state.submit_time
         };
 
@@ -145,7 +146,7 @@ class ContestPlayer extends Model {
             this.score_details[judge_state.problem_id].acceptedTime = x.time;
             this.score_details[judge_state.problem_id].judge_id = x.judge_id;
             break;
-          } else {
+          } else if (x.compiled) {
             this.score_details[judge_state.problem_id].unacceptedCount++;
           }
         }

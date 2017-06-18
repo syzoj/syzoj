@@ -10,7 +10,7 @@
       <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
       <div class="field"><input name="submitter" style="width: 100px; " type="text" value="<%= form.submitter %>"></div>
       <% if ((typeof contest === 'undefined' || !contest) || contest.ended || contest.type !== 'noi' || (user && user.is_admin)) { %>
-        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
           <label style="font-size: 1.2em; margin-right: 1px; ">分数：</label>
           <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="<%= form.min_score || 0 %>"></div>
           <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
@@ -71,7 +71,7 @@
         <th>编号</th>
         <th>题目</th>
         <th>状态</th>
-        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
           <th>分数</th>
         <% } %>
         <th>总时间</th>

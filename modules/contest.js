@@ -138,17 +138,12 @@ app.get('/contest/:id', async (req, res) => {
       for (let problem of problems) {
         if (contest.type === 'noi') {
           if (player.score_details[problem.problem.id]) {
-            if (await contest.isRunning()) {
-              problem.status = true;
-            } else {
-              let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
-              problem.status = judge_state.status;
+            let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
+            problem.status = judge_state.status;
+            if (!contest.ended && !await problem.problem.isAllowedEditBy(res.locals.user) && !['Compile Error', 'Waiting', 'Compiling'].includes(problem.status)) {
+              problem.status = 'Compiled';
             }
             problem.judge_id = player.score_details[problem.problem.id].judge_id;
-          } else {
-            if (contest.isRunning()) {
-              problem.status = false;
-            }
           }
         } else if (contest.type === 'ioi') {
           if (player.score_details[problem.problem.id]) {
@@ -215,8 +210,8 @@ app.get('/contest/:id/ranklist', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-    if (!contest) throw new ErrorMessage('无此比赛。');
 
+    if (!contest) throw new ErrorMessage('无此比赛。');
     if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await contest.loadRelationships();
@@ -260,6 +255,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
     let contest = await Contest.fromID(contest_id);
 
     if (!contest) throw new ErrorMessage('无此比赛。');
+    if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     contest.ended = await contest.isEnded();
 
@@ -272,7 +268,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
     where.type = 1;
     where.type_info = contest_id;
 
-    if (contest.ended || contest.type !== 'noi' || (res.locals.user && res.locals.user.is_admin)) {
+    if (contest.ended || (res.locals.user && res.locals.user.is_admin)) {
       if (!((!res.locals.user || !res.locals.user.is_admin) && !contest.ended && contest.type === 'acm')) {
         let minScore = parseInt(req.query.min_score);
         if (isNaN(minScore)) minScore = 0;
@@ -294,12 +290,17 @@ app.get('/contest/:id/submissions', async (req, res) => {
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
 
-    await judge_state.forEachAsync(async obj => obj.hidden = !(await obj.isAllowedSeeResultBy(res.locals.user)));
     await judge_state.forEachAsync(async obj => obj.allowedSeeCode = await obj.isAllowedSeeCodeBy(res.locals.user));
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
       obj.problem_id = problems_id.indexOf(obj.problem_id) + 1;
       obj.problem.title = syzoj.utils.removeTitleTag(obj.problem.title);
+
+      if (contest.type === 'noi' && !contest.ended && !await obj.problem.isAllowedEditBy(res.locals.user)) {
+        if (!['Compile Error', 'Waiting', 'Compiling'].includes(obj.status)) {
+          obj.status = 'Compiled';
+        }
+      }
     });
 
     res.render('contest_submissions', {

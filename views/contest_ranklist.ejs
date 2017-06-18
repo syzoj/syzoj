@@ -87,7 +87,7 @@
                           <div class="submit_time">
                             <%= syzoj.utils.formatTime(item.player.score_details[problem.id].acceptedTime - contest.start_time) %>
                           </div>
-                        <% } else { %>
+                        <% } else if (item.player.score_details[problem.id].unacceptedCount) { %>
                           <span class="score score_0">
                             -<%= item.player.score_details[problem.id].unacceptedCount %>
                           </span>

@@ -99,26 +99,21 @@ class JudgeState extends Model {
     if (this.problem_id) this.problem = await Problem.fromID(this.problem_id);
   }
 
-  async isAllowedSeeResultBy(user) {
+  async isAllowedVisitBy(user) {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0 || this.type == 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
-      let contest = await Contest.fromID(this.type_info);
-      if (await contest.isRunning()) {
-        return (contest.type === 'acm' || contest.type === 'ioi') || (user && user.is_admin);
-      } else {
-        return true;
-      }
-    } else if (this.type === 2) return user && (await user.hasPrivilege('manage_problem'));
+      return user && (user.is_admin || user.id === this.user_id);
+    }
   }
 
   async isAllowedSeeCodeBy(user) {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0 || this.type === 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -126,14 +121,14 @@ class JudgeState extends Model {
       } else {
         return true;
       }
-    } else if (this.type === 2) return user && (await user.hasPrivilege('manage_problem'));
+    }
   }
 
   async isAllowedSeeCaseBy(user) {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0 || this.type === 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -141,14 +136,14 @@ class JudgeState extends Model {
       } else {
         return true;
       }
-    } else if (this.type === 2) return user && (await user.hasPrivilege('manage_problem'));
+    }
   }
 
   async isAllowedSeeDataBy(user) {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0 || this.type === 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -156,7 +151,7 @@ class JudgeState extends Model {
       } else {
         return true;
       }
-    } else if (this.type === 2) return true;
+    }
   }
 
   async updateResult(result) {
@@ -169,7 +164,7 @@ class JudgeState extends Model {
   }
 
   async updateRelatedInfo(newSubmission) {
-    if (this.type === 0) {
+    if (this.type === 0 || this.type === 2) {
       if (newSubmission) {
         await this.loadRelationships();
         await this.user.refreshSubmitInfo();
@@ -222,7 +217,7 @@ class JudgeState extends Model {
       await this.user.save();
     }
 
-    if (this.type === 0) {
+    if (this.type === 0 || this.type === 2) {
       if (oldStatus === 'Accepted') {
         this.problem.ac_num--;
         await this.problem.save();

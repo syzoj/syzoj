@@ -22,7 +22,7 @@
     <div class="bar" style="width: <%= timePercentage %>%;"></div>
   </div>
   <div class="ui grid">
-  <% if (contest.allowedEdit || (unveiled && (!contest.running || contest.type !== 'noi'))) { %>
+  <% if (contest.allowedEdit || (unveiled && (!contest.running || contest.type === 'acm'))) { %>
     <div class="row">
       <div class="column">
         <div class="ui buttons">
@@ -66,9 +66,7 @@
                 <td class="center aligned" style="white-space: nowrap; ">
                 <% if (problem.judge_id) { %>
                   <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_id]) %>">
-                  <% if (problem.status === true) { %>
-                  <i class="black checkmark icon"></i>
-                  <% } else if (typeof problem.status === 'string') { %>
+                  <% if (typeof problem.status === 'string') { %>
                     <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
                       <i class="<%= icon[getStatusMeta(problem.status)] || 'remove' %> icon"></i>
                       <%= problem.status %>

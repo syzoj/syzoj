@@ -357,6 +357,9 @@ table.center.aligned ul, table.center.aligned ol {
 }
 */
 
+:not(.status_detail).status.compiled,
+.title:hover .status_detail.status.compiled,
+.title.active .status_detail.status.compiled,
 :not(.status_detail).status.accepted,
 .title:hover .status_detail.status.accepted,
 .title.active .status_detail.status.accepted {

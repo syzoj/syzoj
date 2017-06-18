@@ -2,7 +2,7 @@
 // Sanitize judge results for backward compatibility and clarity
 if (!judge.result.subtasks) {
   judge.result.subtasks = [
-    { case_num: judge.result.case_num, status: judge.result.status, score: judge.result.score }
+    { case_num: judge.result.case_num, status: judge.status, score: judge.result.score }
   ];
   for (let i = 0; i < judge.result.case_num; ++i) {
     judge.result.subtasks[0][i] = judge.result[i];
@@ -35,7 +35,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <th>编号</th>
         <th>题目名称</th>
         <th>状态</th>
-        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
           <th>分数</th>
         <% } %>
         <th>总时间</th>
@@ -49,27 +49,19 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
        <tr>
         <td>#<%= judge.id %></td>
         <td><a style="width: 220px; height: 22px; display: block; margin: 0 auto; line-height: 22px; " id="text-fit" href="<%= problemUrl %>"><%= (typeof contest !== 'undefined' && contest) ? this.alpha(judge.problem_id) : ('#' + judge.problem_id) %>. <%= judge.problem.title %></a></td>
-        <% if (judge.allowedSeeResult) { %>
-          <td class="status <%= getStatusMeta(judge.result.status).toLowerCase().split(' ').join('_') %>">
-          <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
-          <%= judge.result.status %>
-          </td>
-          <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm')) { %>
-            <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
-          <% } %>
-          <td><%= judge.result.total_time %> ms</td>
-          <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
-          <% if (judge.allowedSeeCode) { %>
-            <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
-          <% } else { %>
-            <td><%= syzoj.config.languages[judge.language].show %> / 隐藏 %></td>
-          <% } %>
+        <td class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
+        <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
+        <%= judge.status %>
+        </td>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
+          <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
+        <% } %>
+        <td><%= judge.result.total_time %> ms</td>
+        <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
+        <% if (judge.allowedSeeCode) { %>
+          <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
         <% } else { %>
-          <td>隐藏</td>
-          <td>隐藏</td>
-          <td>隐藏</td>
-          <td>隐藏</td>
-          <td>隐藏</td>
+          <td><%= syzoj.config.languages[judge.language].show %> / 隐藏 %></td>
         <% } %>
         <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
         <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
@@ -104,13 +96,13 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
       });
     </script>
   <% } %>
-<% if (judge.result.compiler_output && judge.result.status === 'Compile Error' && judge.allowedSeeCode) { %>
+<% if (judge.result.compiler_output && judge.status === 'Compile Error' && judge.allowedSeeCode) { %>
   <h3 class="ui header">编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.compiler_output) %></code></pre></div>
 <% } else if (judge.result.spj_compiler_output) { %>
   <h3 class="ui header">Special Judge 编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.spj_compiler_output) %></code></pre></div>
-<% } else if (judge.allowedSeeResult && judge.allowedSeeCase && judge.result.subtasks && (judge.result.subtasks.length !== 1 || judge.result.subtasks[0].case_num)) { %>
+<% } else if (judge.allowedSeeCase && judge.result.subtasks && (judge.result.subtasks.length !== 1 || judge.result.subtasks[0].case_num)) { %>
 <div class="ui styled fluid accordion" id="subtasks_list">
   <% let subtask_count = 0; %>
   <% for (let subtask_cases of (judge.result.subtasks || [])) { %>
@@ -186,7 +178,7 @@ $(function() {
 
 <% if (!isPending(judge.status)) { %><div><div id="stop_ajax"></div><div id="show_rejudge"></div></div><% } %>
 <script>
-<% if (isPending(judge.status) && judge.allowedSeeResult) { %>
+<% if (isPending(judge.status)) { %>
 document.addEventListener('mousedown', function (event) {
   var list = $('#submission_content').find('div.auto_update_activation');
   for (var i = 0; i < list.length; ++i) {
