@@ -32,6 +32,18 @@
               <th>个性签名</th>
             </tr>
           </thead>
+          <script>
+          var lineHeight = 0;
+          (function () {
+            var div = document.createElement('div');
+            div.style.position = 'fixed';
+            div.style.left = -10000;
+            div.style.visibility = 'hidden';
+            div.innerText = '测试，Test.';
+            document.body.appendChild(div);
+            lineHeight = div.clientHeight;
+          })();
+          </script>
           <tbody>
             <%
             let i = 0;
@@ -46,7 +58,8 @@
                       (function () {
                         var html = <%- JSON.stringify(user.information) %>;
                         var elem = document.createElement('div');
-                        elem.style = 'max-height: 50px; overflow: hidden; width: 100%; max-width: 480px; ';
+                        elem.style = 'overflow: hidden; width: 100%; max-width: 480px; ';
+                        elem.style.maxHeight = lineHeight + 'px';
                         elem.innerHTML = html;
                         var imgs = Array.from(elem.getElementsByTagName('img'));
                         for (var i in imgs) imgs[i].parentNode.removeChild(imgs[i]);
