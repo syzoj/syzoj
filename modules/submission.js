@@ -97,6 +97,8 @@ app.get('/submissions/:id/ajax', async (req, res) => {
     let contest;
     if (judge_state.type === 1) {
       contest = await Contest.fromID(judge_state.type_info);
+      contest.ended = await contest.isEnded();
+
       let problems_id = await contest.getProblems();
       judge_state.problem_id = problems_id.indexOf(judge_state.problem_id) + 1;
       judge_state.problem.title = syzoj.utils.removeTitleTag(judge_state.problem.title);
@@ -127,7 +129,10 @@ app.get('/submission/:id', async (req, res) => {
     if (!judge || !await judge.isAllowedVisitBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
-    if (judge.type === 1) contest = await Contest.fromID(judge.type_info);
+    if (judge.type === 1) {
+      contest = await Contest.fromID(judge.type_info);
+      contest.ended = await contest.isEnded();
+    }
 
     await judge.loadRelationships();
 
@@ -169,7 +174,10 @@ app.get('/submission/:id/ajax', async (req, res) => {
     if (!judge || !await judge.isAllowedVisitBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
-    if (judge.type === 1) contest = await Contest.fromID(judge.type_info);
+    if (judge.type === 1) {
+      contest = await Contest.fromID(judge.type_info);
+      contest.ended = await contest.isEnded();
+    }
 
     await judge.loadRelationships();
 
