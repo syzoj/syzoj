@@ -536,7 +536,7 @@ app.post('/problem/:id/submit', async (req, res) => {
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!syzoj.config.languages[req.body.language]) throw new ErrorMessage('不支持该语言。');
-    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });
 
     let judge_state = await JudgeState.create({
       code: req.body.code,
