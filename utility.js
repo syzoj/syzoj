@@ -111,7 +111,9 @@ module.exports = {
            .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');
 
       let cheerio = require('cheerio');
-      let $ = cheerio.load(s);
+      let $ = cheerio.load('<html><head></head><body></body></html>');
+      let body = $('body');
+      body.html(s);
 
       let a = $('img:only-child');
       for (let img of Array.from(a)) {
@@ -121,7 +123,7 @@ module.exports = {
         }
       }
 
-      return $.html();
+      return body.html();
     };
     return new Promise((resolve, reject) => {
       if (!keys) {
