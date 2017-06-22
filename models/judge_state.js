@@ -105,7 +105,12 @@ class JudgeState extends Model {
     if (user && user.id === this.problem.user_id) return true;
     else if (this.type === 0 || this.type == 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
-      return user && (user.is_admin || user.id === this.user_id);
+      let contest = await Contest.fromID(this.type_info);
+      if (await contest.isRunning()) {
+        return (user && this.user_id === user.id) || (user && user.is_admin);
+      } else {
+        return true;
+      }
     }
   }
 

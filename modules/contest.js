@@ -118,6 +118,7 @@ app.get('/contest/:id', async (req, res) => {
 
     contest.allowedEdit = await contest.isAllowedEditBy(res.locals.user);
     contest.running = await contest.isRunning();
+    contest.ended = await contest.isEnded();
     contest.subtitle = await syzoj.utils.markdown(contest.subtitle);
     contest.information = await syzoj.utils.markdown(contest.information);
 
