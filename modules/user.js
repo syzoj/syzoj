@@ -87,6 +87,7 @@ app.get('/user/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let user = await User.fromID(id);
+    if (!user) throw new ErrorMessage('无此用户。');
     user.ac_problems = await user.getACProblems();
     user.articles = await user.getArticles();
     user.allowedEdit = await user.isAllowedEditBy(res.locals.user);
@@ -138,6 +139,7 @@ app.post('/user/:id/edit', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     user = await User.fromID(id);
+    if (!user) throw new ErrorMessage('无此用户。');
 
     let allowedEdit = await user.isAllowedEditBy(res.locals.user);
     if (!allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
