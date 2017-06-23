@@ -1,11 +1,13 @@
 <%
 this.title = '统计';
 let types = {
-  fastest: '最快',
-  slowest: '最慢',
-  shortest: '最短',
-  longest: '最长',
-  earliest: '最早'
+  fastest: problem.type === 'submit-answer' ? null : '最快',
+  slowest: problem.type === 'submit-answer' ? null : '最慢',
+  shortest: problem.type === 'submit-answer' ? null : '最短',
+  longest: problem.type === 'submit-answer' ? null : '最长',
+  earliest: '最早',
+  min: problem.type === 'submit-answer' ? '最小' : '最小内存',
+  max: problem.type === 'submit-answer' ? '最大' : '最大内存'
 };
 %>
 <% include header %>
@@ -38,7 +40,7 @@ function getColorOfScore(score) {
           <i class="dropdown icon"></i>
           <div class="menu">
             <% for (let type in types) { %>
-              <% if (type !== statistics.type) { %>
+              <% if (type !== statistics.type && types[type] !== null) { %>
                 <a class="item" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', type]) %>"><%= types[type] %></a>
               <% } %>
             <% } %>
@@ -54,9 +56,13 @@ function getColorOfScore(score) {
           <th>题目</th>
           <th>状态</th>
           <th>分数</th>
-          <th>总时间</th>
-          <th>内存</th>
-          <th>代码</th>
+          <% if (problem.type !== 'submit-answer') { %>
+            <th>总时间</th>
+            <th>内存</th>
+            <th>代码</th>
+          <% } else { %>
+            <th>答案文件</th>
+          <% } %>
           <th>提交者</th>
           <th>提交时间</th>
       </tr>
@@ -74,9 +80,13 @@ function getColorOfScore(score) {
                   </span>
               </a></td>
               <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></span></a></td>
-              <td><%= judge.result.total_time %> ms</td>
-              <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
-              <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+              <% if (problem.type !== 'submit-answer') { %>
+                <td><%= judge.result.total_time %> ms</td>
+                <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
+                <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+              <% } else { %>
+                <td><%= syzoj.utils.formatSize(judge.max_memory) %></td>
+              <% } %>
               <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
               <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
           </tr>

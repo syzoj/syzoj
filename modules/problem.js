@@ -464,7 +464,7 @@ app.get('/problem/:id/data', async (req, res) => {
   }
 });
 
-app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) => {
+app.post('/problem/:id/data', app.multer.fields([{ name: 'testdata', maxCount: 1 }, { name: 'additional_file', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -480,11 +480,22 @@ app.post('/problem/:id/data', app.multer.single('testdata'), async (req, res) =>
     problem.file_io_input_name = req.body.file_io_input_name;
     problem.file_io_output_name = req.body.file_io_output_name;
 
+    if (problem.type === 'submit-answer' && req.body.type !== 'submit-answer' || problem.type !== 'submit-answer' && req.body.type === 'submit-answer') {
+      if (await JudgeState.count({ problem_id: id }) !== 0) {
+        throw new ErrorMessage('已有提交的题目不允许在提交答案和非提交答案之间更改。');
+      }
+    }
+    problem.type = req.body.type;
+
     let validateMsg = await problem.validate();
     if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
 
-    if (req.file) {
-      await problem.updateTestdata(req.file.path);
+    if (req.files['testdata']) {
+      await problem.updateFile(req.files['testdata'][0].path, 'testdata');
+    }
+
+    if (req.files['additional_file']) {
+      await problem.updateFile(req.files['additional_file'][0].path, 'additional_file');
     }
 
     await problem.save();
@@ -529,21 +540,37 @@ app.get('/problem/:id/dis_public', async (req, res) => {
   await setPublic(req, res, false);
 });
 
-app.post('/problem/:id/submit', async (req, res) => {
+app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
-    if (!syzoj.config.languages[req.body.language]) throw new ErrorMessage('不支持该语言。');
+    if (problem.type !== 'submit-answer' && !syzoj.config.languages[req.body.language]) throw new ErrorMessage('不支持该语言。');
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });
 
-    let judge_state = await JudgeState.create({
-      code: req.body.code,
-      language: req.body.language,
-      user_id: res.locals.user.id,
-      problem_id: req.params.id
-    });
+    let judge_state;
+    if (problem.type === 'submit-answer') {
+      let File = syzoj.model('file');
+      let file = await File.upload(req.files['answer'][0].path, 'answer');
+      let size = await file.getUnzipSize();
+
+      if (!file.md5) throw new ErrorMessage('上传答案文件失败。');
+      judge_state = await JudgeState.create({
+        code: file.md5,
+        max_memory: size,
+        language: '',
+        user_id: res.locals.user.id,
+        problem_id: req.params.id
+      });
+    } else {
+      judge_state = await JudgeState.create({
+        code: req.body.code,
+        language: req.body.language,
+        user_id: res.locals.user.id,
+        problem_id: req.params.id
+      });
+    }
 
     let contest_id = parseInt(req.query.contest_id), redirectToContest = false;
     if (contest_id) {
@@ -579,7 +606,7 @@ app.post('/problem/:id/submit', async (req, res) => {
   }
 });
 
-app.get('/problem/:id/download', async (req, res) => {
+app.get('/problem/:id/download/testdata', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -592,6 +619,28 @@ app.get('/problem/:id/download', async (req, res) => {
     if (!problem.testdata) throw new ErrorMessage('无测试数据。');
 
     res.download(problem.testdata.getPath(), `testdata_${id}.zip`);
+  } catch (e) {
+    syzoj.log(e);
+    res.status(404);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/problem/:id/download/additional_file', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+
+    await problem.loadRelationships();
+
+    if (!problem.additional_file) throw new ErrorMessage('无附加文件。');
+
+    res.download(problem.additional_file.getPath(), `additional_file_${id}.zip`);
   } catch (e) {
     syzoj.log(e);
     res.status(404);

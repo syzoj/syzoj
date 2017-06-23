@@ -21,6 +21,7 @@
           <div class="default text"></div>
           <div class="menu">
             <div class="item" data-value="">不限</div>
+            <div class="item" data-value="submit-answer">提交答案</div>
             <% for (let lang in syzoj.config.languages) { %>
               <div class="item" data-value="<%= lang %>"><%= syzoj.config.languages[lang].show %></div>
             <% } %>
@@ -70,7 +71,7 @@
         <th>分数</th>
         <th>总时间</th>
         <th>内存</th>
-        <th>代码</th>
+        <th>代码 / 答案文件</th>
         <th>提交者</th>
         <th>提交时间</th>
       </tr>

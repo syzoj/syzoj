@@ -28,6 +28,8 @@ let Contest = syzoj.model('contest');
 
 let model = db.define('judge_state', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+
+  // The data zip's md5 if it's a submit-answer problem
   code: { type: Sequelize.TEXT('medium') },
   language: { type: Sequelize.STRING(20) },
 
@@ -163,8 +165,11 @@ class JudgeState extends Model {
     this.score = result.score;
     this.pending = result.pending;
     this.status = result.status;
-    this.total_time = result.total_time;
-    this.max_memory = result.max_memory;
+    if (this.language) {
+      // language is empty if it's a submit-answer problem
+      this.total_time = result.total_time;
+      this.max_memory = result.max_memory;
+    }
     this.result = result;
   }
 
@@ -203,8 +208,11 @@ class JudgeState extends Model {
 
       this.status = 'Waiting';
       this.score = 0;
-      this.total_time = 0;
-      this.max_memory = 0;
+      if (this.language) {
+        // language is empty if it's a submit-answer problem
+        this.total_time = 0;
+        this.max_memory = 0;
+      }
       this.pending = true;
       this.result = { status: "Waiting", total_time: 0, max_memory: 0, score: 0, case_num: 0, compiler_output: "", pending: true };
       await this.save();
@@ -231,6 +239,11 @@ class JudgeState extends Model {
         await contest.newSubmission(this);
       }
     });
+  }
+
+  async getProblemType() {
+    await this.loadRelationships();
+    return this.problem.type;
   }
 
   getModel() { return model; }

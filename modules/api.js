@@ -23,7 +23,7 @@ let User = syzoj.model('user');
 let Problem = syzoj.model('problem');
 let WaitingJudge = syzoj.model('waiting_judge');
 let JudgeState = syzoj.model('judge_state');
-let TestData = syzoj.model('testdata');
+let File = syzoj.model('file');
 
 function setLoginCookie(username, password, res) {
   res.cookie('login', JSON.stringify([username, password]));
@@ -109,18 +109,32 @@ app.get('/api/waiting_judge', async (req, res) => {
     });
 
     if (judge_state) {
-      res.send({
-        have_task: 1,
-        judge_id: judge_state.id,
-        code: judge_state.code,
-        language: judge_state.language,
-        testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
-        time_limit: judge_state.problem.time_limit,
-        memory_limit: judge_state.problem.memory_limit,
-        file_io: judge_state.problem.file_io,
-        file_io_input_name: judge_state.problem.file_io_input_name,
-        file_io_output_name: judge_state.problem.file_io_output_name
-      });
+      await judge_state.loadRelationships();
+      await judge_state.problem.loadRelationships();
+
+      if (judge_state.problem.type === 'submit-answer') {
+        res.send({
+          have_task: 1,
+          judge_id: judge_state.id,
+          answer_file: judge_state.code,
+          testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
+          problem_type: judge_state.problem.type
+        });
+      } else {
+        res.send({
+          have_task: 1,
+          judge_id: judge_state.id,
+          code: judge_state.code,
+          language: judge_state.language,
+          testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
+          time_limit: judge_state.problem.time_limit,
+          memory_limit: judge_state.problem.memory_limit,
+          file_io: judge_state.problem.file_io,
+          file_io_input_name: judge_state.problem.file_io_input_name,
+          file_io_output_name: judge_state.problem.file_io_output_name,
+          problem_type: judge_state.problem.type
+        });
+      }
     } else {
       res.send({ have_task: 0 });
     }
@@ -145,9 +159,17 @@ app.post('/api/update_judge/:id', async (req, res) => {
   }
 });
 
-app.get('/static/uploads/:md5', async (req, res) => {
+app.get('/static/uploads/testdata/:md5', async (req, res) => {
   try {
-    res.sendFile(TestData.resolvePath(req.params.md5));
+    res.sendFile(File.resolvePath('testdata', req.params.md5));
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+
+app.get('/static/uploads/answer/:md5', async (req, res) => {
+  try {
+    res.sendFile(File.resolvePath('answer', req.params.md5));
   } catch (e) {
     res.status(500).send(e);
   }

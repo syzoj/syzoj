@@ -195,7 +195,7 @@ module.exports = {
   gravatar(email, size) {
     return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
   },
-  parseTestData(filename) {
+  parseTestdata(filename) {
     let zip = new AdmZip(filename);
     let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
     let res = [];

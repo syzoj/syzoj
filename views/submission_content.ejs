@@ -1,3 +1,4 @@
+<% include util %>
 <%
 // Sanitize judge results for backward compatibility and clarity
 if (!judge.result.subtasks) {
@@ -38,9 +39,13 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
           <th>分数</th>
         <% } %>
-        <th>总时间</th>
-        <th>内存</th>
-        <th>代码</th>
+        <% if (judge.problem.type !== 'submit-answer') { %>
+          <th>总时间</th>
+          <th>内存</th>
+          <th>代码</th>
+        <% } else { %>
+          <th>文件大小</th>
+        <% } %>
         <th>提交者</th>
         <th>提交时间</th>
       </tr>
@@ -56,12 +61,16 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
         <% } %>
-        <td><%= judge.result.total_time %> ms</td>
-        <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
-        <% if (judge.allowedSeeCode) { %>
-          <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
+        <% if (judge.problem.type !== 'submit-answer') { %>
+          <td><%= judge.result.total_time %> ms</td>
+          <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
+          <% if (judge.allowedSeeCode) { %>
+            <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
+          <% } else { %>
+            <td><%= syzoj.config.languages[judge.language].show %> / 隐藏 %></td>
+          <% } %>
         <% } else { %>
-          <td><%= syzoj.config.languages[judge.language].show %> / 隐藏 %></td>
+          <td><%= syzoj.utils.formatSize(judge.max_memory) %></td>
         <% } %>
         <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
         <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
@@ -76,7 +85,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
   }
   window.applyTextFit();
   </script>
-  <% if (judge.allowedSeeCode) { %>
+  <% if (judge.problem.type !== 'submit-answer' && judge.allowedSeeCode) { %>
     <div class="ui existing segment" style="position: relative; ">
       <% if (judge.allowedRejudge) { %>
         <a id="rejudge-button" href="<%= syzoj.utils.makeUrl(['submission', judge.id, 'rejudge']) %>" class="ui button" style="position: absolute; top: 0px; right: -4px; border-top-left-radius: 0; border-bottom-right-radius: 0; <% if (judge.pending) { %>display: none; <% } %>">重新评测</a>
@@ -96,7 +105,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
       });
     </script>
   <% } %>
-<% if (judge.result.compiler_output && judge.status === 'Compile Error' && judge.allowedSeeCode) { %>
+<% if (judge.problem.type !== 'submit-answer' && judge.result.compiler_output && judge.status === 'Compile Error' && judge.allowedSeeCode) { %>
   <h3 class="ui header">编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.compiler_output) %></code></pre></div>
 <% } else if (judge.result.spj_compiler_output) { %>

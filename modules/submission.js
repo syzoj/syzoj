@@ -42,7 +42,10 @@ app.get('/submissions', async (req, res) => {
       }
     };
 
-    if (req.query.language) where.language = req.query.language;
+    if (req.query.language) {
+      if (req.query.language === 'submit-answer') where.language = '';
+      else where.language = req.query.language;
+    }
     if (req.query.status) where.status = { $like: req.query.status + '%' };
 
     where.type = { $ne: 1 };
@@ -136,8 +139,10 @@ app.get('/submission/:id', async (req, res) => {
 
     await judge.loadRelationships();
 
-    judge.codeLength = judge.code.length;
-    judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+    if (judge.problem.type !== 'submit-answer') {
+      judge.codeLength = judge.code.length;
+      judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+    }
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
     judge.allowedSeeCase = await judge.isAllowedSeeCaseBy(res.locals.user);
     judge.allowedSeeData = await judge.isAllowedSeeDataBy(res.locals.user);
@@ -181,8 +186,10 @@ app.get('/submission/:id/ajax', async (req, res) => {
 
     await judge.loadRelationships();
 
-    judge.codeLength = judge.code.length;
-    judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+    if (judge.problem.type !== 'submit-answer') {
+      judge.codeLength = judge.code.length;
+      judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+    }
     judge.allowedSeeCode = await judge.isAllowedSeeCodeBy(res.locals.user);
     judge.allowedSeeCase = await judge.isAllowedSeeCaseBy(res.locals.user);
     judge.allowedSeeData = await judge.isAllowedSeeDataBy(res.locals.user);
