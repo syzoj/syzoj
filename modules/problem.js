@@ -551,9 +551,14 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
     let judge_state;
     if (problem.type === 'submit-answer') {
+      if (!req.files['answer']) throw new ErrorMessage('请上传答案文件。');
+      if (req.files['answer'][0].size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');
+
       let File = syzoj.model('file');
       let file = await File.upload(req.files['answer'][0].path, 'answer');
       let size = await file.getUnzipSize();
+
+      if (size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');
 
       if (!file.md5) throw new ErrorMessage('上传答案文件失败。');
       judge_state = await JudgeState.create({
@@ -564,8 +569,18 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         problem_id: req.params.id
       });
     } else {
+      let code;
+      if (req.files['answer']) {
+        if (req.files['answer'][0].size > syzoj.config.limit.submit_code) throw new ErrorMessage('代码文件太大。');
+        let fs = Promise.promisifyAll(require('fs'));
+        code = (await fs.readFileAsync(req.files['answer'][0].path)).toString();
+      } else {
+        if (req.body.code.length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码太长。');
+        code = req.body.code;
+      }
+
       judge_state = await JudgeState.create({
-        code: req.body.code,
+        code: code,
         language: req.body.language,
         user_id: res.locals.user.id,
         problem_id: req.params.id

@@ -219,6 +219,12 @@ if (contest) {
                 <div class="twelve wide stretched column" style="padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 1px + 25px) !important; ">
                   <div id="editor" style="border: 1px solid #D4D4D5; "><% if (state) { %><%= state.code %><% } %></div>
                 </div>
+                <div class="inline fields" style="width: 100%; ">
+                <div class="field" style="margin: 0 auto; ">
+                  <label for="answer">或者，上传代码文件</label>
+                  <input type="file" id="answer" name="answer">
+                </div>
+              </div>
               </div>
             <% } %>
             <div class="ui center aligned vertical segment" style="padding-bottom: 0; "><button type="submit" class="ui button">提交</button></div>
