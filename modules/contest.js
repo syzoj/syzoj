@@ -334,6 +334,8 @@ app.get('/contest/:id/:pid', async (req, res) => {
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.fromID(problem_id);
 
+    problem.specialJudge = await problem.hasSpecialJudge();
+
     await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
 
     let state = await problem.getJudgeState(res.locals.user, false);

@@ -197,8 +197,6 @@ class User extends Model {
 
     let oldPrivileges = await this.getPrivileges();
 
-    console.log(newPrivileges);
-
     let delPrivileges = oldPrivileges.filter(x => !newPrivileges.includes(x));
     let addPrivileges = newPrivileges.filter(x => !oldPrivileges.includes(x));
 

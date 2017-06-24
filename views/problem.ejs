@@ -53,6 +53,10 @@ if (contest) {
             <% } %>
         </div>
         <div class="row" style="margin-top: -23px">
+            <span class="ui label">评测方式：<%= problem.specialJudge ? 'Special Judge' : '文本比较' %></span>
+            <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
+        </div>
+        <div class="row" style="margin-top: -23px">
             <span class="ui label">上传者：
             <% if (problem.is_anonymous && !problem.allowedManage) { %>
               匿名
@@ -88,15 +92,15 @@ if (contest) {
           <a class="small ui primary button" href="#submit_code">提交</a>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', 'fastest']) %>">统计</a>
-          <% if (problem.testdata) { %><a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'testdata']) %>">下载测试数据</a><% } %>
+          <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata']) %>">测试数据</a>
         <% } %>
-        <% if (problem.additional_file) { %><a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>">下载附加文件</a><% } %>
+        <% if (problem.additional_file) { %><a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>">附加文件</a><% } %>
       </div>
       <% if (!contest) { %>
         <div class="ui buttons right floated">
           <% if (problem.allowedEdit) { %>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑</a>
-            <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'data']) %>">管理测试数据</a>
+            <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'manage']) %>">管理</a>
           <% } %>
           <% if (problem.allowedManage) { %>
             <% if (problem.is_public) {  %>

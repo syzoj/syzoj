@@ -29,6 +29,7 @@
     "time_limit": 10000,
     "memory_limit": 1024,
     "data_size": 209715200,
+    "testdata": 209715200,
     "submit_code": 102400,
     "submit_answer": 10485760
   },

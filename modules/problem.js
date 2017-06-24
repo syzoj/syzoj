@@ -190,6 +190,7 @@ app.get('/problem/:id', async (req, res) => {
 
     problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
     problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
+    problem.specialJudge = await problem.hasSpecialJudge();
 
     if (problem.is_public || problem.allowedEdit) {
       await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
@@ -427,7 +428,7 @@ app.post('/problem/:id/import', async (req, res) => {
     let fs = require('bluebird').promisifyAll(require('fs'));
 
     try {
-      let data = await download(req.body.url + (req.body.url.endsWith('/') ? 'download' : '/download'));
+      let data = await download(req.body.url + (req.body.url.endsWith('/') ? 'testdata/download' : '/testdata/download'));
       await fs.writeFileAsync(tmpFile.path, data);
       await problem.updateTestdata(tmpFile.path);
     } catch (e) {
@@ -443,7 +444,8 @@ app.post('/problem/:id/import', async (req, res) => {
   }
 });
 
-app.get('/problem/:id/data', async (req, res) => {
+// The 'manage' is not `allow manage`'s 'manage', I just have no better name for it.
+app.get('/problem/:id/manage', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -453,8 +455,11 @@ app.get('/problem/:id/data', async (req, res) => {
 
     await problem.loadRelationships();
 
-    res.render('problem_data', {
-      problem: problem
+    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath());
+
+    res.render('problem_manage', {
+      problem: problem,
+      testcases: testcases
     });
   } catch (e) {
     syzoj.log(e);
@@ -464,7 +469,7 @@ app.get('/problem/:id/data', async (req, res) => {
   }
 });
 
-app.post('/problem/:id/data', app.multer.fields([{ name: 'testdata', maxCount: 1 }, { name: 'additional_file', maxCount: 1 }]), async (req, res) => {
+app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount: 1 }, { name: 'additional_file', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -491,7 +496,7 @@ app.post('/problem/:id/data', app.multer.fields([{ name: 'testdata', maxCount: 1
     if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
 
     if (req.files['testdata']) {
-      await problem.updateFile(req.files['testdata'][0].path, 'testdata');
+      await problem.updateTestdata(req.files['testdata'][0].path);
     }
 
     if (req.files['additional_file']) {
@@ -500,7 +505,7 @@ app.post('/problem/:id/data', app.multer.fields([{ name: 'testdata', maxCount: 1
 
     await problem.save();
 
-    res.redirect(syzoj.utils.makeUrl(['problem', id, 'data']));
+    res.redirect(syzoj.utils.makeUrl(['problem', id, 'manage']));
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
@@ -621,7 +626,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
   }
 });
 
-app.get('/problem/:id/download/testdata', async (req, res) => {
+app.get('/problem/:id/testdata', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
@@ -629,11 +634,60 @@ app.get('/problem/:id/download/testdata', async (req, res) => {
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
-    await problem.loadRelationships();
+    let testdata = await problem.listTestdata();
+    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath());
 
-    if (!problem.testdata) throw new ErrorMessage('无测试数据。');
+    problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user)
 
-    res.download(problem.testdata.getPath(), `testdata_${id}.zip`);
+    res.render('problem_data', {
+      problem: problem,
+      testdata: testdata,
+      testcases: testcases
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.status(404);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.post('/problem/:id/testdata/upload', app.multer.array('file'), async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+
+    if (req.files) {
+      for (let file of req.files) {
+        await problem.uploadTestdataSingleFile(file.originalname, file.path, file.size);
+      }
+    }
+
+    res.redirect(syzoj.utils.makeUrl(['problem', id, 'testdata']));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/problem/:id/testdata/download/:filename?', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+
+    let path = require('path');
+    let filename = req.params.filename ? path.join(problem.getTestdataPath(), req.params.filename) : (problem.getTestdataPath() + '.zip');
+    if (!await syzoj.utils.isFile(filename)) throw new ErrorMessage('文件不存在。');
+    res.download(filename, path.basename(filename));
   } catch (e) {
     syzoj.log(e);
     res.status(404);

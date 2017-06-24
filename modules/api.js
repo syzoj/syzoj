@@ -229,14 +229,6 @@ app.post('/api/update_judge/:id', async (req, res) => {
   }
 });
 
-app.get('/static/uploads/testdata/:md5', async (req, res) => {
-  try {
-    res.sendFile(File.resolvePath('testdata', req.params.md5));
-  } catch (e) {
-    res.status(500).send(e);
-  }
-});
-
 app.get('/static/uploads/answer/:md5', async (req, res) => {
   try {
     res.sendFile(File.resolvePath('answer', req.params.md5));
