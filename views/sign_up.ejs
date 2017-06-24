@@ -14,10 +14,6 @@
                     <label for="email">邮箱</label>
                     <input type="email" placeholder="" id="email">
                 </div>
-                <!--div class="field">
-                    <label for="email">邀请码</label>
-                    <input type="text" placeholder="Invitation code" id="invitation_code">
-                </div-->
                 <div class="two fields">
                     <div class="field">
                     <label class="ui header">密码</label>
@@ -37,10 +33,20 @@ function show_error(error) {
     $("#error_info").text(error);
     $("#error").show();
 }
+
 function success() {
-    alert("注册成功!");
+    alert("注册成功！");
     window.location.href = <%- JSON.stringify(req.query.url || '/') %>;
 }
+
+function mail_required() {
+    alert("注册确认邮件已经发送到您的邮箱的垃圾箱，点击邮件内的链接即可完成注册。");
+    var s = $("#email").val();
+    var mailWebsite = 'https://mail.' + s.substring(s.indexOf('@') + 1, s.length);
+    if (mailWebsite === 'https://mail.gmail.com') mailWebsite = 'https://mail.google.com';
+    window.location.href = mailWebsite;
+}
+
 function submit() {
     if ($("#password1").val() != $("#password2").val()) {
         show_error("两次输入的密码不一致");
@@ -55,7 +61,8 @@ function submit() {
         data: {
           username: $("#username").val(),
           password: password,
-          email: $("#email").val()
+          email: $("#email").val(),
+          prevUrl: <%- JSON.stringify(req.query.url || '/') %>
         },
         success: function(data) {
             error_code = data.error_code;
@@ -79,10 +86,16 @@ function submit() {
                     show_error("已经有人用过这个用户名了");
                     break;
                 case 2009:
-                    show_error("邀请码错误，请联系管理员索要");
+                    show_error("邮箱地址已被占用");
+                    break;
+                case 2010:
+                    show_error("验证邮件发送失败");
                     break;
                 case 1:
                     success();
+                    break;
+                case 2:
+                    mail_required();
                     break;
                 default:
                     show_error("未知错误");

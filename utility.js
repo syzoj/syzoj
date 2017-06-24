@@ -329,5 +329,16 @@ module.exports = {
     let s = JSON.stringify(key);
     if (!this.locks[s]) this.locks[s] = new AsyncLock();
     return this.locks[s].acquire(s, cb);
+  },
+  encrypt(buffer, password) {
+    if (typeof buffer === 'string') buffer = Buffer.from(buffer);
+    let crypto = require('crypto');
+    let cipher = crypto.createCipher('aes-256-ctr', password);
+    return Buffer.concat([cipher.update(buffer), cipher.final()]);
+  },
+  decrypt(buffer, password) {
+    let crypto = require('crypto');
+    let decipher = crypto.createDecipher('aes-256-ctr', password);
+    return Buffer.concat([decipher.update(buffer), decipher.final()]);
   }
 };

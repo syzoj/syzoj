@@ -10,6 +10,11 @@
     "dialect": "sqlite",
     "storage": "syzoj.db"
   },
+  "register_mail": {
+    "enabled": true,
+    "address": "test@test.domain",
+    "key": "test"
+  },
   "upload_dir": "uploads",
   "default": {
     "problem": {

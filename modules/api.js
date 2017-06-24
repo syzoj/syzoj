@@ -54,6 +54,9 @@ app.post('/api/sign_up', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     let user = await User.fromName(req.body.username);
     if (user) throw 2008;
+    user = await User.findOne({ where: { email: req.body.email } });
+    if (user) throw 2009;
+
 
     // Because the salt is "syzoj2_xxx" and the "syzoj2_xxx" 's md5 is"59cb..."
     // the empty password 's md5 will equal "59cb.."
@@ -62,20 +65,87 @@ app.post('/api/sign_up', async (req, res) => {
     if (!(req.body.email = req.body.email.trim())) throw 2006;
     if (!syzoj.utils.isValidUsername(req.body.username)) throw 2002;
 
+    if (syzoj.config.register_mail.enabled) {
+      let sendmail = Promise.promisify(require('sendmail')());
+      let sendObj = {
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email,
+        prevUrl: req.body.prevUrl,
+        r: Math.random()
+      };
+      let encrypted = encodeURIComponent(syzoj.utils.encrypt(JSON.stringify(sendObj), syzoj.config.register_mail.key).toString('base64'));
+      let url = req.protocol + '://' + req.get('host') + syzoj.utils.makeUrl(['api', 'sign_up', encrypted]);
+      try {
+        await sendmail({
+          from: syzoj.config.register_mail.address,
+          to: req.body.email,
+          type: 'text/html',
+          subject: `${req.body.username} 的 ${syzoj.config.title} 注册验证邮件`,
+          html: `<p>请点击该链接完成您在 ${syzoj.config.title} 的注册：<a href="${url}">${url}</a>。</p><p>如果您不是 ${req.body.username}，请忽略此邮件。</p>`
+        });
+      } catch (e) {
+        throw 2010
+      }
+
+      res.send(JSON.stringify({ error_code: 2 }));
+    } else {
+      user = await User.create({
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email
+      });
+      await user.save();
+
+      req.session.user_id = user.id;
+      setLoginCookie(user.username, user.password, res);
+
+      res.send(JSON.stringify({ error_code: 1 }));
+    }
+  } catch (e) {
+    syzoj.log(e);
+    res.send(JSON.stringify({ error_code: e }));
+  }
+});
+
+app.get('/api/sign_up/:token', async (req, res) => {
+  try {
+    let obj;
+    try {
+      let decrypted = syzoj.utils.decrypt(Buffer.from(req.params.token, 'base64'), syzoj.config.register_mail.key).toString();
+      obj = JSON.parse(decrypted);
+    } catch (e) {
+      throw new ErrorMessage('无效的注册验证链接。');
+    }
+
+    let user = await User.fromName(obj.username);
+    if (user) throw new ErrorMessage('用户名已被占用。');
+    user = await User.findOne({ where: { email: obj.email } });
+    if (user) throw new ErrorMessage('邮件地址已被占用。');
+
+    // Because the salt is "syzoj2_xxx" and the "syzoj2_xxx" 's md5 is"59cb..."
+    // the empty password 's md5 will equal "59cb.."
+    let syzoj2_xxx_md5 = '59cb65ba6f9ad18de0dcd12d5ae11bd2';
+    if (obj.password === syzoj2_xxx_md5) throw new ErrorMessage('密码不能为空。');
+    if (!(obj.email = obj.email.trim())) throw new ErrorMessage('邮件地址不能为空。');
+    if (!syzoj.utils.isValidUsername(obj.username)) throw new ErrorMessage('用户名不合法。');
+
     user = await User.create({
-      username: req.body.username,
-      password: req.body.password,
-      email: req.body.email
+      username: obj.username,
+      password: obj.password,
+      email: obj.email
     });
     await user.save();
 
     req.session.user_id = user.id;
     setLoginCookie(user.username, user.password, res);
 
-    res.send(JSON.stringify({ error_code: 1 }));
+    res.redirect(obj.prevUrl || '/');
   } catch (e) {
     syzoj.log(e);
-    res.send(JSON.stringify({ error_code: e }));
+    res.render('error', {
+      err: e
+    });
   }
 });
 
