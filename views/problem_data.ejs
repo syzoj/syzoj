@@ -35,6 +35,11 @@ function getIcon(filename) {
 }
 %>
 <% include header %>
+<style>
+.ui.page.dimmer {
+  position: fixed;
+}
+</style>
 <div class="padding">
   <div class="ui grid">
     <div class="seven wide column">
@@ -49,22 +54,60 @@ function getIcon(filename) {
             <tr>
               <th class="left aligned">文件名</th>
               <th style="width: 100px">文件大小</th>
-              <th style="width: 50px">操作</th>
+              <th style="width: 35px">下载</th>
+              <% if (problem.allowedEdit) { %>
+                <th style="width: 35px">删除</th>
+              <% } %>
             </tr>
           </thead>
           <tbody>
             <% if (testdata.zip) { %>
             <tr>
               <td class="left aligned"><i class="file archive outline icon"></i> 完整数据包</td>
-              <td><%= syzoj.utils.formatSize(testdata.zip.size) %></td>
+              <td><%- !testdata.zip.size ? '<i class="minus icon"></i>' : syzoj.utils.formatSize(testdata.zip.size) %></td>
               <td><a style="color: #000; " href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'download']) %>"><i class="download icon"></i></td>
+              <% if (problem.allowedEdit) { %>
+                <td><i class="minus icon"></i></td>
+              <% } %>
             </tr>
             <% } %>
+            <% let i = 0; %>
             <% if (testdata.files) for (let file of testdata.files) { %>
+            <% i++; %>
             <tr>
               <td class="left aligned"><i class="<%= getIcon(file.filename) %> icon"></i> <%= file.filename %></td>
               <td><%= syzoj.utils.formatSize(file.size) %></td>
-              <td><a style="color: #000; " href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'download', file.filename]) %>"><i class="download icon"></i></td>
+              <td>
+                <a style="color: #000; " href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'download', file.filename]) %>">
+                  <i class="download icon"></i>
+                </a>
+              </td>
+              <% if (problem.allowedEdit) { %>
+                <td>
+                  <a style="color: #000; " onclick="$('#modal-delete-<%= i %>').modal('show')">
+                    <i class="remove icon"></i>
+                  </a>
+                  <div class="ui basic modal" id="modal-delete-<%= i %>">
+                    <div class="ui icon header">
+                      <i class="trash icon"></i>
+                      <p style="margin-top: 15px; ">删除文件</p>
+                    </div>
+                    <div class="content" style="text-align: center; ">
+                      <p>确认删除「 <samp><%= file.filename %></samp> 」吗？</p>
+                    </div>
+                    <div class="actions">
+                      <div class="ui red basic cancel inverted button">
+                        <i class="remove icon"></i>
+                        否
+                      </div>
+                      <a class="ui green ok inverted button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'delete', file.filename]) %>">
+                        <i class="checkmark icon"></i>
+                        是
+                      </a>
+                    </div>
+                  </div>
+                </td>
+              <% } %>
             </tr>
             <% } %>
           </tbody>
@@ -73,18 +116,52 @@ function getIcon(filename) {
         <h4 style="text-align: center; ">无测试数据</h4>
       <% } %>
       <% if (problem.allowedEdit) { %>
-        <form class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'upload']) %>" method="post" enctype="multipart/form-data">
+        <form id="form_upload" class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'upload']) %>" method="post" enctype="multipart/form-data">
           <div class="inline fields">
             <div class="field" style="margin: 0 auto; ">
               <label for="answer">上传文件（可一次性上传多个）</label>
-              <input type="file" name="file" multiple>
+              <input type="file" name="file" multiple id="upload_file">
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
-                <button type="submit" class="ui button">提交</button>
+                <div class="ui button" onclick="check_replace()">提交</div>
                 <a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui blue button">返回题目</a>
               </div>
             </div>
           </div>
         </form>
+        <div class="ui basic modal" id="modal-replace">
+          <div class="ui icon header">
+            <i class="refresh icon"></i>
+            <p style="margin-top: 15px; ">替换文件</p>
+          </div>
+          <div class="content" style="text-align: center; ">
+            <p>确认替换以下文件吗？</p>
+            <div style="display: inline-block; text-align: left; " id="replaced_files"></div>
+          </div>
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              否
+            </div>
+            <a class="ui green ok inverted button" onclick="$('#form_upload').submit()">
+              <i class="checkmark icon"></i>
+              是
+            </a>
+          </div>
+        </div>
+        <script>
+        function check_replace() {
+          var old_files = <%- JSON.stringify((testdata && testdata.files ? testdata.files : []).map(x => x.filename)) %>;
+          var replaced_files = Array.from($('#upload_file')[0].files).map(function (x) { return x.name; }).filter(function (x) { return old_files.includes(x); });
+          var s = '';
+          for (let file of replaced_files) s += '<samp>' + file + '</samp><br>';
+          if (s) {
+            $('#replaced_files').html(s);
+            $('#modal-replace').modal('show');
+          } else {
+            $('#form_upload').submit();
+          }
+        }
+        </script>
       <% } %>
     </div>
   </div>

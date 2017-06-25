@@ -349,12 +349,25 @@ class Problem extends Model {
     if (oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
     await fs.moveAsync(filepath, path.join(dir, filename), { overwrite: true });
+    await fs.removeAsync(dir + '.zip');
+  }
+
+  async deleteTestdataSingleFile(filename) {
+    let dir = this.getTestdataPath();
+    let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
+    await fs.removeAsync(path.join(dir, filename));
+    await fs.removeAsync(dir + '.zip');
+  }
+
+  async makeTestdataZip() {
+    let dir = this.getTestdataPath();
+    if (!await syzoj.utils.isDir(dir)) throw new ErrorMessage('无测试数据。');
 
     let AdmZip = require('adm-zip');
     let zip = new AdmZip();
 
-    list = await this.listTestdata();
-    for (let file of list.files) zip.addLocalFile(path.join(dir, file.filename), '', file.filename);
+    let list = await this.listTestdata();
+    for (let file of list.files) zip.addLocalFile(require('path').join(dir, file.filename), '', file.filename);
     zip.writeZip(dir + '.zip');
   }
 
@@ -380,7 +393,7 @@ class Problem extends Model {
         return {
           filename: x,
           size: stat.size
-        }
+        };
       });
 
       list = list.filter(x => x);
@@ -395,13 +408,18 @@ class Problem extends Model {
         if (stat.isFile()) {
           res.zip = {
             size: stat.size
-          }
+          };
         }
-      } catch (e) {}
+      } catch (e) {
+        if (list) {
+          res.zip = {
+            size: null
+          };
+        }
+      }
 
       return res;
     } catch (e) {
-      console.log(e);
       return null;
     }
   }
