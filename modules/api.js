@@ -187,7 +187,7 @@ app.get('/api/waiting_judge', async (req, res) => {
           have_task: 1,
           judge_id: judge_state.id,
           answer_file: judge_state.code,
-          testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
+          testdata: judge_state.problem.id,
           problem_type: judge_state.problem.type
         });
       } else {
@@ -196,7 +196,7 @@ app.get('/api/waiting_judge', async (req, res) => {
           judge_id: judge_state.id,
           code: judge_state.code,
           language: judge_state.language,
-          testdata: judge_state.problem.testdata ? judge_state.problem.testdata.md5 : '',
+          testdata: judge_state.problem.id,
           time_limit: judge_state.problem.time_limit,
           memory_limit: judge_state.problem.memory_limit,
           file_io: judge_state.problem.file_io,
