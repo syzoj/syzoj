@@ -53,7 +53,9 @@ let model = db.define('contest', {
       model: 'contest_ranklist',
       key: 'id'
     }
-  }
+  },
+
+  is_public: { type: Sequelize.BOOLEAN }
 }, {
   timestamps: false,
   tableName: 'contest',
@@ -79,7 +81,8 @@ class Contest extends Model {
       start_time: 0,
       end_time: 0,
       holder: 0,
-      ranklist_id: 0
+      ranklist_id: 0,
+      is_public: false
     }, val)));
   }
 

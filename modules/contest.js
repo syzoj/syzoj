@@ -28,8 +28,12 @@ let User = syzoj.model('user');
 
 app.get('/contests', async (req, res) => {
   try {
-    let paginate = syzoj.utils.paginate(await Contest.count(), req.query.page, syzoj.config.page.contest);
-    let contests = await Contest.query(paginate, null, [['start_time', 'desc']]);
+    let where;
+    if (res.locals.user && await res.locals.user.is_admin) where = {}
+    else where = { is_public: true };
+
+    let paginate = syzoj.utils.paginate(await Contest.count(where), req.query.page, syzoj.config.page.contest);
+    let contests = await Contest.query(paginate, where, [['start_time', 'desc']]);
 
     await contests.forEachAsync(async x => x.subtitle = await syzoj.utils.markdown(x.subtitle));
 
@@ -97,6 +101,7 @@ app.post('/contest/:id/edit', async (req, res) => {
     contest.information = req.body.information;
     contest.start_time = syzoj.utils.parseDate(req.body.start_time);
     contest.end_time = syzoj.utils.parseDate(req.body.end_time);
+    contest.is_public = req.body.is_public === 'on';
 
     await contest.save();
 

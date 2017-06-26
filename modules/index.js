@@ -47,7 +47,10 @@ app.get('/', async (req, res) => {
       fortune = Divine(res.locals.user.username, res.locals.user.sex);
     }
 
-    let contests = await Contest.query([1, 5], null, [['start_time', 'desc']]);
+    let where;
+    if (res.locals.user && await res.locals.user.is_admin) where = {}
+    else where = { is_public: true };
+    let contests = await Contest.query([1, 5], where, [['start_time', 'desc']]);
 
     let hitokoto;
     try {
