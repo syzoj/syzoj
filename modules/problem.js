@@ -485,6 +485,10 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
     problem.file_io_input_name = req.body.file_io_input_name;
     problem.file_io_output_name = req.body.file_io_output_name;
 
+    if (req.body.type !== 'traditional') {
+      throw new ErrorMessage('暂不支持该题目类型。');
+    }
+
     if (problem.type === 'submit-answer' && req.body.type !== 'submit-answer' || problem.type !== 'submit-answer' && req.body.type === 'submit-answer') {
       if (await JudgeState.count({ problem_id: id }) !== 0) {
         throw new ErrorMessage('已有提交的题目不允许在提交答案和非提交答案之间更改。');
