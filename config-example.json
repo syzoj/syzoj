@@ -142,26 +142,12 @@
       "editor": "vbscript"
     }
   },
-  "notices": [
-    {
-      "type": "// article",
-      "id": 1,
-      "comment": "Specify the id if you want to show a article"
-    },
-    {
-      "type": "// link",
-      "url": "",
-      "date": "",
-      "comment": "Specify the url and date if you want to show any link"
-    }
-  ],
   "links": [
     {
       "title": "LibreOJ",
       "url": "https://loj.ac/"
     }
   ],
-  "announcement": "Here is the announcement",
   "session_secret": "233",
   "judge_token": "233"
 }

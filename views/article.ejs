@@ -1,17 +1,36 @@
 <% this.title = article.title + ' - 帖子'; %>
 <% include header %>
 <style type="text/css" xmlns:style="http://www.w3.org/1999/xhtml">
-    .small{
-    font-size: 0.7em;
-    }
+.small{
+  font-size: 0.7em;
+}
 </style>
 <div class="padding">
   <h1><%= article.title %></h1>
  	<p style="font_size: 0.7em"><img style="vertical-align: middle;" src="<%= syzoj.utils.gravatar(article.user.email, 64) %>" width="32" height="32">
  		<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
         <% if (article.allowedEdit) { %>
-        <a class="ui mini red button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">删除文章</a>
+        <a class="ui mini red button" onclick="$('#modal-delete').modal('show')">删除文章</a>
         <a class="ui mini button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>">编辑文章</a>
+        <div class="ui basic modal" id="modal-delete">
+          <div class="ui icon header">
+            <i class="trash icon"></i>
+            <p style="margin-top: 15px; ">删除文章</p>
+          </div>
+          <div class="content" style="text-align: center; ">
+            <p>确认删除这篇文章吗？</p>
+          </div>
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              否
+            </div>
+            <a class="ui green ok inverted button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">
+              <i class="checkmark icon"></i>
+              是
+            </a>
+          </div>
+        </div>
         <% } %>
  	</p>
   <div class="ui existing segment">
@@ -32,7 +51,26 @@
           </div>
           <div class="text font-content"><%- comment.content %></div>
           <% if (comment.allowedEdit) { %>
-            <div class="actions"><a href="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">删除</a></div>
+            <div class="actions"><a onclick="$('#modal-delete-<%= comment.id %>').modal('show')">删除</a></div>
+            <div class="ui basic modal" id="modal-delete-<%= comment.id %>">
+              <div class="ui icon header">
+                <i class="trash icon"></i>
+                <p style="margin-top: 15px; ">删除评论</p>
+              </div>
+              <div class="content" style="text-align: center; ">
+                <p>确认删除这条评论吗？</p>
+              </div>
+              <div class="actions">
+                <div class="ui red basic cancel inverted button">
+                  <i class="remove icon"></i>
+                  否
+                </div>
+                <a class="ui green ok inverted button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">
+                  <i class="checkmark icon"></i>
+                  是
+                </a>
+              </div>
+            </div>
           <% } %>
         </div>
       </div>

@@ -38,6 +38,8 @@ let model = db.define('article', {
 
   comments_num: { type: Sequelize.INTEGER },
   allow_comment: { type: Sequelize.BOOLEAN },
+
+  is_notice: { type: Sequelize.BOOLEAN }
 }, {
   timestamps: false,
   tableName: 'article',
@@ -65,7 +67,9 @@ class Article extends Model {
       sort_time: 0,
 
       comments_num: 0,
-      allow_comment: true
+      allow_comment: true,
+
+      is_notice: false
     }, val)));
   }
 

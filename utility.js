@@ -315,11 +315,10 @@ module.exports = {
     try {
       let request = require('request-promise');
       let res = await request({
-        uri: 'http://api.hitokoto.us/rand',
+        uri: 'https://sslapi.hitokoto.cn',
         timeout: 1500,
         qs: {
-          encode: 'json',
-          cat: 'a'
+          c: 'a'
         },
         json: true
       });

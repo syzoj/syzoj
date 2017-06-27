@@ -29,18 +29,11 @@ app.get('/', async (req, res) => {
     let ranklist = await User.query([1, 10], { is_show: true }, [['ac_num', 'desc']]);
     await ranklist.forEachAsync(async x => x.renderInformation());
 
-    let notices = await syzoj.config.notices.mapAsync(async notice => {
-      if (notice.type === 'link') return notice;
-      else if (notice.type === 'article') {
-        let article = await Article.fromID(notice.id);
-        if (!article) throw new ErrorMessage(`无此帖子：${notice.id}`);
-        return {
-          title: article.title,
-          url: syzoj.utils.makeUrl(['article', article.id]),
-          date: syzoj.utils.formatDate(article.public_time, 'L')
-        };
-      }
-    });
+    let notices = (await Article.query(null, { is_notice: true }, [['public_time', 'desc']])).map(article => ({
+      title: article.title,
+      url: syzoj.utils.makeUrl(['article', article.id]),
+      date: syzoj.utils.formatDate(article.public_time, 'L')
+    }));
 
     let fortune = null;
     if (res.locals.user) {
