@@ -57,7 +57,7 @@ app.get('/article/:id', async (req, res) => {
 
     let paginate = syzoj.utils.paginate(await ArticleComment.count(where), req.query.page, syzoj.config.page.article_comment);
 
-    let comments = await ArticleComment.query(paginate, where, [['public_time', 'asc']]);
+    let comments = await ArticleComment.query(paginate, where, [['public_time', 'desc']]);
 
     for (let comment of comments) {
       comment.content = await syzoj.utils.markdown(comment.content);
