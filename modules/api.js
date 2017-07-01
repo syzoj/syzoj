@@ -78,11 +78,11 @@ app.post('/api/sign_up', async (req, res) => {
       let url = req.protocol + '://' + req.get('host') + syzoj.utils.makeUrl(['api', 'sign_up', encrypted]);
       try {
         await sendmail({
-          from: syzoj.config.register_mail.address,
+          from: `${syzoj.config.title} <${syzoj.config.register_mail.address}>`,
           to: req.body.email,
           type: 'text/html',
           subject: `${req.body.username} 的 ${syzoj.config.title} 注册验证邮件`,
-          html: `<p>请点击该链接完成您在 ${syzoj.config.title} 的注册：<a href="${url}">${url}</a>。</p><p>如果您不是 ${req.body.username}，请忽略此邮件。</p>`
+          html: `<p>请点击该链接完成您在 ${syzoj.config.title} 的注册：</p><p><a href="${url}">${url}</a></p><p>如果您不是 ${req.body.username}，请忽略此邮件。</p>`
         });
       } catch (e) {
         throw 2010
