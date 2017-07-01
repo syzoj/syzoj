@@ -91,6 +91,7 @@ app.post('/contest/:id/edit', async (req, res) => {
       contest.ranklist_id = ranklist.id;
 
       // Only new contest can be set type
+      if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
       contest.type = req.body.type;
     }
 
@@ -99,7 +100,6 @@ app.post('/contest/:id/edit', async (req, res) => {
     contest.subtitle = req.body.subtitle;
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');
-    if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
     contest.information = req.body.information;
     contest.start_time = syzoj.utils.parseDate(req.body.start_time);
     contest.end_time = syzoj.utils.parseDate(req.body.end_time);
