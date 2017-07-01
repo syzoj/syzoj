@@ -242,6 +242,7 @@ if (contest) {
   <script src="/libs/ace/ace.js"></script>
   <script type="text/javascript">
   var editor = ace.edit("editor");
+  var lastSubmitted = '';
 
   editor.setTheme("ace/theme/tomorrow");
   editor.getSession().setMode("ace/mode/" + $('#languages-menu .item.active').data('mode'));
@@ -256,6 +257,7 @@ if (contest) {
   function submit_code() {
     if (!editor.getValue().trim()) return false;
     $('#submit_code input[name=language]').val($('#languages-menu .item.active').data('value'));
+    lastSubmitted = editor.getValue();
     $('#submit_code input[name=code]').val(editor.getValue());
     return true;
   }
