@@ -17,6 +17,13 @@
         <input type="text" id="title" name="title" value="<%= article.title %>">
         <label for="content">内容</label>
         <textarea rows="15" id="content" name="content" class="font-content"><%= article.content %></textarea>
+        <% if (user && user.is_admin) { %>
+          <div class="ui <% if (article.is_notice) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
+            <input <% if (article.is_notice) { %>checked=""<% } %> name="is_notice" type="checkbox">
+            <label><strong>公告</strong></label>
+            <p style="margin-top: 5px; ">选择后将显示在首页公告栏。</p>
+          </div>
+        <% } %>
       </div>
     </div>
     <div class="ui bottom attached tab segment" data-tab="preview">

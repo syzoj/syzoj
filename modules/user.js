@@ -181,7 +181,6 @@ app.post('/user/:id/edit', async (req, res) => {
       error_info: ''
     });
   } catch (e) {
-    console.log(e);
     user.privileges = await user.getPrivileges();
     res.locals.user.allowedManage = await res.locals.user.hasPrivilege('manage_user');
 

@@ -57,7 +57,7 @@ app.get('/article/:id', async (req, res) => {
 
     let paginate = syzoj.utils.paginate(await ArticleComment.count(where), req.query.page, syzoj.config.page.article_comment);
 
-    let comments = await ArticleComment.query(paginate, where, [['public_time', 'asc']]);
+    let comments = await ArticleComment.query(paginate, where, [['public_time', 'desc']]);
 
     for (let comment of comments) {
       comment.content = await syzoj.utils.markdown(comment.content);
@@ -124,6 +124,7 @@ app.post('/article/:id/edit', async (req, res) => {
     article.title = req.body.title;
     article.content = req.body.content;
     article.update_time = time;
+    article.is_notice = res.locals.user && res.locals.user.is_admin && req.body.is_notice === 'on';
 
     await article.save();
 

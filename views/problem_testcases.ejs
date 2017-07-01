@@ -1,0 +1,42 @@
+<%
+let subtaskType = {
+  sum: '测试点分数按百分比相加',
+  min: '取各测试点最低分',
+  mul: '测试点分数按百分比相乘'
+};
+%>
+<% if (testcases && testcases.error) { %>
+  <h4>数据包错误：<%= testcases.error %></h4>
+<%
+} else if (testcases) {
+%>
+  <% if (testcases.spj) { %>
+    <p>评测方式：Special Judge</p>
+  <% } else { %>
+    <p>评测方式：文本比较</p>
+  <% } %>
+  <table class="ui celled table">
+    <tbody>
+      <% let i = 0; %>
+      <% for (let subtask of testcases) { %>
+        <% if (testcases.length !== 1) { %>
+          <tr>
+            <td style="background-color: #F9FAFB" colspan="2"><h4 style="margin-bottom: 3px; ">子任务 <%= ++i %></h4><span style="font-weight: normal; "><%= subtaskType[subtask.type] %>，总分值 <%= subtask.score %></span></th>
+          </tr>
+        <% } else { %>
+          <tr>
+            <td style="background-color: #F9FAFB" colspan="2"><h4 style="margin-bottom: 3px; ">单个子任务</h4><span style="font-weight: normal; "><%= subtaskType[subtask.type] %></span></th>
+          </tr>
+        <% } %>
+          <% for (let testcase of subtask.cases) { %>
+            <tr class="center aligned">
+              <td style="width: 50%; "><%= testcase.input %></td>
+              <td style="width: 50%; "><%= testcase.output %></td>
+            </tr>
+          <% } %>
+      <% } %>
+    </tbody>
+  </table>
+<% } else { %>
+  <h4 style="text-align: center; ">无测试数据</h4>
+<% } %>

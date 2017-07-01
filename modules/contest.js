@@ -28,8 +28,12 @@ let User = syzoj.model('user');
 
 app.get('/contests', async (req, res) => {
   try {
-    let paginate = syzoj.utils.paginate(await Contest.count(), req.query.page, syzoj.config.page.contest);
-    let contests = await Contest.query(paginate, null, [['start_time', 'desc']]);
+    let where;
+    if (res.locals.user && await res.locals.user.is_admin) where = {}
+    else where = { is_public: true };
+
+    let paginate = syzoj.utils.paginate(await Contest.count(where), req.query.page, syzoj.config.page.contest);
+    let contests = await Contest.query(paginate, where, [['start_time', 'desc']]);
 
     await contests.forEachAsync(async x => x.subtitle = await syzoj.utils.markdown(x.subtitle));
 
@@ -85,6 +89,9 @@ app.post('/contest/:id/edit', async (req, res) => {
       let ranklist = await ContestRanklist.create();
       await ranklist.save();
       contest.ranklist_id = ranklist.id;
+
+      // Only new contest can be set type
+      contest.type = req.body.type;
     }
 
     if (!req.body.title.trim()) throw new ErrorMessage('比赛名不能为空。');
@@ -93,10 +100,10 @@ app.post('/contest/:id/edit', async (req, res) => {
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');
     if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
-    contest.type = req.body.type;
     contest.information = req.body.information;
     contest.start_time = syzoj.utils.parseDate(req.body.start_time);
     contest.end_time = syzoj.utils.parseDate(req.body.end_time);
+    contest.is_public = req.body.is_public === 'on';
 
     await contest.save();
 
@@ -333,6 +340,8 @@ app.get('/contest/:id/:pid', async (req, res) => {
 
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.fromID(problem_id);
+
+    problem.specialJudge = await problem.hasSpecialJudge();
 
     await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
 

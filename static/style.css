@@ -349,6 +349,10 @@ table.center.aligned ul, table.center.aligned ol {
 	text-align: left;
 }
 
+body > .ui.page.dimmer {
+  position: fixed !important;
+}
+
 /* status color */
 
 /*

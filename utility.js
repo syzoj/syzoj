@@ -36,7 +36,9 @@ global.ErrorMessage = class ErrorMessage {
   }
 };
 
+let Promise = require('bluebird');
 let path = require('path');
+let fs = Promise.promisifyAll(require('fs-extra'));
 let util = require('util');
 let renderer = require('moemark-renderer');
 let moment = require('moment');
@@ -44,7 +46,6 @@ let url = require('url');
 let querystring = require('querystring');
 let pygmentize = require('pygmentize-bundled-cached');
 let gravatar = require('gravatar');
-let AdmZip = require('adm-zip');
 let filesize = require('file-size');
 let AsyncLock = require('async-lock');
 
@@ -195,82 +196,89 @@ module.exports = {
   gravatar(email, size) {
     return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
   },
-  parseTestData(filename) {
-    let zip = new AdmZip(filename);
-    let list = zip.getEntries().filter(e => !e.isDirectory).map(e => e.entryName);
-    let res = [];
-    if (!list.includes('data_rule.txt')) {
-      res[0] = {};
-      res[0].cases = [];
-      for (let file of list) {
-        let parsedName = path.parse(file);
-        if (parsedName.ext === '.in') {
-          if (list.includes(`${parsedName.name}.out`)) {
-            res[0].cases.push({
-              input: file,
-              output: `${parsedName.name}.out`
-            });
+  async parseTestdata(dir) {
+    if (!await syzoj.utils.isDir(dir)) return null;
+
+    try {
+      // Get list of *files*
+      let list = await (await fs.readdirAsync(dir)).filterAsync(async x => await syzoj.utils.isFile(path.join(dir, x)));
+
+      let res = [];
+      if (!list.includes('data_rule.txt')) {
+        res[0] = {};
+        res[0].cases = [];
+        for (let file of list) {
+          let parsedName = path.parse(file);
+          if (parsedName.ext === '.in') {
+            if (list.includes(`${parsedName.name}.out`)) {
+              res[0].cases.push({
+                input: file,
+                output: `${parsedName.name}.out`
+              });
+            }
+
+            if (list.includes(`${parsedName.name}.ans`)) {
+              res[0].cases.push({
+                input: file,
+                output: `${parsedName.name}.ans`
+              });
+            }
+          }
+        }
+
+        res[0].type = 'sum';
+        res[0].score = 100;
+        res[0].cases.sort((a, b) => {
+          function getLastInteger(s) {
+            let re = /(\d+)\D*$/;
+            let x = re.exec(s);
+            if (x) return parseInt(x[1]);
+            else return -1;
           }
 
-          if (list.includes(`${parsedName.name}.ans`)) {
-            res[0].cases.push({
-              input: file,
-              output: `${parsedName.name}.ans`
-            });
+          return getLastInteger(a.input) - getLastInteger(b.input);
+        });
+      } else {
+        let lines = (await fs.readFileAsync(path.join(dir, 'data_rule.txt'))).toString().split('\r').join('').split('\n').filter(x => x.length !== 0);
+
+        if (lines.length < 3) throw '无效的数据配置文件（data_rule.txt）。';
+
+        let input = lines[lines.length - 2];
+        let output = lines[lines.length - 1];
+
+        for (let s = 0; s < lines.length - 2; ++s) {
+          res[s] = {};
+          res[s].cases = [];
+          let numbers = lines[s].split(' ').filter(x => x);
+          if (numbers[0].includes(':')) {
+            let tokens = numbers[0].split(':');
+            res[s].type = tokens[0] || 'sum';
+            res[s].score = parseFloat(tokens[1]) || (100 / (lines.length - 2));
+            numbers.shift();
+          } else {
+            res[s].type = 'sum';
+            res[s].score = 100;
+          }
+          for (let i of numbers) {
+            let testcase = {
+              input: input.replace('#', i),
+              output: output.replace('#', i)
+            };
+
+            if (!list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
+            if (!list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
+            res[s].cases.push(testcase);
           }
         }
+
+        res = res.filter(x => x.cases && x.cases.length !== 0);
       }
 
-      res[0].type = 'sum';
-      res[0].score = 100;
-      res[0].cases.sort((a, b) => {
-        function getLastInteger(s) {
-          let re = /(\d+)\D*$/;
-          let x = re.exec(s);
-          if (x) return parseInt(x[1]);
-          else return -1;
-        }
-
-        return getLastInteger(a.input) - getLastInteger(b.input);
-      });
-    } else {
-      let lines = zip.readAsText('data_rule.txt').split('\r').join('').split('\n').filter(x => x.length !== 0);
-
-      if (lines.length < 3) throw '无效的数据配置文件（data_rule.txt）。';
-
-      let input = lines[lines.length - 2];
-      let output = lines[lines.length - 1];
-
-      for (let s = 0; s < lines.length - 2; ++s) {
-        res[s] = {};
-        res[s].cases = [];
-        let numbers = lines[s].split(' ').filter(x => x);
-        if (numbers[0].includes(':')) {
-          let tokens = numbers[0].split(':');
-          res[s].type = tokens[0] || 'sum';
-          res[s].score = parseFloat(tokens[1]) || (100 / (lines.length - 2));
-          numbers.shift();
-        } else {
-          res[s].type = 'sum';
-          res[s].score = 100;
-        }
-        for (let i of numbers) {
-          let testcase = {
-            input: input.replace('#', i),
-            output: output.replace('#', i)
-          };
-
-          if (!list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
-          if (!list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
-          res[s].cases.push(testcase);
-        }
-      }
-
-      res = res.filter(x => x.cases && x.cases.length !== 0);
+      res.spj = list.includes('spj.js') || list.some(s => s.startsWith('spj_'));
+      return res;
+    } catch (e) {
+      return { error: e };
     }
-
-    res.spj = list.includes('spj.js') || list.some(s => s.startsWith('spj_'));
-    return res;
   },
   ansiToHTML(s) {
     let Convert = require('ansi-to-html');
@@ -307,11 +315,10 @@ module.exports = {
     try {
       let request = require('request-promise');
       let res = await request({
-        uri: 'http://api.hitokoto.us/rand',
+        uri: 'https://sslapi.hitokoto.cn',
         timeout: 1500,
         qs: {
-          encode: 'json',
-          cat: 'a'
+          c: 'a'
         },
         json: true
       });
@@ -329,5 +336,30 @@ module.exports = {
     let s = JSON.stringify(key);
     if (!this.locks[s]) this.locks[s] = new AsyncLock();
     return this.locks[s].acquire(s, cb);
+  },
+  encrypt(buffer, password) {
+    if (typeof buffer === 'string') buffer = Buffer.from(buffer);
+    let crypto = require('crypto');
+    let cipher = crypto.createCipher('aes-256-ctr', password);
+    return Buffer.concat([cipher.update(buffer), cipher.final()]);
+  },
+  decrypt(buffer, password) {
+    let crypto = require('crypto');
+    let decipher = crypto.createDecipher('aes-256-ctr', password);
+    return Buffer.concat([decipher.update(buffer), decipher.final()]);
+  },
+  async isFile(path) {
+    try {
+      return (await fs.statAsync(path)).isFile();
+    } catch (e) {
+      return false;
+    }
+  },
+  async isDir(path) {
+    try {
+      return (await fs.statAsync(path)).isDirectory();
+    } catch (e) {
+      return false;
+    }
   }
 };

@@ -144,6 +144,56 @@ FROM `judge_state` `outer_table` \
 WHERE  \
 	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
 ORDER BY `submit_time` ASC \
+',
+  min:
+' \
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `max_memory` ASC \
+    LIMIT 1 \
+	) AS `id`, \
+	( \
+		SELECT \
+			`max_memory` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `max_memory` ASC \
+    LIMIT 1 \
+	) AS `max_memory` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `max_memory` ASC \
+',
+  max:
+' \
+SELECT \
+	DISTINCT(`user_id`) AS `user_id`,  \
+	( \
+		SELECT \
+			`id` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `max_memory` ASC \
+    LIMIT 1 \
+	) AS `id`, \
+	( \
+		SELECT \
+			`max_memory` \
+		FROM `judge_state` `inner_table` \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		ORDER BY `max_memory` ASC \
+    LIMIT 1 \
+	) AS `max_memory` \
+FROM `judge_state` `outer_table` \
+WHERE  \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+ORDER BY `max_memory` DESC \
 '
 };
 
@@ -151,7 +201,7 @@ let Sequelize = require('sequelize');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
-let TestData = syzoj.model('testdata');
+let File = syzoj.model('file');
 
 let model = db.define('problem', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -182,13 +232,7 @@ let model = db.define('problem', {
   time_limit: { type: Sequelize.INTEGER },
   memory_limit: { type: Sequelize.INTEGER },
 
-  testdata_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'file',
-      key: 'id'
-    }
-  },
+  additional_file_id: { type: Sequelize.INTEGER },
 
   ac_num: { type: Sequelize.INTEGER },
   submit_num: { type: Sequelize.INTEGER },
@@ -196,7 +240,12 @@ let model = db.define('problem', {
 
   file_io: { type: Sequelize.BOOLEAN },
   file_io_input_name: { type: Sequelize.TEXT },
-  file_io_output_name: { type: Sequelize.TEXT }
+  file_io_output_name: { type: Sequelize.TEXT },
+
+  type: {
+    type: Sequelize.ENUM,
+    values: ['traditional', 'submit-answer', 'interaction']
+  }
 }, {
   timestamps: false,
   tableName: 'problem',
@@ -234,14 +283,16 @@ class Problem extends Model {
 
       file_io: false,
       file_io_input_name: '',
-      file_io_output_name: ''
+      file_io_output_name: '',
+
+      type: 'traditional'
     }, val)));
   }
 
   async loadRelationships() {
     this.user = await User.fromID(this.user_id);
     this.publicizer = await User.fromID(this.publicizer_id);
-    this.testdata = await TestData.fromID(this.testdata_id);
+    this.additional_file = await File.fromID(this.additional_file_id);
   }
 
   async isAllowedEditBy(user) {
@@ -263,35 +314,122 @@ class Problem extends Model {
     return user.is_admin;
   }
 
+  getTestdataPath() {
+    return syzoj.utils.resolvePath(syzoj.config.upload_dir, 'testdata', this.id.toString());
+  }
+
   async updateTestdata(path) {
+    let AdmZip = require('adm-zip');
+    let zip = new AdmZip(path);
+
+    let unzipSize = 0;
+    for (let x of zip.getEntries()) unzipSize += x.header.size;
+    if (unzipSize > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
+
+    let dir = this.getTestdataPath();
     let fs = Promise.promisifyAll(require('fs-extra'));
+    await fs.removeAsync(dir);
+    await fs.ensureDirAsync(dir);
 
-    let buf = await fs.readFileAsync(path);
+    zip.extractAllTo(dir);
+    await fs.moveAsync(path, dir + '.zip', { overwrite: true });
+  }
 
-    if (buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('测试数据太大。');
+  async uploadTestdataSingleFile(filename, filepath, size) {
+    let dir = this.getTestdataPath();
+    let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
+    await fs.ensureDirAsync(dir);
 
-    let key = syzoj.utils.md5(buf);
-    await fs.moveAsync(path, TestData.resolvePath(key), { overwrite: true });
-
-    if (this.testdata_id) {
-      let tmp = this.testdata_id;
-      this.testdata_id = null;
-      await this.save();
-
-      let file = await TestData.fromID(tmp);
-      if (file) await file.destroy();
+    let oldSize = 0;
+    let list = await this.listTestdata();
+    if (list) {
+      for (let file of list.files) if (file.filename !== filename) oldSize += file.size;
     }
 
-    let filename = `test_data_${this.id}.zip`;
-    let file = await TestData.findOne({ where: { filename: filename } });
-    if (file) await file.destroy();
+    if (oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
-    file = await TestData.create({
-      filename: filename,
-      md5: key
-    });
-    await file.save();
-    this.testdata_id = file.id;
+    await fs.moveAsync(filepath, path.join(dir, filename), { overwrite: true });
+    await fs.removeAsync(dir + '.zip');
+  }
+
+  async deleteTestdataSingleFile(filename) {
+    let dir = this.getTestdataPath();
+    let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
+    await fs.removeAsync(path.join(dir, filename));
+    await fs.removeAsync(dir + '.zip');
+  }
+
+  async makeTestdataZip() {
+    let dir = this.getTestdataPath();
+    if (!await syzoj.utils.isDir(dir)) throw new ErrorMessage('无测试数据。');
+
+    let AdmZip = require('adm-zip');
+    let zip = new AdmZip();
+
+    let list = await this.listTestdata();
+    for (let file of list.files) zip.addLocalFile(require('path').join(dir, file.filename), '', file.filename);
+    zip.writeZip(dir + '.zip');
+  }
+
+  async hasSpecialJudge() {
+    try {
+      let fs = Promise.promisifyAll(require('fs-extra'));
+      let dir = this.getTestdataPath();
+      let list = await fs.readdirAsync(dir);
+      return list.includes('spj.js') || list.find(x => x.startsWith('spj_')) !== undefined;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async listTestdata() {
+    try {
+      let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
+      let dir = this.getTestdataPath();
+      let list = await fs.readdirAsync(dir);
+      list = await list.mapAsync(async x => {
+        let stat = await fs.statAsync(path.join(dir, x));
+        if (!stat.isFile()) return undefined;
+        return {
+          filename: x,
+          size: stat.size
+        };
+      });
+
+      list = list.filter(x => x);
+
+      let res = {
+        files: list,
+        zip: null
+      };
+
+      try {
+        let stat = await fs.statAsync(this.getTestdataPath() + '.zip');
+        if (stat.isFile()) {
+          res.zip = {
+            size: stat.size
+          };
+        }
+      } catch (e) {
+        if (list) {
+          res.zip = {
+            size: null
+          };
+        }
+      }
+
+      return res;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async updateFile(path, type) {
+    let file = await File.upload(path, type);
+
+    if (type === 'additional_file') {
+      this.additional_file_id = file.id;
+    }
 
     await this.save();
   }
@@ -453,7 +591,6 @@ class Problem extends Model {
     await db.query('UPDATE `problem`         SET `id`         = ' + id                      + ' WHERE `id`         = ' + this.id);
     await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
     await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
-    await db.query('UPDATE `file`            SET `filename`   = ' + `"test_data_${id}.zip"` + ' WHERE `filename`   = ' + `"test_data_${this.id}.zip"`);
 
     let Contest = syzoj.model('contest');
     let contests = await Contest.all();
@@ -474,7 +611,21 @@ class Problem extends Model {
       }
     }
 
+    let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = oldTestdataDir + '.zip';
+
     this.id = id;
+
+    // Move testdata
+    let newTestdataDir = this.getTestdataPath(), newTestdataZip = newTestdataDir + '.zip';
+    let fs = Promise.promisifyAll(require('fs-extra'));
+    if (await syzoj.utils.isDir(oldTestdataDir)) {
+      await fs.moveAsync(oldTestdataDir, newTestdataDir);
+    }
+
+    if (await syzoj.utils.isFile(oldTestdataZip)) {
+      await fs.moveAsync(oldTestdataZip, newTestdataZip);
+    }
+
     await this.save();
   }
 

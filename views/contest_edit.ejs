@@ -22,19 +22,19 @@
               <label>赛制</label>
               <div class="field">
                 <div class="ui radio checkbox">
-                  <input type="radio" name="type" id="type-noi" value="noi"<% if (contest.type === 'noi') { %> checked="checked"<% } %>>
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-noi" value="noi"<% if (contest.type === 'noi') { %> checked="checked"<% } %>>
                   <label for="type-noi">NOI</label>
                 </div>
               </div>
               <div class="field">
                 <div class="ui radio checkbox">
-                  <input type="radio" name="type" id="type-ioi" value="ioi"<% if (contest.type === 'ioi') { %> checked="checked"<% } %>>
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-ioi" value="ioi"<% if (contest.type === 'ioi') { %> checked="checked"<% } %>>
                   <label for="type-ioi">IOI</label>
                 </div>
               </div>
               <div class="field">
                 <div class="ui radio checkbox">
-                  <input type="radio" name="type" id="type-acm" value="acm"<% if (contest.type === 'acm') { %> checked="checked"<% } %>>
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-acm" value="acm"<% if (contest.type === 'acm') { %> checked="checked"<% } %>>
                   <label for="type-acm">ACM</label>
                 </div>
               </div>
@@ -50,6 +50,13 @@
             <div class="field">
                 <label>结束时间</label>
                 <input type="text" name="end_time" value="<%= syzoj.utils.formatDate(contest.end_time || syzoj.utils.getCurrentDate()) %>">
+            </div>
+            <div class="inline field">
+              <label class="ui header">公开</label>
+              <div class="ui toggle checkbox">
+                <input type="checkbox"<% if (contest.is_public) { %> checked<% } %> name="is_public">
+                <label><span style="visibility: hidden; ">　</span></label>
+              </div>
             </div>
             <button type="submit" class="ui button">提交</button>
         </form>

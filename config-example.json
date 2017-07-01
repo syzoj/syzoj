@@ -10,6 +10,11 @@
     "dialect": "sqlite",
     "storage": "syzoj.db"
   },
+  "register_mail": {
+    "enabled": true,
+    "address": "test@test.domain",
+    "key": "test"
+  },
   "upload_dir": "uploads",
   "default": {
     "problem": {
@@ -23,7 +28,10 @@
   "limit": {
     "time_limit": 10000,
     "memory_limit": 1024,
-    "data_size": 209715200
+    "data_size": 209715200,
+    "testdata": 209715200,
+    "submit_code": 102400,
+    "submit_answer": 10485760
   },
   "page": {
     "problem": 50,
@@ -134,26 +142,12 @@
       "editor": "vbscript"
     }
   },
-  "notices": [
-    {
-      "type": "// article",
-      "id": 1,
-      "comment": "Specify the id if you want to show a article"
-    },
-    {
-      "type": "// link",
-      "url": "",
-      "date": "",
-      "comment": "Specify the url and date if you want to show any link"
-    }
-  ],
   "links": [
     {
       "title": "LibreOJ",
       "url": "https://loj.ac/"
     }
   ],
-  "announcement": "Here is the announcement",
   "session_secret": "233",
   "judge_token": "233"
 }

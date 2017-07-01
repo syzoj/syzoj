@@ -80,7 +80,7 @@
         <h4 class="ui top attached block header">一言（ヒトコト）</h4>
         <div class="ui bottom attached center aligned segment">
           <div style="font-size: 1em; line-height: 1.5em; "><%= hitokoto.hitokoto %></div>
-          <% if (hitokoto.source) { %><div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; ">——<%= hitokoto.source %></div><% } %>
+          <% if (hitokoto.from) { %><div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; ">——<%= hitokoto.from %></div><% } %>
         </div>
         <% } %>
         <%
@@ -180,14 +180,6 @@
             <% } %>
           </tbody>
         </table>
-        <% } %>
-      </div>
-      <h4 class="ui top attached block header font-content">信息栏</h4>
-      <div class="ui bottom attached <% if (!syzoj.config.announcement) { %>center aligned <% } %>segment">
-        <% if (!syzoj.config.announcement) { %>
-        无任何信息
-        <% } else { %>
-        <p><%- syzoj.config.announcement %></p>
         <% } %>
       </div>
       <% if (typeof links !== 'undefined' && links) { %>
