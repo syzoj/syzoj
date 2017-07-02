@@ -422,6 +422,12 @@ body > .ui.page.dimmer {
   color: #78909C;
 }
 
+:not(.status_detail).status.skipped,
+.title:hover .status_detail.status.skipped,
+.title.active .status_detail.status.skipped {
+  color: #FF5722;
+}
+
 :not(.status_detail).status.compiling {
     color: #00b5ad;
 }
