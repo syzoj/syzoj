@@ -493,7 +493,7 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
     problem.file_io_input_name = req.body.file_io_input_name;
     problem.file_io_output_name = req.body.file_io_output_name;
 
-    if (req.body.type !== 'traditional') {
+    if (req.body.type === 'interaction') {
       throw new ErrorMessage('暂不支持该题目类型。');
     }
 
