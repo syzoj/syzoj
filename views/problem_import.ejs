@@ -7,10 +7,12 @@
   </div>
 
   <form class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'import']) %>" method="post">
-      <div class="field">
-          <label>题目编号</label>
-          <input type="text" name="id" value="<%= problem.id ? problem.id : '' %>" placeholder="留空则自动延伸" <%= problem.new ? '' : 'disabled' %>>
-      </div>
+      <% if (problem.allowedManage) { %>
+          <div class="field">
+              <label>题目编号</label>
+              <input type="text" name="id" value="<%= problem.id ? problem.id : '' %>" placeholder="留空则自动延伸" <%= problem.new ? '' : 'disabled' %>>
+          </div>
+      <% } %>
       <div class="field">
           <label>题目链接</label>
           <input type="text" name="url" placeholder="如：http://example.com/problem/1">

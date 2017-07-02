@@ -288,11 +288,13 @@ app.post('/problem/:id/edit', async (req, res) => {
 
       problem = await Problem.create();
 
-      let customID = parseInt(req.body.id);
-      if (customID) {
-        if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
-        problem.id = customID;
-      } else if (id) problem.id = id;
+      if (await res.locals.user.hasPrivilege('manage_problem')) {
+        let customID = parseInt(req.body.id);
+        if (customID) {
+          if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
+          problem.id = customID;
+        } else if (id) problem.id = id;
+      }
 
       problem.user_id = res.locals.user.id;
       problem.publicizer_id = res.locals.user.id;
@@ -357,6 +359,8 @@ app.get('/problem/:id/import', async (req, res) => {
       if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
+    problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
+
     res.render('problem_import', {
       problem: problem
     });
@@ -377,11 +381,13 @@ app.post('/problem/:id/import', async (req, res) => {
 
       problem = await Problem.create();
 
-      let customID = parseInt(req.body.id);
-      if (customID) {
-        if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
-        problem.id = customID;
-      } else if (id) problem.id = id;
+      if (await res.locals.user.hasPrivilege('manage_problem')) {
+        let customID = parseInt(req.body.id);
+        if (customID) {
+          if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
+          problem.id = customID;
+        } else if (id) problem.id = id;
+      }
 
       problem.user_id = res.locals.user.id;
       problem.publicizer_id = res.locals.user.id;
