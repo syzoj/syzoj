@@ -54,7 +54,7 @@ if (contest) {
             <% } %>
         </div>
         <div class="row" style="margin-top: -23px">
-            <span class="ui label">评测方式：<%= testcases.spj ? 'Special Judge' : '文本比较' %></span>
+            <span class="ui label">评测方式：<%= testcases ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
             <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
         </div>
         <div class="row" style="margin-top: -23px">
@@ -197,9 +197,11 @@ if (contest) {
             <% if (problem.type === 'submit-answer') { %>
               <%
               let cases = [];
-              for (let subtasks of testcases) {
-                for (let testcase of subtasks.cases) {
-                  cases.push(testcase.answer);
+              if (testcases) {
+                for (let subtasks of testcases) {
+                  for (let testcase of subtasks.cases) {
+                    cases.push(testcase.answer);
+                  }
                 }
               }
               %>
@@ -207,6 +209,7 @@ if (contest) {
               var cases = <%- JSON.stringify(cases) %>, currCase = 0;
               </script>
               <div class="ui grid">
+                <% if (testcases) { %>
                 <div class="four wide column" style="margin-right: -25px; ">
                   <div class="ui attached vertical fluid pointing menu" id="testcase-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <% for (let i = 0; i < cases.length; i++) { %>
@@ -221,6 +224,7 @@ if (contest) {
                     <div id="editor-<%= i %>" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; <%= i === 0 ? '' : 'visibility: hidden; ' %>"></div>
                   <% } %>
                 </div>
+                <% } %>
                 <input id="answer_by_editor" name="answer_by_editor" type="hidden">
                 <script>
                 var editors = [];
