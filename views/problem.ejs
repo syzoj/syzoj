@@ -54,7 +54,7 @@ if (contest) {
             <% } %>
         </div>
         <div class="row" style="margin-top: -23px">
-            <span class="ui label">评测方式：<%= testcases ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
+            <span class="ui label">评测方式：<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
             <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
         </div>
         <div class="row" style="margin-top: -23px">
@@ -197,7 +197,7 @@ if (contest) {
             <% if (problem.type === 'submit-answer') { %>
               <%
               let cases = [];
-              if (testcases) {
+              if (testcases && !testcases.error) {
                 for (let subtasks of testcases) {
                   for (let testcase of subtasks.cases) {
                     cases.push(testcase.answer);

@@ -278,8 +278,8 @@ module.exports = {
 
             if (submitAnswer) testcase.answer = answer.replace('#', i);
 
-            if (!list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
-            if (!list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
+            if (testcase.input !== '-' && !list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
+            if (testcase.output !== '-' && !list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
             res[s].cases.push(testcase);
           }
         }
