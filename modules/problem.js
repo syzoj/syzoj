@@ -190,7 +190,6 @@ app.get('/problem/:id', async (req, res) => {
 
     problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
     problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
-    problem.specialJudge = await problem.hasSpecialJudge();
 
     if (problem.is_public || problem.allowedEdit) {
       await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
@@ -203,10 +202,13 @@ app.get('/problem/:id', async (req, res) => {
     problem.tags = await problem.getTags();
     await problem.loadRelationships();
 
+    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath(), problem.type === 'submit-answer');
+
     res.render('problem', {
       problem: problem,
       state: state,
-      lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null
+      lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null,
+      testcases: testcases
     });
   } catch (e) {
     syzoj.log(e);
@@ -461,7 +463,7 @@ app.get('/problem/:id/manage', async (req, res) => {
 
     await problem.loadRelationships();
 
-    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath());
+    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath(), problem.type === 'submit-answer');
 
     res.render('problem_manage', {
       problem: problem,
@@ -566,11 +568,27 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
     let judge_state;
     if (problem.type === 'submit-answer') {
-      if (!req.files['answer']) throw new ErrorMessage('请上传答案文件。');
-      if (req.files['answer'][0].size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');
+      let pathOrData;
+      if (!req.files['answer']) {
+        // Submited by editor
+        try {
+          let files = JSON.parse(req.body.answer_by_editor);
+          let AdmZip = require('adm-zip');
+          let zip = new AdmZip();
+          for (let file of files) {
+            zip.addFile(file.filename, file.data);
+          }
+          pathOrData = zip.toBuffer();
+        } catch (e) {
+          throw new ErrorMessage('无法解析提交数据。');
+        }
+      } else {
+        if (req.files['answer'][0].size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');
+        pathOrData = req.files['answer'][0].path;
+      }
 
       let File = syzoj.model('file');
-      let file = await File.upload(req.files['answer'][0].path, 'answer');
+      let file = await File.upload(pathOrData, 'answer');
       let size = await file.getUnzipSize();
 
       if (size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');
@@ -645,7 +663,7 @@ app.get('/problem/:id/testdata', async (req, res) => {
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let testdata = await problem.listTestdata();
-    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath());
+    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath(), problem.type === 'submit-answer');
 
     problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user)
 

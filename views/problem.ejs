@@ -18,6 +18,7 @@ if (contest) {
     background: transparent;
 }
 </style>
+<script src="/libs/ace/ace.js"></script>
 <div class="ui center aligned grid">
     <div class="row">
       <h1 class="ui header">
@@ -53,7 +54,7 @@ if (contest) {
             <% } %>
         </div>
         <div class="row" style="margin-top: -23px">
-            <span class="ui label">评测方式：<%= problem.specialJudge ? 'Special Judge' : '文本比较' %></span>
+            <span class="ui label">评测方式：<%= testcases.spj ? 'Special Judge' : '文本比较' %></span>
             <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
         </div>
         <div class="row" style="margin-top: -23px">
@@ -194,18 +195,84 @@ if (contest) {
           %>
           <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
             <% if (problem.type === 'submit-answer') { %>
-              <div class="inline fields">
+              <%
+              let cases = [];
+              for (let subtasks of testcases) {
+                for (let testcase of subtasks.cases) {
+                  cases.push(testcase.answer);
+                }
+              }
+              %>
+              <script>
+              var cases = <%- JSON.stringify(cases) %>, currCase = 0;
+              </script>
+              <div class="ui grid">
+                <div class="four wide column" style="margin-right: -25px; ">
+                  <div class="ui attached vertical fluid pointing menu" id="testcase-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
+                    <% for (let i = 0; i < cases.length; i++) { %>
+                      <a class="item<%= i === 0 ? ' active' : '' %>" data-value="<%= i %>">
+                        <%= cases[i] %>
+                      </a>
+                    <% } %>
+                  </div>
+                </div>
+                <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 12px) !important; ">
+                  <% for (let i = 0; i < cases.length; i++) { %>
+                    <div id="editor-<%= i %>" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; <%= i === 0 ? '' : 'visibility: hidden; ' %>"></div>
+                  <% } %>
+                </div>
+                <input id="answer_by_editor" name="answer_by_editor" type="hidden">
+                <script>
+                var editors = [];
+                for (var i = 0; i < cases.length; i++) {
+                  var editor = ace.edit("editor-" + i);
+                  var lastSubmitted = '';
+
+                  editor.setTheme("ace/theme/tomorrow");
+                  // editor.getSession().setMode("ace/mode/" + $('#languages-menu .item.active').data('mode'));
+                  editor.getSession().setUseSoftTabs(false);
+
+                  editor.container.style.lineHeight = 1.6;
+                  editor.container.style.fontSize = '14px';
+                  editor.container.style.fontFamily = "'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace";
+                  editor.setShowPrintMargin(false);
+                  editor.renderer.updateFontSize();
+
+                  editors[i] = editor;
+                }
+
+                $(function () {
+                  $('#testcase-menu .item').click(function() {
+                    $(this)
+                      .addClass('active')
+                      .closest('.ui.menu')
+                      .find('.item')
+                        .not($(this))
+                        .removeClass('active')
+                    ;
+
+                    var x = $(this).attr('data-value');
+                    if (currCase != x) {
+                      $('#editor-' + currCase).css('visibility', 'hidden');
+                      $('#editor-' + x).css('visibility', 'visible');
+                      currCase = x;
+                    }
+                  });
+                });
+                </script>
+                <div class="inline fields" style="width: 100%; ">
                 <div class="field" style="margin: 0 auto; ">
-                  <label for="answer">上传答案（请使用 ZIP 格式压缩）</label>
+                  <label for="answer">或者，上传答案（请使用 ZIP 格式压缩）</label>
                   <input type="file" id="answer" name="answer">
                 </div>
+              </div>
               </div>
             <% } else { %>
               <input name="language" type="hidden" id="form">
               <input name="code" type="hidden">
               <div class="ui grid">
                 <div class="four wide column" style="margin-right: -25px; ">
-                  <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="max-height: 370px; overflow-y: scroll; overflow-x: hidden; ">
+                  <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <%
                     let language = Object.getOwnPropertyNames(syzoj.config.languages).shift();
                     if (state) {
@@ -239,7 +306,6 @@ if (contest) {
 </div>
 
 <% if (problem.type !== 'submit-answer') { %>
-  <script src="/libs/ace/ace.js"></script>
   <script type="text/javascript">
   var editor = ace.edit("editor");
   var lastSubmitted = '';
@@ -280,7 +346,15 @@ if (contest) {
 <% } else { %>
   <script>
   function submit_code() {
-    if ($('#answer')[0].files.length === 0) return false;
+    var a = [];
+    for (var i = 0; i < cases.length; i++) {
+      a.push({
+        filename: cases[i],
+        data: editors[i].getValue()
+      });
+    }
+    console.log(a);
+    $('#answer_by_editor').val(JSON.stringify(a));
   }
   </script>
 <% } %>

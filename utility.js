@@ -196,7 +196,7 @@ module.exports = {
   gravatar(email, size) {
     return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
   },
-  async parseTestdata(dir) {
+  async parseTestdata(dir, submitAnswer) {
     if (!await syzoj.utils.isDir(dir)) return null;
 
     try {
@@ -211,17 +211,21 @@ module.exports = {
           let parsedName = path.parse(file);
           if (parsedName.ext === '.in') {
             if (list.includes(`${parsedName.name}.out`)) {
-              res[0].cases.push({
+              let o = {
                 input: file,
                 output: `${parsedName.name}.out`
-              });
+              };
+              if (submitAnswer) o.answer = `${parsedName.name}.out`;
+              res[0].cases.push(o);
             }
 
             if (list.includes(`${parsedName.name}.ans`)) {
-              res[0].cases.push({
+              let o = {
                 input: file,
                 output: `${parsedName.name}.ans`
-              });
+              };
+              if (submitAnswer) o.answer = `${parsedName.name}.out`;
+              res[0].cases.push(o);
             }
           }
         }
@@ -241,12 +245,19 @@ module.exports = {
       } else {
         let lines = (await fs.readFileAsync(path.join(dir, 'data_rule.txt'))).toString().split('\r').join('').split('\n').filter(x => x.length !== 0);
 
-        if (lines.length < 3) throw '无效的数据配置文件（data_rule.txt）。';
+        let input, output, answer;
+        if (submitAnswer) {
+          if (lines.length < 4) throw '无效的数据配置文件（data_rule.txt）。';
+          input = lines[lines.length - 3];
+          output = lines[lines.length - 2];
+          answer = lines[lines.length - 1];
+        } else {
+          if (lines.length < 3) throw '无效的数据配置文件（data_rule.txt）。';
+          input = lines[lines.length - 2];
+          output = lines[lines.length - 1];
+        }
 
-        let input = lines[lines.length - 2];
-        let output = lines[lines.length - 1];
-
-        for (let s = 0; s < lines.length - 2; ++s) {
+        for (let s = 0; s < lines.length - (submitAnswer ? 3 : 2); ++s) {
           res[s] = {};
           res[s].cases = [];
           let numbers = lines[s].split(' ').filter(x => x);
@@ -265,6 +276,8 @@ module.exports = {
               output: output.replace('#', i)
             };
 
+            if (submitAnswer) testcase.answer = answer.replace('#', i);
+
             if (!list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
             if (!list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
             res[s].cases.push(testcase);
@@ -274,9 +287,10 @@ module.exports = {
         res = res.filter(x => x.cases && x.cases.length !== 0);
       }
 
-      res.spj = list.includes('spj.js') || list.some(s => s.startsWith('spj_'));
+      res.spj = list.some(s => s.startsWith('spj_'));
       return res;
     } catch (e) {
+      console.log(e);
       return { error: e };
     }
   },

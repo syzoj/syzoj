@@ -60,9 +60,18 @@ output#.out
             <p>注意：<span><code>zip</code> 包内<strong>没有</strong>一层文件夹，直接是上述文件。</span>
             </p>
             <p>如果没有 <code>data_rule.txt</code>，则评测系统会自动将 <code>.in</code> 文件与同名的 <code>.out</code> 或 <code>.ans</code> 匹配。</p>
+            <p>如果需要配置提交答案题目的数据，请添加额外的一行，表示用户提交的文件名：</p>
+            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>sum:30  1 2 3
+min:20  4 5 6
+mul:50  7 8 9 10
+
+input#.in
+output#.out
+submit#.out
+</code></pre></div>
             <h3 class="ui header">Special Judge</h3>
             <p>如果需要使用 Special Judge 评分，请在数据包中添加 <code>spj_LANG.xxx</code>，其中 <code>xxx</code> 为任意后缀名，<code>LANG</code> 为所用语言的简称，可为 <code>c</code>、<code>cpp</code>、<code>cpp11</code>、<code>csharp</code>、<code>haskell</code>、<code>java</code>、<code>lua</code>、<code>nodejs</code>、<code>pascal</code>、<code>python2</code>、<code>python3</code>、<code>ruby</code>、<code>vala</code>、<code>vbnet</code>。</p>
-            <p>Special Judge 程序运行时，其目录下会有四个文件 <code>input</code>、<code>user_out</code>、<code>answer</code>、<code>code</code>，分别对应该测试点的输入文件、用户输出、该测试点的输出文件、用户的代码。</p>
+            <p>Special Judge 程序运行时，其目录下会有四个文件 <code>input</code>、<code>user_out</code>、<code>answer</code>、<code>code</code>，分别对应该测试点的输入文件、用户输出、该测试点的输出文件、用户的代码（对于非提交答案题目）。</p>
             <p>Special Judge 程序运行完成后，应将该测试点的得分输出到<strong>标准输出</strong>（<code>stdout</code>）中（范围为 0 到 100，将自动折合为测试点分数），并将提供给用户的额外信息输出到<strong>标准错误输出</strong>（<code>stderr</code>）中。</p>
         </div>
     </div>

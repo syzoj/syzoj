@@ -56,10 +56,10 @@ class File extends Model {
     return syzoj.utils.resolvePath(syzoj.config.upload_dir, type, md5);
   }
 
-  static async upload(path, type, noLimit) {
+  static async upload(pathOrData, type, noLimit) {
     let fs = Promise.promisifyAll(require('fs-extra'));
 
-    let buf = await fs.readFileAsync(path);
+    let buf = Buffer.isBuffer(pathOrData) ? pathOrData : await fs.readFileAsync(pathOrData);
 
     if (!noLimit && buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('数据包太大。');
 
@@ -73,7 +73,11 @@ class File extends Model {
     }
 
     let key = syzoj.utils.md5(buf);
-    await fs.moveAsync(path, File.resolvePath(type, key), { overwrite: true });
+    if (Buffer.isBuffer(pathOrData)) {
+      await fs.writeFileAsync(File.resolvePath(type, key), pathOrData);
+    } else {
+      await fs.moveAsync(pathOrData, File.resolvePath(type, key), { overwrite: true });
+    }
 
     let file = await File.findOne({ where: { md5: key } });
     if (!file) {

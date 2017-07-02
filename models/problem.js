@@ -335,7 +335,7 @@ class Problem extends Model {
     await fs.moveAsync(path, dir + '.zip', { overwrite: true });
   }
 
-  async uploadTestdataSingleFile(filename, filepath, size) {
+  async uploadTestdataSingleFile(filename, filepath, size, noLimit) {
     let dir = this.getTestdataPath();
     let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
     await fs.ensureDirAsync(dir);
