@@ -436,7 +436,7 @@ app.post('/problem/:id/import', async (req, res) => {
     try {
       let data = await download(req.body.url + (req.body.url.endsWith('/') ? 'testdata/download' : '/testdata/download'));
       await fs.writeFileAsync(tmpFile.path, data);
-      await problem.updateTestdata(tmpFile.path);
+      await problem.updateTestdata(tmpFile.path, await res.locals.user.hasPrivilege('manage_problem'));
     } catch (e) {
       syzoj.log(e);
     }
@@ -506,11 +506,11 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
     if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
 
     if (req.files['testdata']) {
-      await problem.updateTestdata(req.files['testdata'][0].path);
+      await problem.updateTestdata(req.files['testdata'][0].path, await res.locals.user.hasPrivilege('manage_problem'));
     }
 
     if (req.files['additional_file']) {
-      await problem.updateFile(req.files['additional_file'][0].path, 'additional_file');
+      await problem.updateFile(req.files['additional_file'][0].path, 'additional_file', await res.locals.user.hasPrivilege('manage_problem'));
     }
 
     await problem.save();
@@ -673,7 +673,7 @@ app.post('/problem/:id/testdata/upload', app.multer.array('file'), async (req, r
 
     if (req.files) {
       for (let file of req.files) {
-        await problem.uploadTestdataSingleFile(file.originalname, file.path, file.size);
+        await problem.uploadTestdataSingleFile(file.originalname, file.path, file.size, await res.locals.user.hasPrivilege('manage_problem'));
       }
     }
 

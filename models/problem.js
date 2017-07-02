@@ -318,13 +318,13 @@ class Problem extends Model {
     return syzoj.utils.resolvePath(syzoj.config.upload_dir, 'testdata', this.id.toString());
   }
 
-  async updateTestdata(path) {
+  async updateTestdata(path, noLimit) {
     let AdmZip = require('adm-zip');
     let zip = new AdmZip(path);
 
     let unzipSize = 0;
     for (let x of zip.getEntries()) unzipSize += x.header.size;
-    if (unzipSize > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
+    if (!noLimit && unzipSize > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
     let dir = this.getTestdataPath();
     let fs = Promise.promisifyAll(require('fs-extra'));
@@ -346,7 +346,7 @@ class Problem extends Model {
       for (let file of list.files) if (file.filename !== filename) oldSize += file.size;
     }
 
-    if (oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
+    if (!noLimit && oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
     await fs.moveAsync(filepath, path.join(dir, filename), { overwrite: true });
     await fs.removeAsync(dir + '.zip');
@@ -424,8 +424,8 @@ class Problem extends Model {
     }
   }
 
-  async updateFile(path, type) {
-    let file = await File.upload(path, type);
+  async updateFile(path, type, noLimit) {
+    let file = await File.upload(path, type, noLimit);
 
     if (type === 'additional_file') {
       this.additional_file_id = file.id;

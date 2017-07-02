@@ -56,12 +56,12 @@ class File extends Model {
     return syzoj.utils.resolvePath(syzoj.config.upload_dir, type, md5);
   }
 
-  static async upload(path, type) {
+  static async upload(path, type, noLimit) {
     let fs = Promise.promisifyAll(require('fs-extra'));
 
     let buf = await fs.readFileAsync(path);
 
-    if (buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('数据包太大。');
+    if (!noLimit && buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('数据包太大。');
 
     try {
       let AdmZip = require('adm-zip');
