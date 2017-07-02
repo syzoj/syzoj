@@ -346,13 +346,15 @@ app.get('/contest/:id/:pid', async (req, res) => {
     await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
 
     let state = await problem.getJudgeState(res.locals.user, false);
+    let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath(), problem.type === 'submit-answer');
 
     res.render('problem', {
       pid: pid,
       contest: contest,
       problem: problem,
       state: state,
-      lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null
+      lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null,
+      testcases: testcases
     });
   } catch (e) {
     syzoj.log(e);
