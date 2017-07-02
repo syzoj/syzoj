@@ -132,13 +132,13 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
     <% } %>
     <% for (let i = 0; i < subtask_cases.case_num; i++) { %>
       <% let testcase = subtask_cases[i]; %>
-      <div class="title<% if (testcase.pending || !judge.allowedSeeData) { %> pending<% } %> auto_update"<% if (testcase.pending || !judge.allowedSeeData) { %> style="cursor: auto; "<% } %>>
+      <div class="title<% if (testcase.pending || !judge.allowedSeeData || testcase.status === 'Skipped') { %> pending<% } %> auto_update"<% if (testcase.pending || !judge.allowedSeeData) { %> style="cursor: auto; "<% } %>>
         <div class="ui grid">
           <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
           <div class="four wide column status status_detail <%= getStatusMeta(testcase.status).toLowerCase().split(' ').join('_') %>">
           <i class="<%= icon[getStatusMeta(testcase.status)] || 'remove' %> icon"></i>
           <%= testcase.status %></div>
-          <% if (!testcase.pending) { %>
+          <% if (!testcase.pending && testcase.status !== 'Skipped') { %>
             <% if (!testcase.score) testcase.score = testcase.status === 'Accepted' ? 100 : 0; %>
             <div class="three wide column">得分：<span style="font-weight: normal; "><%= parseFloat(testcase.score.toFixed(2)).toString() %></span></div>
             <div class="three wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
@@ -147,7 +147,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         </div>
       </div>
       <div class="content auto_update">
-        <% if (!testcase.pending && judge.allowedSeeData) { %>
+        <% if (!testcase.pending && judge.allowedSeeData && testcase.status !== 'Skipped') { %>
           <p>
               <strong>输入文件</strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.input %></code></pre></div>
