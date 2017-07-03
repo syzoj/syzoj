@@ -319,56 +319,63 @@ class Problem extends Model {
   }
 
   async updateTestdata(path, noLimit) {
-    let AdmZip = require('adm-zip');
-    let zip = new AdmZip(path);
+    await syzoj.utils.lock(['Problem::Testdata', this.id], async () => {
+      let p7zip = new (require('node-7z'));
 
-    let unzipSize = 0;
-    for (let x of zip.getEntries()) unzipSize += x.header.size;
-    if (!noLimit && unzipSize > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
+      let unzipSize = 0;
+      await p7zip.list(path).progress(files => {
+        for (let file of files) unzipSize += file.size;
+      });
+      if (!noLimit && unzipSize > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
-    let dir = this.getTestdataPath();
-    let fs = Promise.promisifyAll(require('fs-extra'));
-    await fs.removeAsync(dir);
-    await fs.ensureDirAsync(dir);
+      let dir = this.getTestdataPath();
+      let fs = Promise.promisifyAll(require('fs-extra'));
+      await fs.removeAsync(dir);
+      await fs.ensureDirAsync(dir);
 
-    zip.extractAllTo(dir);
-    await fs.moveAsync(path, dir + '.zip', { overwrite: true });
+      await p7zip.extract(path, dir);
+      await fs.moveAsync(path, dir + '.zip', { overwrite: true });
+    });
   }
 
   async uploadTestdataSingleFile(filename, filepath, size, noLimit) {
-    let dir = this.getTestdataPath();
-    let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
-    await fs.ensureDirAsync(dir);
+    await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
+      let dir = this.getTestdataPath();
+      let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
+      await fs.ensureDirAsync(dir);
 
-    let oldSize = 0;
-    let list = await this.listTestdata();
-    if (list) {
-      for (let file of list.files) if (file.filename !== filename) oldSize += file.size;
-    }
+      let oldSize = 0;
+      let list = await this.listTestdata();
+      if (list) {
+        for (let file of list.files) if (file.filename !== filename) oldSize += file.size;
+      }
 
-    if (!noLimit && oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
+      if (!noLimit && oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
-    await fs.moveAsync(filepath, path.join(dir, filename), { overwrite: true });
-    await fs.removeAsync(dir + '.zip');
+      await fs.moveAsync(filepath, path.join(dir, filename), { overwrite: true });
+      await fs.removeAsync(dir + '.zip');
+    });
   }
 
   async deleteTestdataSingleFile(filename) {
-    let dir = this.getTestdataPath();
-    let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
-    await fs.removeAsync(path.join(dir, filename));
-    await fs.removeAsync(dir + '.zip');
+    await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
+      let dir = this.getTestdataPath();
+      let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
+      await fs.removeAsync(path.join(dir, filename));
+      await fs.removeAsync(dir + '.zip');
+    });
   }
 
   async makeTestdataZip() {
-    let dir = this.getTestdataPath();
-    if (!await syzoj.utils.isDir(dir)) throw new ErrorMessage('无测试数据。');
+    await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
+      let dir = this.getTestdataPath();
+      if (!await syzoj.utils.isDir(dir)) throw new ErrorMessage('无测试数据。');
 
-    let AdmZip = require('adm-zip');
-    let zip = new AdmZip();
+      let p7zip = new (require('node-7z'));
 
-    let list = await this.listTestdata();
-    for (let file of list.files) zip.addLocalFile(require('path').join(dir, file.filename), '', file.filename);
-    zip.writeZip(dir + '.zip');
+      let list = await this.listTestdata(), path = require('path');
+      await p7zip.add(dir + '.zip', list.files.map(file => path.join(dir, file.filename)));
+    });
   }
 
   async hasSpecialJudge() {

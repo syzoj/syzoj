@@ -568,27 +568,21 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
     let judge_state;
     if (problem.type === 'submit-answer') {
-      let pathOrData;
+      let File = syzoj.model('file'), path;
       if (!req.files['answer']) {
         // Submited by editor
         try {
-          let files = JSON.parse(req.body.answer_by_editor);
-          let AdmZip = require('adm-zip');
-          let zip = new AdmZip();
-          for (let file of files) {
-            zip.addFile(file.filename, file.data);
-          }
-          pathOrData = zip.toBuffer();
+          path = await File.zipFiles(JSON.parse(req.body.answer_by_editor));
         } catch (e) {
+          console.log(e);
           throw new ErrorMessage('无法解析提交数据。');
         }
       } else {
         if (req.files['answer'][0].size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');
-        pathOrData = req.files['answer'][0].path;
+        path = req.files['answer'][0].path;
       }
 
-      let File = syzoj.model('file');
-      let file = await File.upload(pathOrData, 'answer');
+      let file = await File.upload(path, 'answer');
       let size = await file.getUnzipSize();
 
       if (size > syzoj.config.limit.submit_answer) throw new ErrorMessage('答案文件太大。');

@@ -56,28 +56,43 @@ class File extends Model {
     return syzoj.utils.resolvePath(syzoj.config.upload_dir, type, md5);
   }
 
-  static async upload(pathOrData, type, noLimit) {
+  // data: Array of { filename: string, data: buffer or string }
+  static async zipFiles(files) {
+    let tmp = require('tmp-promise');
+    let dir = await tmp.dir(), path = require('path'), fs = require('fs-extra');
+    let filenames = await files.mapAsync(async file => {
+      let fullPath = path.join(dir.path, file.filename);
+      await fs.writeFileAsync(fullPath, file.data);
+      return fullPath;
+    });
+
+    let p7zip = new (require('node-7z')), zipFile = await tmp.tmpName() + '.zip';
+    console.log(await p7zip.add(zipFile, filenames));
+
+    await fs.removeAsync(dir.path);
+
+    return zipFile;
+  }
+
+  static async upload(path, type, noLimit) {
     let fs = Promise.promisifyAll(require('fs-extra'));
 
-    let buf = Buffer.isBuffer(pathOrData) ? pathOrData : await fs.readFileAsync(pathOrData);
+    let buf = await fs.readFileAsync(path);
 
     if (!noLimit && buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('数据包太大。');
 
     try {
-      let AdmZip = require('adm-zip');
-      let zip = new AdmZip(buf);
+      let p7zip = new (require('node-7z'));
       this.unzipSize = 0;
-      for (let x of zip.getEntries()) this.unzipSize += x.header.size;
+      await p7zip.list(path).progress(files => {
+        for (let file of files) this.unzipSize += file.size;
+      });
     } catch (e) {
       this.unzipSize = null;
     }
 
     let key = syzoj.utils.md5(buf);
-    if (Buffer.isBuffer(pathOrData)) {
-      await fs.writeFileAsync(File.resolvePath(type, key), pathOrData);
-    } else {
-      await fs.moveAsync(pathOrData, File.resolvePath(type, key), { overwrite: true });
-    }
+    await fs.moveAsync(path, File.resolvePath(type, key), { overwrite: true });
 
     let file = await File.findOne({ where: { md5: key } });
     if (!file) {
@@ -94,14 +109,11 @@ class File extends Model {
   async getUnzipSize() {
     if (this.unzipSize === undefined)  {
       try {
-        let fs = Promise.promisifyAll(require('fs-extra'));
-        let buf = await fs.readFileAsync(this.getPath());
-
-        let AdmZip = require('adm-zip');
-        let zip = new AdmZip(buf);
-
+        let p7zip = new (require('node-7z'));
         this.unzipSize = 0;
-        for (let x of zip.getEntries()) this.unzipSize += x.header.size;
+        await p7zip.list(this.getPath()).progress(files => {
+          for (let file of files) this.unzipSize += file.size;
+        });
       } catch (e) {
         this.unzipSize = null;
       }

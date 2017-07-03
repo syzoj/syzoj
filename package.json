@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/syzoj/syzoj#readme",
   "dependencies": {
-    "adm-zip": "^0.4.7",
     "ansi-to-html": "^0.4.2",
     "async-lock": "^0.3.9",
     "body-parser": "^1.15.2",
@@ -41,6 +40,7 @@
     "moment": "^2.15.0",
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
+    "node-7z": "^0.4.0",
     "pygmentize-bundled-cached": "^1.1.0",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
