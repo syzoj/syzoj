@@ -369,6 +369,7 @@ class Problem extends Model {
   async makeTestdataZip() {
     await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
       let dir = this.getTestdataPath();
+      if (await syzoj.utils.isFile(dir + '.zip')) return;
       if (!await syzoj.utils.isDir(dir)) throw new ErrorMessage('无测试数据。');
 
       let p7zip = new (require('node-7z'));
