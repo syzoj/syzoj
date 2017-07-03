@@ -31,6 +31,21 @@
             </thead>
             <tbody>
             <%
+            for (let problem of problems) {
+              let i = 0, min, minPos = -1;
+              for (let item of ranklist) {
+                i++;
+                let condition;
+                if (contest.type === 'acm') condition = item.player.score_details[problem.id] && (minPos === -1 || item.player.score_details[problem.id].acceptedTime < min.player.score_details[problem.id].acceptedTime);
+                else condition = item.player.score_details[problem.id] && item.player.score_details[problem.id].score === 100 && (minPos === -1 || item.player.score_details[problem.id].time < min.player.score_details[problem.id].time);
+                if (condition) {
+                  min = item;
+                  minPos = i;
+                }
+              }
+              problem.min = minPos;
+            }
+
             let i = 0;
             for (let item of ranklist) {
               i++
@@ -70,10 +85,14 @@
                   </td>
                 <% } %>
                 <% for (let problem of problems) { %>
-                  <% if (!item.player.score_details[problem.id]) { %>
-                    <td></td>
-                  <% } else if (contest.type === 'acm') { %>
+                  <% if (problem.min === i) { %>
+                    <td style="background: rgb(244, 255, 245); ">
+                  <% } else { %>
                     <td>
+                  <% } %>
+                  <% if (!item.player.score_details[problem.id]) { %>
+                    </td>
+                  <% } else if (contest.type === 'acm') { %>
                       <a href="<%= syzoj.utils.makeUrl(['submission', item.player.score_details[problem.id].judge_id]) %>">
                         <% if (item.player.score_details[problem.id].accepted) { %>
                           <span class="score score_10">
@@ -95,7 +114,6 @@
                       </a>
                     </td>
                   <% } else if (contest.type === 'noi' || contest.type === 'ioi') { %>
-                    <td>
                       <a href="<%= syzoj.utils.makeUrl(['submission', item.player.score_details[problem.id].judge_id]) %>">
                         <span class="score score_<%= parseInt((item.player.score_details[problem.id].score / 10) || 0) %>">
                           <%= item.player.score_details[problem.id].score %>
