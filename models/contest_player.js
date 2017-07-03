@@ -139,6 +139,7 @@ class ContestPlayer extends Model {
 
           this.score_details[judge_state.problem_id].unacceptedCount = 0;
           this.score_details[judge_state.problem_id].judge_id = 0;
+          this.score_details[judge_state.problem_id].accepted = 0;
           for (let x of arr) {
             if (x.accepted) {
               this.score_details[judge_state.problem_id].accepted = true;
