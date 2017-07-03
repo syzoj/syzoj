@@ -67,7 +67,7 @@ class File extends Model {
     });
 
     let p7zip = new (require('node-7z')), zipFile = await tmp.tmpName() + '.zip';
-    console.log(await p7zip.add(zipFile, filenames));
+    await p7zip.add(zipFile, filenames);
 
     await fs.removeAsync(dir.path);
 

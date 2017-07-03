@@ -574,7 +574,6 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         try {
           path = await File.zipFiles(JSON.parse(req.body.answer_by_editor));
         } catch (e) {
-          console.log(e);
           throw new ErrorMessage('无法解析提交数据。');
         }
       } else {
