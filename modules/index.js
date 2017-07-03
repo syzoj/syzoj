@@ -45,20 +45,11 @@ app.get('/', async (req, res) => {
     else where = { is_public: true };
     let contests = await Contest.query([1, 5], where, [['start_time', 'desc']]);
 
-    let hitokoto;
-    try {
-      hitokoto = await syzoj.utils.hitokoto();
-    } catch (e) {
-      syzoj.log(e);
-      hitokoto = null;
-    }
-
     res.render('index', {
       ranklist: ranklist,
       notices: notices,
       fortune: fortune,
       contests: contests,
-      hitokoto: hitokoto,
       links: syzoj.config.links
     });
   } catch (e) {

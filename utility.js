@@ -325,23 +325,6 @@ module.exports = {
     md5.update(data);
     return md5.digest('hex');
   },
-  async hitokoto() {
-    try {
-      let request = require('request-promise');
-      let res = await request({
-        uri: 'https://sslapi.hitokoto.cn',
-        timeout: 1500,
-        qs: {
-          c: 'a'
-        },
-        json: true
-      });
-      if (!res.hitokoto) return null;
-      else return res;
-    } catch (e) {
-      return null;
-    }
-  },
   isValidUsername(s) {
     return /^[a-zA-Z0-9\-\_]+$/.test(s);
   },

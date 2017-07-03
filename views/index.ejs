@@ -79,8 +79,19 @@
         <% if (hitokoto) { %>
         <h4 class="ui top attached block header">一言（ヒトコト）</h4>
         <div class="ui bottom attached center aligned segment">
-          <div style="font-size: 1em; line-height: 1.5em; "><%= hitokoto.hitokoto %></div>
-          <% if (hitokoto.from) { %><div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; ">——<%= hitokoto.from %></div><% } %>
+          <div class="ui active centered inline loader" id="hitokoto-loader"></div>
+          <script>
+          $.get('https://sslapi.hitokoto.cn/?c=a', function (data) {
+            data = JSON.parse(data);
+            $('#hitokoto-loader').removeClass('active');
+            $('#hitokoto-content').css('display', '').text(data.hitokoto);
+            if (data.from) {
+              $('#hitokoto-from').css('display', '').text('——' + data.from);
+            }
+          });
+          </script>
+          <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
+          <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
         </div>
         <% } %>
         <%
