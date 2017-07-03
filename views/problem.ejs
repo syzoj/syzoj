@@ -144,7 +144,7 @@ if (contest) {
         </div>
     </div>
   <% } %>
-  <% if (problem.tags && problem.tags.length) { %>
+  <% if (problem.tags && problem.tags.length && (typeof contest === 'undefined' || !contest)) { %>
     <div class="row">
       <div class="column">
         <h4 class="ui block header" id="show_tag_title_div" style="margin-bottom: 0; margin-left: -1px; margin-right: -1px; "><a href="#" id="show_tag_button" style="color: #000; ">显示分类标签</a></h4>
