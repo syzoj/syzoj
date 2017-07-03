@@ -36,7 +36,7 @@
               for (let item of ranklist) {
                 i++;
                 let condition;
-                if (contest.type === 'acm') condition = item.player.score_details[problem.id] && (minPos === -1 || item.player.score_details[problem.id].acceptedTime < min.player.score_details[problem.id].acceptedTime);
+                if (contest.type === 'acm') condition = item.player.score_details[problem.id] && item.player.score_details[problem.id].accepted && (minPos === -1 || item.player.score_details[problem.id].acceptedTime < min.player.score_details[problem.id].acceptedTime);
                 else condition = item.player.score_details[problem.id] && item.player.score_details[problem.id].score === 100 && (minPos === -1 || item.player.score_details[problem.id].time < min.player.score_details[problem.id].time);
                 if (condition) {
                   min = item;
