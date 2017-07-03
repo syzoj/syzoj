@@ -46,35 +46,44 @@
               problem.min = minPos;
             }
 
-            let i = 0;
+            let i = 0, rank = 0, lastItem;
             for (let item of ranklist) {
-              i++
+              i++;
               let latest = contest.start_time, timeSum = 0, unacceptedCount = 0;
             %>
             <tr>
-                <td>
-                  <% if (i == 1) { %>
-                    <div class="ui yellow ribbon label">
-                  <% } else if (i == 2) { %>
-                    <div class="ui ribbon label">
-                  <% } else if (i == 3) { %>
-                    <div class="ui brown ribbon label" style="background-color: #C47222 !important;">
-                  <% } else { %>
-                    <div>
-                  <% } %>
-                  <%= i %>
-                  </div>
-                </td>
-                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a><% if (item.user.nameplate) { %><%- item.user.nameplate %><% } %></td>
                 <%
-                  if (contest.type === 'acm') {
+                  if (contest.type === 'noi' || contest.type === 'ioi') {
+                    console.log(i);
+                    console.log(lastItem);
+                    if (i === 1 || item.player.score !== lastItem.player.score) rank++;
+                  } else if (contest.type === 'acm') {
                     for (let problem of problems) {
                       if (item.player.score_details[problem.id] && item.player.score_details[problem.id].accepted) {
                         timeSum += (item.player.score_details[problem.id].acceptedTime - contest.start_time) + (item.player.score_details[problem.id].unacceptedCount * 20 * 60);
                         unacceptedCount += item.player.score_details[problem.id].unacceptedCount;
                       }
                     }
+                    item.player.timeSum = timeSum;
+
+                    if (i === 1 || item.player.score !== lastItem.player.score || item.player.timeSum !== lastItem.player.timeSum) rank++;
+                  }
                 %>
+                <td>
+                  <% if (rank == 1) { %>
+                    <div class="ui yellow ribbon label">
+                  <% } else if (rank == 2) { %>
+                    <div class="ui ribbon label">
+                  <% } else if (rank == 3) { %>
+                    <div class="ui brown ribbon label" style="background-color: #C47222 !important;">
+                  <% } else { %>
+                    <div>
+                  <% } %>
+                  <%= rank %>
+                  </div>
+                </td>
+                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a><% if (item.user.nameplate) { %><%- item.user.nameplate %><% } %></td>
+                <% if (contest.type === 'acm') { %>
                   <td>
                     <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
                       <%= item.player.score %>
@@ -137,6 +146,7 @@
                   </td>
                 <% } %>
             </tr>
+            <% lastItem = item; %>
             <% } %>
             </tbody>
         </table>
