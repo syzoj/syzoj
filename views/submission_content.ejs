@@ -163,6 +163,10 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
                 <strong>标准错误</strong>
                 <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_err %></code></pre></div>
               <% } %>
+              <% if (testcase.runner_message && judge.allowedManage) { %>
+                <strong>调试信息</strong>
+                <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.runner_message %></code></pre></div>
+              <% } %>
           </p>
         <% } %>
       </div>

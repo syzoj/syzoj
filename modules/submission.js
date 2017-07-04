@@ -147,6 +147,7 @@ app.get('/submission/:id', async (req, res) => {
     judge.allowedSeeCase = await judge.isAllowedSeeCaseBy(res.locals.user);
     judge.allowedSeeData = await judge.isAllowedSeeDataBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
+    judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
     if (contest) {
       let problems_id = await contest.getProblems();
@@ -194,6 +195,7 @@ app.get('/submission/:id/ajax', async (req, res) => {
     judge.allowedSeeCase = await judge.isAllowedSeeCaseBy(res.locals.user);
     judge.allowedSeeData = await judge.isAllowedSeeDataBy(res.locals.user);
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
+    judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
     if (contest) {
       let problems_id = await contest.getProblems();
