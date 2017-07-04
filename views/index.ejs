@@ -61,7 +61,7 @@
                         elem.style = 'overflow: hidden; width: 100%; ';
                         elem.style.maxHeight = lineHeight + 'px';
                         elem.innerHTML = html;
-                        var imgs = Array.from(elem.getElementsByTagName('img'));
+                        var imgs = Array.prototype.slice.call(elem.getElementsByTagName('img'));
                         for (var i in imgs) imgs[i].parentNode.removeChild(imgs[i]);
                         var script = document.getElementById('user-infomation-script-<%= i %>');
                         script.parentNode.replaceChild(elem, script);
