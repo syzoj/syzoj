@@ -330,9 +330,6 @@ app.get('/contest/:id/:pid', async (req, res) => {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
 
-    contest.ended = await contest.isEnded();
-    if (!(await contest.isRunning() || contest.ended)) throw new ErrorMessage('比赛尚未开始或已结束。');
-
     let problems_id = await contest.getProblems();
 
     let pid = parseInt(req.params.pid);
@@ -340,6 +337,14 @@ app.get('/contest/:id/:pid', async (req, res) => {
 
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.fromID(problem_id);
+
+    contest.ended = await contest.isEnded();
+    if (!(await contest.isRunning() || contest.ended)) {
+      if (await problem.isAllowedUseBy(res.locals.user)) {
+        return res.redirect(syzoj.utils.makeUrl(['problem', problem_id]));
+      }
+      throw new ErrorMessage('比赛尚未开始。');
+    }
 
     problem.specialJudge = await problem.hasSpecialJudge();
 
