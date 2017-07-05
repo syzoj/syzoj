@@ -84,7 +84,9 @@ div[class*=ace_br] {
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'submissions'], { problem_id: pid }) %>">提交记录</a>
           <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui orange button">返回比赛</a>
         <% } else { %>
-          <a class="small ui primary button" href="#submit_code">提交</a>
+          <% if (testcases && !testcases.error) { %>
+            <a class="small ui primary button" href="#submit_code">提交</a>
+          <% } %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', problem.type === 'submit-answer' ? 'min' : 'fastest']) %>">统计</a>
           <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata']) %>">测试数据</a>
@@ -175,7 +177,7 @@ div[class*=ace_br] {
   <% } %>
     <% let noSubmit = false; %>
     <%
-    if (typeof contest !== 'undefined' && contest && contest.ended) {
+    if (typeof contest !== 'undefined' && contest && contest.ended || (!testcases || testcases.error)) {
       noSubmit = true;
     }
     %>
