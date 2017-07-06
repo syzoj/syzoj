@@ -85,7 +85,10 @@ app.post('/api/sign_up', async (req, res) => {
           html: `<p>请点击该链接完成您在 ${syzoj.config.title} 的注册：</p><p><a href="${url}">${url}</a></p><p>如果您不是 ${req.body.username}，请忽略此邮件。</p>`
         });
       } catch (e) {
-        throw 2010
+        return res.send({
+          error_code: 2010,
+          message: require('util').inspect(e)
+        });
       }
 
       res.send(JSON.stringify({ error_code: 2 }));

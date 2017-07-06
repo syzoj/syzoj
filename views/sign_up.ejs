@@ -89,7 +89,7 @@ function submit() {
                     show_error("邮箱地址已被占用");
                     break;
                 case 2010:
-                    show_error("验证邮件发送失败");
+                    show_error("验证邮件发送失败：\n" + data.message)A;
                     break;
                 case 1:
                     success();
@@ -98,7 +98,7 @@ function submit() {
                     mail_required();
                     break;
                 default:
-                    show_error("未知错误");
+                    show_error("未知错误：" + JSON.stringify(data));
                     break;
             }
             $("#sign_up").removeClass("loading");
