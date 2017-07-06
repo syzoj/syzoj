@@ -337,6 +337,7 @@ app.get('/contest/:id/:pid', async (req, res) => {
 
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.fromID(problem_id);
+    await problem.loadRelationships();
 
     contest.ended = await contest.isEnded();
     if (!(await contest.isRunning() || contest.ended)) {
