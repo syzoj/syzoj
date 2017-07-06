@@ -108,7 +108,7 @@ app.get('/submissions/:id/ajax', async (req, res) => {
 
       if (contest.type === 'noi' && !contest.ended && !await judge_state.problem.isAllowedEditBy(res.locals.user)) {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge_state.status)) {
-          judge_state.status = 'Compiled';
+          judge_state.status = 'Submitted';
         }
       }
     }
@@ -156,7 +156,7 @@ app.get('/submission/:id', async (req, res) => {
 
       if (contest.type === 'noi' && !contest.ended && !await judge.problem.isAllowedEditBy(res.locals.user)) {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge.status)) {
-          judge.status = 'Compiled';
+          judge.status = 'Submitted';
         }
       }
     }
@@ -204,7 +204,7 @@ app.get('/submission/:id/ajax', async (req, res) => {
 
       if (contest.type === 'noi' && !contest.ended && !await judge.problem.isAllowedEditBy(res.locals.user)) {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge.status)) {
-          judge.status = 'Compiled';
+          judge.status = 'Submitted';
         }
       }
     }

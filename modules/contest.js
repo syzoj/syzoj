@@ -149,7 +149,7 @@ app.get('/contest/:id', async (req, res) => {
             let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
             problem.status = judge_state.status;
             if (!contest.ended && !await problem.problem.isAllowedEditBy(res.locals.user) && !['Compile Error', 'Waiting', 'Compiling'].includes(problem.status)) {
-              problem.status = 'Compiled';
+              problem.status = 'Submitted';
             }
             problem.judge_id = player.score_details[problem.problem.id].judge_id;
           }
@@ -306,7 +306,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
 
       if (contest.type === 'noi' && !contest.ended && !await obj.problem.isAllowedEditBy(res.locals.user)) {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(obj.status)) {
-          obj.status = 'Compiled';
+          obj.status = 'Submitted';
         }
       }
     });

@@ -361,9 +361,9 @@ body > .ui.page.dimmer {
 }
 */
 
-:not(.status_detail).status.compiled,
-.title:hover .status_detail.status.compiled,
-.title.active .status_detail.status.compiled,
+:not(.status_detail).status.submitted,
+.title:hover .status_detail.status.submitted,
+.title.active .status_detail.status.submitted,
 :not(.status_detail).status.accepted,
 .title:hover .status_detail.status.accepted,
 .title.active .status_detail.status.accepted {
