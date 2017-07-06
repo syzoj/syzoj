@@ -149,9 +149,9 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
       <div class="content auto_update">
         <% if (!testcase.pending && judge.allowedSeeData && testcase.status !== 'Skipped') { %>
           <p>
-              <strong>输入文件</strong>
+              <strong>输入文件<% if (testcase.input_file_name) { %>（<span style="font-family: monospace; "><%= testcase.input_file_name %></span>）<% } %></strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.input %></code></pre></div>
-              <strong>输出文件</strong>
+              <strong>输出文件<% if (testcase.output_file_name) { %>（<span style="font-family: monospace; "><%= testcase.output_file_name %></span>）<% } %></strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.answer %></code></pre></div>
               <strong>选手输出</strong>
               <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= testcase.user_out %></code></pre></div>
