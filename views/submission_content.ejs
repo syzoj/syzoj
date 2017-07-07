@@ -36,12 +36,14 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <th>编号</th>
         <th>题目名称</th>
         <th>状态</th>
-        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm') && !hideScore) { %>
           <th>分数</th>
         <% } %>
         <% if (judge.problem.type !== 'submit-answer') { %>
-          <th>总时间</th>
-          <th>内存</th>
+          <% if (!hideScore) { %>
+            <th>总时间</th>
+            <th>内存</th>
+          <% } %>
           <th>代码</th>
         <% } else { %>
           <th>文件大小</th>
@@ -58,12 +60,14 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
         <%= judge.status %>
         </td>
-        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
+        <% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && contest.type === 'acm') && !hideScore) { %>
           <td class="score score_<%= parseInt(judge.result.score / 10) || 0 %>"><%= judge.result.score %></td>
         <% } %>
         <% if (judge.problem.type !== 'submit-answer') { %>
-          <td><%= judge.result.total_time %> ms</td>
-          <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
+          <% if (!hideScore) { %>
+            <td><%= judge.result.total_time %> ms</td>
+            <td><%= parseInt(judge.result.max_memory) || 0 %> K</td>
+          <% } %>
           <% if (judge.allowedSeeCode) { %>
             <td><%= syzoj.config.languages[judge.language].show %> / <%= syzoj.utils.formatSize(judge.codeLength) %></td>
           <% } else { %>

@@ -149,6 +149,7 @@ app.get('/submission/:id', async (req, res) => {
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
     judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
+    let hideScore = false;
     if (contest) {
       let problems_id = await contest.getProblems();
       judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
@@ -158,10 +159,13 @@ app.get('/submission/:id', async (req, res) => {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge.status)) {
           judge.status = 'Submitted';
         }
+
+        hideScore = true;
       }
     }
 
     res.render('submission', {
+      hideScore, hideScore,
       contest: contest,
       judge: judge
     });
@@ -197,6 +201,7 @@ app.get('/submission/:id/ajax', async (req, res) => {
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
     judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
+    let hideScore = false;
     if (contest) {
       let problems_id = await contest.getProblems();
       judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
@@ -206,10 +211,13 @@ app.get('/submission/:id/ajax', async (req, res) => {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge.status)) {
           judge.status = 'Submitted';
         }
+
+        hideScore = true;
       }
     }
 
     res.render('submission_content', {
+      hideScore, hideScore,
       contest: contest,
       judge: judge
     });

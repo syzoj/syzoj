@@ -12,9 +12,9 @@ git clone https://github.com/syzoj/syzoj
 cd syzoj
 ```
 
-Install dependencies with `npm install` or `yarn`.
+Install dependencies with `npm install` or `yarn`. Also, follow the instructions [here](https://www.npmjs.com/package/node-7z#installation) to install `7z` executable used by the `node-7z` package.
 
-Copy the `config-example.json` file to `config.json`, and change the configures.
+Copy `config-example.json` to `config.json`, and make necessary changes.
 
 ## Database
 SYZOJ 2 uses [Sequelize](http://sequelizejs.com), which supports many database systems, including MySQL and Sqlite.
