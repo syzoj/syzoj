@@ -54,9 +54,7 @@
             <tr>
                 <%
                   if (contest.type === 'noi' || contest.type === 'ioi') {
-                    console.log(i);
-                    console.log(lastItem);
-                    if (i === 1 || item.player.score !== lastItem.player.score) rank++;
+                    if (i === 1 || item.player.score !== lastItem.player.score) rank = i;
                   } else if (contest.type === 'acm') {
                     for (let problem of problems) {
                       if (item.player.score_details[problem.id] && item.player.score_details[problem.id].accepted) {
@@ -66,7 +64,7 @@
                     }
                     item.player.timeSum = timeSum;
 
-                    if (i === 1 || item.player.score !== lastItem.player.score || item.player.timeSum !== lastItem.player.timeSum) rank++;
+                    if (i === 1 || item.player.score !== lastItem.player.score || item.player.timeSum !== lastItem.player.timeSum) rank = i;
                   }
                 %>
                 <td>
