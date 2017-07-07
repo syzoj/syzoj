@@ -58,7 +58,7 @@
                       (function () {
                         var html = <%- JSON.stringify(user.information) %>;
                         var elem = document.createElement('div');
-                        elem.style = 'overflow: hidden; width: 100%; ';
+                        elem.style = 'overflow: hidden; width: 100%; position: relative; ';
                         elem.style.maxHeight = lineHeight + 'px';
                         elem.innerHTML = html;
                         var imgs = Array.prototype.slice.call(elem.getElementsByTagName('img'));
