@@ -92,7 +92,7 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
   <% if (judge.problem.type !== 'submit-answer' && judge.allowedSeeCode) { %>
     <div class="ui existing segment" style="position: relative; ">
       <% if (judge.allowedRejudge) { %>
-        <a id="rejudge-button" href="<%= syzoj.utils.makeUrl(['submission', judge.id, 'rejudge']) %>" class="ui button" style="position: absolute; top: 0px; right: -4px; border-top-left-radius: 0; border-bottom-right-radius: 0; <% if (judge.pending) { %>display: none; <% } %>">重新评测</a>
+        <a id="rejudge-button" href-post="<%= syzoj.utils.makeUrl(['submission', judge.id, 'rejudge']) %>" class="ui button" style="position: absolute; top: 0px; right: -4px; border-top-left-radius: 0; border-bottom-right-radius: 0; <% if (judge.pending) { %>display: none; <% } %>">重新评测</a>
       <% } %>
       <pre style="margin-top: 0; margin-bottom: 0; "><code id="code"><%- judge.code %></code></pre>
     </div>

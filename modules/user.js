@@ -76,7 +76,7 @@ app.get('/sign_up', async (req, res) => {
 });
 
 // Logout
-app.get('/logout', async (req, res) => {
+app.post('/logout', async (req, res) => {
   req.session.user_id = null;
   res.clearCookie('login');
   res.redirect(req.query.url || '/');

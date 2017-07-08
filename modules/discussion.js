@@ -137,7 +137,7 @@ app.post('/article/:id/edit', async (req, res) => {
   }
 });
 
-app.get('/article/:id/delete', async (req, res) => {
+app.post('/article/:id/delete', async (req, res) => {
   try {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
@@ -192,7 +192,7 @@ app.post('/article/:id/comment', async (req, res) => {
   }
 });
 
-app.get('/article/:article_id/comment/:id/delete', async (req, res) => {
+app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
   try {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 

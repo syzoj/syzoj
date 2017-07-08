@@ -106,9 +106,9 @@ div[class*=ace_br] {
           <% } %>
           <% if (problem.allowedManage) { %>
             <% if (problem.is_public) {  %>
-              <a class="small ui button" id="dis_public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
+              <a class="small ui button" id="dis_public" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
             <% } else { %>
-              <a class="small ui button" id="public" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'public']) %>">公开</a>
+              <a class="small ui button" id="public" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'public']) %>">公开</a>
             <% } %>
           <% } %>
         </div>

@@ -229,7 +229,7 @@ app.get('/submission/:id/ajax', async (req, res) => {
   }
 });
 
-app.get('/submission/:id/rejudge', async (req, res) => {
+app.post('/submission/:id/rejudge', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);

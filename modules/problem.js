@@ -549,11 +549,11 @@ async function setPublic(req, res, is_public) {
   }
 }
 
-app.get('/problem/:id/public', async (req, res) => {
+app.post('/problem/:id/public', async (req, res) => {
   await setPublic(req, res, true);
 });
 
-app.get('/problem/:id/dis_public', async (req, res) => {
+app.post('/problem/:id/dis_public', async (req, res) => {
   await setPublic(req, res, false);
 });
 
@@ -697,7 +697,7 @@ app.post('/problem/:id/testdata/upload', app.multer.array('file'), async (req, r
   }
 });
 
-app.get('/problem/:id/testdata/delete/:filename', async (req, res) => {
+app.post('/problem/:id/testdata/delete/:filename', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
