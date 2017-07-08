@@ -1,3 +1,13 @@
+var addUrlParam = function (url, key, val) {
+  var newParam = encodeURIComponent(key) + '=' + encodeURIComponent(val);
+
+  url = url.split('#')[0];
+  if (url.indexOf('?') === -1) url += '?' + newParam;
+  else url += '&' + newParam;
+
+  return url;
+};
+
 $(function () {
   $('a[href-post]').click(function (e) {
     e.preventDefault();
@@ -19,10 +29,6 @@ $(function () {
   });
 
   $('form').each(function () {
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = '_csrf';
-    input.value = document.head.getAttribute('data-csrf-token');
-    this.appendChild(input);
+    this.action = addUrlParam(this.action || location.href, '_csrf', document.head.getAttribute('data-csrf-token'));
   });
 });
