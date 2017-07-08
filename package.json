@@ -29,6 +29,7 @@
     "cheerio": "^1.0.0-rc.1",
     "cookie-parser": "^1.4.3",
     "cssfilter": "0.0.10",
+    "csurf": "^1.9.0",
     "download": "^5.0.3",
     "ejs": "^2.5.2",
     "express": "^4.14.0",
