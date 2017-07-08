@@ -164,7 +164,7 @@ app.post('/api/markdown', async (req, res) => {
 });
 
 // APIs for judge client
-app.get('/api/waiting_judge', async (req, res) => {
+app.post('/api/waiting_judge', async (req, res) => {
   try {
     if (req.query.session_id !== syzoj.config.judge_token) return res.status(404).send({ err: 'Permission denied' });
 
