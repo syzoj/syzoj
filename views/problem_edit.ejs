@@ -71,7 +71,7 @@
 <script type="text/javascript">
 $(function () {
     function render(output, input) {
-      $.post('/api/markdown', { s: input.val() }, function (s) {
+      $.post('/api/markdown', { s: input.val(), _csrf: document.head.getAttribute('data-csrf-token') }, function (s) {
         // console.log(s);
         output.html(s);
       });

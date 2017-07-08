@@ -62,7 +62,8 @@ function submit() {
           username: $("#username").val(),
           password: password,
           email: $("#email").val(),
-          prevUrl: <%- JSON.stringify(req.query.url || '/') %>
+          prevUrl: <%- JSON.stringify(req.query.url || '/') %>,
+          _csrf: document.head.getAttribute('data-csrf-token')
         },
         success: function(data) {
             error_code = data.error_code;
