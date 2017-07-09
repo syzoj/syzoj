@@ -91,7 +91,7 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
 
     let judge_state;
     await syzoj.utils.lock('/api/v2/judge/peek', async () => {
-      let waiting_judge = await WaitingJudge.findOne({ order: [['priority', 'ASC']] });
+      let waiting_judge = await WaitingJudge.findOne({ order: [['priority', 'ASC'], ['id', 'ASC']] });
       if (!waiting_judge) {
         return;
       }
