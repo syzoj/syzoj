@@ -112,6 +112,9 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
 <% if (judge.problem.type !== 'submit-answer' && judge.result.compiler_output && judge.status === 'Compile Error' && judge.allowedSeeCode) { %>
   <h3 class="ui header">编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.compiler_output) %></code></pre></div>
+<% } else if (judge.result.message) { %>
+  <h3 class="ui header">系统调试信息</h3>
+  <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= judge.result.message %></code></pre></div>
 <% } else if (judge.result.spj_compiler_output) { %>
   <h3 class="ui header">Special Judge 编译信息</h3>
   <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%- syzoj.utils.ansiToHTML(judge.result.spj_compiler_output) %></code></pre></div>
