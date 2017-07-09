@@ -94,7 +94,8 @@ app.post('/api/sign_up', async (req, res) => {
       user = await User.create({
         username: req.body.username,
         password: req.body.password,
-        email: req.body.email
+        email: req.body.email,
+        public_email: true
       });
       await user.save();
 
@@ -134,7 +135,8 @@ app.get('/api/sign_up/:token', async (req, res) => {
     user = await User.create({
       username: obj.username,
       password: obj.password,
-      email: obj.email
+      email: obj.email,
+      public_email: true
     });
     await user.save();
 

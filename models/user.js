@@ -37,6 +37,7 @@ let model = db.define('user', {
 
   is_admin: { type: Sequelize.BOOLEAN },
   is_show: { type: Sequelize.BOOLEAN },
+  public_email: { type: Sequelize.BOOLEAN },
 
   sex: { type: Sequelize.INTEGER }
 }, {

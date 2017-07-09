@@ -94,6 +94,7 @@ app.get('/user/:id', async (req, res) => {
 
     let statistics = await user.getStatistics();
     await user.renderInformation();
+    user.emailVisible = user.public_email || user.allowedEdit;
 
     res.render('user', {
       show_user: user,
@@ -168,6 +169,7 @@ app.post('/user/:id/edit', async (req, res) => {
 
     user.information = req.body.information;
     user.sex = req.body.sex;
+    user.public_email = (req.body.public_email === 'on');
 
     await user.save();
 
