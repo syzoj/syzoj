@@ -3,23 +3,45 @@
 <div class="padding">
   <div class="ui grid">
     <div class="row">
-      <div class="column">
-        <a href="<%= syzoj.utils.makeUrl(['article', 0, 'edit']) %>" class="ui mini right floated button">发帖</a>
+      <div class="ten wide column">
+        <div class="ui breadcrumb">
+          <div class="section">讨论</div>
+          <i class="right angle icon divider"></i>
+          <% if (problem) { %>
+            <div class="section">题目</div>
+            <i class="right angle icon divider"></i>
+            <div class="active section"><%= problem.title %></div>
+          <% } else { %>
+            <div class="section">全局板块</div>
+          <% } %>
+        </div>
+      </div>
+      <div class="six wide right aligned column">
+        <% if (problem) { %>
+          <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui labeled icon mini blue button">
+            <i class="arrow left icon"></i>
+            返回题目
+          </a>
+        <% } %>
+        <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui labeled icon mini button">
+            <i class="write icon"></i>
+            发帖
+        </a>
       </div>
     </div>
   </div>
-  <table class="ui very basic table">
+  <table class="ui very basic center aligned table">
     <thead>
       <tr>
-        <th>标题</th>
-        <th>作者</th>
-        <th>发表时间</th>
+        <th class="left aligned" style="width: 65%; ">标题</th>
+        <th style="width: 15%; ">作者</th>
+        <th style="width: 20%; ">发表时间</th>
       </tr>
     </thead>
     <tbody>
     <% for (let article of articles) { %>
         <tr>
-            <td><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
+            <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
             <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
             <td><%= syzoj.utils.formatDate(article.public_time) %></td>
         </tr>

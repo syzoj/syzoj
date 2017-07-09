@@ -25,6 +25,7 @@ let WaitingJudge = syzoj.model('waiting_judge');
 let Contest = syzoj.model('contest');
 let ProblemTag = syzoj.model('problem_tag');
 let ProblemTagMap = syzoj.model('problem_tag_map');
+let Article = syzoj.model('article');
 
 app.get('/problems', async (req, res) => {
   try {
@@ -204,11 +205,14 @@ app.get('/problem/:id', async (req, res) => {
 
     let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath(), problem.type === 'submit-answer');
 
+    let discussionCount = await Article.count({ problem_id: id });
+
     res.render('problem', {
       problem: problem,
       state: state,
       lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null,
-      testcases: testcases
+      testcases: testcases,
+      discussionCount: discussionCount
     });
   } catch (e) {
     syzoj.log(e);

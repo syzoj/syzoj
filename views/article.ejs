@@ -6,6 +6,17 @@
 }
 </style>
 <div class="padding">
+  <div class="ui breadcrumb">
+    <div class="section">讨论</div>
+    <i class="right angle icon divider"></i>
+    <% if (problem) { %>
+      <div class="section">题目</div>
+      <i class="right angle icon divider"></i>
+      <a href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'discussion']) %>" class="active section"><%= problem.title %></a>
+    <% } else { %>
+      <a href="<%= syzoj.utils.makeUrl(['discussion']) %>" class="section">全局板块</a>
+    <% } %>
+  </div>
   <h1><%= article.title %></h1>
  	<p style="font_size: 0.7em"><img style="vertical-align: middle;" src="<%= syzoj.utils.gravatar(article.user.email, 64) %>" width="32" height="32">
  		<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
