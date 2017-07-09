@@ -85,8 +85,8 @@ app.get('/article/:id', async (req, res) => {
     article.content = await syzoj.utils.markdown(article.content);
 
     let where = { article_id: id };
-
-    let paginate = syzoj.utils.paginate(await ArticleComment.count(where), req.query.page, syzoj.config.page.article_comment);
+    let commentsCount = await ArticleComment.count(where);
+    let paginate = syzoj.utils.paginate(commentsCount, req.query.page, syzoj.config.page.article_comment);
 
     let comments = await ArticleComment.query(paginate, where, [['public_time', 'desc']]);
 
@@ -108,7 +108,8 @@ app.get('/article/:id', async (req, res) => {
       article: article,
       comments: comments,
       paginate: paginate,
-      problem: problem
+      problem: problem,
+      commentsCount: commentsCount
     });
   } catch (e) {
     syzoj.log(e);
