@@ -219,7 +219,8 @@ class JudgeState extends Model {
 
       let WaitingJudge = syzoj.model('waiting_judge');
       let waiting_judge = await WaitingJudge.create({
-        judge_id: this.id
+        judge_id: this.id,
+        priority: 2
       });
 
       await waiting_judge.save();

@@ -19,11 +19,10 @@
 
 'use strict';
 
-let Problem = syzoj.model('problem');
-let ProblemTag = syzoj.model('problem_tag');
-
 app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
   try {
+    let Problem = syzoj.model('problem');
+
     let keyword = req.params.keyword || '';
     let problems = await Problem.query(null, {
       title: { like: `%${req.params.keyword}%` }
@@ -54,6 +53,9 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
 
 app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
   try {
+    let Problem = syzoj.model('problem');
+    let ProblemTag = syzoj.model('problem_tag');
+
     let keyword = req.params.keyword || '';
     let tags = await ProblemTag.query(null, {
       name: { like: `%${req.params.keyword}%` }
@@ -69,12 +71,85 @@ app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
   }
 });
 
-app.post('/api/v2/markdown', async (req, res) => {
+app.apiRouter.post('/api/v2/markdown', async (req, res) => {
   try {
     let s = await syzoj.utils.markdown(req.body.s.toString(), null, req.body.noReplaceUI === 'true');
     res.send(s);
   } catch (e) {
     syzoj.log(e);
     res.send(e);
+  }
+});
+
+// APIs for judge client
+app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
+  try {
+    if (req.query.session_id !== syzoj.config.judge_token) return res.status(404).send({ err: 'Permission denied' });
+
+    let WaitingJudge = syzoj.model('waiting_judge');
+    let JudgeState = syzoj.model('judge_state');
+
+    let judge_state;
+    await syzoj.utils.lock('/api/v2/judge/peek', async () => {
+      let waiting_judge = await WaitingJudge.findOne({ order: [['priority', 'ASC']] });
+      if (!waiting_judge) {
+        return;
+      }
+
+      judge_state = await waiting_judge.getJudgeState();
+      await judge_state.loadRelationships();
+      await judge_state.problem.loadRelationships();
+      await waiting_judge.destroy();
+    });
+
+    if (judge_state) {
+      await judge_state.loadRelationships();
+      await judge_state.problem.loadRelationships();
+
+      if (judge_state.problem.type === 'submit-answer') {
+        res.send({
+          have_task: 1,
+          judge_id: judge_state.id,
+          answer_file: judge_state.code,
+          testdata: judge_state.problem.id,
+          problem_type: judge_state.problem.type
+        });
+      } else {
+        res.send({
+          have_task: 1,
+          judge_id: judge_state.id,
+          code: judge_state.code,
+          language: judge_state.language,
+          testdata: judge_state.problem.id,
+          time_limit: judge_state.problem.time_limit,
+          memory_limit: judge_state.problem.memory_limit,
+          file_io: judge_state.problem.file_io,
+          file_io_input_name: judge_state.problem.file_io_input_name,
+          file_io_output_name: judge_state.problem.file_io_output_name,
+          problem_type: judge_state.problem.type
+        });
+      }
+    } else {
+      res.send({ have_task: 0 });
+    }
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+
+app.apiRouter.post('/api/v2/judge/update/:id', async (req, res) => {
+  try {
+    if (req.query.session_id !== syzoj.config.judge_token) return res.status(404).send({ err: 'Permission denied' });
+
+    let JudgeState = syzoj.model('judge_state');
+    let judge_state = await JudgeState.fromID(req.params.id);
+    await judge_state.updateResult(JSON.parse(req.body.result));
+    await judge_state.save();
+    await judge_state.updateRelatedInfo();
+
+    res.send({ return: 0 });
+  } catch (e) {
+    syzoj.log(e);
+    res.status(500).send(e);
   }
 });
