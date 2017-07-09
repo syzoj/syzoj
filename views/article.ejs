@@ -87,11 +87,10 @@
       </div>
     <% } %>
   </div>
-  <% } %>
-  <br>
   <div style="margin-bottom: 50px; ">
     <% include page %>
   </div>
+  <% } %>
    <% if (article.allowedComment) { %>
    <form class="ui reply form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>">
       <div class="field">
