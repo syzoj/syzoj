@@ -631,7 +631,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       await judge_state.save();
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
-      judge_state.type = problem.is_public ? 0 : 2;
+      judge_state.type = 0;
       await judge_state.save();
     }
     await judge_state.updateRelatedInfo(true);
