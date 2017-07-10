@@ -652,6 +652,25 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
   }
 });
 
+app.post('/problem/:id/delete', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+    if (!problem) throw new ErrorMessage('无此题目。');
+
+    if (!problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+
+    await problem.delete();
+
+    res.redirect(syzoj.utils.makeUrl(['problem']));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
 app.get('/problem/:id/testdata', async (req, res) => {
   try {
     let id = parseInt(req.params.id);

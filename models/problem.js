@@ -638,6 +638,36 @@ class Problem extends Model {
     await this.save();
   }
 
+  async delete() {
+    let fs = Promise.promisifyAll(require('fs-extra'));
+    let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = oldTestdataDir + '.zip';
+    await fs.removeAsync(oldTestdataDir);
+    await fs.removeAsync(oldTestdataZip);
+
+    let JudgeState = syzoj.model('judge_state');
+    let submissions = await JudgeState.query(null, { problem_id: this.id }), submitCnt = {}, acUsers = new Set();
+    for (let sm of submissions) {
+      if (sm.status === 'Accepted') acUsers.add(sm.user_id);
+      if (!submitCnt[sm.user_id]) {
+        submitCnt[sm.user_id] = 1;
+      } else {
+        submitCnt[sm.user_id]++;
+      }
+    }
+
+    for (let u in submitCnt) {
+      let user = await User.fromID(u);
+      user.submit_num -= submitCnt[u];
+      if (acUsers.has(parseInt(u))) user.ac_num--;
+      await user.save();
+    }
+
+    await db.query('DELETE FROM `problem`         WHERE `id`         = ' + this.id);
+    await db.query('DELETE FROM `judge_state`     WHERE `problem_id` = ' + this.id);
+    await db.query('DELETE FROM `problem_tag_map` WHERE `problem_id` = ' + this.id);
+    await db.query('DELETE FROM `article`         WHERE `problem_id` = ' + this.id);
+  }
+
   getModel() { return model; }
 }
 
