@@ -95,7 +95,8 @@ module.exports = {
           top: true,
           bottom: true,
           left: true,
-          right: true
+          right: true,
+          "white-space": true
         })
       },
       whiteList: whiteList,
