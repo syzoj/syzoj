@@ -9,7 +9,7 @@ var addUrlParam = function (url, key, val) {
 };
 
 $(function () {
-  $('a[href-post]').click(function (e) {
+  $(document).on('click', 'a[href-post]', function (e) {
     e.preventDefault();
 
     var form = document.createElement('form');
