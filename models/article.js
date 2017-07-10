@@ -28,7 +28,7 @@ let model = db.define('article', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
 
   title: { type: Sequelize.STRING(80) },
-  content: { type: Sequelize.TEXT },
+  content: { type: Sequelize.TEXT('medium') },
 
   user_id: { type: Sequelize.INTEGER },
   problem_id: { type: Sequelize.INTEGER },
