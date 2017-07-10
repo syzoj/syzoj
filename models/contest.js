@@ -123,9 +123,8 @@ class Contest extends Model {
     let problems = await this.getProblems();
     if (!problems.includes(judge_state.problem_id)) throw new ErrorMessage('当前比赛中无此题目。');
 
-    let player;
-    await syzoj.utils.lock(['Contest::newSubmission', 'create_player', judge_state.user_id], async () => {
-      player = await ContestPlayer.findInContest({
+    await syzoj.utils.lock(['Contest::newSubmission', judge_state.user_id], async () => {
+      let player = await ContestPlayer.findInContest({
         contest_id: this.id,
         user_id: judge_state.user_id
       });
@@ -136,14 +135,14 @@ class Contest extends Model {
           user_id: judge_state.user_id
         });
       }
+
+      await player.updateScore(judge_state);
+      await player.save();
+
+      await this.loadRelationships();
+      await this.ranklist.updatePlayer(this, player);
+      await this.ranklist.save();
     });
-
-    await player.updateScore(judge_state);
-    await player.save();
-
-    await this.loadRelationships();
-    await this.ranklist.updatePlayer(this, player);
-    await this.ranklist.save();
   }
 
   async isRunning(now) {
