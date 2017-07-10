@@ -599,6 +599,7 @@ class Problem extends Model {
     await db.query('UPDATE `problem`         SET `id`         = ' + id                      + ' WHERE `id`         = ' + this.id);
     await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
     await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
+    await db.query('UPDATE `article`         SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
 
     let Contest = syzoj.model('contest');
     let contests = await Contest.all();
