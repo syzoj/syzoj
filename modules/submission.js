@@ -244,7 +244,7 @@ app.post('/submission/:id/rejudge', async (req, res) => {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
-    if (judge.pending && !req.query.force) throw new ErrorMessage('无法重新评测一个评测中的提交。');
+    if (judge.pending && !(res.locals.user && await res.locals.user.hasPrivilege('manage_problem'))) throw new ErrorMessage('无法重新评测一个评测中的提交。');
 
     await judge.loadRelationships();
 
