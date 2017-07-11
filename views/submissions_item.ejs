@@ -33,21 +33,4 @@ textFit(e, { maxFontSize: 14 });
 <% } %>
 <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
 <td><%= syzoj.utils.formatDate(judge.submit_time) %>
-<% if (isPending(judge.status)) { %>
-<script>
-function update_judge_<%= judge.id %>() {
-  setTimeout(function () {
-<%
-let url = syzoj.utils.makeUrl(['submissions', judge.id, 'ajax']);
-%>
-    $.get('<%= url %>', function (data) {
-      var e = $('#submissions_<%= judge.id %>');
-      if (e.html() != data) e.html(data);
-      else update_judge_<%= judge.id %>();
-    });
-  }, 500);
-}
-update_judge_<%= judge.id %>();
-</script>
-<% } %>
 </td>
