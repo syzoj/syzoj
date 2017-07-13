@@ -499,6 +499,9 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
     problem.file_io_output_name = req.body.file_io_output_name;
 
     if (req.body.type === 'interaction') {
+      if (!problem.file_io) {
+        throw new ErrorMessage('交互题目必须使用文件 IO。');
+      }
       throw new ErrorMessage('暂不支持该题目类型。');
     }
 

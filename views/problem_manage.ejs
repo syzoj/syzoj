@@ -55,7 +55,7 @@
             <div class="inline fields">
               <label>IO 方式</label>
               <div class="field">
-                <div class="ui radio checkbox">
+                <div class="ui radio checkbox" id="std-io-div">
                   <input name="io_method" value="std-io" id="std-io" type="radio" onclick="goDisable()">
                   <label for="std-io">标准 IO</label>
                 </div>
@@ -125,11 +125,16 @@ $(function () {
   $('a[data-tab="traditional"]').click(function () {
     $('input[name=type]').val('traditional');
     if ($('div[data-tab="interaction"]').attr('data-tab', 'traditional').length) $('a[data-tab="traditional"]').click();
+
+    $('#std-io')[0].disabled = false;
   });
 
   $('a[data-tab="interaction"]').click(function () {
     $('input[name=type]').val('interaction');
     if ($('div[data-tab="traditional"]').attr('data-tab', 'interaction').length) $('a[data-tab="interaction"]').click();
+
+    $('#std-io')[0].disabled = true;
+    $('#file-io').click();
   });
 
   $('a[data-tab="submit-answer"]').click(function () {
