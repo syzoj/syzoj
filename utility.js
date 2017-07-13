@@ -103,7 +103,11 @@ module.exports = {
       stripIgnoreTag: true
     });
     let replaceXSS = s => {
-      return xss.process(s);
+      s = xss.process(s);
+      if (s) {
+        s = `<div style="position: relative; overflow: hidden; ">${s}</div>`;
+      }
+      return s;
     };
     let replaceUI = s => {
       if (noReplaceUI) return s;
