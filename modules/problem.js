@@ -21,6 +21,7 @@
 
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
+let CustomTest = syzoj.model('custom_test');
 let WaitingJudge = syzoj.model('waiting_judge');
 let Contest = syzoj.model('contest');
 let ProblemTag = syzoj.model('problem_tag');
@@ -638,7 +639,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
     let waiting_judge = await WaitingJudge.create({
       judge_id: judge_state.id,
-      priority: 1
+      priority: 1,
+      type: 'submission'
     });
 
     await waiting_judge.save();
@@ -813,6 +815,63 @@ app.get('/problem/:id/statistics/:type', async (req, res) => {
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', maxCount: 1 }, { name: 'input_file', maxCount: 1 }]), async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+
+    if (!problem) throw new ErrorMessage('无此题目。');
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });
+    if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+
+    let filepath;
+    if (req.files['input_file'][0]) {
+      if (req.files['input_file'][0].size > syzoj.config.limit.custom_test_input) throw new ErrorMessage('输入数据过长。');
+      filepath = req.files['input_file'][0].path;
+    } else {
+      if (req.body.input_file_textarea.length > syzoj.config.limit.custom_test_input) throw new ErrorMessage('输入数据过长。');
+      filepath = await require('tmp-promise').tmpName({ template: '/tmp/tmp-XXXXXX' });
+      await require('fs-extra').writeFileAsync(filepath, req.body.input_file_textarea);
+    }
+
+    let code;
+    if (req.files['code_upload'][0]) {
+      if (req.files['code_upload'][0].size > syzoj.config.limit.submit_code) throw new ErrorMessage('代码过长。');
+      code = (await require('fs-extra').readFileAsync(req.files['code_upload'][0].path)).toString();
+    } else {
+      if (req.body.code.length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码过长。');
+      code = req.body.code;
+    }
+
+    let custom_test = await CustomTest.create({
+      input_filepath: filepath,
+      code: code,
+      language: req.body.language,
+      user_id: res.locals.user.id,
+      problem_id: id
+    });
+
+    await custom_test.save();
+
+    let waiting_judge = await WaitingJudge.create({
+      judge_id: custom_test.id,
+      priority: 3,
+      type: 'custom_test'
+    });
+
+    await waiting_judge.save();
+
+    res.send({
+      id: custom_test.id
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.send({
       err: e
     });
   }

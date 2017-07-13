@@ -29,7 +29,12 @@ let model = db.define('waiting_judge', {
   judge_id: { type: Sequelize.INTEGER },
 
   // Smaller is higher
-  priority: { type: Sequelize.INTEGER }
+  priority: { type: Sequelize.INTEGER },
+
+  type: {
+    type: Sequelize.ENUM,
+    values: ['submission', 'custom-test']
+  }
 }, {
   timestamps: false,
   tableName: 'waiting_judge',
