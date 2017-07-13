@@ -333,7 +333,7 @@ div[class*=ace_br] {
               </div>
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
                 <button type="submit" class="ui button">提交</button>
-                <div onclick="$('#modal-custom-test').modal('show')" class="ui positive button">自定义测试</div>
+                <div onclick="show_custom_test()" class="ui positive button">自定义测试</div>
               </div>
             <% } %>
           </form>
@@ -381,6 +381,7 @@ div[class*=ace_br] {
   });
   </script>
 
+  <script src="https://cdn.staticfile.org/css-element-queries/0.4.0/ResizeSensor.min.js"></script>
   <div class="ui modal" id="modal-custom-test">
     <div class="header">
       自定义测试
@@ -439,6 +440,13 @@ div[class*=ace_br] {
 
     form.removeChild(code_upload);
   });
+
+  function show_custom_test() {
+    $('#modal-custom-test').modal('show');
+    new ResizeSensor($('#modal-custom-test'), function () {
+      $(window).resize();
+    });
+  }
 
   function update_custom_test_result() {
     $.get('/custom-test/' + custom_test_id + '/ajax', function (data) {
