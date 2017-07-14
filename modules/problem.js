@@ -833,7 +833,7 @@ app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', m
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let filepath;
-    if (req.files['input_file'][0]) {
+    if (req.files['input_file']) {
       if (req.files['input_file'][0].size > syzoj.config.limit.custom_test_input) throw new ErrorMessage('输入数据过长。');
       filepath = req.files['input_file'][0].path;
     } else {
@@ -843,7 +843,7 @@ app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', m
     }
 
     let code;
-    if (req.files['code_upload'][0]) {
+    if (req.files['code_upload']) {
       if (req.files['code_upload'][0].size > syzoj.config.limit.submit_code) throw new ErrorMessage('代码过长。');
       code = (await require('fs-extra').readFileAsync(req.files['code_upload'][0].path)).toString();
     } else {

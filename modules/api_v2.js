@@ -138,7 +138,7 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
         judge_id: custom_test.id,
         code: custom_test.code,
         language: custom_test.language,
-        testdata: custom_test.problem.id,
+        input_file: (await require('fs-extra').readFileAsync(custom_test.input_file)).toString(),
         time_limit: custom_test.problem.time_limit,
         memory_limit: custom_test.problem.memory_limit,
         file_io: custom_test.problem.file_io,
