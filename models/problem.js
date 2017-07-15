@@ -374,8 +374,9 @@ class Problem extends Model {
 
       let p7zip = new (require('node-7z'));
 
-      let list = await this.listTestdata(), path = require('path');
-      await p7zip.add(dir + '.zip', list.files.map(file => path.join(dir, file.filename)));
+      let list = await this.listTestdata(), path = require('path'), pathlist = list.files.map(file => path.join(dir, file.filename));
+      if (!pathlist.length) throw new ErrorMessage('无测试数据。');
+      await p7zip.add(dir + '.zip', pathlist);
     });
   }
 
