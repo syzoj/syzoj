@@ -92,6 +92,7 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
     let judge_state, custom_test;
     await syzoj.utils.lock('/api/v2/judge/peek', async () => {
       let waiting_judge = await WaitingJudge.findOne({ order: [['priority', 'ASC'], ['id', 'ASC']] });
+      console.log(waiting_judge);
       if (!waiting_judge) {
         return;
       }
@@ -133,12 +134,12 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
         });
       }
     } else if (custom_test) {
-      console.log({
+      res.send({
         have_task: 1,
         judge_id: custom_test.id,
         code: custom_test.code,
         language: custom_test.language,
-        input_file: (await require('fs-extra').readFileAsync(custom_test.input_file)).toString(),
+        input_file: (await require('fs-extra').readFileAsync(custom_test.input_filepath)).toString(),
         time_limit: custom_test.problem.time_limit,
         memory_limit: custom_test.problem.memory_limit,
         file_io: custom_test.problem.file_io,
