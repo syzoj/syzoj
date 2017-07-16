@@ -21,7 +21,7 @@
         <div>
             <p>在<a href="/problem/0/edit">添加题目页面</a>填写题面，题目内容使用 Markdown 与 TeX 公式。</p>
             <h3 class="ui header">测试数据</h3>
-            <p>在添加好的题目页面选择「上传测试数据」，可以调整时间和内存限制。数据包是一个 <code>zip</code> 压缩包：</p>
+            <p>在添加好的题目页面选择「管理」，可以调整时间和内存限制。数据包是一个 <code>zip</code> 压缩包：</p>
             <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>xxx.zip
 <span class="hljs-string">|</span>
 <span class="hljs-string">|--data_rule.txt</span>
@@ -57,7 +57,7 @@ output#.out
                 <li><code>mul</code>：测试点分数按百分比相乘；</li>
                 <li><code>min</code>：取各测试点最低分；</li>
             </ul>
-            <p>注意：<span><code>zip</code> 包内<strong>没有</strong>一层文件夹，直接是上述文件。</span>
+            <p>注意：<span><code>zip</code> 包内<strong>没有</strong>一层文件夹，直接是上述文件。如果不希望将数据打包，可以通过题目页面的「测试数据」按钮进入测试数据文件上传的页面。</span>
             </p>
             <p>如果没有 <code>data_rule.txt</code>，则评测系统会自动将 <code>.in</code> 文件与同名的 <code>.out</code> 或 <code>.ans</code> 匹配。</p>
             <p>如果需要配置提交答案题目的数据，请添加额外的一行，表示用户提交的文件名：</p>
