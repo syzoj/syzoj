@@ -822,6 +822,7 @@ app.get('/problem/:id/statistics/:type', async (req, res) => {
   }
 });
 
+/*
 app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', maxCount: 1 }, { name: 'input_file', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
@@ -878,3 +879,4 @@ app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', m
     });
   }
 });
+*/
