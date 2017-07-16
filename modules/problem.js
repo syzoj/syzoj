@@ -502,7 +502,6 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
       if (!problem.file_io) {
         throw new ErrorMessage('交互题目必须使用文件 IO。');
       }
-      throw new ErrorMessage('暂不支持该题目类型。');
     }
 
     if (problem.type === 'submit-answer' && req.body.type !== 'submit-answer' || problem.type !== 'submit-answer' && req.body.type === 'submit-answer') {
