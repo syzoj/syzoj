@@ -172,15 +172,21 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
       <% let testcase = subtask_cases[i]; %>
       <div class="title<% if (testcase.pending || !judge.allowedSeeData || testcase.status === 'Skipped') { %> pending<% } %> auto_update"<% if (testcase.pending || !judge.allowedSeeData) { %> style="cursor: auto; "<% } %>>
         <div class="ui grid">
-          <div class="three wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
+          <div class="<%= judge.problem.type === 'submit-answer' ? 'four' : 'three' %> wide column"><i class="dropdown icon"></i>测试点 #<%= i + 1 %></div>
           <div class="four wide column status status_detail <%= getStatusMeta(testcase.status).toLowerCase().split(' ').join('_') %>">
           <i class="<%= icon[getStatusMeta(testcase.status)] || 'remove' %> icon"></i>
           <%= testcase.status %></div>
           <% if (!testcase.pending && testcase.status !== 'Skipped') { %>
             <% if (!testcase.score) testcase.score = testcase.status === 'Accepted' ? 100 : 0; %>
-            <div class="three wide column">得分：<span style="font-weight: normal; "><%= parseFloat(testcase.score.toFixed(2)).toString() %></span></div>
-            <div class="three wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
-            <div class="three wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
+            <% if (judge.problem.type === 'submit-answer') { %>
+              <% if (testcase.length != null) { %>
+                <div class="three wide column">文件大小：<span style="font-weight: normal; "><%= syzoj.utils.formatSize(testcase.length) %></span></div>
+              <% } %>
+            <% } else { %>
+              <div class="three wide column">得分：<span style="font-weight: normal; "><%= parseFloat(testcase.score.toFixed(2)).toString() %></span></div>
+              <div class="three wide column">用时：<span style="font-weight: normal; "><%= testcase.time_used %> ms</span></div>
+              <div class="three wide column">内存：<span style="font-weight: normal; "><%= testcase.memory_used %> KiB</span></div>
+            <% } %>
           <% } %>
         </div>
       </div>
