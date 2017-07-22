@@ -50,6 +50,9 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <% } %>
         <th>提交者</th>
         <th>提交时间</th>
+        <% if (judge.allowedRejudge) { %>
+          <th>重新评测</th>
+        <% } %>
       </tr>
      </thead>
      <tbody>
@@ -78,6 +81,42 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
         <% } %>
         <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
         <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
+        <% if (judge.allowedRejudge) { %>
+          <td>
+            <a id="rejudge-button" onclick="check_rejudge()" style="color: #000; " href="#"><i class="repeat icon"></i></a>
+            <div class="ui basic modal" id="modal-rejudge">
+              <div class="ui icon header">
+                <i class="retweet icon"></i>
+                <p style="margin-top: 15px; ">重新评测</p>
+              </div>
+              <div class="content" style="text-align: center; ">
+                <p>确认重新评测该提交记录吗？</p>
+                <p id="warning_pending"><strong>警告：只有管理员可以重新评测一个未评测完成的记录，<br>这种情况一般发生在评测服务中断后，如果一个提交正在被评测，<br>则将其重新评测会导致系统错乱！</strong></p>
+                <script>
+                var pending = <%= judge.pending %>;
+                function check_rejudge() {
+                  if (pending) {
+                    $('#warning_pending').css('display', '');
+                  } else {
+                    $('#warning_pending').css('display', 'none');
+                  }
+                  $('#modal-rejudge').modal('show');
+                }
+                </script>
+              </div>
+              <div class="actions">
+                <div class="ui red basic cancel inverted button">
+                  <i class="remove icon"></i>
+                  否
+                </div>
+                <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['submission', judge.id, 'rejudge']) %>">
+                  <i class="checkmark icon"></i>
+                  是
+                </a>
+              </div>
+            </div>
+          </td>
+        <% } %>
        </tr>
      </tbody>
   </table>
@@ -91,40 +130,6 @@ else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
   </script>
   <% if (judge.problem.type !== 'submit-answer' && judge.allowedSeeCode) { %>
     <div class="ui existing segment" style="position: relative; ">
-      <% if (judge.allowedRejudge) { %>
-        <a id="rejudge-button" class="ui button" style="position: absolute; top: 0px; right: -4px; border-top-left-radius: 0; border-bottom-right-radius: 0; " onclick="check_rejudge()">重新评测</a>
-        <div class="ui basic modal" id="modal-rejudge">
-          <div class="ui icon header">
-            <i class="retweet icon"></i>
-            <p style="margin-top: 15px; ">重新评测</p>
-          </div>
-          <div class="content" style="text-align: center; ">
-            <p>确认重新评测该提交记录吗？</p>
-            <p id="warning_pending"><strong>警告：只有管理员可以重新评测一个未评测完成的记录，<br>这种情况一般发生在评测服务中断后，如果一个提交正在被评测，<br>则将其重新评测会导致系统错乱！</strong></p>
-            <script>
-            var pending = <%= judge.pending %>;
-            function check_rejudge() {
-              if (pending) {
-                $('#warning_pending').css('display', '');
-              } else {
-                $('#warning_pending').css('display', 'none');
-              }
-              $('#modal-rejudge').modal('show');
-            }
-            </script>
-          </div>
-          <div class="actions">
-            <div class="ui red basic cancel inverted button">
-              <i class="remove icon"></i>
-              否
-            </div>
-            <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['submission', judge.id, 'rejudge']) %>">
-              <i class="checkmark icon"></i>
-              是
-            </a>
-          </div>
-        </div>
-      <% } %>
       <pre style="margin-top: 0; margin-bottom: 0; "><code id="code"><%- judge.code %></code></pre>
     </div>
     <script>
