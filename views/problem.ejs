@@ -38,7 +38,9 @@ div[class*=ace_br] {
       <div class="row" style="margin-top: -15px">
           <span class="ui label">内存限制：<%= problem.memory_limit %> MiB</span>
           <span class="ui label">时间限制：<%= problem.time_limit %> ms</span>
-          <% if (problem.file_io) { %>
+          <% if (problem.type === 'interaction') { %>
+            <span class="ui label">题目类型：交互</span>
+          <% } else if (problem.file_io) { %>
             <span class="ui label">输入文件: <%= problem.file_io_input_name %></span>
             <span class="ui label">输出文件: <%= problem.file_io_output_name %></span>
           <% } else { %>
@@ -46,10 +48,12 @@ div[class*=ace_br] {
           <% } %>
       </div>
     <% } %>
-    <div class="row" style="margin-top: -<%= problem.type === 'submit-answer' ? 15 : 23 %>px">
-        <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
-        <span class="ui label">评测方式：<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
-    </div>
+    <% if (problem.type !== 'interaction') { %>
+      <div class="row" style="margin-top: -<%= problem.type === 'submit-answer' ? 15 : 23 %>px">
+          <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
+          <span class="ui label">评测方式：<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
+      </div>
+    <% } %>
     <% if (!contest) { %>
         <div class="row" style="margin-top: -23px">
             <span class="ui label">上传者：

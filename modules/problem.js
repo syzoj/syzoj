@@ -494,14 +494,10 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
 
     problem.time_limit = req.body.time_limit;
     problem.memory_limit = req.body.memory_limit;
-    problem.file_io = req.body.io_method === 'file-io';
-    problem.file_io_input_name = req.body.file_io_input_name;
-    problem.file_io_output_name = req.body.file_io_output_name;
-
-    if (req.body.type === 'interaction') {
-      if (!problem.file_io) {
-        throw new ErrorMessage('交互题目必须使用文件 IO。');
-      }
+    if (req.body.type === 'traditional') {
+      problem.file_io = req.body.io_method === 'file-io';
+      problem.file_io_input_name = req.body.file_io_input_name;
+      problem.file_io_output_name = req.body.file_io_output_name;
     }
 
     if (problem.type === 'submit-answer' && req.body.type !== 'submit-answer' || problem.type !== 'submit-answer' && req.body.type === 'submit-answer') {

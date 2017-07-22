@@ -455,13 +455,15 @@ class Problem extends Model {
     if (this.memory_limit <= 0) return 'Invalid memory limit';
     if (this.memory_limit > syzoj.config.limit.memory_limit) return 'Memory limit too large';
 
-    let filenameRE = /^[\w \-\+\.]*$/;
-    if (this.file_io_input_name && !filenameRE.test(this.file_io_input_name)) return 'Invalid input file name';
-    if (this.file_io_output_name && !filenameRE.test(this.file_io_output_name)) return 'Invalid output file name';
+    if (this.type === 'traditional') {
+      let filenameRE = /^[\w \-\+\.]*$/;
+      if (this.file_io_input_name && !filenameRE.test(this.file_io_input_name)) return 'Invalid input file name';
+      if (this.file_io_output_name && !filenameRE.test(this.file_io_output_name)) return 'Invalid output file name';
 
-    if (this.file_io) {
-      if (!this.file_io_input_name) return 'No input file name';
-      if (!this.file_io_output_name) return 'No output file name';
+      if (this.file_io) {
+        if (!this.file_io_input_name) return 'No input file name';
+        if (!this.file_io_output_name) return 'No output file name';
+      }
     }
 
     return null;
