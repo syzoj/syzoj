@@ -12,6 +12,8 @@ let subtaskType = {
 %>
   <% if (testcases.spj) { %>
     <p>评测方式：Special Judge</p>
+  <% } else if (problem.type === 'interaction') { %>
+    <p>评测方式：交互</p>
   <% } else { %>
     <p>评测方式：文本比较</p>
   <% } %>
@@ -33,12 +35,12 @@ let subtaskType = {
               <tr class="center aligned">
                 <td style="width: 33%; "><%= testcase.input || '-' %></td>
                 <td style="width: 33%; "><%= testcase.output || '-' %></td>
-                <td style="width: 33%; "><%= testcase.answer %></td>
+                <td style="width: 33%; "><%= testcase.answer || '-' %></td>
               </tr>
             <% } else { %>
               <tr class="center aligned">
-                <td style="width: 50%; "><%= testcase.input %></td>
-                <td style="width: 50%; "><%= testcase.output %></td>
+                <td style="width: 50%; "><%= testcase.input || '-' %></td>
+                <td style="width: 50%; "><%= testcase.output || '-' %></td>
               </tr>
             <% } %>
           <% } %>

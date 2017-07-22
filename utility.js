@@ -209,7 +209,7 @@ module.exports = {
       let list = await (await fs.readdirAsync(dir)).filterAsync(async x => await syzoj.utils.isFile(path.join(dir, x)));
 
       let res = [];
-      if (!list.includes('data_rule.txt')) {
+      if (!list.includes('data.yml')) {
         res[0] = {};
         res[0].cases = [];
         for (let file of list) {
@@ -247,52 +247,37 @@ module.exports = {
 
           return getLastInteger(a.input) - getLastInteger(b.input);
         });
+
+        res.spj = list.some(s => s.startsWith('spj_'));
       } else {
-        let lines = (await fs.readFileAsync(path.join(dir, 'data_rule.txt'))).toString().split('\r').join('').split('\n').filter(x => x.length !== 0);
+        let config = require('js-yaml').load((await fs.readFileAsync(dir + '/data.yml')));
 
-        let input, output, answer;
-        if (submitAnswer) {
-          if (lines.length < 4) throw '无效的数据配置文件（data_rule.txt）。';
-          input = lines[lines.length - 3];
-          output = lines[lines.length - 2];
-          answer = lines[lines.length - 1];
-        } else {
-          if (lines.length < 3) throw '无效的数据配置文件（data_rule.txt）。';
-          input = lines[lines.length - 2];
-          output = lines[lines.length - 1];
-        }
+        let input = config.inputFile, output = config.answerFile, answer = config.userOutput;
 
-        for (let s = 0; s < lines.length - (submitAnswer ? 3 : 2); ++s) {
-          res[s] = {};
-          res[s].cases = [];
-          let numbers = lines[s].split(' ').filter(x => x);
-          if (numbers[0].includes(':')) {
-            let tokens = numbers[0].split(':');
-            res[s].type = tokens[0] || 'sum';
-            res[s].score = parseFloat(tokens[1]) || (100 / (lines.length - 2));
-            numbers.shift();
-          } else {
-            res[s].type = 'sum';
-            res[s].score = 100;
-          }
-          for (let i of numbers) {
-            let testcase = {
-              input: input.replace('#', i),
-              output: output.replace('#', i)
-            };
+        res = config.subtasks.map(st => ({
+          score: st.score,
+          type: st.type,
+          cases: st.cases.map(c => {
+            function getFileName(template, id) {
+              let s = template.split('#').join(String(id));
+              if (!list.includes(s)) throw `找不到文件 ${s}`;
+              return s;
+            }
 
-            if (submitAnswer) testcase.answer = answer.replace('#', i);
+            let o = {};
+            if (input) o.input = getFileName(input, c);
+            if (output) o.output = getFileName(output, c);
+            if (answer) o.answer = getFileName(answer, c);
 
-            if (testcase.input !== '-' && !list.includes(testcase.input)) throw `找不到文件 ${testcase.input}`;
-            if (testcase.output !== '-' && !list.includes(testcase.output)) throw `找不到文件 ${testcase.output}`;
-            res[s].cases.push(testcase);
-          }
-        }
+            return o;
+          })
+        }));
 
         res = res.filter(x => x.cases && x.cases.length !== 0);
+
+        res.spj = !!config.specialJudge;
       }
 
-      res.spj = list.some(s => s.startsWith('spj_'));
       return res;
     } catch (e) {
       console.log(e);
