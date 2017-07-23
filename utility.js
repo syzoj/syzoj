@@ -252,7 +252,7 @@ module.exports = {
       } else {
         let config = require('js-yaml').load((await fs.readFileAsync(dir + '/data.yml')));
 
-        let input = config.inputFile, output = config.answerFile, answer = config.userOutput;
+        let input = config.inputFile, output = config.outputFile, answer = config.userOutput;
 
         res = config.subtasks.map(st => ({
           score: st.score,
