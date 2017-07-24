@@ -76,7 +76,7 @@ app.get('/sign_up', async (req, res) => {
 });
 
 // Logout
-app.get('/logout', async (req, res) => {
+app.post('/logout', async (req, res) => {
   req.session.user_id = null;
   res.clearCookie('login');
   res.redirect(req.query.url || '/');
@@ -94,6 +94,7 @@ app.get('/user/:id', async (req, res) => {
 
     let statistics = await user.getStatistics();
     await user.renderInformation();
+    user.emailVisible = user.public_email || user.allowedEdit;
 
     res.render('user', {
       show_user: user,
@@ -152,6 +153,7 @@ app.post('/user/:id/edit', async (req, res) => {
     if (res.locals.user && await res.locals.user.hasPrivilege('manage_user')) {
       if (!syzoj.utils.isValidUsername(req.body.username)) throw new ErrorMessage('无效的用户名。');
       user.username = req.body.username;
+      user.email = req.body.email;
     }
 
     if (res.locals.user && res.locals.user.is_admin) {
@@ -165,9 +167,9 @@ app.post('/user/:id/edit', async (req, res) => {
       await user.setPrivileges(privileges);
     }
 
-    user.email = req.body.email;
     user.information = req.body.information;
     user.sex = req.body.sex;
+    user.public_email = (req.body.public_email === 'on');
 
     await user.save();
 

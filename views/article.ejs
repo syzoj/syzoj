@@ -6,6 +6,17 @@
 }
 </style>
 <div class="padding">
+  <div class="ui breadcrumb">
+    <div class="section">讨论</div>
+    <i class="right angle icon divider"></i>
+    <% if (problem) { %>
+      <div class="section">题目</div>
+      <i class="right angle icon divider"></i>
+      <a href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'discussion']) %>" class="active section"><%= problem.title %></a>
+    <% } else { %>
+      <a href="<%= syzoj.utils.makeUrl(['discussion']) %>" class="section">全局板块</a>
+    <% } %>
+  </div>
   <h1><%= article.title %></h1>
  	<p style="font_size: 0.7em"><img style="vertical-align: middle;" src="<%= syzoj.utils.gravatar(article.user.email, 64) %>" width="32" height="32">
  		<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
@@ -25,7 +36,7 @@
               <i class="remove icon"></i>
               否
             </div>
-            <a class="ui green ok inverted button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">
+            <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">
               <i class="checkmark icon"></i>
               是
             </a>
@@ -38,7 +49,7 @@
   </div>
   <% if (comments.length) { %>
   <div class="ui comments" style="max-width: none;">
-    <h3 class="ui dividing header">共 <%= comments.length %> 条回复</h3>
+    <h3 class="ui dividing header">共 <%= commentsCount %> 条回复</h3>
     <% for (let comment of comments) { %>
       <div class="comment">
         <a class="avatar">
@@ -65,7 +76,7 @@
                   <i class="remove icon"></i>
                   否
                 </div>
-                <a class="ui green ok inverted button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">
+                <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">
                   <i class="checkmark icon"></i>
                   是
                 </a>
@@ -76,11 +87,10 @@
       </div>
     <% } %>
   </div>
-  <% } %>
-  <br>
   <div style="margin-bottom: 50px; ">
     <% include page %>
   </div>
+  <% } %>
    <% if (article.allowedComment) { %>
    <form class="ui reply form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>">
       <div class="field">

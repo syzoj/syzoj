@@ -361,6 +361,9 @@ body > .ui.page.dimmer {
 }
 */
 
+:not(.status_detail).status.success,
+.title:hover .status_detail.status.success,
+.title.active .status_detail.status.success,
 :not(.status_detail).status.submitted,
 .title:hover .status_detail.status.submitted,
 .title.active .status_detail.status.submitted,
@@ -376,6 +379,9 @@ body > .ui.page.dimmer {
     color: red;
 }
 
+:not(.status_detail).status.invalid_interaction,
+.title:hover .status_detail.status.invalid_interaction,
+.title.active .status_detail.status.invalid_interaction,
 :not(.status_detail).status.runtime_error,
 .title:hover .status_detail.status.runtime_error,
 .title.active .status_detail.status.runtime_error,

@@ -28,9 +28,10 @@ let model = db.define('article', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
 
   title: { type: Sequelize.STRING(80) },
-  content: { type: Sequelize.TEXT },
+  content: { type: Sequelize.TEXT('medium') },
 
   user_id: { type: Sequelize.INTEGER },
+  problem_id: { type: Sequelize.INTEGER },
 
   public_time: { type: Sequelize.INTEGER },
   update_time: { type: Sequelize.INTEGER },
@@ -61,6 +62,7 @@ class Article extends Model {
       content: '',
 
       user_id: 0,
+      problem_id: 0,
 
       public_time: 0,
       update_time: 0,

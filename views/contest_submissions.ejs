@@ -39,6 +39,7 @@
             <div class="menu">
               <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
               <% for (let status in this.icon) { %>
+                <% if (this.iconHidden.includes(status)) continue; %>
                 <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
               <% } %>
             </div>

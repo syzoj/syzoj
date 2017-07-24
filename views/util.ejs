@@ -19,21 +19,28 @@ this.alpha = number => {
 
 this.icon = {
   'Accepted': 'checkmark',
+  'Success': 'checkmark',  // Custom test
   'Wrong Answer': 'remove',
   'Runtime Error': 'bomb',
+  'Invalid Interaction': 'ban',
   'Time Limit Exceeded': 'clock',
-  'Memory Limit Exceeded': 'disk outline',
+  'Memory Limit Exceeded': 'microchip',
   'Output Limit Exceeded': 'print',
   'File Error': 'file outline',
   'Waiting': 'hourglass half',
   'Running': 'spinner',
   'Compiling': 'spinner',
   'Compile Error': 'code',
-  'Submitted': 'checkmark',
+  'Submitted': 'checkmark', // NOI contests
   'System Error': 'server',
   'No Testdata': 'folder open outline',
   'Partially Correct': 'minus',
   'Judgement Failed': 'server',
   'Skipped': 'ban'
 };
+
+this.iconHidden = [
+  'Success',
+  'Submitted'
+];
 %>

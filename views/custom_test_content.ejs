@@ -1,0 +1,30 @@
+<% include util %>
+<div style="padding-bottom: 1.5rem; ">
+  <div class="ui styled fluid accordion" id="custom-test-accordion">
+    <div class="title"<% if (custom_test.pending) { %> style="cursor: auto; "<% } %>>
+      <div class="ui grid">
+        <div class="four wide column"><i class="dropdown icon"></i>自定义测试</div>
+        <div class="four wide column status status_detail <%= getStatusMeta(custom_test.status).toLowerCase().split(' ').join('_') %>">
+        <i class="<%= icon[getStatusMeta(custom_test.status)] || 'remove' %> icon"></i>
+        <%= custom_test.status %></div>
+        <% if (!custom_test.pending) { %>
+          <div class="four wide column">用时：<span style="font-weight: normal; "><%= custom_test.time %> ms</span></div>
+          <div class="four wide column">内存：<span style="font-weight: normal; "><%= custom_test.memory %> KiB</span></div>
+        <% } %>
+      </div>
+    </div>
+    <% if (!custom_test.pending) { %>
+      <div class="content">
+        <strong>选手输出</strong>
+        <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code><%= custom_test.result.user_out %></code></pre></div>
+      </div>
+    <% } %>
+  </div>
+  <% if (!custom_test.pending) { %>
+    <script>
+    $(function () {
+      $('#custom-test-accordion').accordion();
+    });
+    </script>
+  <% } %>
+</div>

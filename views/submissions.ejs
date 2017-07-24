@@ -37,6 +37,7 @@
           <div class="menu">
             <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
             <% for (let status in this.icon) { %>
+              <% if (this.iconHidden.includes(status)) continue; %>
               <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
             <% } %>
           </div>
@@ -77,7 +78,9 @@
       </tr>
     </thead>
     <tbody>
+      <% let ids = []; %>
       <% for (let judge of judge_state) { %>
+        <% if (judge.pending) ids.push(judge.id); %>
         <tr id="submissions_<%= judge.id %>"><% include submissions_item %></tr>
       <% } %>
     </tbody>
@@ -93,5 +96,26 @@ $(function () {
   $('#select_language').dropdown();
   $('#select_status').dropdown();
 });
+
+var ids = <%= JSON.stringify(ids) %>;
+function update() {
+  setTimeout(function () {
+    $.get('/submissions/' + ids.join(',') + '/ajax', function (data) {
+      var newIDs = [];
+      for (var id in data) {
+        if (data[id].pending) newIDs.push(id);
+        var e = $('#submissions_' + id);
+        if (e.find('span.status').text().trim() !== data[id].status) e.html(data[id].html);
+      }
+
+      if (newIDs.length > 0) {
+        ids = newIDs;
+        update();
+      }
+    });
+  }, 500);
+}
+
+update();
 </script>
 <% include footer %>

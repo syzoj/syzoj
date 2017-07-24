@@ -23,7 +23,14 @@
 	    </div>
 	    <div class="field">
 	    	<label for="email">Email</label>
-	    	<input class="font-content" type="email" id="email" name="email" value="<%= edited_user.email %>">
+	    	<input class="font-content" type="email" id="email" name="email" value="<%= edited_user.email %>"<% if (!user.allowedManage) { %> readonly<% } %>>
+	    </div>
+      <div class="inline field">
+        <label class="ui header">公开 Email</label>
+        <div class="ui toggle checkbox">
+          <input id="public_email" name="public_email" type="checkbox" <% if (edited_user.public_email) { %> checked<% } %>>
+          <label>　</label>
+        </div>
 	    </div>
 	    <div class="field">
 	    	<label for="information">个性签名</label>

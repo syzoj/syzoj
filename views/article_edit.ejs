@@ -6,7 +6,7 @@
     }
 </style>
 <div class="padding">
-  <form class="ui form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>">
+  <form class="ui form" method="post">
     <div class="ui top attached tabular menu">
       <a class="item active" data-tab="edit">编辑</a>
       <a class="item" data-tab="preview" id="preview_tab">预览</a>
@@ -39,7 +39,7 @@
 <script type="text/javascript">
 $(function () {
     function render(output, input) {
-      $.post('/api/markdown', { s: input.val() }, function (s) {
+      $.post('/api/markdown', { s: input.val(), _csrf: document.head.getAttribute('data-csrf-token') }, function (s) {
         // console.log(s);
         output.html(s);
       });

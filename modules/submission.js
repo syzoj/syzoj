@@ -87,36 +87,46 @@ app.get('/submissions', async (req, res) => {
   }
 });
 
-app.get('/submissions/:id/ajax', async (req, res) => {
+app.get('/submissions/:ids/ajax', async (req, res) => {
   try {
-    let judge_state = await JudgeState.fromID(req.params.id);
-    if (!judge_state) throw new ErrorMessage('无此提交记录。');
+    let ids = req.params.ids.split(','), rendered = {};
 
-    await judge_state.loadRelationships();
+    for (let id of ids) {
+      let judge_state = await JudgeState.fromID(id);
+      if (!judge_state) throw new ErrorMessage('无此提交记录。');
 
-    judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
-    judge_state.allowedSeeData = await judge_state.isAllowedSeeDataBy(res.locals.user);
+      await judge_state.loadRelationships();
 
-    let contest;
-    if (judge_state.type === 1) {
-      contest = await Contest.fromID(judge_state.type_info);
-      contest.ended = await contest.isEnded();
+      judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
+      judge_state.allowedSeeData = await judge_state.isAllowedSeeDataBy(res.locals.user);
 
-      let problems_id = await contest.getProblems();
-      judge_state.problem_id = problems_id.indexOf(judge_state.problem_id) + 1;
-      judge_state.problem.title = syzoj.utils.removeTitleTag(judge_state.problem.title);
+      let contest;
+      if (judge_state.type === 1) {
+        contest = await Contest.fromID(judge_state.type_info);
+        contest.ended = await contest.isEnded();
 
-      if (contest.type === 'noi' && !contest.ended && !await judge_state.problem.isAllowedEditBy(res.locals.user)) {
-        if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge_state.status)) {
-          judge_state.status = 'Submitted';
+        let problems_id = await contest.getProblems();
+        judge_state.problem_id = problems_id.indexOf(judge_state.problem_id) + 1;
+        judge_state.problem.title = syzoj.utils.removeTitleTag(judge_state.problem.title);
+
+        if (contest.type === 'noi' && !contest.ended && !await judge_state.problem.isAllowedEditBy(res.locals.user)) {
+          if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge_state.status)) {
+            judge_state.status = 'Submitted';
+          }
         }
       }
+
+      let o = { pending: judge_state.pending, html: null, status: judge_state.status };
+
+      o.html = await require('util').promisify(app.render).bind(app)('submissions_item', {
+        contest: contest,
+        judge: judge_state
+      });
+
+      rendered[id] = o;
     }
 
-    res.render('submissions_item', {
-      contest: contest,
-      judge: judge_state
-    });
+    res.send(rendered);
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
@@ -149,6 +159,7 @@ app.get('/submission/:id', async (req, res) => {
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
     judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
+    let hideScore = false;
     if (contest) {
       let problems_id = await contest.getProblems();
       judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
@@ -158,10 +169,13 @@ app.get('/submission/:id', async (req, res) => {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge.status)) {
           judge.status = 'Submitted';
         }
+
+        hideScore = true;
       }
     }
 
     res.render('submission', {
+      hideScore, hideScore,
       contest: contest,
       judge: judge
     });
@@ -197,6 +211,7 @@ app.get('/submission/:id/ajax', async (req, res) => {
     judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
     judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
+    let hideScore = false;
     if (contest) {
       let problems_id = await contest.getProblems();
       judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
@@ -206,10 +221,13 @@ app.get('/submission/:id/ajax', async (req, res) => {
         if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge.status)) {
           judge.status = 'Submitted';
         }
+
+        hideScore = true;
       }
     }
 
     res.render('submission_content', {
+      hideScore, hideScore,
       contest: contest,
       judge: judge
     });
@@ -221,12 +239,12 @@ app.get('/submission/:id/ajax', async (req, res) => {
   }
 });
 
-app.get('/submission/:id/rejudge', async (req, res) => {
+app.post('/submission/:id/rejudge', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
-    if (judge.pending && !req.query.force) throw new ErrorMessage('无法重新评测一个评测中的提交。');
+    if (judge.pending && !(res.locals.user && await res.locals.user.hasPrivilege('manage_problem'))) throw new ErrorMessage('无法重新评测一个评测中的提交。');
 
     await judge.loadRelationships();
 

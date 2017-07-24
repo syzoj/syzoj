@@ -49,12 +49,14 @@
                                            <div class="ui bottom attached segment"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %></div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="column">
-                                            <h4 class="ui top attached block header">Email</h4>
-                                            <div class="ui bottom attached segment" class="font-content"><%= show_user.email %></div>
-                                        </div>
-                                    </div>
+                                    <% if (show_user.emailVisible) { %>
+                                      <div class="row">
+                                          <div class="column">
+                                              <h4 class="ui top attached block header">Email</h4>
+                                              <div class="ui bottom attached segment" class="font-content"><%= show_user.email %></div>
+                                          </div>
+                                      </div>
+                                    <% } %>
                                     <div class="row">
                                         <div class="column">
                                             <h4 class="ui top attached block header">个性签名</h4>

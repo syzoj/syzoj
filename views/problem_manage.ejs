@@ -25,59 +25,61 @@
                 <input type="number" name="memory_limit" value="<%= problem.memory_limit %>">
               </div>
             </div>
-            <% if (!problem.file_io) { %>
-            <div class="inline fields">
-              <label>IO 方式</label>
-              <div class="field">
-                <div class="ui radio checkbox">
-                  <input name="io_method" value="std-io" id="std-io" type="radio" onclick="goDisable()" checked>
-                  <label for="std-io">标准 IO</label>
+            <div id="io-type"<% if (problem.type === 'interaction') { %> style="display: none; "<% } %>>
+              <% if (!problem.file_io) { %>
+              <div class="inline fields">
+                <label>IO 方式</label>
+                <div class="field">
+                  <div class="ui radio checkbox">
+                    <input name="io_method" value="std-io" id="std-io" type="radio" onclick="goDisable()" checked>
+                    <label for="std-io">标准 IO</label>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="ui radio checkbox">
+                    <input name="io_method" value="file-io" id="file-io" type="radio" onclick="goEnable()">
+                    <label for="file-io">文件 IO</label>
+                  </div>
                 </div>
               </div>
-              <div class="field">
-                <div class="ui radio checkbox">
-                  <input name="io_method" value="file-io" id="file-io" type="radio" onclick="goEnable()">
-                  <label for="file-io">文件 IO</label>
+              <div class="two fields">
+                <div class="field">
+                  <label for="file_io_input_name">输入文件名</label>
+                  <input type="text" id="file-io-input-name" name="file_io_input_name" value="<%= problem.file_io_input_name %>" disabled>
+                </div>
+                <div class="field">
+                  <label for="file_io_output_name">输出文件名</label>
+                  <input type="text" id="file-io-output-name" name="file_io_output_name" value="<%= problem.file_io_output_name %>" disabled>
                 </div>
               </div>
-            </div>
-            <div class="two fields">
-              <div class="field">
-                <label for="file_io_input_name">输入文件名</label>
-                <input type="text" id="file-io-input-name" name="file_io_input_name" value="<%= problem.file_io_input_name %>" disabled>
-              </div>
-              <div class="field">
-                <label for="file_io_output_name">输出文件名</label>
-                <input type="text" id="file-io-output-name" name="file_io_output_name" value="<%= problem.file_io_output_name %>" disabled>
-              </div>
-            </div>
-            <% } else { %>
-            <div class="inline fields">
-              <label>IO 方式</label>
-              <div class="field">
-                <div class="ui radio checkbox">
-                  <input name="io_method" value="std-io" id="std-io" type="radio" onclick="goDisable()">
-                  <label for="std-io">标准 IO</label>
+              <% } else { %>
+              <div class="inline fields">
+                <label>IO 方式</label>
+                <div class="field">
+                  <div class="ui radio checkbox" id="std-io-div">
+                    <input name="io_method" value="std-io" id="std-io" type="radio" onclick="goDisable()">
+                    <label for="std-io">标准 IO</label>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="ui radio checkbox">
+                    <input name="io_method" value="file-io" id="file-io" type="radio" onclick="goEnable()" checked>
+                    <label for="file-io">文件 IO</label>
+                  </div>
                 </div>
               </div>
-              <div class="field">
-                <div class="ui radio checkbox">
-                  <input name="io_method" value="file-io" id="file-io" type="radio" onclick="goEnable()" checked>
-                  <label for="file-io">文件 IO</label>
+              <div class="two fields">
+                <div class="field">
+                  <label for="file_io_input_name">输入文件名</label>
+                  <input type="text" id="file-io-input-name" name="file_io_input_name" value="<%= problem.file_io_input_name %>">
+                </div>
+                <div class="field">
+                  <label for="file_io_output_name">输出文件名</label>
+                  <input type="text" id="file-io-output-name" name="file_io_output_name" value="<%= problem.file_io_output_name %>">
                 </div>
               </div>
+              <% } %>
             </div>
-            <div class="two fields">
-              <div class="field">
-                <label for="file_io_input_name">输入文件名</label>
-                <input type="text" id="file-io-input-name" name="file_io_input_name" value="<%= problem.file_io_input_name %>">
-              </div>
-              <div class="field">
-                <label for="file_io_output_name">输出文件名</label>
-                <input type="text" id="file-io-output-name" name="file_io_output_name" value="<%= problem.file_io_output_name %>">
-              </div>
-            </div>
-            <% } %>
           </div>
           <div class="ui <%= problem.type === 'submit-answer' ? 'active ' : '' %>tab" data-tab="submit-answer" style="margin-bottom: 10px; ">
             <b>为了避免系统出错，已有提交的题目不允许在提交答案和非提交答案之间更改。</b><br>
@@ -125,11 +127,15 @@ $(function () {
   $('a[data-tab="traditional"]').click(function () {
     $('input[name=type]').val('traditional');
     if ($('div[data-tab="interaction"]').attr('data-tab', 'traditional').length) $('a[data-tab="traditional"]').click();
+
+    $('#io-type').show();
   });
 
   $('a[data-tab="interaction"]').click(function () {
     $('input[name=type]').val('interaction');
     if ($('div[data-tab="traditional"]').attr('data-tab', 'interaction').length) $('a[data-tab="interaction"]').click();
+
+    $('#io-type').hide();
   });
 
   $('a[data-tab="submit-answer"]').click(function () {

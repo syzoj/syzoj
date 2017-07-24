@@ -37,7 +37,7 @@
                 i++;
                 let condition;
                 if (contest.type === 'acm') condition = item.player.score_details[problem.id] && item.player.score_details[problem.id].accepted && (minPos === -1 || item.player.score_details[problem.id].acceptedTime < min.player.score_details[problem.id].acceptedTime);
-                else condition = item.player.score_details[problem.id] && item.player.score_details[problem.id].score === 100 && (minPos === -1 || item.player.score_details[problem.id].time < min.player.score_details[problem.id].time);
+                else condition = item.player.score_details[problem.id] && item.player.score_details[problem.id].score === 100 && (minPos === -1 || item.player.score_details[problem.id].judge_state.submit_time < min.player.score_details[problem.id].judge_state.submit_time);
                 if (condition) {
                   min = item;
                   minPos = i;
@@ -54,9 +54,7 @@
             <tr>
                 <%
                   if (contest.type === 'noi' || contest.type === 'ioi') {
-                    console.log(i);
-                    console.log(lastItem);
-                    if (i === 1 || item.player.score !== lastItem.player.score) rank++;
+                    if (i === 1 || item.player.score !== lastItem.player.score) rank = i;
                   } else if (contest.type === 'acm') {
                     for (let problem of problems) {
                       if (item.player.score_details[problem.id] && item.player.score_details[problem.id].accepted) {
@@ -66,7 +64,7 @@
                     }
                     item.player.timeSum = timeSum;
 
-                    if (i === 1 || item.player.score !== lastItem.player.score || item.player.timeSum !== lastItem.player.timeSum) rank++;
+                    if (i === 1 || item.player.score !== lastItem.player.score || item.player.timeSum !== lastItem.player.timeSum) rank = i;
                   }
                 %>
                 <td>

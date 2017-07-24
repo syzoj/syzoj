@@ -95,7 +95,7 @@ function getIcon(filename) {
                         <i class="remove icon"></i>
                         否
                       </div>
-                      <a class="ui green ok inverted button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'delete', file.filename]) %>">
+                      <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'delete', file.filename]) %>">
                         <i class="checkmark icon"></i>
                         是
                       </a>

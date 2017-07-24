@@ -60,6 +60,17 @@ global.syzoj = {
     let multer = require('multer');
     app.multer = multer({ dest: syzoj.utils.resolvePath(syzoj.config.upload_dir, 'tmp') });
 
+    // Trick to bypass CSRF for APIv2
+    app.use((() => {
+      let router = new Express.Router();
+      app.apiRouter = router;
+      require('./modules/api_v2');
+      return router;
+    })());
+
+    let csurf = require('csurf');
+    app.use(csurf({ cookie: true }));
+
     await this.connectDatabase();
     this.loadHooks();
     this.loadModules();

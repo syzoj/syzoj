@@ -1,13 +1,13 @@
 <% include util %>
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+<head data-csrf-token="<%= req.csrfToken() %>">
     <meta charset="utf-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <title><%= title %> - <%= syzoj.config.title %></title>
     <link href="/libs/semantic-ui/semantic.min.css" rel="stylesheet">
     <link href="/tomorrow.css" rel="stylesheet">
-    <link href="/mathjax.css" rel="stylesheet">
+    <link href="/mathjax.css?20170713" rel="stylesheet">
     <link href="/libs/KaTeX/katex.min.css" rel="stylesheet">
     <link href="/libs/morris.js/morris.css" rel="stylesheet">
     <link href="/style.css?20170706" rel="stylesheet">
@@ -34,7 +34,7 @@
                 <%= user.username %><% if (user.nameplate) { %><%- user.nameplate %><% } %> <i class="dropdown icon"></i>
                 <div class="menu">
                   <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="edit icon"></i>修改资料</a>
-                  <a class="item" href="#" id="logout"><i class="power icon"></i>注销</a>
+                  <a class="item" href-post="<%= syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }) %>"><i class="power icon"></i>注销</a>
                 </div>
               </div>
               </a>

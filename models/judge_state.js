@@ -48,9 +48,8 @@ let model = db.define('judge_state', {
   submit_time: { type: Sequelize.INTEGER },
   /*
    * "type" indicate it's contest's submission(type = 1) or normal submission(type = 0)
-   * type = 2: this is a test submission
    * if it's contest's submission (type = 1), the type_info is contest_id
-   * use this way represent because it's easy to expand
+   * use this way represent because it's easy to expand // Menci：这锅我不背，是 Chenyao 留下来的坑。
    */
   type: { type: Sequelize.INTEGER },
   type_info: { type: Sequelize.INTEGER }
@@ -105,7 +104,7 @@ class JudgeState extends Model {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0 || this.type == 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -120,7 +119,7 @@ class JudgeState extends Model {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0 || this.type === 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -135,7 +134,7 @@ class JudgeState extends Model {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0 || this.type === 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -150,7 +149,7 @@ class JudgeState extends Model {
     await this.loadRelationships();
 
     if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0 || this.type === 2) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
+    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (await contest.isRunning()) {
@@ -174,30 +173,28 @@ class JudgeState extends Model {
   }
 
   async updateRelatedInfo(newSubmission) {
-    if (this.type === 0 || this.type === 2) {
-      if (newSubmission) {
-        await this.loadRelationships();
-        await this.user.refreshSubmitInfo();
-        this.problem.submit_num++;
-        await this.user.save();
-        await this.problem.save();
-      } else if (this.status === 'Accepted') {
-        await this.loadRelationships();
-        await this.user.refreshSubmitInfo();
-        this.problem.ac_num++;
-        await this.user.save();
-        await this.problem.save();
-      }
-    } else if (this.type === 1) {
-      let contest = await Contest.fromID(this.type_info);
-      await contest.newSubmission(this);
-    } else if (this.type === 2) {
-      if (newSubmission || this.status === 'Accepted') {
-        await this.loadRelationships();
-        await this.user.refreshSubmitInfo();
-        await this.user.save();
-      }
-    }
+    await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'problem', this.problem_id], async () => {
+      await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'user', this.user_id], async () => {
+        if (this.type === 0) {
+          if (newSubmission) {
+            await this.loadRelationships();
+            await this.user.refreshSubmitInfo();
+            this.problem.submit_num++;
+            await this.user.save();
+            await this.problem.save();
+          } else if (this.status === 'Accepted') {
+            await this.loadRelationships();
+            await this.user.refreshSubmitInfo();
+            this.problem.ac_num++;
+            await this.user.save();
+            await this.problem.save();
+          }
+        } else if (this.type === 1) {
+          let contest = await Contest.fromID(this.type_info);
+          await contest.newSubmission(this);
+        }
+      });
+    });
   }
 
   async rejudge() {
@@ -219,7 +216,9 @@ class JudgeState extends Model {
 
       let WaitingJudge = syzoj.model('waiting_judge');
       let waiting_judge = await WaitingJudge.create({
-        judge_id: this.id
+        judge_id: this.id,
+        priority: 2,
+        type: 'submission'
       });
 
       await waiting_judge.save();
@@ -229,7 +228,7 @@ class JudgeState extends Model {
         await this.user.save();
       }
 
-      if (this.type === 0 || this.type === 2) {
+      if (this.type === 0) {
         if (oldStatus === 'Accepted') {
           this.problem.ac_num--;
           await this.problem.save();

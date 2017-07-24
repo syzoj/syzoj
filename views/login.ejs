@@ -58,7 +58,8 @@ function login() {
         type: 'POST',
         data: {
             "username": $("#username").val(),
-            "password": password
+            "password": password,
+            "_csrf": document.head.getAttribute('data-csrf-token')
         },
         async: true,
         success: function(data) {
