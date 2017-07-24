@@ -83,7 +83,7 @@ class JudgeState extends Model {
       submit_time: parseInt((new Date()).getTime() / 1000),
 
       type: 0,
-      type_info: '',
+      type_info: 0,
 
       pending: true,
 
