@@ -104,7 +104,7 @@ app.get('/problems/search', async (req, res) => {
       }
     }
 
-    let order = [syzoj.db.literal('`id` = ' + id + ' DESC')];
+    let order = [syzoj.db.literal('`id` = ' + id + ' DESC'), ['id', 'ASC']];
 
     let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.query(paginate, where, order);
