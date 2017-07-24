@@ -258,16 +258,16 @@ module.exports = {
           score: st.score,
           type: st.type,
           cases: st.cases.map(c => {
-            function getFileName(template, id) {
+            function getFileName(template, id, mustExist) {
               let s = template.split('#').join(String(id));
-              if (!list.includes(s)) throw `找不到文件 ${s}`;
+              if (mustExist && !list.includes(s)) throw `找不到文件 ${s}`;
               return s;
             }
 
             let o = {};
-            if (input) o.input = getFileName(input, c);
-            if (output) o.output = getFileName(output, c);
-            if (answer) o.answer = getFileName(answer, c);
+            if (input) o.input = getFileName(input, c, true);
+            if (output) o.output = getFileName(output, c, true);
+            if (answer) o.answer = getFileName(answer, c, false);
 
             return o;
           })
