@@ -497,11 +497,15 @@ body > .ui.page.dimmer {
 
 /* code tag */
 :not(pre) > code {
-    background: #E0E1E2;
-    padding: 2px;
-    border-radius: 2px;
-    color: rgba(0, 0, 0, 0.6);
-    font-size: 0.85em;
+    background-color: rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    display: inline-block;
+    font-family: "Monaco","Menlo","Ubuntu Mono","Consolas","source-code-pro",monospace;
+    font-size: 0.95em;
+    font-weight: bold;
+    padding: 1px 6px;
+    vertical-align: baseline;
+    color: #444;
 }
 
 /* Animated spinner */
