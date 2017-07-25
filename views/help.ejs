@@ -8,6 +8,7 @@
             C++ 使用 <code>g++</code> 编译，命令为 &nbsp;<code>g++ source_file.cpp -o exec_file -O2 -lm -DONLINE_JUDGE</code>；
             <br> C 使用 <code>gcc</code> 编译，命令为 &nbsp;<code>gcc source_file.c -o exec_file -O2 -lm -DONLINE_JUDGE</code>；
             <br> Pascal 使用 <code>fpc</code> 编译，命令为 &nbsp;<code>fpc source_file.pas -O2</code>。
+            <br> Java 编译时会自动检测您的代码中 <code>public class</code>，如果您的代码中没有 <code>public class</code>，请将入口类命名为 <code>Main</code>。
             <br> C# 与 Visual Basic 使用 Mono 平台的编译器与运行环境。
             <br>
         </p>
@@ -18,62 +19,70 @@
         <p>个性签名可以使用 Markdown 与 HTML，请不要在其中添加恶意代码。</p>
         <h2 class="ui header">添加题目</h2>
         <h3 class="ui header">题面</h3>
-        <div>
-            <p>在<a href="/problem/0/edit">添加题目页面</a>填写题面，题目内容使用 Markdown 与 TeX 公式。</p>
-            <h3 class="ui header">测试数据</h3>
-            <p>在添加好的题目页面选择「管理」，可以调整时间和内存限制。数据包是一个 <code>zip</code> 压缩包：</p>
-            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>xxx.zip
-<span class="hljs-string">|</span>
-<span class="hljs-string">|--data_rule.txt</span>
-<span class="hljs-string">|--input1.in</span>
-<span class="hljs-string">|--output1.out</span>
-<span class="hljs-string">|--input2.in</span>
-<span class="hljs-string">|--output2.out</span>
-<span class="hljs-string">|--......</span>
-</code></pre>
-            </div>
-            <p>其中&nbsp;<code>data_rule.txt</code>&nbsp;格式类似这样三行：</p>
-            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>1 2 3 4 5 6 7 8 9 10
-input#.in
-output#.out
-</code></pre>
-            </div>
-            <ul>
-                <li>第一行表示有哪些测试点，用空格分开；</li>
-                <li>第二行表示输入文件名字，其中&nbsp;<code>#</code>&nbsp;会被替换成相应的测试点编号；</li>
-                <li>第三行表示输出文件名字，其中&nbsp;<code>#</code>&nbsp;会被替换成相应的测试点编号。</li>
-            </ul>
-            <p>如果需要配置<strong>子任务</strong>，则需要改为以下格式：</p>
-            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>sum:30  1 2 3
-min:20  4 5 6
-mul:50  7 8 9 10
+        <p>在<a href="/problem/0/edit">添加题目页面</a>填写题面，题目内容使用 Markdown 与 TeX 公式。</p>
+        <h3 class="ui header">测试数据</h3>
+<p>旧版的 <code>data_rule.txt</code> 已经停止使用，新加入的题目请使用新的 <code>data.yml</code> 配置文件。关于 YAML，详见 <a href="https://zh.wikipedia.org/wiki/YAML">YAML 的 Wikipedia 词条</a>。</p>
+<p>对于传统和提交答案题目，<code>data.yml</code> 是可选的，系统会自动识别您的数据包，将每个 <code>.in</code> 文件对应到 <code>.out</code> 或 <code>.ans</code> 文件，并将 <code>spj_</code> 开头的文件作为 Special Judge（详见下文的「Special Judge」）。</p>
+<h4>传统</h4>
+<p>对于传统题目，<code>data.yml</code> 的格式如下：</p>
+<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code class="lang-yaml"><span class="pl-l-Scalar-Plain">subtasks</span><span class="pl-p-Indicator">:</span>
+  <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">score</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">30</span>              <span class="pl-c1"># 这个子任务的分数（注意，所有子任务的总分必须为 100）</span>
+    <span class="pl-l-Scalar-Plain">type</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">sum</span>              <span class="pl-c1"># 子任务类型，可选的值有 sum、min 和 mul.</span>
+    <span class="pl-l-Scalar-Plain">cases</span><span class="pl-p-Indicator">:</span> <span class="pl-p-Indicator">[</span><span class="pl-nv">1</span><span class="pl-p-Indicator">,</span> <span class="pl-nv">2</span><span class="pl-p-Indicator">,</span> <span class="pl-nv">3</span><span class="pl-p-Indicator">]</span>       <span class="pl-c1"># 测试点编号可为数字</span>
+  <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">score</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">30</span>              <span class="pl-c1"># 另一个子任务</span>
+    <span class="pl-l-Scalar-Plain">type</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">mul</span>
+    <span class="pl-l-Scalar-Plain">cases</span><span class="pl-p-Indicator">:</span> <span class="pl-p-Indicator">[</span><span class="pl-s">'4'</span><span class="pl-p-Indicator">,</span> <span class="pl-s">'5'</span><span class="pl-p-Indicator">,</span> <span class="pl-s">'6'</span><span class="pl-p-Indicator">]</span> <span class="pl-c1"># 测试点编号也可为字符串</span>
 
-input#.in
-output#.out
-</code></pre></div>
-            原有的第一行改为若干行（空白行将被忽略），每行表示一个子任务，冒号前面为评分方式，后面为该子任务的总分数，之后若干个整数表示测试点编号。支持的评分方式有：
-            <ul>
-                <li><code>sum</code>：测试点分数按百分比相加；</li>
-                <li><code>mul</code>：测试点分数按百分比相乘；</li>
-                <li><code>min</code>：取各测试点最低分；</li>
-            </ul>
-            <p>注意：<span><code>zip</code> 包内<strong>没有</strong>一层文件夹，直接是上述文件。如果不希望将数据打包，可以通过题目页面的「测试数据」按钮进入测试数据文件上传的页面。</span>
-            </p>
-            <p>如果没有 <code>data_rule.txt</code>，则评测系统会自动将 <code>.in</code> 文件与同名的 <code>.out</code> 或 <code>.ans</code> 匹配。</p>
-            <p>如果需要配置提交答案题目的数据，请添加额外的一行，表示用户提交的文件名：</p>
-            <div class="ui existing segment" style="border-radius: 0.285714rem; font-size: 14px;"><pre style="margin-top: 0px; margin-bottom: 0px;"><code>sum:30  1 2 3
-min:20  4 5 6
-mul:50  7 8 9 10
+<span class="pl-l-Scalar-Plain">inputFile</span><span class="pl-p-Indicator">:</span> <span class="pl-s">'dat#.in'</span>   <span class="pl-c1"># 测试数据包中的输入文件</span>
+<span class="pl-l-Scalar-Plain">outputFile</span><span class="pl-p-Indicator">:</span> <span class="pl-s">'dat#.ans'</span> <span class="pl-c1"># 测试数据包中的输出文件</span>
+<span class="pl-c1"># 上述文件名中的 # 字符将被替换为测试点编号</span>
 
-input#.in
-output#.out
-submit#.out
+<span class="pl-c1"># 可选 - Special Judge</span>
+<span class="pl-l-Scalar-Plain">specialJudge</span><span class="pl-p-Indicator">:</span>
+  <span class="pl-l-Scalar-Plain">language</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">cpp</span>
+  <span class="pl-l-Scalar-Plain">fileName</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">spj.cpp</span>
+
+<span class="pl-c1"># 可选 - 附加源文件</span>
+<span class="pl-c1"># 例如，给选手提供一个 C++ 头文件，选手可以引用它，调用您提供的代码。</span>
+<span class="pl-c1"># 常用于封装交互库</span>
+<span class="pl-l-Scalar-Plain">extraSourceFiles</span><span class="pl-p-Indicator">:</span>
+  <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">language</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">cpp</span>
+    <span class="pl-l-Scalar-Plain">files</span><span class="pl-p-Indicator">:</span> <span class="pl-c1"># 这是一个数组</span>
+     <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">name</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">itlib_cpp.h</span>     <span class="pl-c1"># 数据包中的文件名</span>
+       <span class="pl-l-Scalar-Plain">dest</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">interaction.h</span>   <span class="pl-c1"># 目标文件名，在编译时被放置在与选手程序的同一目录下</span>
+  <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">language</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">c</span> <span class="pl-c1"># 给不同的语言提供不同的附加源文件</span>
+    <span class="pl-l-Scalar-Plain">files</span><span class="pl-p-Indicator">:</span>
+      <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">name</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">itlib_c.h</span>
+        <span class="pl-l-Scalar-Plain">dest</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">interaction.h</span>
 </code></pre></div>
-            <h3 class="ui header">Special Judge</h3>
-            <p>如果需要使用 Special Judge 评分，请在数据包中添加 <code>spj_LANG.xxx</code>，其中 <code>xxx</code> 为任意后缀名，<code>LANG</code> 为所用语言的简称，可为 <code>c</code>、<code>cpp</code>、<code>cpp11</code>、<code>csharp</code>、<code>haskell</code>、<code>java</code>、<code>lua</code>、<code>nodejs</code>、<code>pascal</code>、<code>python2</code>、<code>python3</code>、<code>ruby</code>、<code>vala</code>、<code>vbnet</code>。</p>
-            <p>Special Judge 程序运行时，其目录下会有四个文件 <code>input</code>、<code>user_out</code>、<code>answer</code>、<code>code</code>，分别对应该测试点的输入文件、用户输出、该测试点的输出文件、用户的代码（对于非提交答案题目）。</p>
-            <p>Special Judge 程序运行完成后，应将该测试点的得分输出到<strong>标准输出</strong>（<code>stdout</code>）中（范围为 0 到 100，将自动折合为测试点分数），并将提供给用户的额外信息输出到<strong>标准错误输出</strong>（<code>stderr</code>）中。</p>
-        </div>
+<h4>提交答案</h4>
+<p>对于提交答案题目，<code>inputFile</code> 和 <code>outputFile</code> 可以省略，用 <code>userOutput</code> 表示用户提交的答案文件名。</p>
+<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code class="lang-yaml"><span class="pl-l-Scalar-Plain">userOutput</span><span class="pl-p-Indicator">:</span> <span class="pl-s">'dat#.out'</span>
+</code></pre></div>
+<h4>交互</h4>
+<p>对于交互题目，需要加入以下内容：</p>
+<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code class="lang-yaml"><span class="pl-c1"># 交互器</span>
+<span class="pl-l-Scalar-Plain">interactor</span><span class="pl-p-Indicator">:</span>
+  <span class="pl-l-Scalar-Plain">language</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">cpp</span>
+  <span class="pl-l-Scalar-Plain">fileName</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">interactor.cpp</span>
+</code></pre></div>
+<p>交互器和选手程序同时运行，交互器的标准输入和标准输出连接了选手程序的标准输出和标准输入 —— 交互通过输入输出进行。</p>
+<p>交互器运行时，其目录下会有 <code>input</code> 文件，表示该测试点的输入文件。交互器运行结束后，需要将选手得分写入 <code>score.txt</code> 文件中，并将提供给用户的额外信息输出到标准错误输出（<code>stderr</code>）中。</p>
+<p>如果您希望实现 NOI 试题风格的交互（选手通过函数调用与交互器交互），请编写一些头文件作为「附加源文件」并封装标准输入输出的交互。</p>
+<h4>子任务</h4>
+<p>子任务是一组测试点的集合，一个子任务的分数由其包含的测试点的分数计算而来，具体的计算方式根据子任务类型而定：</p>
+<ul>
+<li><code>sum</code>：测试点分数按百分比相加；</li>
+<li><code>mul</code>：测试点分数按百分比相乘；</li>
+<li><code>min</code>：取各测试点最低分。</li>
+</ul>
+<h4>Special Judge</h4>
+<p>Special Judge 用于<strong>传统</strong>或<strong>提交答案</strong>题目。</p>
+<p>如果您没有编写 <code>data.yml</code>，请在数据包中添加 <code>spj_LANG.xxx</code>，其中 <code>xxx</code> 为任意后缀名，<code>LANG</code> 为所用语言的简称。</p>
+<p>Special Judge 程序运行时，其目录下会有四个文件 <code>input</code>、<code>user_out</code>、<code>answer</code>、<code>code</code>，分别对应该测试点的输入文件、用户输出、该测试点的输出文件、用户的代码（对于非提交答案题目）。</p>
+<p>Special Judge 程序运行完成后，应将该测试点的得分输出到标准输出（<code>stdout</code>）中（范围为 <code>0</code> 到 <code>100</code>，将自动折合为测试点分数），并将提供给用户的额外信息输出到标准错误输出（<code>stderr</code>）中。</p>
+<h4>语言简称</h4>
+<p>配置数据时，描述 Special Judge 或交互器的语言时使用语言的简称，它们是 <code>c</code>、<code>cpp</code>、<code>cpp11</code>、<code>csharp</code>、<code>haskell</code>、<code>java</code>、<code>lua</code>、<code>luajit</code>、<code>nodejs</code>、<code>pascal</code>、<code>python2</code>、<code>python3</code>、<code>ruby</code>、<code>vala</code>、<code>vbnet</code>、<code>ocaml</code>。</p>
     </div>
 </div>
 <% include footer %>
