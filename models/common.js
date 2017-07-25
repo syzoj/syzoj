@@ -117,7 +117,7 @@ class Model {
         options.limit = paginate[1] - paginate[0] + 1;
       } else if (paginate) {
         options.offset = (paginate.currPage - 1) * paginate.perPage;
-        options.limit = paginate.perPage;
+        options.limit = parseInt(paginate.perPage);
       }
 
       records = await this.model.findAll(options);
