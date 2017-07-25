@@ -1,0 +1,79 @@
+<% this.adminPage = 'info'; %>
+<% include admin_header %>
+<style>
+.ui.statistics {
+  width: 100%;
+}
+
+.statistic {
+  width: calc(100% / 3 - 3em);
+}
+
+.statistic .icon {
+  font-size: 0.7em;
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 2px;
+}
+
+.statistic .label {
+  font-weight: normal !important;
+}
+</style>
+<div class="ui statistics">
+  <div class="statistic">
+    <div class="value">
+      <i class="tasks icon"></i>
+      <%= allSubmissionsCount %>
+    </div>
+    <div class="label">
+      总评测量
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="tasks icon"></i>
+      <%= todaySubmissionsCount %>
+    </div>
+    <div class="label">
+      今日评测量
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="list icon"></i>
+      <%= problemsCount %>
+    </div>
+    <div class="label">
+      题目数量
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="comments icon"></i>
+      <%= articlesCount %>
+    </div>
+    <div class="label">
+      讨论数量
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="calendar icon"></i>
+      <%= contestsCount %>
+    </div>
+    <div class="label">
+      比赛数量
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="user icon"></i>
+      <%= usersCount %>
+    </div>
+    <div class="label">
+      用户数量
+    </div>
+  </div>
+</div>
+<% include admin_footer %>

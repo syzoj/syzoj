@@ -1,0 +1,108 @@
+<% this.adminPage = 'rejudge'; %>
+<% include admin_header %>
+<form method="post" class="ui form">
+
+  <div class="four fields">
+    <div class="field">
+      <label>题目 ID</label>
+      <input type="text" name="problem_id" placeholder="题目 ID" value="<%= form.problem_id %>">
+    </div>
+    <div class="field">
+      <label>用户名</label>
+      <input type="text" name="submitter" placeholder="用户名" value="<%= form.submitter %>">
+    </div>
+    <div class="field">
+      <label>语言</label>
+      <div class="ui selection dropdown">
+        <input type="hidden" name="language" value="<%= form.language %>">
+        <i class="dropdown icon"></i>
+        <div class="default text"></div>
+        <div class="menu">
+          <div class="item" data-value="">不限</div>
+          <div class="item" data-value="submit-answer">提交答案</div>
+          <% for (let lang in syzoj.config.languages) { %>
+            <div class="item" data-value="<%= lang %>"><%= syzoj.config.languages[lang].show %></div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>状态</label>
+      <div class="ui selection dropdown">
+        <input type="hidden" name="status" value="<%= form.status %>">
+        <i class="dropdown icon"></i>
+        <div class="default text"></div>
+        <div class="menu">
+          <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
+          <% for (let status in this.icon) { %>
+            <% if (this.iconHidden.includes(status)) continue; %>
+            <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="three fields">
+    <div class="field">
+      <label>ID（最小值）</label>
+      <input type="text" name="min_id" placeholder="ID（最小值）" value="<%= form.min_id %>">
+    </div>
+    <div class="field">
+      <label>分数（最小值）</label>
+      <input type="text" name="min_score" placeholder="分数（最小值）" value="<%= form.min_score %>">
+    </div>
+    <div class="field">
+      <label>提交时间（最小值）</label>
+      <input type="text" name="min_time" placeholder="提交时间（最小值）" value="<%= form.min_time || syzoj.utils.formatDate(0) %>">
+    </div>
+  </div>
+  <div class="three fields">
+    <div class="field">
+      <label>ID（最大值）</label>
+      <input type="text" name="max_id" placeholder="ID（最大值）" value="<%= form.max_id %>">
+    </div>
+    <div class="field">
+      <label>分数（最大值）</label>
+      <input type="text" name="max_score" placeholder="分数（最大值）" value="<%= form.max_score %>">
+    </div>
+    <div class="field">
+      <label>提交时间（最大值）</label>
+      <input type="text" name="max_time" placeholder="提交时间（最大值）" value="<%= form.max_time || syzoj.utils.formatDate(2147483647) %>">
+    </div>
+  </div>
+
+  <div style="text-align: center; ">
+    <button class="ui button" name="type" value="query">查询</button>
+    <% if (form.type === 'rejudge') { %>
+      <button class="ui blue disabled button" name="type" value="rejudge">已重测 <%= count %> 条记录</button>
+    <% } else if (count !== null) { %>
+      <a onclick="$('#modal-rejudge').modal('show');" class="ui blue<% if (count === 0) { %> disabled<% } %> button"><% if (count === 0) { %>没有符合条件的记录<% } else { %>重测 <%= count %> 条记录<% } %></a>
+      <button id="submit_rejudge" name="type" value="rejudge" style="display: none; "></button>
+      <div class="ui basic modal" id="modal-rejudge">
+        <div class="ui icon header">
+          <i class="refresh icon"></i>
+          <p style="margin-top: 15px; ">重新评测</p>
+        </div>
+        <div class="content" style="text-align: center; ">
+          <p>确认重新评测 <%= count %> 条记录吗？</p>
+        </div>
+        <div class="actions">
+          <div class="ui red basic cancel inverted button">
+            <i class="remove icon"></i>
+            否
+          </div>
+          <button class="ui green ok inverted button" onclick="$('#submit_rejudge').click()">
+            <i class="checkmark icon"></i>
+            是
+          </button>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</form>
+<script>
+$(function () {
+  $('.ui.dropdown').dropdown();
+});
+</script>
+<% include admin_footer %>

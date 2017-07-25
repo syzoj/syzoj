@@ -23,6 +23,7 @@ let fs = require('fs'),
     path = require('path');
 
 global.syzoj = {
+  rootDir: __dirname,
   config: require('./config.json'),
   models: [],
   modules: [],

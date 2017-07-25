@@ -173,8 +173,15 @@ module.exports = {
   parseDate(s) {
     return parseInt(+new Date(s) / 1000);
   },
-  getCurrentDate() {
-    return parseInt(+new Date / 1000);
+  getCurrentDate(removeTime) {
+    let d = new Date;
+    if (removeTime) {
+      d.setHours(0);
+      d.setMinutes(0);
+      d.setSeconds(0);
+      d.setMilliseconds(0);
+    }
+    return parseInt(+d / 1000);
   },
   makeUrl(req_params, form) {
     let res = '';
@@ -348,5 +355,9 @@ module.exports = {
     } catch (e) {
       return false;
     }
+  },
+  async saveConfig() {
+    let fs = require('fs-extra');
+    fs.writeFileAsync(syzoj.rootDir + '/config.json', JSON.stringify(syzoj.config, null, 2));
   }
 };

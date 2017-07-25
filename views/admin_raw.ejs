@@ -1,0 +1,34 @@
+<% this.adminPage = 'raw'; %>
+<% include admin_header %>
+<form method="post" class="ui form">
+
+<div id="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "><%= data %></div>
+<input type="hidden" name="data">
+
+<script src="/libs/ace/ace.js"></script>
+<script type="text/javascript">
+var editor = ace.edit("editor");
+
+editor.setTheme("ace/theme/tomorrow");
+editor.getSession().setMode("ace/mode/json");
+editor.getSession().setUseSoftTabs(false);
+
+editor.container.name = 'data';
+editor.container.style.lineHeight = 1.6;
+editor.container.style.fontSize = '14px';
+editor.container.style.fontFamily = "'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace";
+editor.setShowPrintMargin(false);
+editor.renderer.updateFontSize();
+
+var input = $('[name="data"]');
+editor.getSession().on("change", function () {
+  input.val(editor.getSession().getValue());
+});
+</script>
+
+
+<div style="text-align: center; ">
+  <button class="ui blue button">提交</button>
+</div>
+</form>
+<% include admin_footer %>

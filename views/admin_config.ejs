@@ -1,0 +1,54 @@
+<% this.adminPage = 'config'; %>
+<% include admin_header %>
+<form method="post" class="ui form">
+<%
+function showTitle(title) {
+  %><h4 class="ui dividing header"><%= title  %></h4><%
+}
+
+function showStringItem(name, text, val) {
+  %>
+  <div class="ui fluid input inline field">
+    <label style="line-height: 37.8px; font-weight: normal; "><%= text %></label>
+    <input type="text" name="<%= name %>" value="<%= val %>">
+  </div>
+  <%
+}
+
+function showNumberItem(name, text, val) {
+  %>
+  <div class="ui fluid input inline field">
+    <label style="line-height: 37.8px; font-weight: normal; "><%= text %></label>
+    <input type="number" name="<%= name %>" value="<%= val %>">
+  </div>
+  <%
+}
+
+function showBooleanItem(name, text, val) {
+  %>
+  <div class="inline field">
+    <div class="ui toggle checkbox">
+      <input name="<%= name %>" type="checkbox" class=""<% if (val) { %> checked<% } %>>
+      <label><%= text %></label>
+    </div>
+  </div>
+  <%
+}
+
+for (let item in items) {
+  if (items[item] === null) {
+    showTitle(item);
+  } else if (items[item].type === String) {
+    showStringItem(item, items[item].name, items[item].val);
+  } else if (items[item].type === Number) {
+    showNumberItem(item, items[item].name, items[item].val);
+  } else {
+    showBooleanItem(item, items[item].name, items[item].val);
+  }
+}
+%>
+<div style="text-align: center; ">
+  <button class="ui blue button">提交</button>
+</div>
+</form>
+<% include admin_footer %>

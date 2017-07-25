@@ -2,8 +2,21 @@ var addUrlParam = function (url, key, val) {
   var newParam = encodeURIComponent(key) + '=' + encodeURIComponent(val);
 
   url = url.split('#')[0];
-  if (url.indexOf('?') === -1) url += '?' + newParam;
-  else url += '&' + newParam;
+  var twoPart = url.split('?'), params = {};
+  var tmp = twoPart[1] ? twoPart[1].split('&') : [];
+  for (let i in tmp) {
+    let a = tmp[i].split('=');
+    params[a[0]] = a[1];
+  }
+
+  params[key] = val;
+
+  url = twoPart[0] + '?';
+  for (let key in params) {
+    url += encodeURIComponent(key) + '=' + encodeURIComponent(params[key]) + '&';
+  }
+
+  url = url.substring(0, url.length - 1);
 
   return url;
 };

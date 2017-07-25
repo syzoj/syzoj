@@ -1,0 +1,78 @@
+<%
+this.adminPage = 'links';
+%>
+<% include admin_header %>
+<table class="ui center aligned celled table">
+<thead>
+  <tr>
+    <th>名称</th>
+    <th>链接</th>
+    <th width="50px">删除</th>
+  </tr>
+</thead>
+
+<tbody>
+  <% for (let i = 0; i < links.length; i++) { %>
+    <tr>
+      <td><%= links[i].title %></td>
+      <td><a href="<%= links[i].url %>"><%= links[i].url %></a></td>
+      <td>
+        <a onclick="$('#modal-remove-<%= i %>').modal('show');" style="color: #000; " href="#"><i class="remove icon"></i></a>
+        <div class="ui basic modal" id="modal-remove-<%= i %>">
+          <div class="ui icon header">
+            <i class="remove icon"></i>
+            <p style="margin-top: 15px; ">删除友链</p>
+          </div>
+          <div class="content" style="text-align: center; ">
+            <p>确认删除该友链吗？</p>
+          </div>
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              否
+            </div>
+            <a class="ui green ok inverted button remove_link" data-id="<%= i %>">
+              <i class="checkmark icon"></i>
+              是
+            </a>
+          </div>
+        </div>
+      </td>
+    </tr>
+  <% } %>
+</tbody>
+</table>
+
+<div class="ui form">
+  <div class="two fields">
+    <div class="field">
+      <label>名称</label>
+      <input type="text" id="add_title">
+    </div>
+    <div class="field">
+      <label>链接</label>
+      <input type="text" id="add_url">
+    </div>
+  </div>
+  <div style="text-align: center; "><div id="add_button" class="ui submit button">添加</a></div>
+</div>
+
+<form method="post" id="submit_form">
+  <input type="hidden" name="data" id="submit_data">
+</form>
+
+<script>
+var links = <%- JSON.stringify(links) %>;
+$('.remove_link').click(function () {
+  links.splice($(this).data('id'), 1);
+  $('#submit_data').val(JSON.stringify(links));
+  $('#submit_form').submit();
+});
+
+$('#add_button').click(function () {
+  links.push({ title: $('#add_title').val(), url: $('#add_url').val() });
+  $('#submit_data').val(JSON.stringify(links));
+  $('#submit_form').submit();
+});
+</script>
+<% include admin_footer %>
