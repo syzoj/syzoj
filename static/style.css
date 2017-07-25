@@ -501,7 +501,6 @@ body > .ui.page.dimmer {
     border-radius: 3px;
     display: inline-block;
     font-family: "Monaco","Menlo","Ubuntu Mono","Consolas","source-code-pro",monospace;
-    font-size: 0.95em;
     font-weight: bold;
     padding: 1px 6px;
     vertical-align: baseline;
