@@ -128,6 +128,8 @@ app.post('/admin/config', async (req, res) => {
         let val;
         if (configItems[i].type === Boolean) {
           val = req.body[i] === 'on';
+        } else if (configItems[i].type === Number) {
+          val = Number(req.body[i]);
         } else {
           val = req.body[i];
         }
