@@ -29,7 +29,7 @@ let User = syzoj.model('user');
 app.get('/contests', async (req, res) => {
   try {
     let where;
-    if (res.locals.user && await res.locals.user.is_admin) where = {}
+    if (res.locals.user && res.locals.user.is_admin) where = {}
     else where = { is_public: true };
 
     let paginate = syzoj.utils.paginate(await Contest.count(where), req.query.page, syzoj.config.page.contest);
@@ -122,6 +122,7 @@ app.get('/contest/:id', async (req, res) => {
 
     let contest = await Contest.fromID(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
+    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('无此比赛。');
 
     contest.allowedEdit = await contest.isAllowedEditBy(res.locals.user);
     contest.running = await contest.isRunning();
