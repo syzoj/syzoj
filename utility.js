@@ -245,14 +245,8 @@ module.exports = {
         res[0].type = 'sum';
         res[0].score = 100;
         res[0].cases.sort((a, b) => {
-          function getLastInteger(s) {
-            let re = /(\d+)\D*$/;
-            let x = re.exec(s);
-            if (x) return parseInt(x[1]);
-            else return -1;
-          }
-
-          return getLastInteger(a.input) - getLastInteger(b.input);
+          let extractNumerals = (s) => (s.match(/\d+/g) || []).map((x) => parseInt(x)).concat(s);
+          return extractNumerals(a.input) < extractNumerals(b.input) ? -1 : +1;
         });
 
         res.spj = list.some(s => s.startsWith('spj_'));

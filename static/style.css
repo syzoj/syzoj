@@ -322,6 +322,10 @@
     margin-top: 0;
 }
 
+.ui.segment:last-child {
+  margin-bottom: 3px;
+}
+
 .hljs {
     background: #FFF !important;
 }
@@ -501,6 +505,7 @@ body > .ui.page.dimmer {
     border-radius: 3px;
     display: inline-block;
     font-family: "Monaco","Menlo","Ubuntu Mono","Consolas","source-code-pro",monospace;
+    font-size: 0.9em;
     font-weight: bold;
     padding: 1px 6px;
     vertical-align: baseline;
