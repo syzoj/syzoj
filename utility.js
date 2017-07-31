@@ -244,9 +244,14 @@ module.exports = {
 
         res[0].type = 'sum';
         res[0].score = 100;
+        res[0].cases.forEach((e) => { e.key = (e.input.match(/\d+/g) || []).map((x) => parseInt(x)).concat(e.input); });
         res[0].cases.sort((a, b) => {
-          let extractNumerals = (s) => (s.match(/\d+/g) || []).map((x) => parseInt(x)).concat(s);
-          return extractNumerals(a.input) < extractNumerals(b.input) ? -1 : +1;
+          for (let i = 0; i < Math.max(a.key.length, b.key.length); ++i) {
+            if (a.key[i] == undefined) return -1;
+            if (b.key[i] == undefined) return +1;
+            if (a.key[i] !== b.key[i]) return (a.key[i] < b.key[i] ? -1 : +1);
+          }
+          return 0;
         });
 
         res.spj = list.some(s => s.startsWith('spj_'));
