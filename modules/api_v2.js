@@ -190,9 +190,9 @@ app.apiRouter.post('/api/v2/judge/update2', async (req, res) => {
     judge_state.score = data.score;
     judge_state.pending = false;
     judge_state.status = data.statusString;
-    this.total_time = data.time;
-    this.max_memory = data.memory;
-    this.result = data.result;
+    judge_state.total_time = data.time;
+    judge_state.max_memory = data.memory;
+    judge_state.result = data.result;
     await judge_state.save();
     await judge_state.updateRelatedInfo();
 
