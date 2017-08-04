@@ -155,30 +155,6 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
   }
 });
 
-app.apiRouter.post('/api/v2/judge/update/:id', async (req, res) => {
-  try {
-    if (req.query.session_id !== syzoj.config.judge_token) return res.status(404).send({ err: 'Permission denied' });
-
-    if (req.body.type === 'custom-test') {
-      let CustomTest = syzoj.model('custom_test');
-      let custom_test = CustomTest.fromID(req.params.id);
-      await custom_test.updateResult(JSON.parse(req.body.result));
-      await custom_test.save();
-    } else if (req.body.type === 'submission') {
-      let JudgeState = syzoj.model('judge_state');
-      let judge_state = await JudgeState.fromID(req.params.id);
-      await judge_state.updateResult(JSON.parse(req.body.result));
-      await judge_state.save();
-      await judge_state.updateRelatedInfo();
-    }
-
-    res.send({ return: 0 });
-  } catch (e) {
-    syzoj.log(e);
-    res.status(500).send(e);
-  }
-});
-
 app.apiRouter.post('/api/v2/judge/update2', async (req, res) => {
   try {
     if (req.get('Token') !== syzoj.config.judge_token) return res.status(403).send({ err: 'Incorrect token' });

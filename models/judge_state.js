@@ -161,18 +161,6 @@ class JudgeState extends Model {
     }
   }
 
-  async updateResult(result) {
-    this.score = result.score;
-    this.pending = result.pending;
-    this.status = result.status;
-    if (this.language) {
-      // language is empty if it's a submit-answer problem
-      this.total_time = result.total_time;
-      this.max_memory = result.max_memory;
-    }
-    this.result = result;
-  }
-
   async updateRelatedInfo(newSubmission) {
     await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'problem', this.problem_id], async () => {
       await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'user', this.user_id], async () => {
