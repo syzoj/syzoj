@@ -178,3 +178,27 @@ app.apiRouter.post('/api/v2/judge/update/:id', async (req, res) => {
     res.status(500).send(e);
   }
 });
+
+app.apiRouter.post('/api/v2/judge/update2', async (req, res) => {
+  try {
+    if (req.get('Token') !== syzoj.config.judge_token) return res.status(403).send({ err: 'Incorrect token' });
+    const data = req.body;
+
+    let JudgeState = syzoj.model('judge_state');
+    let judge_state = await JudgeState.fromID(req.body.taskId);
+    // await judge_state.updateResult(JSON.parse(req.body));
+    judge_state.score = data.score;
+    judge_state.pending = false;
+    judge_state.status = data.statusString;
+    this.total_time = data.time;
+    this.max_memory = data.memory;
+    this.result = data.result;
+    await judge_state.save();
+    await judge_state.updateRelatedInfo();
+
+    res.send({ return: 0 });
+  } catch (e) {
+    syzoj.log(e);
+    res.status(500).send(e);
+  }
+});

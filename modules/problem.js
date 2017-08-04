@@ -28,6 +28,8 @@ let ProblemTag = syzoj.model('problem_tag');
 let ProblemTagMap = syzoj.model('problem_tag_map');
 let Article = syzoj.model('article');
 
+const judger = require('../modules/judge');
+
 app.get('/problems', async (req, res) => {
   try {
     let where = {};
@@ -194,7 +196,7 @@ app.get('/problem/:id', async (req, res) => {
     problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
 
     if (problem.is_public || problem.allowedEdit) {
-      await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
+      await syzoj.utils.markdown(problem, ['description', 'input_format', 'output_format', 'example', 'limit_and_hint']);
     } else {
       throw new ErrorMessage('您没有权限进行此操作。');
     }
@@ -635,13 +637,11 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     }
     await judge_state.updateRelatedInfo(true);
 
-    let waiting_judge = await WaitingJudge.create({
-      judge_id: judge_state.id,
-      priority: 1,
-      type: 'submission'
-    });
-
-    await waiting_judge.save();
+    try {
+      await judger.judge(judge_state, contest_id ? 3 : 2);
+    } catch (err) {
+      throw new ErrorMessage(`无法开始评测：${err.toString()}`);
+    }
 
     res.redirect(syzoj.utils.makeUrl(['submission', judge_state.id]));
   } catch (e) {

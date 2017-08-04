@@ -20,6 +20,7 @@
 'use strict';
 
 let Sequelize = require('sequelize');
+const judger = require('../modules/judge');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
@@ -211,9 +212,10 @@ class JudgeState extends Model {
         this.max_memory = 0;
       }
       this.pending = true;
-      this.result = { status: "Waiting", total_time: 0, max_memory: 0, score: 0, case_num: 0, compiler_output: "", pending: true };
+      this.result = { };
       await this.save();
 
+      /*
       let WaitingJudge = syzoj.model('waiting_judge');
       let waiting_judge = await WaitingJudge.create({
         judge_id: this.id,
@@ -222,6 +224,7 @@ class JudgeState extends Model {
       });
 
       await waiting_judge.save();
+      */
 
       if (oldStatus === 'Accepted') {
         await this.user.refreshSubmitInfo();
@@ -237,6 +240,8 @@ class JudgeState extends Model {
         let contest = await Contest.fromID(this.type_info);
         await contest.newSubmission(this);
       }
+
+      await judger.judge(this, 1);
     });
   }
 
