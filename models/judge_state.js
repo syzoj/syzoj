@@ -20,12 +20,13 @@
 'use strict';
 
 let Sequelize = require('sequelize');
-const judger = require('../modules/judge');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
 let Problem = syzoj.model('problem');
 let Contest = syzoj.model('contest');
+
+let Judger = syzoj.lib('judger');
 
 let model = db.define('judge_state', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -229,7 +230,7 @@ class JudgeState extends Model {
         await contest.newSubmission(this);
       }
 
-      await judger.judge(this, 1);
+      await Judger.judge(this, 1);
     });
   }
 

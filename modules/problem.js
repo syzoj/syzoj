@@ -28,7 +28,7 @@ let ProblemTag = syzoj.model('problem_tag');
 let ProblemTagMap = syzoj.model('problem_tag_map');
 let Article = syzoj.model('article');
 
-const judger = require('../modules/judge');
+let Judger = syzoj.lib('judger');
 
 app.get('/problems', async (req, res) => {
   try {
@@ -638,7 +638,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     await judge_state.updateRelatedInfo(true);
 
     try {
-      await judger.judge(judge_state, contest_id ? 3 : 2);
+      await Judger.judge(judge_state, contest_id ? 3 : 2);
     } catch (err) {
       throw new ErrorMessage(`无法开始评测：${err.toString()}`);
     }

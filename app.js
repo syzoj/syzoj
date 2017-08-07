@@ -112,6 +112,9 @@ global.syzoj = {
       this.db.sync();
     });
   },
+  lib(name) {
+    return require(`./libs/${name}`);
+  },
   model(name) {
     return require(`./models/${name}`);
   },
