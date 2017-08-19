@@ -40,6 +40,9 @@ let model = db.define('judge_state', {
   pending: { type: Sequelize.BOOLEAN },
   max_memory: { type: Sequelize.INTEGER },
 
+  // For NOI contest
+  compilation: { type: Sequelize.TEXT('medium'), json: true },
+
   result: { type: Sequelize.TEXT('medium'), json: true },
 
   user_id: { type: Sequelize.INTEGER },
@@ -55,23 +58,23 @@ let model = db.define('judge_state', {
   type: { type: Sequelize.INTEGER },
   type_info: { type: Sequelize.INTEGER }
 }, {
-  timestamps: false,
-  tableName: 'judge_state',
-  indexes: [
-    {
-      fields: ['status'],
-    },
-    {
-      fields: ['score'],
-    },
-    {
-      fields: ['user_id'],
-    },
-    {
-      fields: ['problem_id'],
-    }
-  ]
-});
+    timestamps: false,
+    tableName: 'judge_state',
+    indexes: [
+      {
+        fields: ['status'],
+      },
+      {
+        fields: ['score'],
+      },
+      {
+        fields: ['user_id'],
+      },
+      {
+        fields: ['problem_id'],
+      }
+    ]
+  });
 
 let Model = require('./common');
 class JudgeState extends Model {
@@ -200,7 +203,7 @@ class JudgeState extends Model {
         this.max_memory = 0;
       }
       this.pending = true;
-      this.result = { };
+      this.result = {};
       await this.save();
 
       /*

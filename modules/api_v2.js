@@ -155,10 +155,27 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
   }
 });
 
-app.apiRouter.post('/api/v2/judge/update2', async (req, res) => {
+app.apiRouter.post('/api/v2/judge/compiled', async (req, res) => {
   try {
     if (req.get('Token') !== syzoj.config.judge_token) return res.status(403).send({ err: 'Incorrect token' });
     const data = req.body;
+
+    let JudgeState = syzoj.model('judge_state');
+    let judge_state = await JudgeState.fromID(req.body.taskId);
+    judge_state.compilation = req.body.result;
+    await judge_state.save();
+
+    res.send({ return: 0 });
+  } catch (e) {
+    syzoj.log(e);
+    res.status(500).send(e);
+  }
+});
+
+app.apiRouter.post('/api/v2/judge/finished', async (req, res) => {
+  try {
+    if (req.get('Token') !== syzoj.config.judge_token) return res.status(403).send({ err: 'Incorrect token' });
+    let data = req.body;
 
     let JudgeState = syzoj.model('judge_state');
     let judge_state = await JudgeState.fromID(req.body.taskId);
