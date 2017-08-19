@@ -158,7 +158,7 @@ app.apiRouter.post('/api/v2/judge/peek', async (req, res) => {
 app.apiRouter.post('/api/v2/judge/compiled', async (req, res) => {
   try {
     if (req.get('Token') !== syzoj.config.judge_token) return res.status(403).send({ err: 'Incorrect token' });
-    const data = req.body;
+    let data = req.body;
 
     let JudgeState = syzoj.model('judge_state');
     let judge_state = await JudgeState.fromID(req.body.taskId);
