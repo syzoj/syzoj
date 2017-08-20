@@ -23,6 +23,8 @@ let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
 let Contest = syzoj.model('contest');
 
+const jwt = require('jsonwebtoken');
+
 app.get('/submissions', async (req, res) => {
   try {
     let user = await User.fromName(req.query.submitter || '');
@@ -31,16 +33,18 @@ app.get('/submissions', async (req, res) => {
     else if (req.query.submitter) where.user_id = -1;
 
     let minScore = parseInt(req.query.min_score);
-    if (isNaN(minScore)) minScore = 0;
     let maxScore = parseInt(req.query.max_score);
-    if (isNaN(maxScore)) maxScore = 100;
 
-    where.score = {
-      $and: {
-        $gte: parseInt(minScore),
-        $lte: parseInt(maxScore)
-      }
-    };
+    if (!isNaN(minScore) || !isNaN(maxScore)) {
+      if (isNaN(minScore)) minScore = 0;
+      if (isNaN(maxScore)) maxScore = 100;
+      where.score = {
+        $and: {
+          $gte: parseInt(minScore),
+          $lte: parseInt(maxScore)
+        }
+      };
+    }
 
     if (req.query.language) {
       if (req.query.language === 'submit-answer') where.language = '';
@@ -75,7 +79,27 @@ app.get('/submissions', async (req, res) => {
     await judge_state.forEachAsync(async obj => obj.allowedSeeData = await obj.isAllowedSeeDataBy(res.locals.user));
 
     res.render('submissions', {
-      judge_state: judge_state,
+      // judge_state: judge_state,
+      items: judge_state.map((s) => ({
+        taskId: s.id,
+        user: s.user.username,
+        userId: s.user_id,
+        problemName: s.problem.title,
+        problemId: s.problem.id,
+        language: s.language != null ? syzoj.config.languages[s.language].show : null,
+        codeSize: s.allowedSeeCode ? syzoj.utils.formatSize(s.code.length) : null,
+        result: s.pending ? null : {
+          result: s.status,
+          time: s.total_time,
+          memory: s.max_memory,
+          score: s.score
+        },
+        submitTime: syzoj.utils.formatDate(s.submit_time),
+        token: s.pending ? jwt.sign({
+          taskId: s.id
+        }, syzoj.config.judge_token) : null,
+        running: false
+      })),
       paginate: paginate,
       form: req.query
     });

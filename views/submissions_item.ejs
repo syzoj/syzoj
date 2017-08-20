@@ -1,36 +1,37 @@
 <% include util %>
-<%
-let problemUrl;
-if (typeof contest !== 'undefined' && contest) problemUrl = syzoj.utils.makeUrl(['contest', contest.id, judge.problem_id]);
-else problemUrl = syzoj.utils.makeUrl(['problem', judge.problem_id]);
-%>
-<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">#<%= judge.id %></a></td>
-<td><a style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px; " id="text-fit-<%= judge.id %>" href="<%= problemUrl %>"><%= (typeof contest !== 'undefined' && contest) ? this.alpha(judge.problem_id) : ('#' + judge.problem_id) %>. <%= judge.problem.title %></a></td>
+
 <script>
-var e = document.getElementById('text-fit-<%= judge.id %>');
-textFit(e, { maxFontSize: 14 });
+Vue.component('submission-item', {
+  template: '#submissionItemTemplate',
+  props: ['data'],
+  computed: {
+    statusString: function() {
+      const data = this.data;
+      if (data.result) {
+        return data.result.result;
+      } 
+      else if (data.running) return 'Running';
+      else return 'Waiting';
+    }
+  }
+});
 </script>
-<td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">
-    <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
-    <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
-    <%= judge.status %>
-    </span>
-</a></td>
-<% if ((typeof contest === 'undefined' || !contest) || !((!user || !user.is_admin) && !contest.ended && (contest.type === 'acm' || contest.type === 'noi'))) { %>
-  <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.score / 10) || 0 %>"><%= judge.score %></span></a></td>
-  <% if (judge.problem.type !== 'submit-answer') { %>
-    <td><%= judge.total_time %> ms</td>
-    <td><%= parseInt(judge.max_memory) || 0 %> K</td>
-    <% if (judge.allowedSeeCode) { %>
-      <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
-    <% } else { %>
-      <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / 隐藏</td>
-    <% } %>
-  <% } else { %>
-    <td>-</td><td>-</td>
-    <td><%= syzoj.utils.formatSize(judge.max_memory) %></td>
-  <% } %>
-<% } %>
-<td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
-<td><%= syzoj.utils.formatDate(judge.submit_time) %>
-</td>
+
+<script id="submissionItemTemplate" type="text/x-template">
+<tr>
+  <td>#{{ data.taskId }}</td>
+  <td>#{{ data.problemId }}. {{ data.problemName }}</td>
+  <td>{{ statusString }}</td>
+  <template v-if="data.result">
+  <td>{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</td>
+  <td>{{ (data.result.time != null && data.result.time !== NaN) ? data.result.time.toString() + ' ms' : '' }}</td>
+  <td>{{ (data.result.memory != null && data.result.memory !== NaN) ? data.result.memory.toString() + ' KiB' : '' }}</td>
+  </template>
+  <template v-else>
+  <td /> <td /> <td />
+  </template>
+  <td>{{ data.language != null ? data.language + ' / ' : '' }}{{ data.codeSize }}</td>
+  <td>{{ data.user }}</td>
+  <td>{{ data.submitTime }}</td>
+</tr>
+</script>

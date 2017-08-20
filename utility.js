@@ -170,6 +170,9 @@ module.exports = {
     else res.suffix = res.suffix.replace('iB', '');
     return res.fixed + ' ' + res.suffix;
   },
+  judgeServer(suffix) {
+    return JSON.stringify(url.resolve(syzoj.config.judge_server_addr, suffix));
+  },
   parseDate(s) {
     return parseInt(+new Date(s) / 1000);
   },

@@ -63,7 +63,7 @@
       <% } %>
     </div>
   </form>
-  <table class="ui very basic center aligned table" style="white-space: nowrap; visibility: hidden; " id="table">
+  <table id="vueApp" class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
     <thead>
       <tr>
         <th>编号</th>
@@ -78,44 +78,68 @@
       </tr>
     </thead>
     <tbody>
-      <% let ids = []; %>
-      <% for (let judge of judge_state) { %>
-        <% if (judge.pending) ids.push(judge.id); %>
-        <tr id="submissions_<%= judge.id %>"><% include submissions_item %></tr>
-      <% } %>
+      <tr v-for="item in items" is='submission-item' v-bind:data="item">
+      <fake a/> <%# <-- a temporary workaround for a syntaxing bug by Visual Studio Code ejs plugin %>
+      </tr>
     </tbody>
   </table>
   <script>
-  document.getElementById('table').style.visibility = '';
+  // document.getElementById('table').style.visibility = '';
   </script>
   <br>
   <% include page %>
 </div>
+
+<script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js"></script>
+
+<% include submissions_item %>
 <script>
 $(function () {
   $('#select_language').dropdown();
   $('#select_status').dropdown();
 });
+const itemList = <%- JSON.stringify(items) %>;
 
-var ids = <%= JSON.stringify(ids) %>;
-function update() {
-  setTimeout(function () {
-    $.get('/submissions/' + ids.join(',') + '/ajax', function (data) {
-      var newIDs = [];
-      for (var id in data) {
-        if (data[id].pending) newIDs.push(id);
-        var e = $('#submissions_' + id);
-        if (e.find('span.status').text().trim() !== data[id].status) e.html(data[id].html);
-      }
+const socketUrl = <%- syzoj.utils.judgeServer('rough') %>;
+const vueApp = new Vue({
+  el: '#vueApp',
+  data: {
+    items: itemList
+  },
+});
 
-      if (newIDs.length > 0) {
-        ids = newIDs;
-        update();
-      }
-    });
-  }, 500);
+if (itemList.some(t => t.token != null)) {
+  const socket = io(socketUrl);
+  socket.on('connect', () => {
+    for (let x of itemList.filter(x => x.token != null)){
+      socket.emit('join', x.token, (data) => {
+        if (data && data.ok) {
+          if (data.running) {
+            x.running = true;
+          } else if (data.finished) {
+            x.running = false;
+            x.result = data.result;
+          }
+        } else {
+          alert("ERROR: " + JSON.stringify(data));
+        }
+      });
+
+      const getItem = (id) => itemList.find(x => x.taskId === id);
+      socket.on('start', (data) => {
+        getItem(data.taskId).running = true;
+      });
+
+      socket.on('finish', (data) => {
+        getItem(data.taskId).running = false;
+        getItem(data.taskId).result = data.result;
+        if (itemList.every(x => x.result)) {
+          socket.close();
+        }
+      });
+    }
+  })
 }
-
-update();
 </script>
 <% include footer %>
