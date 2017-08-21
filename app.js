@@ -22,9 +22,16 @@
 let fs = require('fs'),
     path = require('path');
 
+const commandLineArgs = require('command-line-args');
+const optionDefinitions = [
+    { name: 'config', alias: 'c', type: String, defaultValue: './config.json' },
+];
+
+const options = commandLineArgs(optionDefinitions);
+
 global.syzoj = {
   rootDir: __dirname,
-  config: require('./config.json'),
+  config: require(options.config),
   models: [],
   modules: [],
   db: null,

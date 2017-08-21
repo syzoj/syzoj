@@ -27,6 +27,7 @@
     "async-lock": "^0.3.9",
     "body-parser": "^1.15.2",
     "cheerio": "^1.0.0-rc.1",
+    "command-line-args": "^4.0.7",
     "cookie-parser": "^1.4.3",
     "cssfilter": "0.0.10",
     "csurf": "^1.9.0",
