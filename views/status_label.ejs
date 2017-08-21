@@ -1,0 +1,43 @@
+<script>
+const iconList = {
+  'Accepted': 'checkmark',
+  'Wrong Answer': 'remove',
+  'Runtime Error': 'bomb',
+  'Invalid Interaction': 'ban',
+  'Time Limit Exceeded': 'clock',
+  'Memory Limit Exceeded': 'microchip',
+  'Output Limit Exceeded': 'print',
+  'File Error': 'file outline',
+  'Waiting': 'hourglass half',
+  'Running': 'spinner',
+  'Compile Error': 'code',
+  'Submitted': 'checkmark', // NOI contests
+  'System Error': 'server',
+  'No Testdata': 'folder open outline',
+  'Partially Correct': 'minus',
+  'Judgement Failed': 'server',
+  'Skipped': 'ban'
+};
+Vue.component('status-label', {
+  template: '#statusIconTemplate',
+  props: ['status'],
+  computed: {
+    icon() {
+      if (this.status in iconList) {
+        return iconList[this.status];
+      } else {
+        return 'man';
+      }
+    },
+    colorClass() {
+      return this.status.toLowerCase().split(' ').join('_');
+    }
+  }
+})
+</script>
+<script type="text/x-template" id="statusIconTemplate">
+  <span class="status" :class="colorClass">
+    <i class="icon" :class="icon"></i>
+    {{ status }}
+  </span>
+</script>

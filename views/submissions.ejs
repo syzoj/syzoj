@@ -78,14 +78,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="item in items" is='submission-item' v-bind:data="item">
-      <fake a/> <%# <-- a temporary workaround for a syntaxing bug by Visual Studio Code ejs plugin %>
+      <tr v-for="item in items" :data="item" is='submission-item'>
       </tr>
     </tbody>
   </table>
-  <script>
-  // document.getElementById('table').style.visibility = '';
-  </script>
   <br>
   <% include page %>
 </div>
@@ -113,6 +109,19 @@ if (itemList.some(t => t.token != null)) {
   const socket = io(socketUrl);
   socket.on('connect', () => {
     for (let x of itemList.filter(x => x.token != null)){
+      const getItem = (id) => itemList.find(x => x.info.taskId === id);
+      socket.on('start', (data) => {
+        getItem(data.taskId).running = true;
+      });
+
+      socket.on('finish', (data) => {
+        getItem(data.taskId).running = false;
+        getItem(data.taskId).result = data.result;
+        if (itemList.every(x => x.result)) {
+          socket.close();
+        }
+      });
+
       socket.emit('join', x.token, (data) => {
         if (data && data.ok) {
           if (data.running) {
@@ -123,19 +132,6 @@ if (itemList.some(t => t.token != null)) {
           }
         } else {
           alert("ERROR: " + JSON.stringify(data));
-        }
-      });
-
-      const getItem = (id) => itemList.find(x => x.taskId === id);
-      socket.on('start', (data) => {
-        getItem(data.taskId).running = true;
-      });
-
-      socket.on('finish', (data) => {
-        getItem(data.taskId).running = false;
-        getItem(data.taskId).result = data.result;
-        if (itemList.every(x => x.result)) {
-          socket.close();
         }
       });
     }

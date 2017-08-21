@@ -1,17 +1,29 @@
 <% include util %>
+<% include status_label %>
 
 <script>
+const submissionUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['submission', 'VanDarkholme'])) %>;
+const problemUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['problem', 'VanDarkholme'])) %>;
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
   props: ['data'],
   computed: {
-    statusString: function() {
+    statusString() {
       const data = this.data;
       if (data.result) {
         return data.result.result;
       } 
       else if (data.running) return 'Running';
       else return 'Waiting';
+    },
+    submissionLink() {
+      return submissionUrl.replace('VanDarkholme', this.data.info.taskId);
+    },
+    problemLink() {
+      return problemUrl.replace('VanDarkholme', this.data.info.problemId);
+    },
+    scoreClass() {
+      return "score_" + (parseInt(this.data.result.score / 10) || 0).toString();
     }
   }
 });
@@ -19,19 +31,20 @@ Vue.component('submission-item', {
 
 <script id="submissionItemTemplate" type="text/x-template">
 <tr>
-  <td>#{{ data.taskId }}</td>
-  <td>#{{ data.problemId }}. {{ data.problemName }}</td>
-  <td>{{ statusString }}</td>
+  <td><a :href="submissionLink">#{{ data.info.taskId }}</a></td>
+  <td><a :href="problemLink">#{{ data.info.problemId }}. {{ data.info.problemName }}</a></td>
+  <td><status-label :status="statusString"></status-label></td>
+
   <template v-if="data.result">
-  <td>{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</td>
+  <td><span class="score" :class="scoreClass">{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</span></td>
   <td>{{ (data.result.time != null && data.result.time !== NaN) ? data.result.time.toString() + ' ms' : '' }}</td>
   <td>{{ (data.result.memory != null && data.result.memory !== NaN) ? data.result.memory.toString() + ' KiB' : '' }}</td>
-  </template>
-  <template v-else>
+  </template> <template v-else>
   <td /> <td /> <td />
   </template>
-  <td>{{ data.language != null ? data.language + ' / ' : '' }}{{ data.codeSize }}</td>
-  <td>{{ data.user }}</td>
-  <td>{{ data.submitTime }}</td>
+
+  <td>{{ data.info.language != null ? data.info.language + ' / ' : '' }}{{ data.info.codeSize }}</td>
+  <td>{{ data.info.user }}</td>
+  <td>{{ data.info.submitTime }}</td>
 </tr>
 </script>

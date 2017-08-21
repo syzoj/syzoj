@@ -92,11 +92,11 @@ class JudgeState extends Model {
 
       pending: true,
 
-      score: 0,
-      total_time: 0,
-      max_memory: 0,
+      score: null,
+      total_time: null,
+      max_memory: null,
       status: 'Waiting',
-      result: '{ "status": "Waiting", "total_time": 0, "max_memory": 0, "score": 0, "case_num": 0, "compiler_output": "", "pending": true }'
+      result: null
     }, val)));
   }
 

@@ -25,6 +25,25 @@ let Contest = syzoj.model('contest');
 
 const jwt = require('jsonwebtoken');
 
+// s is JudgeState
+const getSubmissionInfo = (s) => ({
+  taskId: s.id,
+  user: s.user.username,
+  userId: s.user_id,
+  problemName: s.problem.title,
+  problemId: s.problem.id,
+  language: s.language != null ? syzoj.config.languages[s.language].show : null,
+  codeSize: s.allowedSeeCode ? syzoj.utils.formatSize(s.code.length) : null,
+  submitTime: syzoj.utils.formatDate(s.submit_time),
+});
+
+const getRoughResult = (x) => (x.pending ? null : {
+  result: x.status,
+  time: x.total_time,
+  memory: x.max_memory,
+  score: x.score
+});
+
 app.get('/submissions', async (req, res) => {
   try {
     let user = await User.fromName(req.query.submitter || '');
@@ -80,77 +99,18 @@ app.get('/submissions', async (req, res) => {
 
     res.render('submissions', {
       // judge_state: judge_state,
-      items: judge_state.map((s) => ({
-        taskId: s.id,
-        user: s.user.username,
-        userId: s.user_id,
-        problemName: s.problem.title,
-        problemId: s.problem.id,
-        language: s.language != null ? syzoj.config.languages[s.language].show : null,
-        codeSize: s.allowedSeeCode ? syzoj.utils.formatSize(s.code.length) : null,
-        result: s.pending ? null : {
-          result: s.status,
-          time: s.total_time,
-          memory: s.max_memory,
-          score: s.score
-        },
-        submitTime: syzoj.utils.formatDate(s.submit_time),
-        token: s.pending ? jwt.sign({
-          taskId: s.id
+      items: judge_state.map(x => ({
+        info: getSubmissionInfo(x),
+        token: x.pending ? jwt.sign({
+          taskId: x.id,
+          type: 'rough'
         }, syzoj.config.judge_token) : null,
+        result: getRoughResult(x),
         running: false
       })),
       paginate: paginate,
       form: req.query
     });
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
-});
-
-app.get('/submissions/:ids/ajax', async (req, res) => {
-  try {
-    let ids = req.params.ids.split(','), rendered = {};
-
-    for (let id of ids) {
-      let judge_state = await JudgeState.fromID(id);
-      if (!judge_state) throw new ErrorMessage('无此提交记录。');
-
-      await judge_state.loadRelationships();
-
-      judge_state.allowedSeeCode = await judge_state.isAllowedSeeCodeBy(res.locals.user);
-      judge_state.allowedSeeData = await judge_state.isAllowedSeeDataBy(res.locals.user);
-
-      let contest;
-      if (judge_state.type === 1) {
-        contest = await Contest.fromID(judge_state.type_info);
-        contest.ended = await contest.isEnded();
-
-        let problems_id = await contest.getProblems();
-        judge_state.problem_id = problems_id.indexOf(judge_state.problem_id) + 1;
-        judge_state.problem.title = syzoj.utils.removeTitleTag(judge_state.problem.title);
-
-        if (contest.type === 'noi' && !contest.ended && !await judge_state.problem.isAllowedEditBy(res.locals.user)) {
-          if (!['Compile Error', 'Waiting', 'Compiling'].includes(judge_state.status)) {
-            judge_state.status = 'Submitted';
-          }
-        }
-      }
-
-      let o = { pending: judge_state.pending, html: null, status: judge_state.status };
-
-      o.html = await require('util').promisify(app.render).bind(app)('submissions_item', {
-        contest: contest,
-        judge: judge_state
-      });
-
-      rendered[id] = o;
-    }
-
-    res.send(rendered);
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
@@ -199,9 +159,14 @@ app.get('/submission/:id', async (req, res) => {
     }
 
     res.render('submission', {
-      hideScore, hideScore,
-      contest: contest,
-      judge: judge
+      info: getSubmissionInfo(judge),
+      roughResult: getRoughResult(judge),
+      code: judge.code.toString("utf8"),
+      detailResult: judge.result,
+      socketToken: judge.pending ? jwt.sign({
+        taskId: judge.id,
+        type: 'detail'
+      }, syzoj.config.judge_token) : null
     });
   } catch (e) {
     syzoj.log(e);
