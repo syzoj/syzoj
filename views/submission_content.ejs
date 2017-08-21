@@ -27,7 +27,7 @@
 
   <div class="ui styled fluid accordion" v-if="detailResult && detailResult.judge && detailResult.judge.subtasks">
     <template v-for="subtask, $index in detailResult.judge.subtasks">
-      <div class="title">
+      <div class="title" :class="singleSubtask ? 'active' : ''">
         <div class="ui grid">
           <div class="three wide column">
             <i class="dropdown icon"></i>
@@ -41,7 +41,7 @@
           </div>
         </div>
       </div>
-      <div class="content">
+      <div class="content" :class="singleSubtask ? 'active' : ''">
         <div class="accordion">
           <template v-for="curCase, $caseIndex in subtask.cases">
             <div class="title">
@@ -153,6 +153,11 @@ const vueApp = new Vue({
     },
     code: <%- JSON.stringify(code) %>,
     detailResult: <%- JSON.stringify(detailResult) %>
+  },
+  computed: {
+    singleSubtask() {
+      return this.detailResult.judge.subtasks.length === 1;
+    }
   },
   methods: {
     getStatusString(statusCode) {
