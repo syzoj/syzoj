@@ -429,13 +429,13 @@ body > .ui.page.dimmer {
 :not(.status_detail).status.judgement_failed,
 .title:hover .status_detail.status.judgement_failed,
 .title.active .status_detail.status.judgement_failed {
-  color: #78909C;
+  color: #FF5722;
 }
 
 :not(.status_detail).status.skipped,
 .title:hover .status_detail.status.skipped,
 .title.active .status_detail.status.skipped {
-  color: #FF5722;
+  color: #78909C;
 }
 
 :not(.status_detail).status.compiling {
