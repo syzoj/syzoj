@@ -197,11 +197,9 @@ const vueApp = new Vue({
     }
   },
   mounted() {
-    console.log("mounted");
-    setTimeout(() => $('.ui.accordion').accordion(), 500);
+    $(document).ready(() => $('.ui.accordion').accordion());
   },
   updated() {
-    console.log("updated");
     $('.ui.accordion').accordion("refresh");
   }
 });
