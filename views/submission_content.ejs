@@ -222,7 +222,10 @@ if (token != null) {
     socket.emit('join', token, (data) => {
       if (data && data.ok) {
         if (data.finished) {
-          alert('This submission is finished but not reported to the server. Please try again later.');
+          vueApp.roughData = data.roughResult;
+          vueApp.detailData = data.result || {
+            systemMessage: "系统出错，请刷新后重试。"
+          };
         } else {
           if (data.current.running) {
             vueApp.roughData.running = true;
