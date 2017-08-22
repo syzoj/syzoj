@@ -212,21 +212,23 @@ if (token != null) {
       vueApp.roughData.running = true;
     });
     socket.on('update', (p) => {
-      // console.log("Delta: " + JSON.stringify(p));
+      console.log("Delta: " + JSON.stringify(p));
       const current = JSON.parse(JSON.stringify(vueApp.detailResult));
       jsondiffpatch.patch(current, p.delta);
       vueApp.detailResult = current;
     });
     socket.on('finish', (p) => {
+      console.log("Finish: " + JSON.stringify(p));
       vueApp.roughData.running = false;
       vueApp.roughData.result = p.roughResult;
       vueApp.detailResult = p.result;
     });
     socket.emit('join', token, (data) => {
+      console.log("JOIN" + JSON.stringify(data));
       if (data && data.ok) {
         if (data.finished) {
           vueApp.roughData.result = data.roughResult;
-          vueApp.detailData = data.result || {
+          vueApp.detailResult = data.result || {
             systemMessage: "系统出错，请刷新后重试。"
           };
         } else {
