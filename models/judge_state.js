@@ -101,8 +101,12 @@ class JudgeState extends Model {
   }
 
   async loadRelationships() {
-    this.user = await User.fromID(this.user_id);
-    if (this.problem_id) this.problem = await Problem.fromID(this.problem_id);
+    if (!this.user) {
+      this.user = await User.fromID(this.user_id);
+    }
+    if (!this.problem) {
+      if (this.problem_id) this.problem = await Problem.fromID(this.problem_id);
+    }
   }
 
   async isAllowedVisitBy(user) {
