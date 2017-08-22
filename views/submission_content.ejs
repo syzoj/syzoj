@@ -222,6 +222,7 @@ if (token != null) {
       vueApp.roughData.running = false;
       vueApp.roughData.result = p.roughResult;
       vueApp.detailResult = p.result;
+      socket.close();
     });
     socket.emit('join', token, (data) => {
       console.log("JOIN" + JSON.stringify(data));
@@ -231,6 +232,7 @@ if (token != null) {
           vueApp.detailResult = data.result || {
             systemMessage: "系统出错，请刷新后重试。"
           };
+          socket.close();
         } else {
           if (data.current.running) {
             vueApp.roughData.running = true;
