@@ -57,10 +57,10 @@
                   <div class="three wide column">得分率
                       <span style="font-weight: normal; ">{{ Math.trunc(curCase.result.scoringRate * 100) }}</span>
                   </div>
-                  <div class="three wide column" v-if="curCase.result.time !== NaN">用时
+                  <div class="three wide column" v-if="curCase.result.time != null && curCase.result.time !== NaN">用时
                       <span style="font-weight: normal; ">{{ curCase.result.time }} ms</span>
                   </div>
-                  <div class="three wide column" v-if="curCase.result.memory !== NaN">内存
+                  <div class="three wide column" v-if="curCase.result.memory != null && curCase.result.memory !== NaN">内存
                       <span style="font-weight: normal; ">{{ curCase.result.memory }} KiB</span>
                   </div>
                 </template>
