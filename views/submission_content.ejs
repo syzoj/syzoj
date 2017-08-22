@@ -175,8 +175,8 @@ const vueApp = new Vue({
         return "Running";
       } else if (t.cases.some(c => c.status === TaskStatus.Waiting)) {
         return "Waiting";
-      } else if (t.cases.every(c => c.status === TaskStatus.Done)) {
-        return this.getStatusString(this.firstNonAC(t.cases.map(c => c.result.type)));
+      } else if (t.cases.every(c => c.status === TaskStatus.Done || c.status === TaskStatus.Skipped)) {
+        return this.getStatusString(this.firstNonAC(t.cases.filter(c => c.result).map(c => c.result.type)));
       } else {
         return "System Error";
       }
@@ -188,6 +188,8 @@ const vueApp = new Vue({
         return "Waiting";
       } else if (c.status === TaskStatus.Running) {
         return "Running";
+      } else if (c.status === TaskStatus.Skipped) {
+        return "Skipped";
       } else {
         return "System Error";
       }
