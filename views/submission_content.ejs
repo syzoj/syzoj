@@ -55,12 +55,12 @@
                 </div>
                 <template v-if="checkTestcaseOK(curCase)">
                   <div class="three wide column">得分率
-                      <span style="font-weight: normal; ">{{ (curCase.result.scoringRate * 100).toFixed(1) }}</span>
+                      <span style="font-weight: normal; ">{{ Math.trunc(curCase.result.scoringRate * 100) }}</span>
                   </div>
-                  <div class="three wide column">用时
+                  <div class="three wide column" v-if="curCase.result.time !== NaN">用时
                       <span style="font-weight: normal; ">{{ curCase.result.time }} ms</span>
                   </div>
-                  <div class="three wide column">内存
+                  <div class="three wide column" v-if="curCase.result.memory !== NaN">内存
                       <span style="font-weight: normal; ">{{ curCase.result.memory }} KiB</span>
                   </div>
                 </template>
@@ -212,9 +212,10 @@ if (token != null) {
       vueApp.roughData.running = true;
     });
     socket.on('update', (p) => {
-      console.log("Updating");
-      console.log("Delta: " + JSON.stringify(p));
-      jsondiffpatch.patch(vueApp.detailResult, p.delta);
+      // console.log("Delta: " + JSON.stringify(p));
+      const current = JSON.parse(JSON.stringify(vueApp.detailResult));
+      jsondiffpatch.patch(current, p.delta);
+      vueApp.detailResult = current;
     });
     socket.on('finish', (p) => {
       vueApp.roughData.running = false;
@@ -224,7 +225,7 @@ if (token != null) {
     socket.emit('join', token, (data) => {
       if (data && data.ok) {
         if (data.finished) {
-          vueApp.roughData = data.roughResult;
+          vueApp.roughData.result = data.roughResult;
           vueApp.detailData = data.result || {
             systemMessage: "系统出错，请刷新后重试。"
           };
