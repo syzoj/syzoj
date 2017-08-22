@@ -3,10 +3,12 @@ const enums = require('./enums'),
     url = require('url');
 
 module.exports.judge = async function (judge_state, priority) {
-    let type, param;
+    let type, param, extraFile = null;
     switch (judge_state.problem.type) {
         case 'submit-answer':
             type = enums.ProblemType.AnswerSubmission;
+            param = null;
+            extraFile = 'static/uploads/answer/' + judge_state.code;
             break;
         case 'interaction':
             type = enums.ProblemType.Interaction;
@@ -25,11 +27,14 @@ module.exports.judge = async function (judge_state, priority) {
     }
 
     const req = {
-        taskId: judge_state.id,
-        testData: judge_state.problem.id.toString(),
-        type: type,
-        priority: priority,
-        param: param
+        content: {
+            taskId: judge_state.id,
+            testData: judge_state.problem.id.toString(),
+            type: type,
+            priority: priority,
+            param: param
+        },
+        extraFileLocation: extraFile
     };
 
     await rp(url.resolve(syzoj.config.judge_server_addr, "/daemon/task"), {

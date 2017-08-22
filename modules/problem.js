@@ -595,7 +595,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       judge_state = await JudgeState.create({
         code: file.md5,
         max_memory: size,
-        language: '',
+        language: null,
         user_id: res.locals.user.id,
         problem_id: req.params.id
       });
@@ -640,6 +640,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     try {
       await Judger.judge(judge_state, contest_id ? 3 : 2);
     } catch (err) {
+      judge_state.status = "System Error";
+      await judge_state.save();
       throw new ErrorMessage(`无法开始评测：${err.toString()}`);
     }
 

@@ -82,7 +82,7 @@ class JudgeState extends Model {
   static async create(val) {
     return JudgeState.fromRecord(JudgeState.model.build(Object.assign({
       code: '',
-      language: '',
+      language: null,
       user_id: 0,
       problem_id: 0,
       submit_time: parseInt((new Date()).getTime() / 1000),
