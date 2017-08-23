@@ -4,13 +4,24 @@ const getSubmissionInfo = (s, displayConfig) => ({
     userId: s.user_id,
     problemName: s.problem.title,
     problemId: s.problem_id,
-    language: displayConfig.hideCode ? null : ((s.language != null && s.language !== '') ? syzoj.config.languages[s.language].show : null),
-    codeSize: displayConfig.hideCode ? null : syzoj.utils.formatSize(s.code.length),
+    language: displayConfig.showCode ? ((s.language != null && s.language !== '') ? syzoj.config.languages[s.language].show : null) : null,
+    codeSize: displayConfig.showCode ? syzoj.utils.formatSize(s.code.length) : null,
     submitTime: syzoj.utils.formatDate(s.submit_time),
 });
 
 const getRoughResult = (x, displayConfig) => {
-    if (displayConfig.hideResult) {
+    if (displayConfig.showResult) {
+        if (x.pending) {
+            return null;
+        } else {
+            return {
+                result: x.status,
+                time: displayConfig.showUsage ? x.total_time : null,
+                memory: displayConfig.showUsage ? x.max_memory : null,
+                score: displayConfig.showUsage ? x.score : null
+            };
+        }
+    } else {
         // 0: Waiting 1: Running
         if (x.status === "System Error")
             return { result: "System Error" };
@@ -23,18 +34,41 @@ const getRoughResult = (x, displayConfig) => {
                 return { result: "Compile Error" };
             }
         }
-    } else {
-        if (x.pending) {
-            return null;
-        } else {
-            return {
-                result: x.status,
-                time: displayConfig.hideUsage ? null : x.total_time,
-                memory: displayConfig.hideUsage ? null : x.max_memory,
-                score: displayConfig.hideUsage ? null : x.score
-            };
-        }
     }
 }
 
-module.exports = { getRoughResult, getSubmissionInfo };
+const processOverallResult = (source, config) => {
+    if (source == null)
+        return null;
+    if (source.error != null) {
+        return {
+            error: source.error,
+            systemMessage: source.systemMessage
+        };
+    }
+    return {
+        compile: source.compile,
+        judge: config.showDetailResult ? (source.judge && {
+            subtasks: source.judge.subtasks && source.judge.subtasks.map(st => ({
+                score: st.score,
+                cases: st.cases.map(cs => ({
+                    status: cs.status,
+                    result: cs.result && {
+                        type: cs.result.type,
+                        time: config.showUsage ? cs.result.time : undefined,
+                        memory: config.showUsage ? cs.result.memory : undefined,
+                        scoringRate: cs.result.scoringRate,
+                        systemMessage: cs.result.systemMessage,
+                        input: config.showTestdata ? cs.result.input : undefined,
+                        output: config.showTestdata ? cs.result.output : undefined,
+                        userOutput: config.showTestdata ? cs.result.userOutput : undefined,
+                        userError: config.showTestdata ? cs.result.userError : undefined,
+                        spjMessage: config.showTestdata ? cs.result.spjMessage : undefined,
+                    }
+                }))
+            }))
+        }) : null
+    };
+}
+
+module.exports = { getRoughResult, getSubmissionInfo, processOverallResult };

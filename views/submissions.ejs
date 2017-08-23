@@ -6,23 +6,23 @@
   <% if (displayConfig.inContest) { %>
     <div class="ui large info message">
       <div class="ui header">比赛 - <%= contest.title %></div>
-      <% if (displayConfig.hideOthers) { %>
-        <p>您只能看到自己的提交。</p>
-      <% } else { %>
+      <% if (displayConfig.showOthers) { %>
         <p>您可以看到其他人的提交。
+      <% } else { %>
+        <p>您只能看到自己的提交。</p>
       <% } %>
     </div>
   <% } %>
 
-  <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form" id="form">
+  <form action="<%= syzoj.utils.makeUrl(displayConfig.inContest ? ['contest', contest.id, 'submissions'] : ['submissions']) %>" class="ui mini form" method="get" role="form" id="form">
     <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
       <label style="font-size: 1.2em; margin-right: 1px; ">题目：</label>
       <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%= form.problem_id %>"></div>
-      <% if (!displayConfig.hideOthers) { %>
+      <% if (displayConfig.showOthers) { %>
         <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
         <div class="field"><input name="submitter" style="width: 100px; " type="text" value="<%= form.submitter %>"></div>
       <% } %>
-      <% if (!displayConfig.hideScore) { %>
+      <% if (displayConfig.showScore) { %>
         <label style="font-size: 1.2em; margin-right: 1px; ">分数：</label>
         <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="<%= form.min_score || 0 %>"></div>
         <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <% if (!displayConfig.hideResult) { %>
+      <% if (displayConfig.showResult) { %>
         <label style="font-size: 1.2em; margin-right: 1px; ">状态：</label>
         <div class="field">
           <div class="ui fluid selection dropdown" id="select_status" style="width: 210px; ">
@@ -64,7 +64,7 @@
         <i class="search icon"></i>
         查询
       </button>
-      <% if (user && !displayConfig.hideOthers) { %>
+      <% if (user && displayConfig.showOthers) { %>
       <a class="ui mini labeled icon blue button" style="margin-left: auto; " id="my_submit">
         <i class="user icon"></i>
         我的提交
@@ -86,10 +86,10 @@
         <th>编号</th>
         <th>题目</th>
         <th>状态</th>
-        <th v-if="!displayConfig.hideScore">分数</th>
-        <th v-if="!displayConfig.hideUsage">总时间</th>
-        <th v-if="!displayConfig.hideUsage">内存</th>
-        <th v-if="!displayConfig.hideCode">代码 / 答案文件</th>
+        <th v-if="displayConfig.showScore">分数</th>
+        <th v-if="displayConfig.showUsage">总时间</th>
+        <th v-if="displayConfig.showUsage">内存</th>
+        <th v-if="displayConfig.showCode">代码 / 答案文件</th>
         <th>提交者</th>
         <th>提交时间</th>
       </tr>
@@ -103,8 +103,8 @@
   <% include page %>
 </div>
 
-<script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
-<script src="https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js"></script>
+<script src="//cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+<script src="//cdn.bootcss.com/socket.io/2.0.3/socket.io.js"></script>
 
 <% include submissions_item %>
 <script>

@@ -24,7 +24,18 @@ let User = syzoj.model('user');
 let Contest = syzoj.model('contest');
 
 const jwt = require('jsonwebtoken');
-const { getSubmissionInfo, getRoughResult } = require('../libs/submissions_process');
+const { getSubmissionInfo, getRoughResult, processOverallResult } = require('../libs/submissions_process');
+
+const displayConfig = {
+  showScore: true,
+  showUsage: true,
+  showCode: true,
+  showResult: true,
+  showOthers: true,
+  showTestdata: true,
+  showDetailResult: true,
+  inContest: false,
+};
 
 // s is JudgeState
 app.get('/submissions', async (req, res) => {
@@ -93,15 +104,6 @@ app.get('/submissions', async (req, res) => {
 
     await judge_state.forEachAsync(async obj => obj.loadRelationships());
 
-    const displayConfig = {
-      hideScore: false,
-      hideUsage: false,
-      hideCode: false,
-      hideResult: false,
-      hideOthers: false,
-      inContest: false,
-      showDetailResult: true
-    };
     res.render('submissions', {
       // judge_state: judge_state,
       items: judge_state.map(x => ({
@@ -129,17 +131,15 @@ app.get('/submissions', async (req, res) => {
 
 app.get('/submission/:id', async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
-    let judge = await JudgeState.fromID(id);
-    if (!judge || !await judge.isAllowedVisitBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    const id = parseInt(req.params.id);
+    const judge = await JudgeState.fromID(id);
+    if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
+    if (!await judge.isAllowedVisitBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
     if (judge.type === 1) {
       contest = await Contest.fromID(judge.type_info);
       contest.ended = contest.isEnded();
-      let problems_id = await contest.getProblems();
-      judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
-      judge.problem.title = syzoj.utils.removeTitleTag(judge.problem.title);
 
       if (!contest.ended && !await judge.problem.isAllowedEditBy(res.locals.user)) {
         throw new Error("对不起，在比赛结束之前，您不能查看评测结果。");
@@ -157,14 +157,16 @@ app.get('/submission/:id', async (req, res) => {
     judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
 
     res.render('submission', {
-      info: getSubmissionInfo(judge),
-      roughResult: getRoughResult(judge),
+      info: getSubmissionInfo(judge, displayConfig),
+      roughResult: getRoughResult(judge, displayConfig),
       code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
-      detailResult: judge.result,
+      detailResult: processOverallResult(judge.result, displayConfig),
       socketToken: judge.pending ? jwt.sign({
         taskId: judge.id,
-        type: 'detail'
-      }, syzoj.config.judge_token) : null
+        type: 'detail',
+        displayConfig: displayConfig
+      }, syzoj.config.judge_token) : null,
+      displayConfig: displayConfig
     });
   } catch (e) {
     syzoj.log(e);
