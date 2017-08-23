@@ -91,13 +91,28 @@ class Contest extends Model {
     this.ranklist = await ContestRanklist.fromID(this.ranklist_id);
   }
 
-  async isAllowedEditBy(user) {
+  async isSupervisior(user) {
     return user && (user.is_admin || this.holder_id === user.id);
   }
 
-  async isAllowedSeeResultBy(user) {
+  allowedSeeingOthers() {
     if (this.type === 'acm') return true;
-    return (user && (user.is_admin || this.holder_id === user.id)) || !(await this.isRunning());
+    else return false;
+  }
+
+  allowedSeeingScore() { // If not, then the user can only see status
+    if (this.type === 'ioi') return true;
+    else return false;
+  }
+
+  allowedSeeingResult() { // If not, then the user can only see compile progress
+    if (this.type === 'ioi' || this.type === 'acm') return true;
+    else return false;
+  }
+
+  allowedSeeingTestcase() {
+    if (this.type === 'ioi') return true;
+    return false;
   }
 
   async getProblems() {
@@ -145,12 +160,12 @@ class Contest extends Model {
     });
   }
 
-  async isRunning(now) {
+  isRunning(now) {
     if (!now) now = syzoj.utils.getCurrentDate();
     return now >= this.start_time && now < this.end_time;
   }
 
-  async isEnded(now) {
+  isEnded(now) {
     if (!now) now = syzoj.utils.getCurrentDate();
     return now >= this.end_time;
   }

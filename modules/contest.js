@@ -26,6 +26,9 @@ let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
 
+const jwt = require('jsonwebtoken');
+const { getSubmissionInfo, getRoughResult } = require('../libs/submissions_process');
+
 app.get('/contests', async (req, res) => {
   try {
     let where;
@@ -118,15 +121,15 @@ app.post('/contest/:id/edit', async (req, res) => {
 
 app.get('/contest/:id', async (req, res) => {
   try {
+    const curUser = res.locals.user;
     let contest_id = parseInt(req.params.id);
 
     let contest = await Contest.fromID(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
     if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('无此比赛。');
 
-    contest.allowedEdit = await contest.isAllowedEditBy(res.locals.user);
-    contest.running = await contest.isRunning();
-    contest.ended = await contest.isEnded();
+    contest.running = contest.isRunning();
+    contest.ended = contest.isEnded();
     contest.subtitle = await syzoj.utils.markdown(contest.subtitle);
     contest.information = await syzoj.utils.markdown(contest.information);
 
@@ -205,7 +208,8 @@ app.get('/contest/:id', async (req, res) => {
     res.render('contest', {
       contest: contest,
       problems: problems,
-      hasStatistics: hasStatistics
+      hasStatistics: hasStatistics,
+      isSupervisior: await contest.isSupervisior(curUser)
     });
   } catch (e) {
     syzoj.log(e);
@@ -262,28 +266,48 @@ app.get('/contest/:id/submissions', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
-    contest.ended = await contest.isEnded();
+    if (contest.isEnded()) {
+      res.redirect(syzoj.utils.makeUrl(['submissions'], { contest: contest_id }));
+      return;
+    }
 
+    const hideResult = !contest.allowedSeeingResult();
+    const displayConfig = {
+      pushType: hideResult ? 'compile' : 'rough',
+      hideScore: !contest.allowedSeeingScore(),
+      hideUsage: true,
+      hideCode: true,
+      hideResult: hideResult,
+      hideOthers: !contest.allowedSeeingOthers(),
+      showDetailResult: contest.allowedSeeingTestcase(),
+      inContest: true
+    };
     let problems_id = await contest.getProblems();
+    const curUser = res.locals.user;
 
-    let user = await User.fromName(req.query.submitter || '');
+    let user = req.query.submitter && await User.fromName(req.query.submitter);
     let where = {};
-    if (user) where.user_id = user.id;
-    if (req.query.problem_id) where.problem_id = problems_id[parseInt(req.query.problem_id) - 1];
-    where.type = 1;
-    where.type_info = contest_id;
+    if (displayConfig.hideOthers) {
+      if (curUser == null || // Not logined
+        (user && user.id !== curUser.id)) { // Not querying himself
+        throw new ErrorMessage("您没有权限执行此操作");
+      }
+      where.user_id = curUser.id;
+    } else {
+      if (user) {
+        where.user_id = user.id;
+      }
+    }
 
-    if (contest.ended || (res.locals.user && res.locals.user.is_admin)) {
-      if (!((!res.locals.user || !res.locals.user.is_admin) && !contest.ended && contest.type === 'acm')) {
-        let minScore = parseInt(req.query.min_score);
+    if (!displayConfig.hideScore) {
+      let minScore = parseInt(req.query.min_score);
+      let maxScore = parseInt(req.query.max_score);
+
+      if (!isNaN(minScore) || !isNaN(maxScore)) {
         if (isNaN(minScore)) minScore = 0;
-        let maxScore = parseInt(req.query.max_score);
         if (isNaN(maxScore)) maxScore = 100;
-
         where.score = {
           $and: {
             $gte: parseInt(minScore),
@@ -291,32 +315,44 @@ app.get('/contest/:id/submissions', async (req, res) => {
           }
         };
       }
+    }
 
-      if (req.query.language) where.language = req.query.language;
+    if (req.query.language) {
+      if (req.query.language === 'submit-answer') where.language = '';
+      else where.language = req.query.language;
+    }
+
+    if (!displayConfig.hideResult) {
       if (req.query.status) where.status = { $like: req.query.status + '%' };
     }
+
+    if (req.query.problem_id) where.problem_id = problems_id[parseInt(req.query.problem_id) - 1];
+    where.type = 1;
+    where.type_info = contest_id;
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
 
-    await judge_state.forEachAsync(async obj => obj.allowedSeeCode = await obj.isAllowedSeeCodeBy(res.locals.user));
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
       obj.problem_id = problems_id.indexOf(obj.problem_id) + 1;
       obj.problem.title = syzoj.utils.removeTitleTag(obj.problem.title);
-
-      if (contest.type === 'noi' && !contest.ended && !await obj.problem.isAllowedEditBy(res.locals.user)) {
-        if (!['Compile Error', 'Waiting', 'Compiling'].includes(obj.status)) {
-          obj.status = 'Submitted';
-        }
-      }
     });
 
-    res.render('contest_submissions', {
+    res.render('submissions', {
       contest: contest,
-      judge_state: judge_state,
+      items: judge_state.map(x => ({
+        info: getSubmissionInfo(x, displayConfig),
+        token: (getRoughResult(x, displayConfig) == null) ? jwt.sign({
+          taskId: x.id,
+          displayConfig: displayConfig
+        }, syzoj.config.judge_token) : null,
+        result: getRoughResult(x, displayConfig),
+        running: false,
+      })),
       paginate: paginate,
-      form: req.query
+      form: req.query,
+      displayConfig: displayConfig,
     });
   } catch (e) {
     syzoj.log(e);
@@ -326,7 +362,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
   }
 });
 
-app.get('/contest/:id/:pid', async (req, res) => {
+app.get('/contest/:id/problem/:pid', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
@@ -341,8 +377,8 @@ app.get('/contest/:id/:pid', async (req, res) => {
     let problem = await Problem.fromID(problem_id);
     await problem.loadRelationships();
 
-    contest.ended = await contest.isEnded();
-    if (!(await contest.isRunning() || contest.ended)) {
+    contest.ended = contest.isEnded();
+    if (!(contest.isRunning() || contest.isEnded())) {
       if (await problem.isAllowedUseBy(res.locals.user)) {
         return res.redirect(syzoj.utils.makeUrl(['problem', problem_id]));
       }
@@ -351,7 +387,7 @@ app.get('/contest/:id/:pid', async (req, res) => {
 
     problem.specialJudge = await problem.hasSpecialJudge();
 
-    await syzoj.utils.markdown(problem, [ 'description', 'input_format', 'output_format', 'example', 'limit_and_hint' ]);
+    await syzoj.utils.markdown(problem, ['description', 'input_format', 'output_format', 'example', 'limit_and_hint']);
 
     let state = await problem.getJudgeState(res.locals.user, false);
     let testcases = await syzoj.utils.parseTestdata(problem.getTestdataPath(), problem.type === 'submit-answer');
@@ -388,8 +424,8 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.fromID(problem_id);
 
-    contest.ended = await contest.isEnded();
-    if (!(await contest.isRunning() || contest.ended)) {
+    contest.ended = contest.isEnded();
+    if (!(contest.isRunning() || contest.idEnded())) {
       if (await problem.isAllowedUseBy(res.locals.user)) {
         return res.redirect(syzoj.utils.makeUrl(['problem', problem_id, 'download', 'additional_file']));
       }

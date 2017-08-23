@@ -2,19 +2,28 @@
 <% include status_label %>
 
 <script>
-const submissionUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['submission', 'VanDarkholme'])) %>;
-const problemUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['problem', 'VanDarkholme'])) %>;
+const submissionUrl = <%- JSON.stringify(displayConfig.inContest ? 
+  syzoj.utils.makeUrl(['contest', contest.id, 'submission', 'VanDarkholme']) :
+  syzoj.utils.makeUrl(['submission', 'VanDarkholme'])) %>;
+const problemUrl = <%- JSON.stringify(displayConfig.inContest ? 
+  syzoj.utils.makeUrl(['contest', contest.id, 'problem', 'VanDarkholme']) :
+  syzoj.utils.makeUrl(['problem', 'VanDarkholme'])) %>;
+
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
-  props: ['data'],
+  props: ['data', 'config'],
   computed: {
     statusString() {
       const data = this.data;
       if (data.result) {
         return data.result.result;
-      } 
-      else if (data.running) return 'Running';
-      else return 'Waiting';
+      } else if (data.running) {
+        if (this.config.hideResult) {
+          return 'Compiling';
+        } else {
+          return 'Running';
+        }
+      } else return 'Waiting';
     },
     submissionLink() {
       return submissionUrl.replace('VanDarkholme', this.data.info.taskId);
@@ -25,6 +34,11 @@ Vue.component('submission-item', {
     scoreClass() {
       return "score_" + (parseInt(this.data.result.score / 10) || 0).toString();
     }
+  },
+  methods: {
+    alpha(number) {
+      if (number && parseInt(number) == number && parseInt(number) > 0) return String.fromCharCode('A'.charCodeAt(0) + parseInt(number) - 1);
+    }
   }
 });
 </script>
@@ -32,18 +46,18 @@ Vue.component('submission-item', {
 <script id="submissionItemTemplate" type="text/x-template">
 <tr>
   <td><a :href="submissionLink">#{{ data.info.taskId }}</a></td>
-  <td><a :href="problemLink">#{{ data.info.problemId }}. {{ data.info.problemName }}</a></td>
-  <td><status-label :status="statusString"></status-label></td>
+  <td><a :href="problemLink">#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}. {{ data.info.problemName }}</a></td>
+  <td><a :href="submissionLink"><status-label :status="statusString"></status-label></a></td>
 
   <template v-if="data.result">
-  <td><span class="score" :class="scoreClass">{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</span></td>
-  <td>{{ (data.result.time != null && data.result.time !== NaN) ? data.result.time.toString() + ' ms' : '' }}</td>
-  <td>{{ (data.result.memory != null && data.result.memory !== NaN) ? data.result.memory.toString() + ' KiB' : '' }}</td>
+  <td v-if="!config.hideScore"><span class="score" :class="scoreClass">{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</span></td>
+  <td v-if="!config.hideUsage">{{ (data.result.time != null && data.result.time !== NaN) ? data.result.time.toString() + ' ms' : '' }}</td>
+  <td v-if="!config.hideUsage">{{ (data.result.memory != null && data.result.memory !== NaN) ? data.result.memory.toString() + ' KiB' : '' }}</td>
   </template> <template v-else>
-  <td /> <td /> <td />
+  <td v-if="!config.hideScore"/> <td v-if="!config.hideUsage"/> <td v-if="!config.hideUsage"/>
   </template>
 
-  <td>{{ data.info.language != null ? data.info.language + ' / ' : '' }}{{ data.info.codeSize }}</td>
+  <td v-if="!config.hideCode">{{ data.info.language != null ? data.info.language + ' / ' : '' }}{{ data.info.codeSize }}</td>
   <td>{{ data.info.user }}</td>
   <td>{{ data.info.submitTime }}</td>
 </tr>

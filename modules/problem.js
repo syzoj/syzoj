@@ -618,11 +618,11 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       });
     }
 
-    let contest_id = parseInt(req.query.contest_id), redirectToContest = false;
+    let contest_id = parseInt(req.query.contest_id);
     if (contest_id) {
       let contest = await Contest.fromID(contest_id);
       if (!contest) throw new ErrorMessage('无此比赛。');
-      if (!await contest.isRunning()) throw new ErrorMessage('比赛未开始或已结束。');
+      if (!contest.isRunning()) throw new ErrorMessage('比赛未开始或已结束。');
       let problems_id = await contest.getProblems();
       if (!problems_id.includes(id)) throw new ErrorMessage('无此题目。');
 
@@ -638,14 +638,19 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     await judge_state.updateRelatedInfo(true);
 
     try {
-      await Judger.judge(judge_state, contest_id ? 3 : 2);
+      await Judger.judge(judge_state, problem, contest_id ? 3 : 2);
     } catch (err) {
       judge_state.status = "System Error";
+      judge_state.pending = false;
       await judge_state.save();
       throw new ErrorMessage(`无法开始评测：${err.toString()}`);
     }
 
-    res.redirect(syzoj.utils.makeUrl(['submission', judge_state.id]));
+    if (contest_id) {
+      res.redirect(syzoj.utils.makeUrl(['contest', contest_id, 'submissions']));
+    } else {
+      res.redirect(syzoj.utils.makeUrl(['submission', judge_state.id]));
+    }
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
@@ -781,7 +786,7 @@ app.get('/problem/:id/download/additional_file', async (req, res) => {
     if (contest_id) {
       let contest = await Contest.fromID(contest_id);
       if (!contest) throw new ErrorMessage('无此比赛。');
-      if (!await contest.isRunning()) throw new ErrorMessage('比赛未开始或已结束。');
+      if (!contest.isRunning()) throw new ErrorMessage('比赛未开始或已结束。');
       let problems_id = await contest.getProblems();
       if (!problems_id.includes(id)) throw new ErrorMessage('无此题目。');
     } else {

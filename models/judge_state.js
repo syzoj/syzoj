@@ -116,53 +116,8 @@ class JudgeState extends Model {
     else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
-      if (await contest.isRunning()) {
+      if (contest.isRunning()) {
         return (user && this.user_id === user.id) || (user && user.is_admin);
-      } else {
-        return true;
-      }
-    }
-  }
-
-  async isAllowedSeeCodeBy(user) {
-    await this.loadRelationships();
-
-    if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
-    else if (this.type === 1) {
-      let contest = await Contest.fromID(this.type_info);
-      if (await contest.isRunning()) {
-        return (user && this.user_id === user.id) || (user && user.is_admin);
-      } else {
-        return true;
-      }
-    }
-  }
-
-  async isAllowedSeeCaseBy(user) {
-    await this.loadRelationships();
-
-    if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
-    else if (this.type === 1) {
-      let contest = await Contest.fromID(this.type_info);
-      if (await contest.isRunning()) {
-        return contest.type === 'ioi' || (user && user.is_admin);
-      } else {
-        return true;
-      }
-    }
-  }
-
-  async isAllowedSeeDataBy(user) {
-    await this.loadRelationships();
-
-    if (user && user.id === this.problem.user_id) return true;
-    else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
-    else if (this.type === 1) {
-      let contest = await Contest.fromID(this.type_info);
-      if (await contest.isRunning()) {
-        return user && user.is_admin;
       } else {
         return true;
       }
@@ -237,7 +192,7 @@ class JudgeState extends Model {
         await contest.newSubmission(this);
       }
 
-      await Judger.judge(this, 1);
+      await Judger.judge(this, this.problem, 1);
     });
   }
 

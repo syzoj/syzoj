@@ -2,9 +2,12 @@ const enums = require('./enums'),
     rp = require('request-promise'),
     url = require('url');
 
-module.exports.judge = async function (judge_state, priority) {
+const util = require('util');
+module.exports.judge = async function (judge_state, problem, priority) {
     let type, param, extraFile = null;
-    switch (judge_state.problem.type) {
+    console.log("JudgeState: " + util.inspect(judge_state));
+    console.log("Problem: " + util.inspect(judge_state));
+    switch (problem.type) {
         case 'submit-answer':
             type = enums.ProblemType.AnswerSubmission;
             param = null;
@@ -18,10 +21,10 @@ module.exports.judge = async function (judge_state, priority) {
             param = {
                 language: judge_state.language,
                 code: judge_state.code,
-                timeLimit: judge_state.problem.time_limit,
-                memoryLimit: judge_state.problem.memory_limit,
-                fileIOInput: judge_state.problem.file_io ? judge_state.problem.file_io_input_name : null,
-                fileIOOutput: judge_state.problem.file_io ? judge_state.problem.file_io_output_name : null
+                timeLimit: problem.time_limit,
+                memoryLimit: problem.memory_limit,
+                fileIOInput: problem.file_io ? problem.file_io_input_name : null,
+                fileIOOutput: problem.file_io ? problem.file_io_output_name : null
             };
             break;
     }
@@ -29,7 +32,7 @@ module.exports.judge = async function (judge_state, priority) {
     const req = {
         content: {
             taskId: judge_state.id,
-            testData: judge_state.problem.id.toString(),
+            testData: problem.id.toString(),
             type: type,
             priority: priority,
             param: param

@@ -3,16 +3,31 @@
 <% include util %>
 <script src="/textFit.js"></script>
 <div class="padding">
+  <% if (displayConfig.inContest) { %>
+    <div class="ui large info message">
+      <div class="ui header">比赛 - <%= contest.title %></div>
+      <% if (displayConfig.hideOthers) { %>
+        <p>您只能看到自己的提交。</p>
+      <% } else { %>
+        <p>您可以看到其他人的提交。
+      <% } %>
+    </div>
+  <% } %>
+
   <form action="<%= syzoj.utils.makeUrl(['submissions']) %>" class="ui mini form" method="get" role="form" id="form">
     <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
       <label style="font-size: 1.2em; margin-right: 1px; ">题目：</label>
       <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%= form.problem_id %>"></div>
-      <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
-      <div class="field"><input name="submitter" style="width: 100px; " type="text" value="<%= form.submitter %>"></div>
-      <label style="font-size: 1.2em; margin-right: 1px; ">分数：</label>
-      <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="<%= form.min_score || 0 %>"></div>
-      <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
-      <div class="field"><input name="max_score" style="width: 45px; " type="text" value="<%= form.max_score || 100 %>"></div>
+      <% if (!displayConfig.hideOthers) { %>
+        <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
+        <div class="field"><input name="submitter" style="width: 100px; " type="text" value="<%= form.submitter %>"></div>
+      <% } %>
+      <% if (!displayConfig.hideScore) { %>
+        <label style="font-size: 1.2em; margin-right: 1px; ">分数：</label>
+        <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="<%= form.min_score || 0 %>"></div>
+        <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
+        <div class="field"><input name="max_score" style="width: 45px; " type="text" value="<%= form.max_score || 100 %>"></div>
+      <% } %>
       <label style="font-size: 1.2em; margin-right: 1px; ">语言：</label>
       <div class="field">
         <div class="ui fluid selection dropdown" id="select_language" style="width: 110px; ">
@@ -28,26 +43,28 @@
           </div>
         </div>
       </div>
-      <label style="font-size: 1.2em; margin-right: 1px; ">状态：</label>
-      <div class="field">
-        <div class="ui fluid selection dropdown" id="select_status" style="width: 210px; ">
-          <input type="hidden" name="status" value="<%= form.status %>">
-          <i class="dropdown icon"></i>
-          <div class="default text"></div>
-          <div class="menu">
-            <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
-            <% for (let status in this.icon) { %>
-              <% if (this.iconHidden.includes(status)) continue; %>
-              <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
-            <% } %>
+      <% if (!displayConfig.hideResult) { %>
+        <label style="font-size: 1.2em; margin-right: 1px; ">状态：</label>
+        <div class="field">
+          <div class="ui fluid selection dropdown" id="select_status" style="width: 210px; ">
+            <input type="hidden" name="status" value="<%= form.status %>">
+            <i class="dropdown icon"></i>
+            <div class="default text"></div>
+            <div class="menu">
+              <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
+              <% for (let status in this.icon) { %>
+                <% if (this.iconHidden.includes(status)) continue; %>
+                <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
+              <% } %>
+            </div>
           </div>
         </div>
-      </div>
+      <% } %>
       <button class="ui labeled icon mini button" type="submit">
         <i class="search icon"></i>
-        搜索
+        查询
       </button>
-      <% if (user) { %>
+      <% if (user && !displayConfig.hideOthers) { %>
       <a class="ui mini labeled icon blue button" style="margin-left: auto; " id="my_submit">
         <i class="user icon"></i>
         我的提交
@@ -69,16 +86,16 @@
         <th>编号</th>
         <th>题目</th>
         <th>状态</th>
-        <th>分数</th>
-        <th>总时间</th>
-        <th>内存</th>
-        <th>代码 / 答案文件</th>
+        <th v-if="!displayConfig.hideScore">分数</th>
+        <th v-if="!displayConfig.hideUsage">总时间</th>
+        <th v-if="!displayConfig.hideUsage">内存</th>
+        <th v-if="!displayConfig.hideCode">代码 / 答案文件</th>
         <th>提交者</th>
         <th>提交时间</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="item in items" :data="item" is='submission-item'>
+      <tr v-for="item in items" :config="displayConfig" :data="item" is='submission-item'>
       </tr>
     </tbody>
   </table>
@@ -96,12 +113,14 @@ $(function () {
   $('#select_status').dropdown();
 });
 const itemList = <%- JSON.stringify(items) %>;
+const socketUrl = <%- syzoj.utils.judgeServer(displayConfig.pushType) %>;
+const displayConfig = <%- JSON.stringify(displayConfig) %>;
 
-const socketUrl = <%- syzoj.utils.judgeServer('rough') %>;
 const vueApp = new Vue({
   el: '#vueApp',
   data: {
-    items: itemList
+    items: itemList,
+    displayConfig: displayConfig
   },
 });
 
