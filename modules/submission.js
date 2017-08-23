@@ -94,7 +94,6 @@ app.get('/submissions', async (req, res) => {
     await judge_state.forEachAsync(async obj => obj.loadRelationships());
 
     const displayConfig = {
-      pushType: 'rough',
       hideScore: false,
       hideUsage: false,
       hideCode: false,
@@ -109,12 +108,14 @@ app.get('/submissions', async (req, res) => {
         info: getSubmissionInfo(x, displayConfig),
         token: (getRoughResult(x, displayConfig) == null) ? jwt.sign({
           taskId: x.id,
+          type: 'rough',
           displayConfig: displayConfig
         }, syzoj.config.judge_token) : null,
         result: getRoughResult(x, displayConfig),
         running: false,
       })),
       paginate: paginate,
+      pushType: 'rough',
       form: req.query,
       displayConfig: displayConfig,
     });

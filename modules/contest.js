@@ -262,6 +262,19 @@ app.get('/contest/:id/ranklist', async (req, res) => {
   }
 });
 
+function getDisplayConfig(contest) {
+  const hideResult = !contest.allowedSeeingResult();
+  return {
+    hideScore: !contest.allowedSeeingScore(),
+    hideUsage: true,
+    hideCode: true,
+    hideResult: hideResult,
+    hideOthers: !contest.allowedSeeingOthers(),
+    showDetailResult: contest.allowedSeeingTestcase(),
+    inContest: true
+  };
+}
+
 app.get('/contest/:id/submissions', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
@@ -273,17 +286,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
       return;
     }
 
-    const hideResult = !contest.allowedSeeingResult();
-    const displayConfig = {
-      pushType: hideResult ? 'compile' : 'rough',
-      hideScore: !contest.allowedSeeingScore(),
-      hideUsage: true,
-      hideCode: true,
-      hideResult: hideResult,
-      hideOthers: !contest.allowedSeeingOthers(),
-      showDetailResult: contest.allowedSeeingTestcase(),
-      inContest: true
-    };
+    const displayConfig = getDisplayConfig(contest);
     let problems_id = await contest.getProblems();
     const curUser = res.locals.user;
 
@@ -339,12 +342,14 @@ app.get('/contest/:id/submissions', async (req, res) => {
       obj.problem.title = syzoj.utils.removeTitleTag(obj.problem.title);
     });
 
+    const pushType = hideResult ? 'compile' : 'rough';
     res.render('submissions', {
       contest: contest,
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),
         token: (getRoughResult(x, displayConfig) == null) ? jwt.sign({
           taskId: x.id,
+          type: pushType,
           displayConfig: displayConfig
         }, syzoj.config.judge_token) : null,
         result: getRoughResult(x, displayConfig),
@@ -353,6 +358,54 @@ app.get('/contest/:id/submissions', async (req, res) => {
       paginate: paginate,
       form: req.query,
       displayConfig: displayConfig,
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+
+app.get('/contest/submission/:id', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let judge = await JudgeState.fromID(id);
+    if (!judge || !await judge.isAllowedVisitBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+
+    let contest;
+    if (judge.type === 1) {
+      contest = await Contest.fromID(judge.type_info);
+      contest.ended = contest.isEnded();
+      let problems_id = await contest.getProblems();
+      judge.problem_id = problems_id.indexOf(judge.problem_id) + 1;
+      judge.problem.title = syzoj.utils.removeTitleTag(judge.problem.title);
+
+      if (!contest.ended && !await judge.problem.isAllowedEditBy(res.locals.user)) {
+        throw new Error("对不起，在比赛结束之前，您不能查看评测结果。");
+      }
+    }
+
+    await judge.loadRelationships();
+
+    if (judge.problem.type !== 'submit-answer') {
+      judge.codeLength = judge.code.length;
+      judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+    }
+
+    judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
+    judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
+
+    res.render('submission', {
+      info: getSubmissionInfo(judge),
+      roughResult: getRoughResult(judge),
+      code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
+      detailResult: judge.result,
+      socketToken: judge.pending ? jwt.sign({
+        taskId: judge.id,
+        type: 'detail'
+      }, syzoj.config.judge_token) : null
     });
   } catch (e) {
     syzoj.log(e);
