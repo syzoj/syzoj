@@ -10,6 +10,7 @@ const submissionUrl = <%- JSON.stringify(displayConfig.inContest ?
 const problemUrl = <%- JSON.stringify(displayConfig.inContest ? 
   syzoj.utils.makeUrl(['contest', contest.id, 'problem', 'VanDarkholme']) :
   syzoj.utils.makeUrl(['problem', 'VanDarkholme'])) %>;
+const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', 'VanDarkholme'])) %>;
 
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
@@ -28,6 +29,9 @@ Vue.component('submission-item', {
     },
     problemLink() {
       return problemUrl.replace('VanDarkholme', this.data.info.problemId);
+    },
+    userLink() {
+      return userUrl.replace('VanDarkholme', this.data.info.userId);
     },
     scoreClass() {
       return "score_" + (parseInt(this.data.result.score / 10) || 0).toString();
@@ -59,7 +63,7 @@ Vue.component('submission-item', {
   </template>
 
   <td v-if="config.showCode">{{ data.info.language != null ? data.info.language + ' / ' : '' }}{{ data.info.codeSize }}</td>
-  <td>{{ data.info.user }}</td>
+  <td><a :href="userLink">{{ data.info.user }}</a></td>
   <td>{{ data.info.submitTime }}</td>
 </tr>
 </script>
