@@ -16,10 +16,11 @@
         <th v-if="displayConfig.showCode">代码 / 答案文件</th>
         <th>提交者</th>
         <th>提交时间</th>
+        <th v-if="showRejudge">重新评测</th>
       </tr>
     </thead>
     <tbody>
-      <tr is="submission-item" v-bind:data="roughData" :config="displayConfig"></tr>
+      <tr is="submission-item" v-bind:data="roughData" :config="displayConfig" :showRejudge="showRejudge"></tr>
     </tbody>
   </table>
 
@@ -39,7 +40,7 @@
             <status-label :status="getSubtaskResult(subtask)"></status-label>
           </div>
           <div class="three wide column">得分
-            <span style="font-weight: normal; ">{{ subtask.score }}</span>
+            <span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
           </div>
         </div>
       </div>
@@ -157,11 +158,14 @@ const vueApp = new Vue({
     },
     code: <%- JSON.stringify(code) %>,
     detailResult: <%- JSON.stringify(detailResult) %>,
-    displayConfig: displayConfig
+    displayConfig: displayConfig,
   },
   computed: {
     singleSubtask() {
       return this.detailResult.judge.subtasks.length === 1;
+    },
+    showRejudge() {
+      return this.displayConfig.showRejudge && (!this.roughData.running);
     }
   },
   methods: {
@@ -223,6 +227,7 @@ if (token != null) {
         console.log("Delta: " + JSON.stringify(p));
         if (p.from === currentVersion) {
           currentVersion = p.to;
+          console.log("Before patching: " + JSON.stringify(vueApp));
           jsondiffpatch.patch(vueApp.detailResult, p.delta);
         } else { // Some packets are dropped. Let's reset.
           socket.close();

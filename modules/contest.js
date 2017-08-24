@@ -271,7 +271,8 @@ function getDisplayConfig(contest) {
     showOthers: contest.allowedSeeingOthers(),
     showDetailResult: contest.allowedSeeingTestcase(),
     showTestdata: false,
-    inContest: true
+    inContest: true,
+    showRejudge: false
   };
 }
 
@@ -408,7 +409,7 @@ app.get('/contest/submission/:id', async (req, res) => {
         type: 'detail'
       }, syzoj.config.judge_token) : null,
       displayConfig: displayConfig,
-      contest: contest
+      contest: contest,
     });
   } catch (e) {
     syzoj.log(e);

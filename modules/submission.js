@@ -35,6 +35,7 @@ const displayConfig = {
   showTestdata: true,
   showDetailResult: true,
   inContest: false,
+  showRejudge: false
 };
 
 // s is JudgeState
@@ -153,9 +154,7 @@ app.get('/submission/:id', async (req, res) => {
       judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
     }
 
-    judge.allowedRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
-    judge.allowedManage = await judge.problem.isAllowedManageBy(res.locals.user);
-
+    displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
     res.render('submission', {
       info: getSubmissionInfo(judge, displayConfig),
       roughResult: getRoughResult(judge, displayConfig),
@@ -166,7 +165,7 @@ app.get('/submission/:id', async (req, res) => {
         type: 'detail',
         displayConfig: displayConfig
       }, syzoj.config.judge_token) : null,
-      displayConfig: displayConfig
+      displayConfig: displayConfig,
     });
   } catch (e) {
     syzoj.log(e);

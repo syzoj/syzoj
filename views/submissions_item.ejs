@@ -14,7 +14,7 @@ const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', 'VanDarkholme'])
 
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
-  props: ['data', 'config'],
+  props: ['data', 'config', 'showRejudge'],
   computed: {
     statusString() {
       const data = this.data;
@@ -65,5 +65,11 @@ Vue.component('submission-item', {
   <td v-if="config.showCode">{{ data.info.language != null ? data.info.language + ' / ' : '' }}{{ data.info.codeSize }}</td>
   <td><a :href="userLink">{{ data.info.user }}</a></td>
   <td>{{ data.info.submitTime }}</td>
+  <td v-if="showRejudge">
+    <form class="have-csrf" :action="submissionLink + '/rejudge'" method="POST">
+      <input type="hideen" name="_csrf" value="<%= req.csrfToken() %>" />
+      <input type="submit" value="rejudge"><i class="repeat icon"></i></input>
+    </form>
+  </td>
 </tr>
 </script>
