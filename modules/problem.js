@@ -566,10 +566,11 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
   try {
     let id = parseInt(req.params.id);
     let problem = await Problem.fromID(id);
+    const curUser = res.locals.user;
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (problem.type !== 'submit-answer' && !syzoj.config.languages[req.body.language]) throw new ErrorMessage('不支持该语言。');
-    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });
+    if (!curUser) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });
 
     let judge_state;
     if (problem.type === 'submit-answer') {
@@ -596,7 +597,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code: file.md5,
         code_length: size,
         language: null,
-        user_id: res.locals.user.id,
+        user_id: curUser.id,
         problem_id: req.params.id
       });
     } else {
@@ -614,7 +615,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code: code,
         code_length: code.length,
         language: req.body.language,
-        user_id: res.locals.user.id,
+        user_id: curUser.id,
         problem_id: req.params.id
       });
     }
@@ -623,7 +624,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     if (contest_id) {
       let contest = await Contest.fromID(contest_id);
       if (!contest) throw new ErrorMessage('无此比赛。');
-      if (!contest.isRunning()) throw new ErrorMessage('比赛未开始或已结束。');
+      if ((!contest.isRunning()) && (!await contest.isSupervisior(curUser))) throw new ErrorMessage('比赛未开始或已结束。');
       let problems_id = await contest.getProblems();
       if (!problems_id.includes(id)) throw new ErrorMessage('无此题目。');
 
@@ -632,7 +633,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
       await judge_state.save();
     } else {
-      if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+      if (!await problem.isAllowedUseBy(curUser)) throw new ErrorMessage('您没有权限进行此操作。');
       judge_state.type = 0;
       await judge_state.save();
     }

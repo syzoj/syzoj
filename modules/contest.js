@@ -104,6 +104,7 @@ app.post('/contest/:id/edit', async (req, res) => {
     contest.title = req.body.title;
     contest.subtitle = req.body.subtitle;
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
+    if (!Array.isArray(req.body.admins)) req.body.admins = [req.body.admins];
     contest.problems = req.body.problems.join('|');
     contest.admins = req.body.admins.join('|');
     contest.information = req.body.information;
@@ -301,7 +302,9 @@ app.get('/contest/:id/submissions', async (req, res) => {
     const curUser = res.locals.user;
 
     let user = req.query.submitter && await User.fromName(req.query.submitter);
-    let where = {};
+    let where = {
+      submit_time: { $gte: contest.start_time, $lte: contest.end_time }
+    };
     if (displayConfig.showOthers) {
       if (user) {
         where.user_id = user.id;
@@ -433,6 +436,7 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
+    const curUser = res.locals.user;
 
     let problems_id = await contest.getProblems();
 
@@ -444,7 +448,7 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
     await problem.loadRelationships();
 
     contest.ended = contest.isEnded();
-    if (!(contest.isRunning() || contest.isEnded())) {
+    if (!await contest.isSupervisior(curUser) && !(contest.isRunning() || contest.isEnded())) {
       if (await problem.isAllowedUseBy(res.locals.user)) {
         return res.redirect(syzoj.utils.makeUrl(['problem', problem_id]));
       }
