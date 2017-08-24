@@ -41,7 +41,7 @@ $(function () {
     form.submit();
   });
 
-  $('form').each(function () {
+  $('form').not('.have-csrf').each(function () {
     this.action = addUrlParam(this.action || location.href, '_csrf', document.head.getAttribute('data-csrf-token'));
   });
 });
