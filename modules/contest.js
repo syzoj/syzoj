@@ -360,7 +360,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
       contest: contest,
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),
-        token: (getRoughResult(x, displayConfig) == null) ? jwt.sign({
+        token: (getRoughResult(x, displayConfig) == null && x.task_id != null) ? jwt.sign({
           taskId: x.task_id,
           type: pushType,
           displayConfig: displayConfig
@@ -415,7 +415,7 @@ app.get('/contest/submission/:id', async (req, res) => {
       roughResult: getRoughResult(judge, displayConfig),
       code: (displayConfig.showCode && judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
       detailResult: processOverallResult(judge.result, displayConfig),
-      socketToken: (displayConfig.showDetailResult && judge.pending) ? jwt.sign({
+      socketToken: (displayConfig.showDetailResult && judge.pending && x.task_id != null) ? jwt.sign({
         taskId: judge.task_id,
         displayConfig: displayConfig,
         type: 'detail'
