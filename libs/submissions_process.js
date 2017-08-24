@@ -1,5 +1,6 @@
 const getSubmissionInfo = (s, displayConfig) => ({
-    taskId: s.id,
+    submissionId: s.id,
+    taskId: s.task_id,
     user: s.user.username,
     userId: s.user_id,
     problemName: s.problem.title,
