@@ -199,7 +199,7 @@ class JudgeState extends Model {
       }
 
       try {
-      await Judger.judge(this, this.problem, 1);
+        await Judger.judge(this, this.problem, 1);
       } catch (err) {
         throw new ErrorMessage("无法开始评测。");
       }
