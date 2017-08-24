@@ -19,6 +19,37 @@
 
 'use strict';
 
+app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
+  try {
+    let User = syzoj.model('user');
+
+    let keyword = req.params.keyword || '';
+    let conditions = [];
+    const uid = parseInt(keyword);
+    if (uid != null && !isNaN(uid)) {
+      conditions.push({ id: uid });
+    }
+    if (keyword != null && String(keyword).length >= 2) {
+      conditions.push({ username: { like: `%${req.params.keyword}%` } });
+    }
+    if (conditions.length === 0) {
+      res.send({ success: true, results: [] });
+    } else {
+      let users = await User.query(null, {
+        $or: conditions
+      }, [['username', 'asc']]);
+
+      let result = [];
+
+      result = users.map(x => ({ name: `${x.username}`, value: x.id, url: syzoj.utils.makeUrl(['user', x.id]) }));
+      res.send({ success: true, results: result });
+    }
+  } catch (e) {
+    syzoj.log(e);
+    res.send({ success: false });
+  }
+});
+
 app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
   try {
     let Problem = syzoj.model('problem');

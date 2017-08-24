@@ -71,7 +71,7 @@
               <tr>
                 <td class="center aligned" style="white-space: nowrap; ">
                 <% if (problem.judge_id) { %>
-                  <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_id]) %>">
+                  <a href="<%= syzoj.utils.makeUrl(['contest', 'submission', problem.judge_id]) %>">
                   <% if (typeof problem.status === 'string') { %>
                     <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
                       <i class="<%= icon[getStatusMeta(problem.status)] || 'remove' %> icon"></i>

@@ -18,6 +18,14 @@
                 <% } %>
                 </select>
             </div>
+            <div class="field">
+                <label>比赛管理员</label>
+                <select class="ui fluid search dropdown" multiple="" id="search_admins" name="admins">
+                <% for (let admin of admins) { %>
+                <option value="<%= admin.id %>" selected><%= admin.username %></option>
+                <% } %>
+                </select>
+            </div>
             <div class="inline fields">
               <label>赛制</label>
               <div class="field">
@@ -62,6 +70,21 @@
         </form>
 <script>
 $(function () {
+  $('#search_admins')
+    .dropdown({
+      debug: true,
+      apiSettings: {
+        url: '/api/v2/search/users/{query}',
+        onResponse: function (response) {
+          var a = $('#search_admins').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(x => !a.includes(parseInt(x.value)));
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
   $('#search_problems')
     .dropdown({
       debug: true,

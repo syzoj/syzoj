@@ -46,6 +46,7 @@ let model = db.define('contest', {
 
   information: { type: Sequelize.TEXT },
   problems: { type: Sequelize.TEXT },
+  admins: { type: Sequelize.TEXT },
 
   ranklist_id: {
     type: Sequelize.INTEGER,
@@ -57,17 +58,17 @@ let model = db.define('contest', {
 
   is_public: { type: Sequelize.BOOLEAN }
 }, {
-  timestamps: false,
-  tableName: 'contest',
-  indexes: [
-    {
-      fields: ['holder_id'],
-    },
-    {
-      fields: ['ranklist_id'],
-    }
-  ]
-});
+    timestamps: false,
+    tableName: 'contest',
+    indexes: [
+      {
+        fields: ['holder_id'],
+      },
+      {
+        fields: ['ranklist_id'],
+      }
+    ]
+  });
 
 let Model = require('./common');
 class Contest extends Model {
@@ -76,6 +77,7 @@ class Contest extends Model {
       title: '',
       subtitle: '',
       problems: '',
+      admins: '',
       information: '',
       type: 'noi',
       start_time: 0,
@@ -92,7 +94,7 @@ class Contest extends Model {
   }
 
   async isSupervisior(user) {
-    return user && (user.is_admin || this.holder_id === user.id);
+    return user && (user.is_admin || this.holder_id === user.id || this.admins.split('|').includes(user.id.toString()));
   }
 
   allowedSeeingOthers() {

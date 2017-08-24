@@ -63,12 +63,14 @@ app.get('/contest/:id/edit', async (req, res) => {
       contest.id = 0;
     }
 
-    let problems = [];
+    let problems = [], admins = [];
     if (contest.problems) problems = await contest.problems.split('|').mapAsync(async id => await Problem.fromID(id));
+    if (contest.admins) admins = await contest.admins.split('|').mapAsync(async id => await User.fromID(id));
 
     res.render('contest_edit', {
       contest: contest,
-      problems: problems
+      problems: problems,
+      admins: admins
     });
   } catch (e) {
     syzoj.log(e);
@@ -103,6 +105,7 @@ app.post('/contest/:id/edit', async (req, res) => {
     contest.subtitle = req.body.subtitle;
     if (!Array.isArray(req.body.problems)) req.body.problems = [req.body.problems];
     contest.problems = req.body.problems.join('|');
+    contest.admins = req.body.admins.join('|');
     contest.information = req.body.information;
     contest.start_time = syzoj.utils.parseDate(req.body.start_time);
     contest.end_time = syzoj.utils.parseDate(req.body.end_time);
@@ -223,9 +226,13 @@ app.get('/contest/:id/ranklist', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
+    const curUser = res.locals.user;
 
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!await contest.isAllowedSeeResultBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
+    contest.isEnded(),
+    contest.isSupervisior(curUser)].every(x => !x))
+      throw new ErrorMessage('您没有权限进行此操作。');
 
     await contest.loadRelationships();
 
