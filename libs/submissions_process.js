@@ -19,7 +19,7 @@ const getRoughResult = (x, displayConfig) => {
                 result: x.status,
                 time: displayConfig.showUsage ? x.total_time : null,
                 memory: displayConfig.showUsage ? x.max_memory : null,
-                score: displayConfig.showUsage ? x.score : null
+                score: displayConfig.showScore ? x.score : null
             };
         }
     } else {
