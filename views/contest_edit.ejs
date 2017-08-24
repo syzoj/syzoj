@@ -66,6 +66,13 @@
                 <label><span style="visibility: hidden; ">　</span></label>
               </div>
             </div>
+            <div class="inline field">
+              <label class="ui header">隐藏统计信息</label>
+              <div class="ui toggle checkbox">
+                <input type="checkbox"<% if (contest.hide_statistics) { %> checked<% } %> name="hide_statistics">
+                <label><span style="visibility: hidden; ">　</span></label>
+              </div>
+            </div>
             <button type="submit" class="ui button">提交</button>
         </form>
 <script>

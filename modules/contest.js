@@ -110,6 +110,7 @@ app.post('/contest/:id/edit', async (req, res) => {
     contest.start_time = syzoj.utils.parseDate(req.body.start_time);
     contest.end_time = syzoj.utils.parseDate(req.body.end_time);
     contest.is_public = req.body.is_public === 'on';
+    contest.hide_statistics = req.body.hide_statistics === 'on';
 
     await contest.save();
 
@@ -131,6 +132,7 @@ app.get('/contest/:id', async (req, res) => {
     if (!contest) throw new ErrorMessage('无此比赛。');
     if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('无此比赛。');
 
+    const isSupervisior = await contest.isSupervisior(curUser);
     contest.running = contest.isRunning();
     contest.ended = contest.isEnded();
     contest.subtitle = await syzoj.utils.markdown(contest.subtitle);
@@ -181,7 +183,7 @@ app.get('/contest/:id', async (req, res) => {
     }
 
     let hasStatistics = false;
-    if (contest.type === 'ioi' || contest.type === 'acm' || (contest.type === 'noi' && (contest.ended || (res.locals.user && res.locals.user.is_admin)))) {
+    if ((!contest.hide_statistics) || (contest.ended) || (isSupervisior)) {
       hasStatistics = true;
 
       await contest.loadRelationships();
@@ -212,7 +214,7 @@ app.get('/contest/:id', async (req, res) => {
       contest: contest,
       problems: problems,
       hasStatistics: hasStatistics,
-      isSupervisior: await contest.isSupervisior(curUser)
+      isSupervisior: isSupervisior
     });
   } catch (e) {
     syzoj.log(e);

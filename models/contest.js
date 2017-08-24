@@ -56,7 +56,8 @@ let model = db.define('contest', {
     }
   },
 
-  is_public: { type: Sequelize.BOOLEAN }
+  is_public: { type: Sequelize.BOOLEAN },
+  hide_statistics: { type: Sequelize.BOOLEAN }
 }, {
     timestamps: false,
     tableName: 'contest',
@@ -84,7 +85,8 @@ class Contest extends Model {
       end_time: 0,
       holder: 0,
       ranklist_id: 0,
-      is_public: false
+      is_public: false,
+      hide_statistics: false
     }, val)));
   }
 
