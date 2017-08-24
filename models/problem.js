@@ -202,6 +202,8 @@ let db = syzoj.db;
 
 let User = syzoj.model('user');
 let File = syzoj.model('file');
+const fs = require('fs-extra');
+const path = require('path');
 
 let model = db.define('problem', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -318,6 +320,10 @@ class Problem extends Model {
     return syzoj.utils.resolvePath(syzoj.config.upload_dir, 'testdata', this.id.toString());
   }
 
+  getTestdataArchivePath() {
+    return syzoj.utils.resolvePath(syzoj.config.upload_dir, 'testdata-archive', this.id.toString() + '.zip');
+  }
+
   async updateTestdata(path, noLimit) {
     await syzoj.utils.lock(['Problem::Testdata', this.id], async () => {
       let p7zip = new (require('node-7z'));
@@ -331,20 +337,18 @@ class Problem extends Model {
       if (!noLimit && unzipSize > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
 
       let dir = this.getTestdataPath();
-      let fs = Promise.promisifyAll(require('fs-extra'));
-      await fs.removeAsync(dir);
-      await fs.ensureDirAsync(dir);
+      await fs.remove(dir);
+      await fs.ensureDir(dir);
 
       await p7zip.extract(path, dir);
-      await fs.moveAsync(path, dir + '.zip', { overwrite: true });
+      await fs.move(path, this.getTestdataArchivePath(), { overwrite: true });
     });
   }
 
   async uploadTestdataSingleFile(filename, filepath, size, noLimit) {
     await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
       let dir = this.getTestdataPath();
-      let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
-      await fs.ensureDirAsync(dir);
+      await fs.ensureDir(dir);
 
       let oldSize = 0, list = await this.listTestdata(), replace = false, oldCount = 0;
       if (list) {
@@ -358,39 +362,36 @@ class Problem extends Model {
       if (!noLimit && oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
       if (!noLimit && oldCount + !replace > syzoj.config.limit.testdata_filecount) throw new ErrorMessage('数据包中的文件太多。');
 
-      await fs.moveAsync(filepath, path.join(dir, filename), { overwrite: true });
-      await fs.removeAsync(dir + '.zip');
+      await fs.move(filepath, path.join(dir, filename), { overwrite: true });
+      await fs.remove(this.getTestdataArchivePath());
     });
   }
 
   async deleteTestdataSingleFile(filename) {
     await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
-      let dir = this.getTestdataPath();
-      let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
-      await fs.removeAsync(path.join(dir, filename));
-      await fs.removeAsync(dir + '.zip');
+      await fs.remove(path.join(this.getTestdataPath(), filename));
+      await fs.remove(this.getTestdataArchivePath());
     });
   }
 
   async makeTestdataZip() {
     await syzoj.utils.lock(['Promise::Testdata', this.id], async () => {
       let dir = this.getTestdataPath();
-      if (await syzoj.utils.isFile(dir + '.zip')) return;
       if (!await syzoj.utils.isDir(dir)) throw new ErrorMessage('无测试数据。');
 
       let p7zip = new (require('node-7z'));
 
-      let list = await this.listTestdata(), path = require('path'), pathlist = list.files.map(file => path.join(dir, file.filename));
+      let list = await this.listTestdata(), pathlist = list.files.map(file => path.join(dir, file.filename));
       if (!pathlist.length) throw new ErrorMessage('无测试数据。');
-      await p7zip.add(dir + '.zip', pathlist);
+      await fs.ensureDir(path.resolve(this.getTestdataArchivePath(), '..'));
+      await p7zip.add(this.getTestdataArchivePath(), pathlist);
     });
   }
 
   async hasSpecialJudge() {
     try {
-      let fs = Promise.promisifyAll(require('fs-extra'));
       let dir = this.getTestdataPath();
-      let list = await fs.readdirAsync(dir);
+      let list = await fs.readdir(dir);
       return list.includes('spj.js') || list.find(x => x.startsWith('spj_')) !== undefined;
     } catch (e) {
       return false;
@@ -399,11 +400,10 @@ class Problem extends Model {
 
   async listTestdata() {
     try {
-      let fs = Promise.promisifyAll(require('fs-extra')), path = require('path');
       let dir = this.getTestdataPath();
-      let list = await fs.readdirAsync(dir);
+      let list = await fs.readdir(dir);
       list = await list.mapAsync(async x => {
-        let stat = await fs.statAsync(path.join(dir, x));
+        let stat = await fs.stat(path.join(dir, x));
         if (!stat.isFile()) return undefined;
         return {
           filename: x,
@@ -419,7 +419,7 @@ class Problem extends Model {
       };
 
       try {
-        let stat = await fs.statAsync(this.getTestdataPath() + '.zip');
+        let stat = await fs.stat(this.getTestdataArchivePath());
         if (stat.isFile()) {
           res.zip = {
             size: stat.size
@@ -629,29 +629,27 @@ class Problem extends Model {
       }
     }
 
-    let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = oldTestdataDir + '.zip';
+    let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = this.getTestdataArchivePath();
 
     this.id = id;
 
     // Move testdata
-    let newTestdataDir = this.getTestdataPath(), newTestdataZip = newTestdataDir + '.zip';
-    let fs = Promise.promisifyAll(require('fs-extra'));
+    let newTestdataDir = this.getTestdataPath(), newTestdataZip = this.getTestdataArchivePath();
     if (await syzoj.utils.isDir(oldTestdataDir)) {
-      await fs.moveAsync(oldTestdataDir, newTestdataDir);
+      await fs.move(oldTestdataDir, newTestdataDir);
     }
 
     if (await syzoj.utils.isFile(oldTestdataZip)) {
-      await fs.moveAsync(oldTestdataZip, newTestdataZip);
+      await fs.move(oldTestdataZip, newTestdataZip);
     }
 
     await this.save();
   }
 
   async delete() {
-    let fs = Promise.promisifyAll(require('fs-extra'));
-    let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = oldTestdataDir + '.zip';
-    await fs.removeAsync(oldTestdataDir);
-    await fs.removeAsync(oldTestdataZip);
+    let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = this.getTestdataPath();
+    await fs.remove(oldTestdataDir);
+    await fs.remove(oldTestdataZip);
 
     let JudgeState = syzoj.model('judge_state');
     let submissions = await JudgeState.query(null, { problem_id: this.id }), submitCnt = {}, acUsers = new Set();

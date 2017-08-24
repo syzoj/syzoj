@@ -757,13 +757,13 @@ app.get('/problem/:id/testdata/download/:filename?', async (req, res) => {
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     if (!req.params.filename) {
-      if (!await syzoj.utils.isFile(problem.getTestdataPath() + '.zip')) {
+      if (!await syzoj.utils.isFile(problem.getTestdataArchivePath())) {
         await problem.makeTestdataZip();
       }
     }
 
     let path = require('path');
-    let filename = req.params.filename ? path.join(problem.getTestdataPath(), req.params.filename) : (problem.getTestdataPath() + '.zip');
+    let filename = req.params.filename ? path.join(problem.getTestdataPath(), req.params.filename) : (problem.getTestdataArchivePath());
     if (!await syzoj.utils.isFile(filename)) throw new ErrorMessage('文件不存在。');
     res.download(filename, path.basename(filename));
   } catch (e) {

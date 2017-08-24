@@ -36,7 +36,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "file-size": "^1.0.0",
-    "fs-extra": "^2.1.2",
+    "fs-extra": "^4.0.1",
     "gravatar": "^1.5.2",
     "js-yaml": "^3.9.0",
     "jsonwebtoken": "^7.4.3",
