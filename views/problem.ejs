@@ -222,11 +222,9 @@ div[class*=ace_br] {
     <div class="row">
         <div class="column">
           <%
-          let formUrl;
-          if (contest) formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest.id });
-          else formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit']);
+          const formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest ? contest.id : undefined, _csrf: req.csrfToken() });
           %>
-          <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
+          <form class="ui form have-csrf" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
             <% if (problem.type === 'submit-answer') { %>
               <%
               let cases = [];
