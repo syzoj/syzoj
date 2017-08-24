@@ -135,14 +135,16 @@ app.get('/submission/:id', async (req, res) => {
     const id = parseInt(req.params.id);
     const judge = await JudgeState.fromID(id);
     if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
-    if (!await judge.isAllowedVisitBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    const curUser = res.locals.user;
+    if (!await judge.isAllowedVisitBy(curUser)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
     if (judge.type === 1) {
       contest = await Contest.fromID(judge.type_info);
       contest.ended = contest.isEnded();
 
-      if (!contest.ended && !await judge.problem.isAllowedEditBy(res.locals.user)) {
+      if (!contest.ended &&
+        !(await judge.problem.isAllowedEditBy(res.locals.user) || await contest.isSupervisior(curUser))) {
         throw new Error("对不起，在比赛结束之前，您不能查看评测结果。");
       }
     }

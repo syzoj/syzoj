@@ -621,8 +621,9 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     }
 
     let contest_id = parseInt(req.query.contest_id);
+    let contest;
     if (contest_id) {
-      let contest = await Contest.fromID(contest_id);
+      contest = await Contest.fromID(contest_id);
       if (!contest) throw new ErrorMessage('无此比赛。');
       if ((!contest.isRunning()) && (!await contest.isSupervisior(curUser))) throw new ErrorMessage('比赛未开始或已结束。');
       let problems_id = await contest.getProblems();
@@ -648,7 +649,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       throw new ErrorMessage(`无法开始评测：${err.toString()}`);
     }
 
-    if (contest_id) {
+    if (contest && (!await contest.isSupervisior(curUser))) {
       res.redirect(syzoj.utils.makeUrl(['contest', contest_id, 'submissions']));
     } else {
       res.redirect(syzoj.utils.makeUrl(['submission', judge_state.id]));
