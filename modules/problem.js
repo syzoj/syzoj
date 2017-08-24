@@ -594,7 +594,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       if (!file.md5) throw new ErrorMessage('上传答案文件失败。');
       judge_state = await JudgeState.create({
         code: file.md5,
-        max_memory: size,
+        code_length: size,
         language: null,
         user_id: res.locals.user.id,
         problem_id: req.params.id
@@ -612,6 +612,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
       judge_state = await JudgeState.create({
         code: code,
+        code_length: code.length,
         language: req.body.language,
         user_id: res.locals.user.id,
         problem_id: req.params.id

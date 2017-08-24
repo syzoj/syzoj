@@ -110,7 +110,7 @@ app.get('/submissions', async (req, res) => {
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),
         token: (getRoughResult(x, displayConfig) == null) ? jwt.sign({
-          taskId: x.id,
+          taskId: x.task_id,
           type: 'rough',
           displayConfig: displayConfig
         }, syzoj.config.judge_token) : null,
@@ -161,7 +161,7 @@ app.get('/submission/:id', async (req, res) => {
       code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
       detailResult: processOverallResult(judge.result, displayConfig),
       socketToken: judge.pending ? jwt.sign({
-        taskId: judge.id,
+        taskId: judge.task_id,
         type: 'detail',
         displayConfig: displayConfig
       }, syzoj.config.judge_token) : null,

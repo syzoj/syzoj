@@ -20,6 +20,7 @@
 'use strict';
 
 let Sequelize = require('sequelize');
+const randomstring = require('randomstring');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
@@ -36,8 +37,10 @@ let model = db.define('judge_state', {
   language: { type: Sequelize.STRING(20) },
 
   status: { type: Sequelize.STRING(50) },
+  task_id: { type: Sequelize.STRING(50) },
   score: { type: Sequelize.INTEGER },
   total_time: { type: Sequelize.INTEGER },
+  code_length: { type: Sequelize.INTEGER },
   pending: { type: Sequelize.BOOLEAN },
   max_memory: { type: Sequelize.INTEGER },
 
@@ -82,6 +85,7 @@ class JudgeState extends Model {
   static async create(val) {
     return JudgeState.fromRecord(JudgeState.model.build(Object.assign({
       code: '',
+      code_length: 0,
       language: null,
       user_id: 0,
       problem_id: 0,
@@ -96,7 +100,8 @@ class JudgeState extends Model {
       total_time: null,
       max_memory: null,
       status: 'Waiting',
-      result: null
+      result: null,
+      task_id: randomstring.generate(10)
     }, val)));
   }
 
@@ -156,14 +161,15 @@ class JudgeState extends Model {
       let oldStatus = this.status;
 
       this.status = 'Waiting';
-      this.score = 0;
+      this.score = null;
       if (this.language) {
         // language is empty if it's a submit-answer problem
-        this.total_time = 0;
-        this.max_memory = 0;
+        this.total_time = null;
+        this.max_memory = null;
       }
       this.pending = true;
       this.result = {};
+      this.task_id = randomstring.generate(10);
       await this.save();
 
       /*
@@ -192,7 +198,11 @@ class JudgeState extends Model {
         await contest.newSubmission(this);
       }
 
+      try {
       await Judger.judge(this, this.problem, 1);
+      } catch (err) {
+        throw new ErrorMessage("无法开始评测。");
+      }
     });
   }
 

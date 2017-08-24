@@ -31,7 +31,7 @@ module.exports.judge = async function (judge_state, problem, priority) {
 
     const req = {
         content: {
-            taskId: judge_state.id,
+            taskId: judge_state.task_id,
             testData: problem.id.toString(),
             type: type,
             priority: priority,

@@ -87,7 +87,11 @@ app.apiRouter.post('/api/v2/judge/compiled', async (req, res) => {
     let data = req.body;
 
     let JudgeState = syzoj.model('judge_state');
-    let judge_state = await JudgeState.fromID(req.body.taskId);
+    let judge_state = await JudgeState.findOne({ where: { task_id: req.body.taskId } });
+    if (!judge_state) {
+      res.send({ return: 1 }); // The task might have been rejudging.
+      return;
+    }
     judge_state.compilation = req.body.result;
     await judge_state.save();
 
@@ -104,7 +108,11 @@ app.apiRouter.post('/api/v2/judge/finished', async (req, res) => {
     let data = req.body;
 
     let JudgeState = syzoj.model('judge_state');
-    let judge_state = await JudgeState.fromID(req.body.taskId);
+    let judge_state = await JudgeState.findOne({ where: { task_id: req.body.taskId } });
+    if (!judge_state) {
+      res.send({ return: 1 }); // The task might have been rejudging.
+      return;
+    }
     // await judge_state.updateResult(JSON.parse(req.body));
     judge_state.score = data.score;
     judge_state.pending = false;

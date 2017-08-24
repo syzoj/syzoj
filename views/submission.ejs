@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr is="submission-item" v-bind:data="roughData" :config="displayConfig" :showRejudge="showRejudge"></tr>
+      <tr is="submission-item" v-bind:data="roughData" :config="displayConfig" :show-rejudge="showRejudge"></tr>
     </tbody>
   </table>
 
@@ -39,7 +39,7 @@
           <div class="four wide column">
             <status-label :status="getSubtaskResult(subtask)"></status-label>
           </div>
-          <div class="three wide column">得分
+          <div class="three wide column" v-if="subtask.score != null">得分
             <span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
           </div>
         </div>
@@ -221,13 +221,13 @@ if (token != null) {
     socket.on('connect', () => {
       socket.on('start', () => {
         vueApp.roughData.running = true;
+        console.log("Judge start!");
         vueApp.detailResult = {};
       });
       socket.on('update', (p) => {
         console.log("Delta: " + JSON.stringify(p));
         if (p.from === currentVersion) {
           currentVersion = p.to;
-          console.log("Before patching: " + JSON.stringify(vueApp));
           jsondiffpatch.patch(vueApp.detailResult, p.delta);
         } else { // Some packets are dropped. Let's reset.
           socket.close();
@@ -235,13 +235,14 @@ if (token != null) {
         }
       });
       socket.on('finish', (p) => {
-        console.log("Finish: " + JSON.stringify(p));
+        console.log("Judge finished");
         vueApp.roughData.running = false;
         vueApp.roughData.result = p.roughResult;
         vueApp.detailResult = p.result;
         socket.close();
       });
       socket.emit('join', token, (data) => {
+        console.log("join! " + JSON.stringify(data));
         if (data && data.ok) {
           if (data.finished) {
             vueApp.roughData.result = data.roughResult;
@@ -252,7 +253,8 @@ if (token != null) {
           } else {
             if (data.running) {
               vueApp.roughData.running = true;
-              vueApp.detailResult = data.current;
+              vueApp.detailResult = data.current.content;
+              currentVersion = data.current.version;
             }
           }
         } else {

@@ -46,6 +46,7 @@
     "mysql": "^2.11.1",
     "node-7z": "^0.4.0",
     "pygmentize-bundled-cached": "^1.1.0",
+    "randomstring": "^1.1.5",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "sendmail": "^1.1.1",
