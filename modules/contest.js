@@ -506,7 +506,6 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
 
     if (!problem.additional_file) throw new ErrorMessage('无附加文件。');
 
-    console.log(`additional_file_${id}_${pid}.zip`);
     res.download(problem.additional_file.getPath(), `additional_file_${id}_${pid}.zip`);
   } catch (e) {
     syzoj.log(e);

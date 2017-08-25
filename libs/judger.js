@@ -5,8 +5,6 @@ const enums = require('./enums'),
 const util = require('util');
 module.exports.judge = async function (judge_state, problem, priority) {
     let type, param, extraFile = null;
-    console.log("JudgeState: " + util.inspect(judge_state));
-    console.log("Problem: " + util.inspect(judge_state));
     switch (problem.type) {
         case 'submit-answer':
             type = enums.ProblemType.AnswerSubmission;
