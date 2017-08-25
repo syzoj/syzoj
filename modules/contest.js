@@ -324,12 +324,14 @@ app.get('/contest/:id/submissions', async (req, res) => {
       if (!isNaN(minScore) || !isNaN(maxScore)) {
         if (isNaN(minScore)) minScore = 0;
         if (isNaN(maxScore)) maxScore = 100;
-        where.score = {
-          $and: {
-            $gte: parseInt(minScore),
-            $lte: parseInt(maxScore)
-          }
-        };
+        if (!(minScore === 0 && maxScore === 100)) {
+          where.score = {
+            $and: {
+              $gte: parseInt(minScore),
+              $lte: parseInt(maxScore)
+            }
+          };
+        }
       }
     }
 
