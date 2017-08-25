@@ -34,17 +34,17 @@ let model = db.define('contest_player', {
   score_details: { type: Sequelize.TEXT, json: true },
   time_spent: { type: Sequelize.INTEGER }
 }, {
-  timestamps: false,
-  tableName: 'contest_player',
-  indexes: [
-    {
-      fields: ['contest_id'],
-    },
-    {
-      fields: ['user_id'],
-    }
-  ]
-});
+    timestamps: false,
+    tableName: 'contest_player',
+    indexes: [
+      {
+        fields: ['contest_id'],
+      },
+      {
+        fields: ['user_id'],
+      }
+    ]
+  });
 
 let Model = require('./common');
 class ContestPlayer extends Model {
@@ -102,7 +102,8 @@ class ContestPlayer extends Model {
 
         this.score = 0;
         for (let x in this.score_details) {
-          this.score += this.score_details[x].score;
+          if (this.score != null)
+            this.score += this.score_details[x].score;
         }
       }
     } else if (this.contest.type === 'noi') {
@@ -115,7 +116,8 @@ class ContestPlayer extends Model {
 
       this.score = 0;
       for (let x in this.score_details) {
-        this.score += this.score_details[x].score;
+        if (this.score != null)
+          this.score += this.score_details[x].score;
       }
     } else if (this.contest.type === 'acm') {
       if (!judge_state.pending) {
@@ -132,7 +134,7 @@ class ContestPlayer extends Model {
         this.score_details[judge_state.problem_id].submissions[judge_state.id] = {
           judge_id: judge_state.id,
           accepted: judge_state.status === 'Accepted',
-          compiled: judge_state.status !== 'Compile Error',
+          compiled: judge_state.score != null,
           time: judge_state.submit_time
         };
 
