@@ -12,8 +12,8 @@ var addUrlParam = function (url, key, val) {
   params[key] = val;
 
   url = twoPart[0] + '?';
-  for (let key in params) {
-    url += encodeURIComponent(key) + '=' + encodeURIComponent(params[key]) + '&';
+  for (let key2 in params) {
+    url += encodeURIComponent(key2) + '=' + encodeURIComponent(params[key2]) + '&';
   }
 
   url = url.substring(0, url.length - 1);
