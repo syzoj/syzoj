@@ -173,19 +173,20 @@ const vueApp = new Vue({
       return statusToString[statusCode];
     },
     firstNonAC(t) {
-      if (t.every(v => v === TestcaseResultType.Accepted)) {
+      if (t.every(function(v){ return v === TestcaseResultType.Accepted;})) {
         return TestcaseResultType.Accepted;
       } else {
-        return t.find(r => r !== TestcaseResultType.Accepted);
+        return t.find(function(r) { return r !== TestcaseResultType.Accepted;});
       }
     },
     getSubtaskResult(t) {
-      if (t.cases.some(c => c.status === TaskStatus.Running)) {
+      if (t.cases.some(function(c){ return c.status === TaskStatus.Running;})) {
         return "Running";
-      } else if (t.cases.some(c => c.status === TaskStatus.Waiting)) {
+      } else if (t.cases.some(function(c) { return c.status === TaskStatus.Waiting;})) {
         return "Waiting";
-      } else if (t.cases.every(c => c.status === TaskStatus.Done || c.status === TaskStatus.Skipped)) {
-        return this.getStatusString(this.firstNonAC(t.cases.filter(c => c.result).map(c => c.result.type)));
+      } else if (t.cases.every(function(c){ return c.status === TaskStatus.Done || c.status === TaskStatus.Skipped;})) {
+        return this.getStatusString(this.firstNonAC(t.cases.filter(function(c) { return c.result; })
+          .map(function(c) { return c.result.type;})));
       } else {
         return "System Error";
       }
@@ -208,7 +209,7 @@ const vueApp = new Vue({
     }
   },
   mounted() {
-    $(document).ready(() => $('.ui.accordion').accordion());
+    $(document).ready(function(){ $('.ui.accordion').accordion()});
   },
   updated() {
     $('.ui.accordion').accordion("refresh");
@@ -218,13 +219,13 @@ if (token != null) {
   const loadSocketIO = function () {
     let currentVersion = 0;
     const socket = io(socketUrl);
-    socket.on('connect', () => {
-      socket.on('start', () => {
+    socket.on('connect', function () {
+      socket.on('start', function () {
         vueApp.roughData.running = true;
         console.log("Judge start!");
         vueApp.detailResult = {};
       });
-      socket.on('update', (p) => {
+      socket.on('update', function (p) {
         console.log("Delta: " + JSON.stringify(p));
         if (p.from === currentVersion) {
           currentVersion = p.to;
@@ -234,14 +235,14 @@ if (token != null) {
           setTimeout(loadSocketIO, 0);
         }
       });
-      socket.on('finish', (p) => {
+      socket.on('finish', function (p) {
         console.log("Judge finished");
         vueApp.roughData.running = false;
         vueApp.roughData.result = p.roughResult;
         vueApp.detailResult = p.result;
         socket.close();
       });
-      socket.emit('join', token, (data) => {
+      socket.emit('join', token, function (data) {
         console.log("join! " + JSON.stringify(data));
         if (data && data.ok) {
           if (data.finished) {

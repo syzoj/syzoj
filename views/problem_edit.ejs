@@ -98,7 +98,7 @@ $(function () {
         onResponse: function (response) {
           var a = $('#search_tags').val().map(function (x) { return parseInt(x) });
           if (response.results) {
-            response.results = response.results.filter(x => !a.includes(parseInt(x.value)));
+            response.results = response.results.filter(function(x) { return !a.includes(parseInt(x.value));});
           }
           return response;
         },

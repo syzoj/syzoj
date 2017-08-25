@@ -124,24 +124,24 @@ const vueApp = new Vue({
   },
 });
 
-if (itemList.some(t => t.token != null)) {
+if (itemList.some(function(t) {return t.token != null;})) {
   const socket = io(socketUrl);
-  socket.on('connect', () => {
-    for (let x of itemList.filter(x => x.token != null)){
-      const getItem = (id) => itemList.find(x => x.info.taskId === id);
-      socket.on('start', (data) => {
+  socket.on('connect', function () {
+    for (let x of itemList.filter(function(x) {return x.token != null;})){
+      const getItem = function (id){ return itemList.find(function(x){ return x.info.taskId === id; })};
+      socket.on('start', function (data) {
         getItem(data.taskId).running = true;
       });
 
-      socket.on('finish', (data) => {
+      socket.on('finish', function (data) {
         getItem(data.taskId).running = false;
         getItem(data.taskId).result = data.result;
-        if (itemList.every(x => x.result)) {
+        if (itemList.every(function(x){ return x.result; })) {
           socket.close();
         }
       });
 
-      socket.emit('join', x.token, (data) => {
+      socket.emit('join', x.token, function (data) {
         if (data && data.ok) {
           if (data.running) {
             x.running = true;
