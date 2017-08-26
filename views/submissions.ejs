@@ -80,7 +80,7 @@
       <% } %>
     </div>
   </form>
-  <table id="vueApp" class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
+  <table id="vueAppFuckSafari" class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
     <thead>
       <tr>
         <th>编号</th>
@@ -117,7 +117,7 @@ const socketUrl = <%- syzoj.utils.judgeServer(pushType) %>;
 const displayConfig = <%- JSON.stringify(displayConfig) %>;
 
 const vueApp = new Vue({
-  el: '#vueApp',
+  el: '#vueAppFuckSafari',
   data: {
     items: itemList,
     displayConfig: displayConfig
