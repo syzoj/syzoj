@@ -240,12 +240,14 @@ app.post('/admin/rejudge', async (req, res) => {
     let maxScore = parseInt(req.body.max_score);
     if (isNaN(maxScore)) maxScore = 100;
 
-    where.score = {
-      $and: {
-        $gte: parseInt(minScore),
-        $lte: parseInt(maxScore)
-      }
-    };
+    if (!(minScore === 0 && maxScore === 100)) {
+      where.score = {
+        $and: {
+          $gte: parseInt(minScore),
+          $lte: parseInt(maxScore)
+        }
+      };
+    }
 
     let minTime = syzoj.utils.parseDate(req.body.min_time);
     if (isNaN(minTime)) minTime = 0;
