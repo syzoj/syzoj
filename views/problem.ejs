@@ -96,7 +96,7 @@ div[class*=ace_br] {
           <% } %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', problem.type === 'submit-answer' ? 'min' : 'fastest']) %>">统计</a>
-          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'discussion']) %>" style="position: relative; ">
+          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['discussion', 'problem', problem.id]) %>" style="position: relative; ">
             讨论
             <% if (discussionCount) { %>
               <div class="floating ui red tiny circular label"><%= discussionCount %></div>

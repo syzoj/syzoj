@@ -24,18 +24,34 @@ let Article = syzoj.model('article');
 let ArticleComment = syzoj.model('article-comment');
 let User = syzoj.model('user');
 
-app.get('/discussion', async (req, res) => {
+app.get('/discussion/:type?', async (req, res) => {
   try {
-    let where = { problem_id: null };
+    if (!['global', 'problems'].includes(req.params.type)) {
+      res.redirect(syzoj.utils.makeUrl(['discussion', 'global']));
+    }
+    const in_problems = req.params.type === 'problems';
+
+    let where;
+    if (in_problems) {
+      where = { problem_id: { $not: null } };
+    } else {
+      where = { problem_id: { $eq: null } };
+    }
     let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
     let articles = await Article.query(paginate, where, [['public_time', 'desc']]);
 
-    for (let article of articles) await article.loadRelationships();
+    for (let article of articles) {
+      await article.loadRelationships();
+      if (in_problems) {
+        article.problem = await Problem.fromID(article.problem_id);
+      }
+    }
 
     res.render('discussion', {
       articles: articles,
       paginate: paginate,
-      problem: null
+      problem: null,
+      in_problems: in_problems
     });
   } catch (e) {
     syzoj.log(e);
@@ -45,7 +61,7 @@ app.get('/discussion', async (req, res) => {
   }
 });
 
-app.get('/problem/:pid/discussion', async (req, res) => {
+app.get('/discussion/problem/:pid', async (req, res) => {
   try {
     let pid = parseInt(req.params.pid);
     let problem = await Problem.fromID(pid);
@@ -63,7 +79,8 @@ app.get('/problem/:pid/discussion', async (req, res) => {
     res.render('discussion', {
       articles: articles,
       paginate: paginate,
-      problem: problem
+      problem: problem,
+      in_problems: false
     });
   } catch (e) {
     syzoj.log(e);
@@ -201,7 +218,7 @@ app.post('/article/:id/delete', async (req, res) => {
 
     await article.destroy();
 
-    res.redirect(syzoj.utils.makeUrl(['discussion']));
+    res.redirect(syzoj.utils.makeUrl(['discussion', 'global']));
   } catch (e) {
     syzoj.log(e);
     res.render('error', {

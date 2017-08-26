@@ -8,33 +8,50 @@
           <div class="section">讨论</div>
           <i class="right angle icon divider"></i>
           <% if (problem) { %>
-            <div class="section">题目</div>
+            <div class="section"><a href="<%= syzoj.utils.makeUrl(['discussion', 'problems']) %>">题目</a></div>
             <i class="right angle icon divider"></i>
             <div class="active section"><%= problem.title %></div>
+          <% } else if (in_problems) { %>
+            <div class="section">题目</div>
           <% } else { %>
             <div class="section">全局板块</div>
           <% } %>
         </div>
       </div>
       <div class="six wide right aligned column">
-        <% if (problem) { %>
-          <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui labeled icon mini blue button">
-            <i class="arrow left icon"></i>
-            返回题目
+        <% if(in_problems) { %>
+          <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['discussion', 'global']) %>" class="ui labeled icon mini blue button">
+            <i class="world icon"></i>
+            全局板块
+          </a>
+        <% } else { %>
+          <% if (problem) { %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui labeled icon mini blue button">
+              <i class="arrow left icon"></i>
+              返回题目
+            </a>
+          <% } else { %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['discussion', 'problems']) %>" class="ui labeled icon mini blue button">
+              <i class="file outline icon"></i>
+              题目板块
+            </a>
+          <% } %>
+          <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui labeled icon mini button">
+              <i class="write icon"></i>
+              发帖
           </a>
         <% } %>
-        <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui labeled icon mini button">
-            <i class="write icon"></i>
-            发帖
-        </a>
       </div>
     </div>
   </div>
   <table class="ui very basic center aligned table">
     <thead>
       <tr>
-        <th class="left aligned" style="width: 65%; ">标题</th>
-        <th style="width: 15%; ">作者</th>
+        <th class="left aligned" style="width: 50%; ">标题</th>
+        <% if (in_problems) { %>
+          <th style="width: 20%; ">所属题目</th>
+        <% } %>
+        <th style="width: 10%; ">作者</th>
         <th style="width: 20%; ">发表时间</th>
       </tr>
     </thead>
@@ -42,6 +59,9 @@
     <% for (let article of articles) { %>
         <tr>
             <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
+            <% if (in_problems) { %>
+              <td><a href="<%= syzoj.utils.makeUrl(['discussion', 'problem', article.problem_id]) %>"><%= article.problem.title %></a></td>
+            <% } %>
             <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
             <td><%= syzoj.utils.formatDate(article.public_time) %></td>
         </tr>

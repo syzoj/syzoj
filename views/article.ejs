@@ -10,11 +10,11 @@
     <div class="section">讨论</div>
     <i class="right angle icon divider"></i>
     <% if (problem) { %>
-      <div class="section">题目</div>
+      <div class="section"><a href="<%= syzoj.utils.makeUrl(['discussion', 'problems']) %>">题目</a></div>
       <i class="right angle icon divider"></i>
-      <a href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'discussion']) %>" class="active section"><%= problem.title %></a>
+      <a href="<%= syzoj.utils.makeUrl(['discussion', 'problem', problem.id]) %>" class="active section"><%= problem.title %></a>
     <% } else { %>
-      <a href="<%= syzoj.utils.makeUrl(['discussion']) %>" class="section">全局板块</a>
+      <a href="<%= syzoj.utils.makeUrl(['discussion', 'global']) %>" class="section">全局板块</a>
     <% } %>
   </div>
   <h1><%= article.title %></h1>

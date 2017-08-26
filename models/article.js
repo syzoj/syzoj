@@ -23,6 +23,7 @@ let Sequelize = require('sequelize');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
+const Problem = syzoj.model('problem');
 
 let model = db.define('article', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
