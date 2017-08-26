@@ -50,6 +50,9 @@ let model = db.define('article', {
       fields: ['user_id']
     },
     {
+      fields: ['problem_id']
+    },
+    {
       fields: ['sort_time']
     }
   ]

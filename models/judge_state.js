@@ -76,6 +76,9 @@ let model = db.define('judge_state', {
       },
       {
         fields: ['problem_id'],
+      },
+      {
+        fields: ['task_id'],
       }
     ]
   });
