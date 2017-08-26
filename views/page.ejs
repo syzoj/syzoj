@@ -17,7 +17,7 @@
         rightCnt = leftCnt = 7;
         omitLeft = omitRight = true;
       }
-    } >%
+    } %>
     <a class="item" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: 1 })) %>"><%= 1 %></a>
     <% if (omitLeft) { %>
       <div class="disabled item">...</div>
