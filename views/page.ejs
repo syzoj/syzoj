@@ -33,7 +33,7 @@
 
     <a class="active item" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: paginate.currPage })) %>"><%= paginate.currPage %></a>
 
-    <% for (let i = paginate.currPage + 1; i <= paginate.currPage + rightCnt; i++) { %>
+    <% for (let i = paginate.currPage + 1; i <= paginate.currPage + rightCnt - 1; i++) { %>
       <a class="item" href="<%= syzoj.utils.makeUrl(req, Object.assign(req.query, { page: i })) %>"><%= i %></a>
     <% } %>
 
