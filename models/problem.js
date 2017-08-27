@@ -201,7 +201,6 @@ let Sequelize = require('sequelize');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
-let JudgeState = syzoj.model('judge_state');
 let File = syzoj.model('file');
 const fs = require('fs-extra');
 const path = require('path');
@@ -472,6 +471,7 @@ class Problem extends Model {
 
   async getJudgeState(user, acFirst) {
     if (!user) return null;
+    let JudgeState = syzoj.model('judge_state');
 
     let where = {
       user_id: user.id,
@@ -498,6 +498,7 @@ class Problem extends Model {
   }
 
   async resetSubmissionCount() {
+    let JudgeState = syzoj.model('judge_state');
     await syzoj.utils.lock(['Problem::resetSubmissionCount', this.id], async () => {
       this.submit_num = await JudgeState.count({ score: { $not: null }, problem_id: this.id, type: { $not: 1 } });
       this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id, type: { $not: 1 } });
