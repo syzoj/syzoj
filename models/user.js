@@ -39,7 +39,8 @@ let model = db.define('user', {
   is_show: { type: Sequelize.BOOLEAN },
   public_email: { type: Sequelize.BOOLEAN },
 
-  sex: { type: Sequelize.INTEGER }
+  sex: { type: Sequelize.INTEGER },
+  rating: { type: Sequelize.INTEGER }
 }, {
   timestamps: false,
   tableName: 'user',
@@ -70,7 +71,8 @@ class User extends Model {
       ac_num: 0,
       submit_num: 0,
       sex: 0,
-      is_show: syzoj.config.default.user.show
+      is_show: syzoj.config.default.user.show,
+      rating: syzoj.config.default.user.rating
     }, val)));
   }
 

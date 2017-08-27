@@ -22,7 +22,8 @@
       "memory_limit": 256
     },
     "user": {
-      "show": true
+      "show": true,
+      "rating": 1500
     }
   },
   "limit": {
