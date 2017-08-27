@@ -97,12 +97,12 @@ class JudgeState extends Model {
       type: 0,
       type_info: 0,
 
-      pending: true,
+      pending: false,
 
       score: null,
       total_time: null,
       max_memory: null,
-      status: 'Waiting',
+      status: 'Unknown',
       result: null,
       task_id: randomstring.generate(10)
     }, val)));
@@ -154,14 +154,14 @@ class JudgeState extends Model {
 
       let oldStatus = this.status;
 
-      this.status = 'Waiting';
+      this.status = 'Unknown';
+      this.pending = false;
       this.score = null;
       if (this.language) {
         // language is empty if it's a submit-answer problem
         this.total_time = null;
         this.max_memory = null;
       }
-      this.pending = true;
       this.result = {};
       this.task_id = randomstring.generate(10);
       await this.save();
@@ -190,6 +190,9 @@ class JudgeState extends Model {
 
       try {
         await Judger.judge(this, this.problem, 1);
+        this.pending = true;
+        this.status = 'Waiting';
+        await this.save();
       } catch (err) {
         throw new ErrorMessage("无法开始评测。");
       }

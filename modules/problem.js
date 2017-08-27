@@ -642,10 +642,10 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
     try {
       await Judger.judge(judge_state, problem, contest_id ? 3 : 2);
-    } catch (err) {
-      judge_state.status = "System Error";
-      judge_state.pending = false;
+      judge_state.pending = true;
+      judge_state.status = 'Waiting';
       await judge_state.save();
+    } catch (err) {
       throw new ErrorMessage(`无法开始评测：${err.toString()}`);
     }
 
