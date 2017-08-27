@@ -47,7 +47,7 @@ app.get('/submissions', async (req, res) => {
     if (user) where.user_id = user.id;
     else if (req.query.submitter) where.user_id = -1;
 
-    if (req.query.contest == null) {
+    if (!req.query.contest) {
       where.type = { $ne: 1 };
     } else {
       const contestId = Number(req.query.contest);
