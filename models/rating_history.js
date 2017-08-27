@@ -68,7 +68,7 @@ class RatingHistory extends Model {
         return newRecord;
     }
 
-    async loadRelationShips() {
+    async loadRelationships() {
         this.user = await User.fromID(this.user_id);
     }
 

@@ -54,7 +54,7 @@ class RatingCalculation extends Model {
         return newItem;
     }
 
-    async loadRelationShips() {
+    async loadRelationships() {
         this.contest = await Contest.fromID(this.contest_id);
     }
 
@@ -66,7 +66,7 @@ class RatingCalculation extends Model {
             rating_calculation_id: this.rating_calculation_id
         });
         for (const history of histories) {
-            await history.loadRelationShips();
+            await history.loadRelationships();
             const user = history.user;
             await history.destroy();
             const ratingItem = (await RatingHistory.findOne({
