@@ -136,19 +136,10 @@ class JudgeState extends Model {
     await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'problem', this.problem_id], async () => {
       await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'user', this.user_id], async () => {
         if (this.type === 0) {
-          if (newSubmission) {
-            await this.loadRelationships();
-            await this.user.refreshSubmitInfo();
-            this.problem.submit_num++;
-            await this.user.save();
-            await this.problem.save();
-          } else if (this.status === 'Accepted') {
-            await this.loadRelationships();
-            await this.user.refreshSubmitInfo();
-            this.problem.ac_num++;
-            await this.user.save();
-            await this.problem.save();
-          }
+          await this.loadRelationships();
+          await this.user.refreshSubmitInfo();
+          await this.user.save();
+          await this.problem.resetSubmissionCount();
         } else if (this.type === 1) {
           let contest = await Contest.fromID(this.type_info);
           await contest.newSubmission(this);
@@ -186,17 +177,13 @@ class JudgeState extends Model {
       await waiting_judge.save();
       */
 
+      await this.problem.resetSubmissionCount();
       if (oldStatus === 'Accepted') {
         await this.user.refreshSubmitInfo();
         await this.user.save();
       }
 
-      if (this.type === 0) {
-        if (oldStatus === 'Accepted') {
-          this.problem.ac_num--;
-          await this.problem.save();
-        }
-      } else if (this.type === 1) {
+      if (this.type === 1) {
         let contest = await Contest.fromID(this.type_info);
         await contest.newSubmission(this);
       }
