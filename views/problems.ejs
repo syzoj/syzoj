@@ -142,7 +142,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
             </td>
             <td><%= problem.ac_num %></td>
             <td><%= problem.submit_num %></td>
-            <td><%= ((problem.ac_num / problem.submit_num * 100) || 0).toFixed(2) %>%</td>
+            <td><%= problem.submit_num != 0 ? (((problem.ac_num / problem.submit_num * 100) || 0).toFixed(2) + '%') : '-' %></td>
         </tr>
         <% } %>
     <% } %>
