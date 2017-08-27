@@ -198,6 +198,19 @@ app.post('/admin/privilege', async (req, res) => {
   }
 });
 
+app.get('/admin/other', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    res.render('admin_other');
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
 app.get('/admin/rejudge', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
@@ -206,6 +219,28 @@ app.get('/admin/rejudge', async (req, res) => {
       form: {},
       count: null
     });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
+app.post('/admin/other', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    if (req.body.type === 'reset_count') {
+      const problems = await Problem.query();
+      for(const p of problems) {
+        await p.resetSubmissionCount();
+      }
+    } else {
+      throw new ErrorMessage("操作类型不正确");
+    }
+
+    res.redirect(syzoj.utils.makeUrl(['admin', 'other']));
   } catch (e) {
     syzoj.log(e);
     res.render('error', {

@@ -533,30 +533,30 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
 
 // Set problem public
 async function setPublic(req, res, is_public) {
-  try {
-    let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
-    if (!problem) throw new ErrorMessage('无此题目。');
+    try {
+      let id = parseInt(req.params.id);
+      let problem = await Problem.fromID(id);
+      if (!problem) throw new ErrorMessage('无此题目。');
 
-    let allowedManage = await problem.isAllowedManageBy(res.locals.user);
-    if (!allowedManage) throw new ErrorMessage('您没有权限进行此操作。');
+      let allowedManage = await problem.isAllowedManageBy(res.locals.user);
+      if (!allowedManage) throw new ErrorMessage('您没有权限进行此操作。');
 
-    problem.is_public = is_public;
-    problem.publicizer_id = res.locals.user.id;
-    await problem.save();
+      problem.is_public = is_public;
+      problem.publicizer_id = res.locals.user.id;
+      await problem.save();
 
-    res.redirect(syzoj.utils.makeUrl(['problem', id]));
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
+      res.redirect(syzoj.utils.makeUrl(['problem', id]));
+    } catch (e) {
+      syzoj.log(e);
+      res.render('error', {
+        err: e
+      });
+    }
   }
-}
 
 app.post('/problem/:id/public', async (req, res) => {
-  await setPublic(req, res, true);
-});
+    await setPublic(req, res, true);
+  });
 
 app.post('/problem/:id/dis_public', async (req, res) => {
   await setPublic(req, res, false);

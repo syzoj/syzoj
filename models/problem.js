@@ -21,7 +21,7 @@
 
 let statisticsStatements = {
   fastest:
-'\
+  '\
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -46,7 +46,7 @@ WHERE  \
 ORDER BY `total_time` ASC \
 ',
   slowest:
-' \
+  ' \
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -71,7 +71,7 @@ WHERE  \
 ORDER BY `total_time` DESC \
 ',
   shortest:
-' \
+  ' \
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -96,7 +96,7 @@ WHERE  \
 ORDER BY `code_length` ASC \
 ',
   longest:
-' \
+  ' \
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -121,7 +121,7 @@ WHERE  \
 ORDER BY `code_length` DESC \
 ',
   earliest:
-' \
+  ' \
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -146,7 +146,7 @@ WHERE  \
 ORDER BY `submit_time` ASC \
 ',
   min:
-' \
+  ' \
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -171,7 +171,7 @@ WHERE  \
 ORDER BY `max_memory` ASC \
 ',
   max:
-' \
+  ' \
 SELECT \
 	DISTINCT(`user_id`) AS `user_id`,  \
 	( \
@@ -201,6 +201,7 @@ let Sequelize = require('sequelize');
 let db = syzoj.db;
 
 let User = syzoj.model('user');
+let JudgeState = syzoj.model('judge_state');
 let File = syzoj.model('file');
 const fs = require('fs-extra');
 const path = require('path');
@@ -249,17 +250,17 @@ let model = db.define('problem', {
     values: ['traditional', 'submit-answer', 'interaction']
   }
 }, {
-  timestamps: false,
-  tableName: 'problem',
-  indexes: [
-    {
-      fields: ['title'],
-    },
-    {
-      fields: ['user_id'],
-    }
-  ]
-});
+    timestamps: false,
+    tableName: 'problem',
+    indexes: [
+      {
+        fields: ['title'],
+      },
+      {
+        fields: ['user_id'],
+      }
+    ]
+  });
 
 let Model = require('./common');
 class Problem extends Model {
@@ -472,8 +473,6 @@ class Problem extends Model {
   async getJudgeState(user, acFirst) {
     if (!user) return null;
 
-    let JudgeState = syzoj.model('judge_state');
-
     let where = {
       user_id: user.id,
       problem_id: this.id
@@ -496,6 +495,12 @@ class Problem extends Model {
       where: where,
       order: [['submit_time', 'desc']]
     });
+  }
+
+  async resetSubmissionCount() {
+    this.submit_num = await JudgeState.count({ score: { $not: null }, problem_id: this.id });
+    this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id });
+    await this.save();
   }
 
   // type: fastest / slowest / shortest / longest / earliest
@@ -585,10 +590,12 @@ class Problem extends Model {
     let addTagIDs = newTagIDs.filter(x => !oldTagIDs.includes(x));
 
     for (let tagID of delTagIDs) {
-      let map = await ProblemTagMap.findOne({ where: {
-        problem_id: this.id,
-        tag_id: tagID
-      } });
+      let map = await ProblemTagMap.findOne({
+        where: {
+          problem_id: this.id,
+          tag_id: tagID
+        }
+      });
 
       await map.destroy();
     }
@@ -605,10 +612,10 @@ class Problem extends Model {
 
   async changeID(id) {
     id = parseInt(id);
-    await db.query('UPDATE `problem`         SET `id`         = ' + id                      + ' WHERE `id`         = ' + this.id);
-    await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
-    await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
-    await db.query('UPDATE `article`         SET `problem_id` = ' + id                      + ' WHERE `problem_id` = ' + this.id);
+    await db.query('UPDATE `problem`         SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
+    await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await db.query('UPDATE `article`         SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
 
     let Contest = syzoj.model('contest');
     let contests = await Contest.all();
