@@ -22,6 +22,7 @@
 let Sequelize = require('sequelize');
 let db = syzoj.db;
 const User = syzoj.model('user');
+const Contest = syzoj.model('contest');
 
 let model = db.define('rating_calculation', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
@@ -51,6 +52,10 @@ class RatingCalculation extends Model {
             await RatingHistory.create(newItem.id, val.user_id, val.rating);
         }
         return newItem;
+    }
+
+    async loadRelationShips() {
+        this.contest = await Contest.fromID(this.contest_id);
     }
 
     getModel() { return model; }
