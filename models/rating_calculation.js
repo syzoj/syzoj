@@ -26,13 +26,7 @@ const Contest = syzoj.model('contest');
 
 let model = db.define('rating_calculation', {
     id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-    contest_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: 'contest',
-            key: 'id'
-        }
-    }
+    contest_id: { type: Sequelize.INTEGER }
 }, {
         timestamps: false,
         tableName: 'rating_calculation',
@@ -45,13 +39,8 @@ let model = db.define('rating_calculation', {
 
 let Model = require('./common');
 class RatingCalculation extends Model {
-    static async create(contest_id, newRatingList) {
-        const newItem = await RatingCalculation.model.create({ contest_id: contest_id });
-        const RatingHistory = syzoj.model('rating_history');
-        for (const val of newRatingList) {
-            await RatingHistory.create(newItem.id, val.user_id, val.rating);
-        }
-        return newItem;
+    static async create(contest_id) {
+        return RatingCalculation.fromRecord(RatingCalculation.model.create({ contest_id: contest_id }));
     }
 
     async loadRelationships() {
