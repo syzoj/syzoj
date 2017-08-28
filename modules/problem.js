@@ -130,7 +130,7 @@ app.get('/problems/search', async (req, res) => {
     }
 
     let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(paginate, where,  [syzoj.db.literal('`id` = ' + id + ' DESC'), [sortVal, order]]);
+    let problems = await Problem.query(paginate, where, [syzoj.db.literal('`id` = ' + id + ' DESC'), [sortVal, order]]);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -162,9 +162,11 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
     if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
-    let sortVal = sort;
+    let sortVal;
     if (sort === 'ac_rate') {
-      sortVal = 'ac_num / submit_num';
+      sortVal = '`problem`.`ac_num` / `problem`.`submit_num`';
+    } else {
+      sortVal = '`problem`.`' + sort + '`';
     }
 
     // Validate the tagIDs
@@ -192,7 +194,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
     }
 
     let paginate = syzoj.utils.paginate(await Problem.count(sql), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(sql + paginate.toSQL() + ` ORDER BY ${sortVal} ${order}`);
+    let problems = await Problem.query(sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL());
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
