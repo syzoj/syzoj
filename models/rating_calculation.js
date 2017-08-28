@@ -52,11 +52,12 @@ class RatingCalculation extends Model {
     async delete() {
         const RatingHistory = syzoj.model('rating_history');
         const histories = await RatingHistory.query(null, {
-            rating_calculation_id: this.rating_calculation_id
+            rating_calculation_id: this.id
         });
         for (const history of histories) {
             await history.loadRelationships();
             const user = history.user;
+            console.log("Destroying history for user " + user.id);
             await history.destroy();
             const ratingItem = (await RatingHistory.findOne({
                 where: { user_id: user.id },
