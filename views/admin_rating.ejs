@@ -1,0 +1,34 @@
+<% this.adminPage = 'rating'; %>
+<% include admin_header %>
+<form action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'add']) %>" method="post" class="ui form">
+  <div class="field">
+    <label>比赛</label>
+    <div class="ui fluid search selection dropdown">
+      <input type="hidden" name="contest">
+      <i class="dropdown icon"></i>
+      <div class="default text">选择比赛</div>
+      <div class="menu">
+        <% for (const contest of contests) { %>
+          <div class="item" data-value="<%= contest.id %>"><%= contest.title %></div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <button class="ui blue button" name="type" value="doit" type="submit">计算此比赛的 Rating</button>
+</form>
+
+注意：如果删除一个比赛的 Rating，则该比赛之上的所有比赛也将被删除，Rating 将还原至该比赛之前的状态！
+<form class="have-csrf" action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'delete']) %>" method="POST">
+  <input type="hidden" name="_csrf" value="<%= req.csrfToken() %>" />
+  <div class="ui relaxed divided list">
+    <% for (const calc of calcs) { %>
+      <div class="item">
+        <%= calc.contest.title %>
+        <button name="calc_id" value="<%= calc.id %>" type="submit" style="color: #000; padding: 0; border: none; background: none;"><i class="remove icon"></i></button>
+      </div>
+    <% } %>
+  </div>
+</div>
+</form>
+<% include admin_footer %>
+<script>$('.selection.dropdown').dropdown();</script>
