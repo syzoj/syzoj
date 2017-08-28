@@ -57,7 +57,6 @@ class RatingCalculation extends Model {
         for (const history of histories) {
             await history.loadRelationships();
             const user = history.user;
-            console.log("Destroying history for user " + user.id);
             await history.destroy();
             const ratingItem = (await RatingHistory.findOne({
                 where: { user_id: user.id },

@@ -9,7 +9,6 @@ const getOrderString = function(order) {
 }
 this.createSortableTitle = function(item, display, defaultOrder) {
   const isCurrent = curSort === item;
-  console.log(isCurrent ? (!curOrder) : defaultOrder)
   const url = syzoj.utils.makeUrl(req, 
     Object.assign({}, req.query, { 
       sort: item, 
