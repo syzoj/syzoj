@@ -26,6 +26,16 @@
       "rating": 1500
     }
   },
+  "sorting": {
+    "ranklist": {
+      "field": "rating",
+      "order": "desc"
+    },
+    "problem": {
+      "field": "id",
+      "order": "asc"
+    }
+  },
   "limit": {
     "time_limit": 10000,
     "memory_limit": 1024,

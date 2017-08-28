@@ -24,8 +24,8 @@ let User = syzoj.model('user');
 // Ranklist
 app.get('/ranklist', async (req, res) => {
   try {
-    const sort = req.query.sort || "id";
-    const order = req.query.order || "desc";
+    const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
+    const order = req.query.order || syzoj.config.sorting.ranklist.order;
     console.log("SORT ===> " + sort + ", ORDER ===> " + order);
     if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
