@@ -13,6 +13,12 @@ module.exports.judge = async function (judge_state, problem, priority) {
             break;
         case 'interaction':
             type = enums.ProblemType.Interaction;
+            param = {
+                language: judge_state.language,
+                code: judge_state.code,
+                timeLimit: problem.time_limit,
+                memoryLimit: problem.memory_limit,
+            }
             break;
         default:
             type = enums.ProblemType.Standard;
