@@ -38,7 +38,7 @@ app.get('/discussion/:type?', async (req, res) => {
       where = { problem_id: { $eq: null } };
     }
     let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
-    let articles = await Article.query(paginate, where, [['public_time', 'desc']]);
+    let articles = await Article.query(paginate, where, [['sort_time', 'desc']]);
 
     for (let article of articles) {
       await article.loadRelationships();
@@ -72,7 +72,7 @@ app.get('/discussion/problem/:pid', async (req, res) => {
 
     let where = { problem_id: pid };
     let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
-    let articles = await Article.query(paginate, where, [['public_time', 'desc']]);
+    let articles = await Article.query(paginate, where, [['sort_time', 'desc']]);
 
     for (let article of articles) await article.loadRelationships();
 
@@ -249,6 +249,10 @@ app.post('/article/:id/comment', async (req, res) => {
 
     await comment.save();
 
+    article.sort_time = syzoj.utils.getCurrentDate();
+    article.comments_num += 1;
+    await article.save();
+
     res.redirect(syzoj.utils.makeUrl(['article', article.id]));
   } catch (e) {
     syzoj.log(e);
@@ -272,6 +276,11 @@ app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
     }
 
     await comment.destroy();
+
+    let article = comment.article;
+    article.comments_num -= 1;
+
+    await article.save();
 
     res.redirect(syzoj.utils.makeUrl(['article', comment.article_id]));
   } catch (e) {
