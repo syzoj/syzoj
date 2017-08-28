@@ -86,6 +86,11 @@ app.get('/problems', async (req, res) => {
 app.get('/problems/search', async (req, res) => {
   try {
     let id = parseInt(req.query.keyword) || 0;
+    const sort = req.query.sort || syzoj.config.sorting.problem.field;
+    const order = req.query.order || syzoj.config.sorting.problem.order;
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+      throw new ErrorMessage('错误的排序参数。');
+    }
 
     let where = {
       $or: {
@@ -119,7 +124,11 @@ app.get('/problems/search', async (req, res) => {
       }
     }
 
-    let order = [syzoj.db.literal('`id` = ' + id + ' DESC'), ['id', 'ASC']];
+    let sortVal = sort;
+    if (sort === 'ac_rate') {
+      sortVal = { raw: 'ac_num / submit_num' };
+    }
+    let order = [syzoj.db.literal('`id` = ' + id + ' DESC'), [sortVal, order]];
 
     let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.query(paginate, where, order);
@@ -133,7 +142,9 @@ app.get('/problems/search', async (req, res) => {
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
-      paginate: paginate
+      paginate: paginate,
+      curSort: sort,
+      curOrder: order === 'asc'
     });
   } catch (e) {
     syzoj.log(e);
@@ -147,6 +158,15 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
   try {
     let tagIDs = Array.from(new Set(req.params.tagIDs.split(',').map(x => parseInt(x))));
     let tags = await tagIDs.mapAsync(async tagID => ProblemTag.fromID(tagID));
+    const sort = req.query.sort || syzoj.config.sorting.problem.field;
+    const order = req.query.order || syzoj.config.sorting.problem.order;
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+      throw new ErrorMessage('错误的排序参数。');
+    }
+    let sortVal = sort;
+    if (sort === 'ac_rate') {
+      sortVal = 'ac_num / submit_num';
+    }
 
     // Validate the tagIDs
     for (let tag of tags) {
@@ -173,7 +193,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
     }
 
     let paginate = syzoj.utils.paginate(await Problem.count(sql), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(sql + paginate.toSQL());
+    let problems = await Problem.query(sql + paginate.toSQL() + ` ORDER BY ${sortVal} ${order}`);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -185,7 +205,9 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
       tags: tags,
-      paginate: paginate
+      paginate: paginate,
+      curSort: sort,
+      curOrder: order === 'asc'
     });
   } catch (e) {
     syzoj.log(e);
