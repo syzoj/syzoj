@@ -73,5 +73,5 @@ function calculateDeltas(allContestants) {
 
 module.exports = function(allContestants) {
     const deltas = calculateDeltas(allContestants);
-    return allContestants.map((contestant, i) => ({ user: contestant.user, currentRating: contestant.currentRating + deltas[i] }));
+    return allContestants.map((contestant, i) => ({ user: contestant.user, rank: contestant.rank, currentRating: contestant.currentRating + deltas[i] }));
 }

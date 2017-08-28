@@ -118,6 +118,36 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="column">
+                        <h4 class="ui top attached block header">比赛</h4>
+                        <div class="ui bottom attached segment">
+                            <table class="ui very basic table">
+                                <thead>
+                                    <tr>
+                                        <th>比赛</th>
+                                        <th>名次</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (const history of ratingHistories) { %>
+                                    <tr>
+                                        <td><%= history.contestName %></td>
+                                        <td><%= history.rank != null ? history.rank + " / " + history.participants : '' %></td>
+                                        <td><%= history.value %> 
+                                            <% if(history.delta != null) { %> 
+                                                <span class="<%= history.delta >= 0 ? 'red' : 'green' %>">
+                                                (<%= (history.delta < 0 ? '' : '+') + history.delta %>)
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

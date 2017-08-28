@@ -27,6 +27,7 @@ let model = db.define('rating_history', {
     rating_calculation_id: { type: Sequelize.INTEGER, primaryKey: true },
     user_id: { type: Sequelize.INTEGER, primaryKey: true },
     rating_after: { type: Sequelize.INTEGER },
+    rank: { type: Sequelize.INTEGER },
 }, {
         timestamps: false,
         tableName: 'rating_history',
@@ -42,11 +43,12 @@ let model = db.define('rating_history', {
 
 let Model = require('./common');
 class RatingHistory extends Model {
-    static async create(rating_calculation_id, user_id, rating) {
+    static async create(rating_calculation_id, user_id, rating, rank) {
         return RatingHistory.fromRecord(RatingHistory.model.build({
             rating_calculation_id: rating_calculation_id,
             user_id: user_id,
-            rating_after: rating
+            rating_after: rating,
+            rank: rank
         }));
     }
 

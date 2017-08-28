@@ -20,6 +20,10 @@
 'use strict';
 
 let User = syzoj.model('user');
+const RatingCalculation = syzoj.model('rating_calculation');
+const RatingHistory = syzoj.model('rating_history');
+const Contest = syzoj.model('contest');
+const ContestPlayer = syzoj.model('contest_player');
 
 // Ranklist
 app.get('/ranklist', async (req, res) => {
@@ -103,9 +107,30 @@ app.get('/user/:id', async (req, res) => {
     await user.renderInformation();
     user.emailVisible = user.public_email || user.allowedEdit;
 
+    const ratingHistoryValues = await RatingHistory.query(null, { user_id: user.id }, [['rating_calculation_id', 'asc']]);
+    const ratingHistories = [{
+      name: "初始积分",
+      value: syzoj.config.default.user.rating,
+      delta: null,
+      rank: null
+    }];
+    ratingHistories.reverse();
+
+    for (const history of ratingHistoryValues) {
+      const contest = await Contest.fromId((await RatingCalculation.fromID(history.rating_calculation_id)).contest_id);
+      ratingHistories.push({
+        contestName: contest.title,
+        value: history.rating_after,
+        delta: history.rating_after - ratingHistories[ratingHistories.length - 1].value,
+        rank: history.rank,
+        participants: await ContestPlayer.count({ contest_id: contest.id })
+      });
+    }
+
     res.render('user', {
       show_user: user,
-      statistics: statistics
+      statistics: statistics,
+      ratingHistories: ratingHistories
     });
   } catch (e) {
     syzoj.log(e);

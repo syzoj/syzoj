@@ -250,7 +250,7 @@ app.post('/admin/rating/add', async (req, res) => {
       const user = newRating[i].user;
       user.rating = newRating[i].currentRating;
       await user.save();
-      const newHistory = await RatingHistory.create(newcalc.id, user.id, user.rating);
+      const newHistory = await RatingHistory.create(newcalc.id, user.id, newRating[i].currentRating, newRating[i].rank);
       await newHistory.save();
     }
 
