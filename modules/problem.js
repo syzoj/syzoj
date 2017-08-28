@@ -128,10 +128,9 @@ app.get('/problems/search', async (req, res) => {
     if (sort === 'ac_rate') {
       sortVal = { raw: 'ac_num / submit_num' };
     }
-    let order = [syzoj.db.literal('`id` = ' + id + ' DESC'), [sortVal, order]];
 
     let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(paginate, where, order);
+    let problems = await Problem.query(paginate, where,  [syzoj.db.literal('`id` = ' + id + ' DESC'), [sortVal, order]]);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
