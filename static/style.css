@@ -499,6 +499,14 @@ body > .ui.page.dimmer {
     text-shadow: 0 0 0.1px;
 }
 
+.rating_up {
+  color: #dd4b39;
+}
+
+.rating_down {
+  color: #3d9400;
+}
+
 /* code tag */
 :not(pre) > code {
     background-color: rgba(0, 0, 0, 0.08);

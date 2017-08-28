@@ -109,15 +109,14 @@ app.get('/user/:id', async (req, res) => {
 
     const ratingHistoryValues = await RatingHistory.query(null, { user_id: user.id }, [['rating_calculation_id', 'asc']]);
     const ratingHistories = [{
-      name: "初始积分",
+      contestName: "初始积分",
       value: syzoj.config.default.user.rating,
       delta: null,
       rank: null
     }];
-    ratingHistories.reverse();
 
     for (const history of ratingHistoryValues) {
-      const contest = await Contest.fromId((await RatingCalculation.fromID(history.rating_calculation_id)).contest_id);
+      const contest = await Contest.fromID((await RatingCalculation.fromID(history.rating_calculation_id)).contest_id);
       ratingHistories.push({
         contestName: contest.title,
         value: history.rating_after,
@@ -126,6 +125,7 @@ app.get('/user/:id', async (req, res) => {
         participants: await ContestPlayer.count({ contest_id: contest.id })
       });
     }
+    ratingHistories.reverse();
 
     res.render('user', {
       show_user: user,

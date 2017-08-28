@@ -137,7 +137,7 @@
                                         <td><%= history.rank != null ? history.rank + " / " + history.participants : '' %></td>
                                         <td><%= history.value %> 
                                             <% if(history.delta != null) { %> 
-                                                <span class="<%= history.delta >= 0 ? 'red' : 'green' %>">
+                                                <span class="<%= history.delta >= 0 ? 'rating_up' : 'rating_down' %>">
                                                 (<%= (history.delta < 0 ? '' : '+') + history.delta %>)
                                             <% } %>
                                         </td>
