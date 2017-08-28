@@ -91,11 +91,11 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
         <% if (user) { %>
         <th class="one wide">提交状态</th>
         <% } %>
-        <th class="one wide">编号</th>
-        <th class="left aligned">题目名称</th>
-        <th class="one wide">通过</th>
-        <th class="one wide">提交</th>
-        <th class="one wide">通过率</th>
+        <th class="one wide"><%- createSortableTitle('id', '编号', true) %></th>
+        <th class="left aligned"><%- createSortableTitle('title', '题目名称', true) %></th>
+        <th class="one wide"><%- createSortableTitle('ac_num', '通过', false) %></th>
+        <th class="one wide"><%- createSortableTitle('submit_num', '提交', false) %></th>
+        <th class="one wide"><%- createSortableTitle('ac_rate', '通过率', false) %></th>
       </tr>
     </thead>
     <tbody>

@@ -27,11 +27,22 @@ let Contest = syzoj.model('contest');
 let ProblemTag = syzoj.model('problem_tag');
 let ProblemTagMap = syzoj.model('problem_tag_map');
 let Article = syzoj.model('article');
+const Sequelize = require('sequelize');
 
 let Judger = syzoj.lib('judger');
 
 app.get('/problems', async (req, res) => {
   try {
+    const sort = req.query.sort || syzoj.config.sorting.problem.field;
+    const order = req.query.order || syzoj.config.sorting.problem.order;
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+      throw new ErrorMessage('错误的排序参数。');
+    }
+
+    let sortVal = sort;
+    if (sort === 'ac_rate') {
+      sortVal = { raw: 'ac_num / submit_num' };
+    }
     let where = {};
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
       if (res.locals.user) {
@@ -49,7 +60,7 @@ app.get('/problems', async (req, res) => {
     }
 
     let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(paginate, where);
+    let problems = await Problem.query(paginate, where, [[sortVal, order]]);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -60,7 +71,9 @@ app.get('/problems', async (req, res) => {
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
-      paginate: paginate
+      paginate: paginate,
+      curSort: sort,
+      curOrder: order === 'asc'
     });
   } catch (e) {
     syzoj.log(e);
@@ -533,30 +546,30 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
 
 // Set problem public
 async function setPublic(req, res, is_public) {
-    try {
-      let id = parseInt(req.params.id);
-      let problem = await Problem.fromID(id);
-      if (!problem) throw new ErrorMessage('无此题目。');
+  try {
+    let id = parseInt(req.params.id);
+    let problem = await Problem.fromID(id);
+    if (!problem) throw new ErrorMessage('无此题目。');
 
-      let allowedManage = await problem.isAllowedManageBy(res.locals.user);
-      if (!allowedManage) throw new ErrorMessage('您没有权限进行此操作。');
+    let allowedManage = await problem.isAllowedManageBy(res.locals.user);
+    if (!allowedManage) throw new ErrorMessage('您没有权限进行此操作。');
 
-      problem.is_public = is_public;
-      problem.publicizer_id = res.locals.user.id;
-      await problem.save();
+    problem.is_public = is_public;
+    problem.publicizer_id = res.locals.user.id;
+    await problem.save();
 
-      res.redirect(syzoj.utils.makeUrl(['problem', id]));
-    } catch (e) {
-      syzoj.log(e);
-      res.render('error', {
-        err: e
-      });
-    }
+    res.redirect(syzoj.utils.makeUrl(['problem', id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
   }
+}
 
 app.post('/problem/:id/public', async (req, res) => {
-    await setPublic(req, res, true);
-  });
+  await setPublic(req, res, true);
+});
 
 app.post('/problem/:id/dis_public', async (req, res) => {
   await setPublic(req, res, false);
