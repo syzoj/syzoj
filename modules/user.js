@@ -24,13 +24,21 @@ let User = syzoj.model('user');
 // Ranklist
 app.get('/ranklist', async (req, res) => {
   try {
+    const sort = req.query.sort || "id";
+    const order = req.query.order || "asc";
+    console.log("SORT ===> " + sort + ", ORDER ===> " + order);
+    if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
+      throw new ErrorMessage('错误的排序参数。');
+    }
     let paginate = syzoj.utils.paginate(await User.count({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
-    let ranklist = await User.query(paginate, { is_show: true }, [['ac_num', 'desc']]);
+    let ranklist = await User.query(paginate, { is_show: true }, [[sort, order]]);
     await ranklist.forEachAsync(async x => x.renderInformation());
 
     res.render('ranklist', {
       ranklist: ranklist,
-      paginate: paginate
+      paginate: paginate,
+      curSort: sort,
+      curOrder: order === 'asc'
     });
   } catch (e) {
     syzoj.log(e);

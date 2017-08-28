@@ -1,5 +1,23 @@
 <% this.title = '排名' %>
 <% include header %>
+
+<% 
+const getOrderString = function(order) {
+  return order ? 'asc' : 'desc';
+}
+const createSortableTitle = function(item, display, defaultOrder) {
+  const isCurrent = curSort === item;
+  console.log("IScurrent: ========> " + isCurrent);
+  const url = syzoj.utils.makeUrl(['ranklist'], 
+    { 
+      sort: item, 
+      order: getOrderString(isCurrent ? (!curOrder) : defaultOrder)
+    });
+  const triangle = isCurrent ? `<i class="${curOrder ? "angle up" : "angle down"} icon"></i>` : "";
+  return `<a href="${url}">${display}${triangle}</a>`;
+}
+%>
+
 <div class="padding">
   <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" class="ui mini form" method="get" role="form" style="margin-bottom: 25px; text-align: right; ">
     <div class="ui action left icon input inline" style="width: 180px; margin-right: 77px; ">
@@ -10,10 +28,12 @@
 	    <table class="ui very basic center aligned table" style="table-layout: fixed; ">
 	        <thead>
 	        <tr>
-	            <th style="width: 80px; ">#</th>
-	            <th style="width: 170px; ">用户名</th>
+	            <th style="width: 60px; ">#</th>
+	            <th style="width: 60px; "><%- createSortableTitle('id', 'ID', true) %></th>
+	            <th style="width: 150px; "><%- createSortableTitle('username', '用户名', true) %></th>
 	            <th>个性签名</th>
-	            <th style="width: 100px; ">通过数量</th>
+	            <th style="width: 100px; "><%- createSortableTitle('ac_num', '通过数量', false) %></th>
+	            <th style="width: 100px; "><%- createSortableTitle('rating', 'Rating', false) %></th>
 	        </tr>
 	        </thead>
           <script>
@@ -36,6 +56,7 @@
             %>
             <tr>
 		        	<td><%= i %></td>
+		        	<td><%= user.id %></td>
 		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
 		        	<td class="font-content">
               <script id="user-infomation-script-<%= i %>">
@@ -53,6 +74,7 @@
               </script>
               </td>
 		        	<td><%= user.ac_num %></td>
+		        	<td><%= user.rating %></td>
 		        </tr>
 		    <% } %>
 	        </tbody>
