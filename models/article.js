@@ -91,6 +91,19 @@ class Article extends Model {
     return user && (this.allow_comment || user.is_admin || this.user_id === user.id);
   }
 
+  async resetReplyCountAndTime() {
+    let ArticleComment = syzoj.model('article-comment');
+    await syzoj.utils.lock(['Article::resetReplyCountAndTime', this.id], async () => {
+      this.comments_num = await ArticleComment.count({ article_id: this.id });
+      if (this.comments_num === 0) {
+        this.sort_time = this.public_time;
+      } else {
+        this.sort_time = await ArticleComment.model.max('public_time', { where: { article_id: this.id } });
+      }
+      await this.save();
+    });
+  }
+
   getModel() { return model; }
 };
 
