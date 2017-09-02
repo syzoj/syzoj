@@ -54,7 +54,7 @@ app.get('/submissions', async (req, res) => {
       const contest = await Contest.fromID(contestId);
       contest.ended = contest.isEnded();
       if (contest.ended || // If the contest is ended
-        (curUser && contest.isSupervisior(curUser)) // Or if the user have the permission to check
+        (curUser && await contest.isSupervisior(curUser)) // Or if the user have the permission to check
       ) {
         where.type = { $eq: 1 };
         where.type_info = { $eq: contestId };

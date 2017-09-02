@@ -234,7 +234,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     if (!contest) throw new ErrorMessage('无此比赛。');
     if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
     contest.isEnded(),
-    contest.isSupervisior(curUser)].every(x => !x))
+    await contest.isSupervisior(curUser)].every(x => !x))
       throw new ErrorMessage('您没有权限进行此操作。');
 
     await contest.loadRelationships();
