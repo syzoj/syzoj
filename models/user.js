@@ -40,7 +40,9 @@ let model = db.define('user', {
   public_email: { type: Sequelize.BOOLEAN },
 
   sex: { type: Sequelize.INTEGER },
-  rating: { type: Sequelize.INTEGER }
+  rating: { type: Sequelize.INTEGER },
+
+  register_time: { type: Sequelize.INTEGER }
 }, {
   timestamps: false,
   tableName: 'user',
@@ -72,7 +74,8 @@ class User extends Model {
       submit_num: 0,
       sex: 0,
       is_show: syzoj.config.default.user.show,
-      rating: syzoj.config.default.user.rating
+      rating: syzoj.config.default.user.rating,
+      register_time: parseInt((new Date()).getTime() / 1000)
     }, val)));
   }
 

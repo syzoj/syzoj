@@ -149,6 +149,9 @@ module.exports = {
     });
   },
   formatDate(ts, format) {
+    if (ts == null) {
+      return "Unknown";
+    }
     let m = moment(ts * 1000);
     m.locale('eu');
     return m.format(format || 'L H:mm:ss');
