@@ -44,6 +44,7 @@ app.get('/submissions', async (req, res) => {
     const curUser = res.locals.user;
     let user = await User.fromName(req.query.submitter || '');
     let where = {};
+    let inContest = false;
     if (user) where.user_id = user.id;
     else if (req.query.submitter) where.user_id = -1;
 
@@ -58,6 +59,7 @@ app.get('/submissions', async (req, res) => {
       ) {
         where.type = { $eq: 1 };
         where.type_info = { $eq: contestId };
+        inContest = true;
       } else {
         throw new Error("您暂时无权查看此比赛的详细评测信息。");
       }
@@ -85,7 +87,7 @@ app.get('/submissions', async (req, res) => {
     }
     if (req.query.status) where.status = { $like: req.query.status + '%' };
 
-    if (!curUser || !await curUser.hasPrivilege('manage_problem')) {
+    if (!inContest && (!curUser || !await curUser.hasPrivilege('manage_problem'))) {
       if (req.query.problem_id) {
         where.problem_id = {
           $and: [
