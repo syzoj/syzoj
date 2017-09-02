@@ -320,6 +320,11 @@ app.post('/admin/other', async (req, res) => {
       for (const p of problems) {
         await p.resetSubmissionCount();
       }
+    } else if (req.body.type === 'reset_discussion') {
+      const articles = await Article.query();
+      for (const a of articles) {
+        await a.resetReplyCountAndTime();
+      }
     } else {
       throw new ErrorMessage("操作类型不正确");
     }
