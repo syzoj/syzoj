@@ -11,7 +11,7 @@
   <h1><%= contest.title %></h1>
   <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
   <% let unveiled = (isSupervisior || syzoj.utils.getCurrentDate() >= contest.start_time); %>
-  <% const seeResult = (isSupervisior || contest.ended) %>
+  <% const seeResult = (isSupervisior || contest.ended || (contest.allowedSeeingResult() && contest.allowedSeeingOthers())) %>
   <% let start = syzoj.utils.formatDate(contest.start_time), end = syzoj.utils.formatDate(contest.end_time); %>
   <% if (contest.running && start.split(' ')[0] === end.split(' ')[0]) {
     start = start.split(' ')[1]; end = end.split(' ')[1];
