@@ -125,7 +125,7 @@ class JudgeState extends Model {
     else if (this.type === 1) {
       let contest = await Contest.fromID(this.type_info);
       if (contest.isRunning()) {
-        return (user && this.user_id === user.id) || (user && user.is_admin);
+        return user && await contest.isSupervisior(user);
       } else {
         return true;
       }
