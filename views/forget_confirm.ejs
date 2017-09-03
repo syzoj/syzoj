@@ -57,7 +57,6 @@ function submitForm() {
         async: true,
         success: function(data) {
             error_code = data.error_code;
-            alert('fuck' + error_code);
             switch (error_code) {
                 case 1:
                     showMessage("positive", "密码重置成功。");
