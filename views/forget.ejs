@@ -1,0 +1,71 @@
+<% this.title = '忘记密码' %>
+<% include header %>
+<div class="ui message" id="msgBox" hidden>
+    <p id="msgContent"></p>
+</div>
+<div class="ui middle aligned center aligned grid">
+  <div class="row">
+    <div class="column" style="max-width: 450px">
+      <h2 class="ui image header">
+        <div class="content">
+          忘记密码
+        </div>
+      </h2>
+      <form class="ui large form">
+        <div class="ui existing segment">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="at icon"></i>
+              <input name="email" placeholder="电子邮件地址" type="text" id="email" onkeydown="key_login(event)">
+            </div>
+          </div>
+          <div class="ui fluid large submit button" id="sendEmail">找回密码</div>
+        </div>
+        <div class="ui error message"></div>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function showMessage(mclass, content) {
+    $("#msgBox").addClass(mclass);
+    $("#msgContent").text(content);
+    $("#msgBox").show();
+}
+function submitForm() {
+    $("#sendEmail").addClass("loading");
+    $.ajax({
+        url: "/api/forget",
+        type: 'POST',
+        data: {
+            "email": $("#email").val(),
+            "_csrf": document.head.getAttribute('data-csrf-token')
+        },
+        async: true,
+        success: function(data) {
+            error_code = data.error_code;
+            switch (error_code) {
+                case 1:
+                    showMessage("positive", "找回密码邮件已经发至你电子邮箱的垃圾邮件文件夹。");
+                    return;
+                case 1002:
+                    showMessage("error", "用户不存在");
+                    break;
+                default:
+                    showMessage("error", "未知错误" + error_code);
+                    break;
+            }
+            $("#resetPassword").removeClass("loading");
+        },
+        error:  function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+        }
+    });
+}
+$(document).ready(function() {
+    $("#sendEmail").click(function() {
+        submitForm();
+    });
+});
+</script>
+<% include footer %>

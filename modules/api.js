@@ -22,6 +22,8 @@
 let User = syzoj.model('user');
 let Problem = syzoj.model('problem');
 let File = syzoj.model('file');
+const Email = require('../libs/email');
+const jwt = require('jsonwebtoken');
 
 function setLoginCookie(username, password, res) {
   res.cookie('login', JSON.stringify([username, password]));
@@ -46,6 +48,40 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+app.post('/api/forget', async (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'application/json');
+    let user = await User.fromEmail(req.body.email);
+    if (!user) res.send({ error_code: 1001 });
+    let sendObj = {
+      userId: user.id,
+    };
+
+    const token = jwt.sign(sendObj, syzoj.config.register_mail.key, {
+      subject: 'forget',
+      expiresIn: '12h'
+    });
+
+    const vurl = req.protocol + '://' + req.get('host') + syzoj.utils.makeUrl(['api', 'forget_confirm'], { token: token });
+    try {
+      await Email.send(req.body.email,
+        `${req.body.username} 的 ${syzoj.config.title} 密码重置邮件`,
+        `<p>请点击该链接来重置密码：</p><p><a href="${vurl}">${vurl}</a></p><p>链接有效期为 12h。如果您不是 ${req.body.username}，请忽略此邮件。</p>`
+      );
+    } catch (e) {
+      return res.send({
+        error_code: 2010,
+        message: require('util').inspect(e)
+      });
+    }
+
+    if (!user) res.send({ error_code: 1 });
+  } catch (e) {
+    syzoj.log(e);
+    res.send(JSON.stringify({ error_code: e }));
+  }
+});
+
 // Sign up
 app.post('/api/sign_up', async (req, res) => {
   try {
@@ -64,24 +100,23 @@ app.post('/api/sign_up', async (req, res) => {
     if (!syzoj.utils.isValidUsername(req.body.username)) throw 2002;
 
     if (syzoj.config.register_mail.enabled) {
-      let sendmail = Promise.promisify(require('sendmail')());
       let sendObj = {
         username: req.body.username,
         password: req.body.password,
         email: req.body.email,
-        prevUrl: req.body.prevUrl,
-        r: Math.random()
       };
-      let encrypted = encodeURIComponent(syzoj.utils.encrypt(JSON.stringify(sendObj), syzoj.config.register_mail.key).toString('base64'));
-      let url = req.protocol + '://' + req.get('host') + syzoj.utils.makeUrl(['api', 'sign_up', encrypted]);
+
+      const token = jwt.sign(sendObj, syzoj.config.register_mail.key, {
+        subject: 'register',
+        expiresIn: '2d'
+      });
+
+      const vurl = req.protocol + '://' + req.get('host') + syzoj.utils.makeUrl(['api', 'sign_up_confirm'], { token: token });
       try {
-        await sendmail({
-          from: `${syzoj.config.title} <${syzoj.config.register_mail.address}>`,
-          to: req.body.email,
-          type: 'text/html',
-          subject: `${req.body.username} 的 ${syzoj.config.title} 注册验证邮件`,
-          html: `<p>请点击该链接完成您在 ${syzoj.config.title} 的注册：</p><p><a href="${url}">${url}</a></p><p>如果您不是 ${req.body.username}，请忽略此邮件。</p>`
-        });
+        await Email.send(req.body.email,
+          `${req.body.username} 的 ${syzoj.config.title} 注册验证邮件`,
+          `<p>请点击该链接完成您在 ${syzoj.config.title} 的注册：</p><p><a href="${vurl}">${vurl}</a></p><p>如果您不是 ${req.body.username}，请忽略此邮件。</p>`
+        );
       } catch (e) {
         return res.send({
           error_code: 2010,
@@ -110,6 +145,83 @@ app.post('/api/sign_up', async (req, res) => {
   }
 });
 
+app.get('/api/forget_confirm', async (req, res) => {
+  try {
+    res.render('forget_confirm', {
+      token: req.query.token
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.post('/api/reset_password', async (req, res) => {
+  try {
+    let obj;
+    try {
+      obj = jwt.verify(req.query.token, syzoj.config.register_mail.key, { subject: 'forget' });
+    } catch (e) {
+      throw 3001;
+    }
+
+    let syzoj2_xxx_md5 = '59cb65ba6f9ad18de0dcd12d5ae11bd2';
+    if (req.query.password === syzoj2_xxx_md5) throw new ErrorMessage('密码不能为空。');
+    const user = await User.fromId(obj.id);
+    user.password = req.query.password;
+    await user.save();
+
+    res.send(JSON.stringify({ error_code: 1 }));
+  } catch (e) {
+    syzoj.log(e);
+    res.send(JSON.stringify({ error_code: e }));
+  }
+});
+
+app.get('/api/sign_up_confirm', async (req, res) => {
+  try {
+    let obj;
+    try {
+      obj = jwt.verify(req.query.token, syzoj.config.register_mail.key, { subject: 'register' });
+    } catch (e) {
+      throw new ErrorMessage('无效的注册验证链接。');
+    }
+
+    let user = await User.fromName(obj.username);
+    if (user) throw new ErrorMessage('用户名已被占用。');
+    user = await User.findOne({ where: { email: obj.email } });
+    if (user) throw new ErrorMessage('邮件地址已被占用。');
+
+    // Because the salt is "syzoj2_xxx" and the "syzoj2_xxx" 's md5 is"59cb..."
+    // the empty password 's md5 will equal "59cb.."
+    let syzoj2_xxx_md5 = '59cb65ba6f9ad18de0dcd12d5ae11bd2';
+    if (obj.password === syzoj2_xxx_md5) throw new ErrorMessage('密码不能为空。');
+    if (!(obj.email = obj.email.trim())) throw new ErrorMessage('邮件地址不能为空。');
+    if (!syzoj.utils.isValidUsername(obj.username)) throw new ErrorMessage('用户名不合法。');
+
+    user = await User.create({
+      username: obj.username,
+      password: obj.password,
+      email: obj.email,
+      public_email: true
+    });
+    await user.save();
+
+    req.session.user_id = user.id;
+    setLoginCookie(user.username, user.password, res);
+
+    res.redirect(obj.prevUrl || '/');
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+// Obslete!!!
 app.get('/api/sign_up/:token', async (req, res) => {
   try {
     let obj;

@@ -79,6 +79,14 @@ class User extends Model {
     }, val)));
   }
 
+  static async fromEmail(email) {
+    return User.fromRecord(User.model.findOne({
+      where: {
+        email: email
+      }
+    }));
+  }
+  
   static async fromName(name) {
     return User.fromRecord(User.model.findOne({
       where: {
