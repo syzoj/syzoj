@@ -57,16 +57,16 @@ app.post('/api/forget', async (req, res) => {
       userId: user.id,
     };
 
-    const token = jwt.sign(sendObj, syzoj.config.register_mail.key, {
+    const token = jwt.sign(sendObj, syzoj.config.email.key, {
       subject: 'forget',
       expiresIn: '12h'
     });
 
     const vurl = req.protocol + '://' + req.get('host') + syzoj.utils.makeUrl(['api', 'forget_confirm'], { token: token });
     try {
-      await Email.send(req.body.email,
-        `${req.body.username} 的 ${syzoj.config.title} 密码重置邮件`,
-        `<p>请点击该链接来重置密码：</p><p><a href="${vurl}">${vurl}</a></p><p>链接有效期为 12h。如果您不是 ${req.body.username}，请忽略此邮件。</p>`
+      await Email.send(user.email,
+        `${user.username} 的 ${syzoj.config.title} 密码重置邮件`,
+        `<p>请点击该链接来重置密码：</p><p><a href="${vurl}">${vurl}</a></p><p>链接有效期为 12h。如果您不是 ${user.username}，请忽略此邮件。</p>`
       );
     } catch (e) {
       return res.send({
@@ -75,7 +75,8 @@ app.post('/api/forget', async (req, res) => {
       });
     }
 
-    if (!user) res.send({ error_code: 1 });
+    throw 123;
+    res.send({ error_code: 1 });
   } catch (e) {
     syzoj.log(e);
     res.send(JSON.stringify({ error_code: e }));
@@ -99,14 +100,14 @@ app.post('/api/sign_up', async (req, res) => {
     if (!(req.body.email = req.body.email.trim())) throw 2006;
     if (!syzoj.utils.isValidUsername(req.body.username)) throw 2002;
 
-    if (syzoj.config.register_mail.enabled) {
+    if (syzoj.config.register_mail) {
       let sendObj = {
         username: req.body.username,
         password: req.body.password,
         email: req.body.email,
       };
 
-      const token = jwt.sign(sendObj, syzoj.config.register_mail.key, {
+      const token = jwt.sign(sendObj, syzoj.config.email.key, {
         subject: 'register',
         expiresIn: '2d'
       });
@@ -147,6 +148,11 @@ app.post('/api/sign_up', async (req, res) => {
 
 app.get('/api/forget_confirm', async (req, res) => {
   try {
+    try {
+      jwt.verify(req.query.token, syzoj.config.email.key, { subject: 'forget' });
+    } catch (e) {
+      throw new ErrorMessage("Token 不正确。");
+    }
     res.render('forget_confirm', {
       token: req.query.token
     });
@@ -160,23 +166,28 @@ app.get('/api/forget_confirm', async (req, res) => {
 
 app.post('/api/reset_password', async (req, res) => {
   try {
+    res.setHeader('Content-Type', 'application/json');
     let obj;
     try {
-      obj = jwt.verify(req.query.token, syzoj.config.register_mail.key, { subject: 'forget' });
+      obj = jwt.verify(req.body.token, syzoj.config.email.key, { subject: 'forget' });
     } catch (e) {
       throw 3001;
     }
 
     let syzoj2_xxx_md5 = '59cb65ba6f9ad18de0dcd12d5ae11bd2';
-    if (req.query.password === syzoj2_xxx_md5) throw new ErrorMessage('密码不能为空。');
-    const user = await User.fromId(obj.id);
-    user.password = req.query.password;
+    if (req.body.password === syzoj2_xxx_md5) throw new ErrorMessage('密码不能为空。');
+    const user = await User.fromID(obj.userId);
+    user.password = req.body.password;
     await user.save();
 
     res.send(JSON.stringify({ error_code: 1 }));
   } catch (e) {
     syzoj.log(e);
-    res.send(JSON.stringify({ error_code: e }));
+    if (typeof e === 'number') {
+      res.send(JSON.stringify({ error_code: e }));
+    } else {
+      res.send(JSON.stringify({ error_code: 1000 }));
+    }
   }
 });
 
@@ -184,9 +195,9 @@ app.get('/api/sign_up_confirm', async (req, res) => {
   try {
     let obj;
     try {
-      obj = jwt.verify(req.query.token, syzoj.config.register_mail.key, { subject: 'register' });
+      obj = jwt.verify(req.query.token, syzoj.config.email.key, { subject: 'register' });
     } catch (e) {
-      throw new ErrorMessage('无效的注册验证链接。');
+      throw new ErrorMessage('无效的注册验证链接: ' + e.toString());
     }
 
     let user = await User.fromName(obj.username);
@@ -226,7 +237,7 @@ app.get('/api/sign_up/:token', async (req, res) => {
   try {
     let obj;
     try {
-      let decrypted = syzoj.utils.decrypt(Buffer.from(req.params.token, 'base64'), syzoj.config.register_mail.key).toString();
+      let decrypted = syzoj.utils.decrypt(Buffer.from(req.params.token, 'base64'), syzoj.config.email.key).toString();
       obj = JSON.parse(decrypted);
     } catch (e) {
       throw new ErrorMessage('无效的注册验证链接。');

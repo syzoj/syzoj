@@ -43,10 +43,10 @@
               </a>
                 <% } else { %>
                 <div class="item">
-                    <a class="ui button" style="margin-right: 0.5em; " href="<%= syzoj.utils.makeUrl(['login'], { url: req.originalUrl }) %>">
+                    <a class="ui button" style="margin-right: 0.5em; " href="<%= syzoj.utils.makeUrl(['login'], { url: this.noPreserveUrl ? undefined : req.originalUrl }) %>">
                         登录
                     </a>
-                    <a class="ui primary button" href="<%= syzoj.utils.makeUrl(['sign_up'], { url: req.originalUrl }) %>">
+                    <a class="ui primary button" href="<%= syzoj.utils.makeUrl(['sign_up'], { url: this.noPreserveUrl ? undefined : req.originalUrl }) %>">
                         注册
                     </a>
                 </div>

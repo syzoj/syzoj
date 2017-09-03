@@ -1,4 +1,5 @@
 <% this.title = '忘记密码' %>
+<% this.noPreserveUrl = true; %>
 <% include header %>
 <div class="ui message" id="msgBox" hidden>
     <p id="msgContent"></p>
@@ -11,17 +12,16 @@
           忘记密码
         </div>
       </h2>
-      <form class="ui large form">
+      <form class="ui large form" id="forgetForm">
         <div class="ui existing segment">
           <div class="field">
             <div class="ui left icon input">
               <i class="at icon"></i>
-              <input name="email" placeholder="电子邮件地址" type="text" id="email" onkeydown="key_login(event)">
+              <input name="email" placeholder="电子邮件地址" type="text" id="email">
             </div>
           </div>
-          <div class="ui fluid large submit button" id="sendEmail">找回密码</div>
+          <button type="submit" class="ui fluid large submit button" id="sendEmail">找回密码</div>
         </div>
-        <div class="ui error message"></div>
       </form>
     </div>
   </div>
@@ -48,14 +48,14 @@ function submitForm() {
                 case 1:
                     showMessage("positive", "找回密码邮件已经发至你电子邮箱的垃圾邮件文件夹。");
                     return;
-                case 1002:
+                case 1001:
                     showMessage("error", "用户不存在");
                     break;
                 default:
                     showMessage("error", "未知错误" + error_code);
                     break;
             }
-            $("#resetPassword").removeClass("loading");
+            $("#sendEmail").removeClass("loading");
         },
         error:  function(XMLHttpRequest, textStatus, errorThrown) {
             alert(XMLHttpRequest.responseText);
@@ -63,8 +63,9 @@ function submitForm() {
     });
 }
 $(document).ready(function() {
-    $("#sendEmail").click(function() {
+    $("#forgetForm").submit(function(event) {
         submitForm();
+        event.preventDefault();
     });
 });
 </script>

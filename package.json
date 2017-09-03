@@ -56,5 +56,8 @@
     "syzoj-divine": "^1.0.2",
     "tmp-promise": "^1.0.3",
     "xss": "^0.3.3"
+  },
+  "optionalDependencies": {
+    "waliyun": "^3.1.1"
   }
 }

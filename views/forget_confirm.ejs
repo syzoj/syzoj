@@ -1,6 +1,9 @@
-<% this.title = '重设密码' %>
+<% this.title = '重设密码';  %>
+<% this.noPreserveUrl = true; %>
 <% include header %>
-<div class="ui error message" id="error" hidden></div>
+<div class="ui message" id="msgBox" hidden>
+    <p id="msgContent"></p>
+</div>
 <div class="ui middle aligned center aligned grid">
   <div class="row">
     <div class="column" style="max-width: 450px">
@@ -9,19 +12,21 @@
           重设密码
         </div>
       </h2>
-      <form class="ui large form">
+      <form class="ui large form" id="resetForm">
         <div class="ui existing segment">
-            <div class="two fields">
-                <div class="field">
-                <label class="ui header">密码</label>
-                    <input type="password" placeholder="" id="password1">
-                </div>
-                <div class="field">
-                    <label class="ui header">确认密码</label>
-                    <input type="password" placeholder="" id="password2">
+            <div class="field">
+                <div class="ui left icon input">
+                    <i class="lock icon"></i>
+                    <input type="password" placeholder="密码" id="password1">
                 </div>
             </div>
-            <div class="ui fluid large submit button" id="reset">重设</div>
+            <div class="field">
+                <div class="ui left icon input">
+                    <i class="undo icon"></i>
+                    <input type="password" placeholder="确认密码" id="password2">
+                </div>
+            </div>
+            <button type="submit" class="ui fluid large submit button" id="resetPassword">重设</div>
         </div>
       </form>
     </div>
@@ -46,17 +51,19 @@ function submitForm() {
         type: 'POST',
         data: {
             "token": <%- JSON.stringify(token) %>,
-            "password": password
+            "password": password,
+            "_csrf": document.head.getAttribute('data-csrf-token')
         },
         async: true,
         success: function(data) {
             error_code = data.error_code;
+            alert('fuck' + error_code);
             switch (error_code) {
                 case 1:
                     showMessage("positive", "密码重置成功。");
-                    return;
+                    break;
                 default:
-                    showMessage("error", "未知错误" + error_code);
+                    showMessage("error", "未知错误 " + error_code);
                     break;
             }
             $("#resetPassword").removeClass("loading");
@@ -67,8 +74,9 @@ function submitForm() {
     });
 }
 $(document).ready(function() {
-    $("#reset").click(function() {
+    $("#resetForm").submit(function(event) {
         submitForm();
+        event.preventDefault();
     });
 });
 </script>

@@ -10,10 +10,15 @@
     "dialect": "sqlite",
     "storage": "syzoj.db"
   },
-  "register_mail": {
-    "enabled": true,
-    "address": "test@test.domain",
-    "key": "test"
+  "register_mail": true,
+  "email": {
+    "method": "aliyundm",
+    "key": "test",
+    "options": {
+      "AccessKeyId": "xxxx",
+      "AccessKeySecret": "xxxx",
+      "AccountName": "xxxx"
+    }
   },
   "upload_dir": "uploads",
   "default": {
