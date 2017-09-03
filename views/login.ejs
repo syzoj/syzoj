@@ -73,6 +73,9 @@ function login() {
                 case 1002:
                     show_error("密码错误");
                     break;
+                case 1003:
+                    show_error("您尚未设置密码，请通过下方「找回密码」来设置您的密码。");
+                    break;
                 case 1:
                     success(data.session_id);
                     return;
