@@ -47,7 +47,7 @@ function submitForm() {
             switch (error_code) {
                 case 1:
                     showMessage("positive", "找回密码邮件已经发至你电子邮箱的垃圾邮件文件夹。");
-                    return;
+                    break;
                 case 1001:
                     showMessage("error", "用户不存在");
                     break;
