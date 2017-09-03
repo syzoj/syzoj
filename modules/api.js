@@ -35,7 +35,7 @@ app.post('/api/login', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     let user = await User.fromName(req.body.username);
 
-    if (!user) res.send({ error_code: 1001 });
+    if (!user) throw 1001;
     else if (user.password == null || user.password === '') res.send({ error_code: 1003 });
     else if (user.password !== req.body.password) res.send({ error_code: 1002 });
     else {
@@ -53,7 +53,7 @@ app.post('/api/forget', async (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json');
     let user = await User.fromEmail(req.body.email);
-    if (!user) res.send({ error_code: 1001 });
+    if (!user) throw 1001;
     let sendObj = {
       userId: user.id,
     };
@@ -74,6 +74,7 @@ app.post('/api/forget', async (req, res) => {
         error_code: 2010,
         message: require('util').inspect(e)
       });
+      return null;
     }
 
     res.send({ error_code: 1 });
