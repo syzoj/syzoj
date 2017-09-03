@@ -45,6 +45,7 @@
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
     "node-7z": "^0.4.0",
+    "nodemailer": "^4.1.0",
     "pygmentize-bundled-cached": "^1.1.0",
     "randomstring": "^1.1.5",
     "request": "^2.74.0",
@@ -55,9 +56,7 @@
     "sqlite3": "^3.1.4",
     "syzoj-divine": "^1.0.2",
     "tmp-promise": "^1.0.3",
+    "waliyun": "^3.1.1",
     "xss": "^0.3.3"
-  },
-  "optionalDependencies": {
-    "waliyun": "^3.1.1"
   }
 }

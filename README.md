@@ -118,3 +118,47 @@ systemctl stop syzoj-judge
 systemctl restart syzoj
 systemctl restart syzoj-judge
 ```
+
+## 邮件配置
+### register_mail
+是否启用注册邮件验证。
+
+### email\_jwt\_secret
+用于 Email Token 签名的 secret，脸滚键盘随意填写即可。
+
+### email
+#### Sendmail 直接发送（成功率低，不推荐）
+```js
+  "email": {
+    "method": "sendmail",
+    "options": {
+      "address": "xxxx", // 发件人地址
+    }
+  },
+```
+
+#### 阿里云邮件推送服务（成功率较高）
+```js
+  "email": {
+    "method": "aliyundm",
+    "options": {
+      "AccessKeyId": "xxxx",
+      "AccessKeySecret": "xxxx",
+      "AccountName": "xxxx" // 发件邮箱
+    }
+  },
+```
+
+#### SMTP 服务
+```js
+  "email": {
+    "method": "smtp",
+    "options": {
+        "host": "smtp.163.com",
+        "port": 465,
+        "username": "xxx@163.com",
+        "password": "xxx",
+        "allowUnauthorizedTls": false
+    }
+  },
+```

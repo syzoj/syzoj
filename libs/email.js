@@ -1,6 +1,7 @@
-const Promise = require('bluebird');
-const sendmail = Promise.promisify(require('sendmail')());
+const Bluebird = require('bluebird');
+const sendmail = Bluebird.promisify(require('sendmail')());
 const { DM } = require('waliyun');
+const nodemailer = require('nodemailer');
 
 let doSendEmail;
 
@@ -33,6 +34,29 @@ if (syzoj.config.email.method === "sendmail") {
             throw new Error("阿里云 API 错误：" + JSON.stringify(result));
         }
     }
+} else if (syzoj.config.email.method === "smtp") {
+    const smtpConfig = {
+        host: syzoj.config.email.options.host,
+        port: syzoj.config.email.options.port || 465,
+        secure: (syzoj.config.email.options.port === 465 || !syzoj.config.email.options.port) ? true : false,
+        auth: {
+            user: syzoj.config.email.options.username,
+            pass: syzoj.config.email.options.password,
+        },
+        tls: {
+            rejectUnauthorized: !syzoj.config.email.options.allowUnauthorizedTls,
+        },
+    };
+    const transporter = Bluebird.promisifyAll(nodemailer.createTransport(smtpConfig));
+
+    doSendEmail = async function send_smtp(to, subject, body) {
+        await transporter.sendMailAsync({
+            from: `"${syzoj.config.title}" <${syzoj.config.email.options.username}>`,
+            to: to,
+            subject: subject,
+            html: body
+        });
+    };
 } else {
     doSendEmail = async () => {
         throw new Error("邮件发送配置不正确。");
