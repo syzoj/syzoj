@@ -55,14 +55,17 @@ Vue.component('submission-item', {
   <td><a :href="submissionLink"><status-label :status="statusString"></status-label></a></td>
 
   <template v-if="data.result">
-  <td v-if="config.showScore"><span class="score" :class="scoreClass">{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</span></td>
+  <td v-if="config.showScore"><a :href="submissionLink"><span class="score" :class="scoreClass">{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</span></a></td>
   <td v-if="config.showUsage">{{ (data.result.time != null && data.result.time !== NaN) ? data.result.time.toString() + ' ms' : '' }}</td>
   <td v-if="config.showUsage">{{ (data.result.memory != null && data.result.memory !== NaN) ? data.result.memory.toString() + ' KiB' : '' }}</td>
   </template> <template v-else>
   <td v-if="config.showScore"/> <td v-if="config.showUsage"/> <td v-if="config.showUsage"/>
   </template>
 
-  <td v-if="config.showCode">{{ data.info.language != null ? data.info.language + ' / ' : '' }}{{ data.info.codeSize }}</td>
+  <td v-if="config.showCode">
+    <span v-if="data.info.language"><a :href="submissionLink">{{ data.info.language  }}</a> / <span v-if="data.info.language"/>
+    {{ data.info.codeSize }}
+  </td>
   <td><a :href="userLink">{{ data.info.user }}</a></td>
   <td>{{ data.info.submitTime }}</td>
   <td v-if="showRejudge">
