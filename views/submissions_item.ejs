@@ -63,7 +63,7 @@ Vue.component('submission-item', {
   </template>
 
   <td v-if="config.showCode">
-    <span v-if="data.info.language"><a :href="submissionLink">{{ data.info.language  }}</a> / <span v-if="data.info.language"/>
+    <span v-if="data.info.language"><a :href="submissionLink">{{ data.info.language  }}</a> / </span>
     {{ data.info.codeSize }}
   </td>
   <td><a :href="userLink">{{ data.info.user }}</a></td>
