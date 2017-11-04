@@ -147,9 +147,9 @@ app.get('/submission/:id', async (req, res) => {
       contest = await Contest.fromID(judge.type_info);
       contest.ended = contest.isEnded();
 
-      if (!contest.ended &&
+      if ((!contest.ended || !contest.is_public) &&
         !(await judge.problem.isAllowedEditBy(res.locals.user) || await contest.isSupervisior(curUser))) {
-        throw new Error("对不起，在比赛结束之前，您不能查看评测结果。");
+        throw new Error("比赛没有结束或者没有公开哦");
       }
     }
 
