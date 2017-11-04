@@ -54,7 +54,7 @@ app.get('/submissions', async (req, res) => {
       const contestId = Number(req.query.contest);
       const contest = await Contest.fromID(contestId);
       contest.ended = contest.isEnded();
-      if (contest.ended || // If the contest is ended
+      if ((contest.ended && contest.is_public) || // If the contest is ended and is not hidden
         (curUser && await contest.isSupervisior(curUser)) // Or if the user have the permission to check
       ) {
         where.type = { $eq: 1 };
