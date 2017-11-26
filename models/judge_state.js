@@ -194,6 +194,7 @@ class JudgeState extends Model {
         this.status = 'Waiting';
         await this.save();
       } catch (err) {
+        console.log("Error while connecting to judge frontend: " + err.toString());
         throw new ErrorMessage("无法开始评测。");
       }
     });
