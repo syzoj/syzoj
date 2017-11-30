@@ -360,7 +360,7 @@ div[class*=ace_br] {
   editor.renderer.updateFontSize();
 
   function submit_code() {
-    if (!editor.getValue().trim()) return false;
+    if (!$('#submit_code input[name=answer]').val().trim() && !editor.getValue().trim()) return false;
     $('#submit_code input[name=language]').val($('#languages-menu .item.active').data('value'));
     lastSubmitted = editor.getValue();
     $('#submit_code input[name=code]').val(editor.getValue());
