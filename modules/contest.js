@@ -61,6 +61,8 @@ app.get('/contest/:id/edit', async (req, res) => {
     if (!contest) {
       contest = await Contest.create();
       contest.id = 0;
+    } else {
+      await contest.loadRelationships();
     }
 
     let problems = [], admins = [];
@@ -86,19 +88,25 @@ app.post('/contest/:id/edit', async (req, res) => {
 
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
+    let ranklist = null;
     if (!contest) {
       contest = await Contest.create();
 
       contest.holder_id = res.locals.user.id;
 
-      let ranklist = await ContestRanklist.create();
-      await ranklist.save();
-      contest.ranklist_id = ranklist.id;
+      ranklist = await ContestRanklist.create();
 
       // Only new contest can be set type
       if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
       contest.type = req.body.type;
+    } else {
+      await contest.loadRelationships();
+      ranklist = contest.ranklist;
     }
+
+    ranklist.ranking_params = JSON.parse(req.body.ranking_params);
+    await ranklist.save();
+    contest.ranklist_id = ranklist.id;
 
     if (!req.body.title.trim()) throw new ErrorMessage('比赛名不能为空。');
     contest.title = req.body.title;
@@ -247,6 +255,13 @@ app.get('/contest/:id/ranklist', async (req, res) => {
       let player = await ContestPlayer.fromID(player_id);
       for (let i in player.score_details) {
         player.score_details[i].judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
+
+        /*** XXX: Clumsy duplication, see ContestRanklist::updatePlayer() ***/
+        if (contest.type === 'noi' || contest.type === 'ioi') {
+          let multiplier = contest.ranklist.ranking_params[i] || 1.0;
+          player.score_details[i].weighted_score = player.score_details[i].score == null ? null : Math.round(player.score_details[i].score * multiplier);
+          player.score += player.score_details[i].weighted_score;
+        }
       }
 
       let user = await User.fromID(player.user_id);
