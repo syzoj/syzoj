@@ -518,7 +518,7 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
     let problem = await Problem.fromID(problem_id);
 
     contest.ended = contest.isEnded();
-    if (!(contest.isRunning() || contest.idEnded())) {
+    if (!(contest.isRunning() || contest.isEnded())) {
       if (await problem.isAllowedUseBy(res.locals.user)) {
         return res.redirect(syzoj.utils.makeUrl(['problem', problem_id, 'download', 'additional_file']));
       }
