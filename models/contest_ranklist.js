@@ -70,9 +70,9 @@ class ContestRanklist extends Model {
     if (contest.type === 'noi' || contest.type === 'ioi') {
       for (let player of players) {
         player.latest = 0;
-        for (let i in player.score_details) {
-          player.score = 0;
+        player.score = 0;
 
+        for (let i in player.score_details) {
           let judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
           player.latest = Math.max(player.latest, judge_state.submit_time);
 
