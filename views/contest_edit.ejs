@@ -49,7 +49,7 @@
             </div>
             <div class="field">
                 <label>排行参数</label>
-                <input type="text" name="ranking_params" value="<%= JSON.stringify(contest.ranklist.ranking_params) %>">
+                <input type="text" name="ranking_params" value="<%= contest.ranklist ? JSON.stringify(contest.ranklist.ranking_params) : '' %>">
             </div>
             <div class="field">
                 <label>比赛公告</label>
