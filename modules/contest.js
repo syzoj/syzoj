@@ -253,6 +253,11 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 
     let ranklist = await players_id.mapAsync(async player_id => {
       let player = await ContestPlayer.fromID(player_id);
+
+      if (contest.type === 'noi' || contest.type === 'ioi') {
+        player.score = 0;
+      }
+
       for (let i in player.score_details) {
         player.score_details[i].judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
 
