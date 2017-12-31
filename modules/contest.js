@@ -176,6 +176,9 @@ app.get('/contest/:id', async (req, res) => {
             let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
             problem.status = judge_state.status;
             problem.judge_id = player.score_details[problem.problem.id].judge_id;
+            await contest.loadRelationships();
+            let multiplier = contest.ranklist.ranking_params[problem.problem.id] || 1.0;
+            problem.feedback = (judge_state.score * multiplier).toString() + ' / ' + (100 * multiplier).toString();
           }
         } else if (contest.type === 'acm') {
           if (player.score_details[problem.problem.id]) {

@@ -76,7 +76,7 @@
                   <% if (typeof problem.status === 'string') { %>
                     <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
                       <i class="<%= icon[getStatusMeta(problem.status)] || 'remove' %> icon"></i>
-                      <%= problem.status %>
+                      <%= problem.feedback || problem.status %>
                     </span>
                   <% } else if (typeof problem.status === 'object') { %>
                     <% if (problem.status.accepted) { %>
