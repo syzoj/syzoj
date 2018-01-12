@@ -1,7 +1,7 @@
 /*
  *  This file is part of SYZOJ.
  *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
+ *  Copyright (c) 2016-2018 Menci <huanghaorui301@gmail.com>
  *
  *  SYZOJ is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
