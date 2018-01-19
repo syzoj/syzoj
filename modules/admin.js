@@ -328,8 +328,10 @@ app.post('/admin/other', async (req, res) => {
     } else if (req.body.type === 'reset_codelen') {
       const submissions = await JudgeState.query();
       for (const s of submissions) {
-        s.code_length = s.code.length;
-        await s.save();
+        if (s.type !== 'submit-answer') {
+          s.code_length = s.code.length;
+          await s.save();
+        }
       }
     } else {
       throw new ErrorMessage("操作类型不正确");
