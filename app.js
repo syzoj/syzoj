@@ -39,12 +39,16 @@ global.syzoj = {
     console.log(obj);
   },
   async run() {
+    let winstonLib = require('./libs/winston');
+    winstonLib.configureWinston(true);
+
     let Express = require('express');
     global.app = Express();
 
     syzoj.production = app.get('env') === 'production';
 
-    app.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
+    app.server = require('http').createServer(app);
+    app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
       this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
     });
 

@@ -20,4 +20,4 @@ function configureWinston(verbose) {
     }
 }
 
-configureWinston(false);
+module.exports.configureWinston = configureWinston;

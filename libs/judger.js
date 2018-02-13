@@ -49,10 +49,12 @@ async function connect () {
                 judge_state.result = convertedResult.result;
                 await judge_state.save();
                 await judge_state.updateRelatedInfo();
-            } else {
+            } else if(data.type == interface.ProgressReportType.Compiled) {
                 if(!judge_state) return;
                 judge_state.compilation = data.progress;
                 await judge_state.save();
+            } else {
+                winston.error("Unsupported result type: " + data.type);
             }
        })(msg).then(async() => {
             amqpConsumeChannel.ack(msg)
@@ -61,6 +63,34 @@ async function connect () {
             amqpConsumeChannel.nack(msg, false, false);
        });
     });
+    socketio = require('../modules/socketio');
+    const progressChannel = await amqpConnection.createChannel();
+    const queueName = (await progressChannel.assertQueue('', { exclusive: true })).queue;
+    await progressChannel.bindQueue(queueName, 'progress', '');
+    await progressChannel.consume(queueName, (msg) => {
+        const data = msgPack.decode(msg.content);
+        winston.verbose(`Got result from progress exchange, id: ${data.taskId}`);
+
+        (async (result) => {
+            if (result.type === interface.ProgressReportType.Started) {
+                socketio.createTask(result.taskId);
+            } else if (result.type === interface.ProgressReportType.Compiled) {
+                socketio.updateCompileStatus(result.taskId, result.progress);
+            } else if (result.type === interface.ProgressReportType.Progress) {
+                socketio.updateProgress(result.taskId, result.progress);
+            } else if (result.type === interface.ProgressReportType.Finished) {
+                socketio.updateResult(result.taskId, result.progress);
+            } else if (result.type === interface.ProgressReportType.Reported) {
+                socketio.cleanupProgress(result.taskId);
+            }
+        })(data).then(async() => {
+            progressChannel.ack(msg)
+        }, async(err) => {
+            winston.error('Error handling progress', err);
+            progressChannel.nack(msg, false, false);
+        });
+    });
+    winston.debug('Created progress exchange queue', queueName);
     amqpConnection.on('error', (err) => {
         winston.error('RabbitMQ connection failure: ${err.toString()}');
         amqpConnection.close();
