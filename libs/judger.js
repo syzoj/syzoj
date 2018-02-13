@@ -2,7 +2,33 @@ const enums = require('./enums'),
     rp = require('request-promise'),
     url = require('url');
 
+const amqp = require('amqplib');
 const util = require('util');
+const winston = require('winston');
+const msgPack = require('msgpack-lite');
+
+let amqpConnection;
+let publicChannel;
+
+async function connect () {
+    amqpConnection = await amqp.connect(syzoj.config.rabbitMQ);
+    publicChannel = await amqpConnection.createChannel();
+    await publicChannel.assertQueue('judge', {
+        maxPriority: 5,
+        durable: true
+    });
+    await publicChannel.assertQueue('result', {
+        durable: true
+    });
+    await publicChannel.assertExchange('progress', 'fanout', {
+        durable: false
+    });
+    amqpConnection.on('error', (err) => {
+        winston.error('RabbitMQ connection failure: ${err.toString()}');
+        amqpConnection.close();
+        process.exit(1);
+    });
+}
 module.exports.judge = async function (judge_state, problem, priority) {
     let type, param, extraFile = null;
     switch (problem.type) {
@@ -44,13 +70,8 @@ module.exports.judge = async function (judge_state, problem, priority) {
         extraFileLocation: extraFile
     };
 
-    await rp(url.resolve(syzoj.config.judge_server_addr, "/daemon/task"), {
-        method: 'PUT',
-        body: req,
-        headers: {
-            Token: syzoj.config.judge_token
-        },
-        json: true,
-        simple: true
-    });
+    // TODO: parse extraFileLocation
+    publicChannel.sendToQueue('judge', msgPack.encode({ content: req.content, extraData: null }), { priority: priority });
 }
+
+connect();

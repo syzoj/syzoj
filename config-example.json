@@ -167,6 +167,7 @@
   ],
   "session_secret": "233",
   "judge_server_addr": "http://127.0.0.1:5284",
+  "rabbitMQ": "amqp://localhost/",
   "judge_token": "233",
   "email_jwt_secret": "test"
 }
