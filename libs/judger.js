@@ -96,6 +96,7 @@ async function connect () {
         process.exit(1);
     });
 }
+module.exports.connect = connect;
 
 module.exports.judge = async function (judge_state, problem, priority) {
     let type, param, extraData = null;
@@ -138,5 +139,3 @@ module.exports.judge = async function (judge_state, problem, priority) {
 
     amqpSendChannel.sendToQueue('judge', msgPack.encode({ content: content, extraData: extraData }), { priority: priority });
 }
-
-connect();

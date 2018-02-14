@@ -4,8 +4,8 @@ const socketio = require("socket.io");
 const diff = require("jsondiffpatch");
 const jwt = require("jsonwebtoken");
 const winston = require("winston");
-const judgeResult_1 = require("../libs/judgeResult");
-const interfaces_1 = require("../libs/judger_interfaces");
+const judgeResult = require("../libs/judgeResult");
+const interfaces = require("../libs/judger_interfaces");
 let ioInstance;
 let detailProgressNamespace;
 let roughProgressNamespace;
@@ -223,7 +223,7 @@ function createTask(taskId) {
 exports.createTask = createTask;
 function updateCompileStatus(taskId, result) {
     winston.debug(`Updating compilation status for #${taskId}`);
-    compiledList[taskId] = { result: result.status === interfaces_1.TaskStatus.Done ? 'Submitted' : 'Compile Error' };
+    compiledList[taskId] = { result: result.status === interfaces.TaskStatus.Done ? 'Submitted' : 'Compile Error' };
     compileProgressNamespace.to(taskId.toString()).emit('finish', {
         taskId: taskId,
         result: compiledList[taskId]
@@ -261,7 +261,7 @@ function updateResult(taskId, data) {
             });
         }
     }
-    const finalResult = judgeResult_1.convertResult(taskId, data);
+    const finalResult = judgeResult.convertResult(taskId, data);
     const roughResult = {
         result: finalResult.statusString,
         time: finalResult.time,

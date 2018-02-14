@@ -39,13 +39,12 @@ global.syzoj = {
     console.log(obj);
   },
   async run() {
-    let winstonLib = require('./libs/winston');
-    winstonLib.configureWinston(true);
-
     let Express = require('express');
     global.app = Express();
 
     syzoj.production = app.get('env') === 'production';
+    let winstonLib = require('./libs/winston');
+    winstonLib.configureWinston(!syzoj.production);
 
     app.server = require('http').createServer(app);
     app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
@@ -86,6 +85,7 @@ global.syzoj = {
     app.use(csurf({ cookie: true }));
 
     await this.connectDatabase();
+    await this.lib('judger').connect();
     this.loadModules();
   },
   async connectDatabase() {

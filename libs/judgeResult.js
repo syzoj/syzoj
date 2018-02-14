@@ -2,37 +2,37 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
 const winston = require("winston");
-const interfaces_1 = require("./judger_interfaces");
+const interfaces = require("./judger_interfaces");
 const compileError = "Compile Error", systemError = "System Error", testdataError = "No Testdata";
 exports.statusToString = {};
-exports.statusToString[interfaces_1.TestcaseResultType.Accepted] = "Accepted";
-exports.statusToString[interfaces_1.TestcaseResultType.WrongAnswer] = "Wrong Answer";
-exports.statusToString[interfaces_1.TestcaseResultType.PartiallyCorrect] = "Partially Correct";
-exports.statusToString[interfaces_1.TestcaseResultType.MemoryLimitExceeded] = "Memory Limit Exceeded";
-exports.statusToString[interfaces_1.TestcaseResultType.TimeLimitExceeded] = "Time Limit Exceeded";
-exports.statusToString[interfaces_1.TestcaseResultType.OutputLimitExceeded] = "Output Limit Exceeded";
-exports.statusToString[interfaces_1.TestcaseResultType.RuntimeError] = "Runtime Error";
-exports.statusToString[interfaces_1.TestcaseResultType.FileError] = "File Error";
-exports.statusToString[interfaces_1.TestcaseResultType.JudgementFailed] = "Judgement Failed";
-exports.statusToString[interfaces_1.TestcaseResultType.InvalidInteraction] = "Invalid Interaction";
+exports.statusToString[interfaces.TestcaseResultType.Accepted] = "Accepted";
+exports.statusToString[interfaces.TestcaseResultType.WrongAnswer] = "Wrong Answer";
+exports.statusToString[interfaces.TestcaseResultType.PartiallyCorrect] = "Partially Correct";
+exports.statusToString[interfaces.TestcaseResultType.MemoryLimitExceeded] = "Memory Limit Exceeded";
+exports.statusToString[interfaces.TestcaseResultType.TimeLimitExceeded] = "Time Limit Exceeded";
+exports.statusToString[interfaces.TestcaseResultType.OutputLimitExceeded] = "Output Limit Exceeded";
+exports.statusToString[interfaces.TestcaseResultType.RuntimeError] = "Runtime Error";
+exports.statusToString[interfaces.TestcaseResultType.FileError] = "File Error";
+exports.statusToString[interfaces.TestcaseResultType.JudgementFailed] = "Judgement Failed";
+exports.statusToString[interfaces.TestcaseResultType.InvalidInteraction] = "Invalid Interaction";
 function firstNonAC(t) {
-    if (t.every(v => v === interfaces_1.TestcaseResultType.Accepted)) {
-        return interfaces_1.TestcaseResultType.Accepted;
+    if (t.every(v => v === interfaces.TestcaseResultType.Accepted)) {
+        return interfaces.TestcaseResultType.Accepted;
     }
     else {
-        return t.find(r => r !== interfaces_1.TestcaseResultType.Accepted);
+        return t.find(r => r !== interfaces.TestcaseResultType.Accepted);
     }
 }
 exports.firstNonAC = firstNonAC;
 function convertResult(taskId, source) {
     winston.debug(`Converting result for ${taskId}`, source);
     let time = null, memory = null, score = null, done = true, statusString = null;
-    if (source.compile && source.compile.status === interfaces_1.TaskStatus.Failed) {
+    if (source.compile && source.compile.status === interfaces.TaskStatus.Failed) {
         statusString = compileError;
     }
     else if (source.error != null) {
         done = false;
-        if (source.error === interfaces_1.ErrorType.TestDataError) {
+        if (source.error === interfaces.ErrorType.TestDataError) {
             statusString = testdataError;
         }
         else {
@@ -49,7 +49,7 @@ function convertResult(taskId, source) {
         };
         time = forEveryTestcase(c => c.time, _.sum);
         memory = forEveryTestcase(c => c.memory, _.max);
-        if (source.judge.subtasks.some(s => s.cases.some(c => c.status === interfaces_1.TaskStatus.Failed))) {
+        if (source.judge.subtasks.some(s => s.cases.some(c => c.status === interfaces.TaskStatus.Failed))) {
             winston.debug(`Some subtasks failed, returning system error`);
             statusString = systemError;
         }
@@ -67,7 +67,7 @@ function convertResult(taskId, source) {
         time: time,
         memory: memory,
         score: score,
-        statusNumber: done ? interfaces_1.TaskStatus.Done : interfaces_1.TaskStatus.Failed,
+        statusNumber: done ? interfaces.TaskStatus.Done : interfaces.TaskStatus.Failed,
         statusString: statusString,
         result: source
     };
