@@ -5,6 +5,8 @@ The UI is powered by [Semantic UI](http://semantic-ui.com/).
 Template designed & coded by [Sengxian](https://www.sengxian.com) and [Menci](https://men.ci).
 
 # Deploying
+**Warning** The following content is **outdated**. Please refer to https://syzoj-demo.t123yh.xyz:20170/article/1 for a detailed guide and a demo server.
+
 There's currently *no* stable version of SYZOJ 2, but you can use the unstable version from git.
 
 ```
