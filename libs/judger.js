@@ -28,7 +28,6 @@ async function connect () {
     });
     amqpConsumeChannel = await amqpConnection.createChannel();
     amqpConsumeChannel.prefetch(1);
-    winston.debug('Winston test');
     amqpConsumeChannel.consume('result', async (msg) => {
         (async(msg) => {
             const data = msgPack.decode(msg.content);
@@ -99,12 +98,13 @@ async function connect () {
 }
 
 module.exports.judge = async function (judge_state, problem, priority) {
-    let type, param, extraFile = null;
+    let type, param, extraData = null;
     switch (problem.type) {
         case 'submit-answer':
             type = enums.ProblemType.AnswerSubmission;
             param = null;
-            extraFile = 'static/uploads/answer/' + judge_state.code;
+            let fs = Promise.promisifyAll(require('fs-extra'));
+            extraData = await fs.readFileAsync(syzoj.model('file').resolvePath('answer', judge_state.code));
             break;
         case 'interaction':
             type = enums.ProblemType.Interaction;
@@ -128,19 +128,15 @@ module.exports.judge = async function (judge_state, problem, priority) {
             break;
     }
 
-    const req = {
-        content: {
-            taskId: judge_state.task_id,
-            testData: problem.id.toString(),
-            type: type,
-            priority: priority,
-            param: param
-        },
-        extraFileLocation: extraFile
+    const content = {
+        taskId: judge_state.task_id,
+        testData: problem.id.toString(),
+        type: type,
+        priority: priority,
+        param: param
     };
 
-    // TODO: parse extraFileLocation
-    amqpSendChannel.sendToQueue('judge', msgPack.encode({ content: req.content, extraData: null }), { priority: priority });
+    amqpSendChannel.sendToQueue('judge', msgPack.encode({ content: content, extraData: extraData }), { priority: priority });
 }
 
 connect();

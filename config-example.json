@@ -167,5 +167,6 @@
   ],
   "session_secret": "233",
   "rabbitMQ": "amqp://localhost/",
+  "judge_token": "233",
   "email_jwt_secret": "test"
 }
