@@ -47,8 +47,8 @@ function convertResult(taskId, source) {
             else
                 return reduce(list);
         };
-        time = forEveryTestcase(c => c.time, _.sum);
-        memory = forEveryTestcase(c => c.memory, _.max);
+        time = forEveryTestcase(c => (c.time ? c.time : 0), _.sum);
+        memory = forEveryTestcase(c => (c.memory ? c.memory : 0), _.max);
         if (source.judge.subtasks.some(s => s.cases.some(c => c.status === interfaces.TaskStatus.Failed))) {
             winston.debug(`Some subtasks failed, returning system error`);
             statusString = systemError;
