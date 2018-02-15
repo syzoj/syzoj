@@ -279,6 +279,7 @@ app.get('/problem/:id/export', async (req, res) => {
       file_io: problem.file_io,
       file_io_input_name: problem.file_io_input_name,
       file_io_output_name: problem.file_io_output_name,
+      type: problem.type,
       tags: []
     };
 
@@ -464,6 +465,7 @@ app.post('/problem/:id/import', async (req, res) => {
     problem.file_io = json.obj.file_io;
     problem.file_io_input_name = json.obj.file_io_input_name;
     problem.file_io_output_name = json.obj.file_io_output_name;
+    if(json.obj.type) problem.type = json.obj.type;
 
     let validateMsg = await problem.validate();
     if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
