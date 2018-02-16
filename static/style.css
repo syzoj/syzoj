@@ -305,6 +305,42 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
 }
 
+.ui.header,
+.ui.button,
+.ui.input input,
+.ui.menu,
+.ui.form input:not([type]),
+.ui.form input[type=date],
+.ui.form input[type=datetime-local],
+.ui.form input[type=email],
+.ui.form input[type=file],
+.ui.form input[type=number],
+.ui.form input[type=password],
+.ui.form input[type=search],
+.ui.form input[type=tel],
+.ui.form input[type=text],
+.ui.form input[type=time],
+.ui.form input[type=url],
+h1,
+h2,
+h3,
+h4,
+h5,
+body
+ {
+  font-family: 
+    -apple-system, 
+    'PingFang SC',/* Apple */ 
+    'Source Han Sans SC', 
+    'Noto Sans CJK SC', /* Google */
+    'Microsoft Yahei', 
+    'Lantinghei SC', 
+    'Hiragino Sans GB', 
+    'Microsoft Sans Serif', /* M$ */
+    'WenQuanYi Micro Hei', /* *nix */
+    sans-serif;
+}
+
 .font-content {
   font-family: 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
