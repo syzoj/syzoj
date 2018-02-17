@@ -340,7 +340,8 @@ class Problem extends Model {
       await fs.remove(dir);
       await fs.ensureDir(dir);
 
-      await p7zip.extract(path, dir);
+      let execFileAsync = Promise.promisify(require('child_process').execFile);
+      await execFileAsync(__dirname + '/../bin/unzip', ['-j', '-o', '-d', dir, path]);
       await fs.move(path, this.getTestdataArchivePath(), { overwrite: true });
     });
   }
