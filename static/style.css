@@ -321,6 +321,7 @@
 .ui.form input[type=text],
 .ui.form input[type=time],
 .ui.form input[type=url],
+.ui.accordion .title:not(.ui),
 h1,
 h2,
 h3,
