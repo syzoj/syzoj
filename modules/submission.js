@@ -22,6 +22,7 @@
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
 let Contest = syzoj.model('contest');
+let Problem = syzoj.model('problem');
 
 const jwt = require('jsonwebtoken');
 const { getSubmissionInfo, getRoughResult, processOverallResult } = require('../libs/submissions_process');
@@ -89,15 +90,22 @@ app.get('/submissions', async (req, res) => {
 
     if (!inContest && (!curUser || !await curUser.hasPrivilege('manage_problem'))) {
       if (req.query.problem_id) {
-        where.problem_id = {
-          $and: [
-            { $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1' + (res.locals.user ? (' OR `user_id` = ' + res.locals.user.id) : '') + ')') },
-            { $eq: where.problem_id = parseInt(req.query.problem_id) || -1 }
-          ]
-        };
+        let problem_id = parseInt(req.query.problem_id);
+        let problem = await Problem.fromID(problem_id);
+        if(!problem)
+          throw new ErrorMessage("无此题目。");
+        if(await problem.isAllowedUseBy(res.locals.user)) {
+          where.problem_id = {
+            $and: [
+              { $eq: where.problem_id = problem_id }
+            ]
+          };
+        } else {
+          throw new ErrorMessage("您没有权限进行此操作。");
+        }
       } else {
         where.problem_id = {
-          $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1' + (res.locals.user ? (' OR `user_id` = ' + res.locals.user.id) : '') + ')'),
+          $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1)'),
         };
       }
     } else {
