@@ -104,8 +104,8 @@ app.get('/submissions', async (req, res) => {
           throw new ErrorMessage("您没有权限进行此操作。");
         }
       } else {
-        where.problem_id = {
-          $in: syzoj.db.literal('(SELECT `id` FROM `problem` WHERE `is_public` = 1)'),
+        where.is_public = {
+          $eq: true,
         };
       }
     } else {
