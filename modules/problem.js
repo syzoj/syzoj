@@ -583,6 +583,8 @@ async function setPublic(req, res, is_public) {
     problem.publicizer_id = res.locals.user.id;
     await problem.save();
 
+    await syzoj.db.query("UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_id` SET `judge_state`.`is_public` = `problem`.`is_public` WHERE `problem`.`id` = " + id);
+
     res.redirect(syzoj.utils.makeUrl(['problem', id]));
   } catch (e) {
     syzoj.log(e);
@@ -636,7 +638,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code_length: size,
         language: null,
         user_id: curUser.id,
-        problem_id: req.params.id
+        problem_id: req.params.id,
+        is_public: problem.is_public
       });
     } else {
       let code;
@@ -654,7 +657,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code_length: code.length,
         language: req.body.language,
         user_id: curUser.id,
-        problem_id: req.params.id
+        problem_id: req.params.id,
+        is_public: problem.is_public
       });
     }
 
