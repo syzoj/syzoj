@@ -321,6 +321,7 @@
 .ui.form input[type=text],
 .ui.form input[type=time],
 .ui.form input[type=url],
+.ui.accordion .title:not(.ui),
 h1,
 h2,
 h3,
@@ -339,6 +340,14 @@ body
     'Microsoft Sans Serif', /* M$ */
     'WenQuanYi Micro Hei', /* *nix */
     sans-serif;
+}
+
+.ui.header {
+  line-height: 1.7em;
+}
+
+.show_tag_controled {
+  white-space: normal !important;
 }
 
 .font-content {
