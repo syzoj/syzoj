@@ -342,6 +342,14 @@ body
     sans-serif;
 }
 
+.ui.header {
+  line-height: 1.7em;
+}
+
+.show_tag_controled {
+  white-space: normal !important;
+}
+
 .font-content {
   font-family: 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
