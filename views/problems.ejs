@@ -42,7 +42,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
             document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { overflow: hidden; }';
           } else {
             document.write('<input type="checkbox">');
-            document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { display: none; overflow: hidden; }';
+            document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { width: 0; height: 0; overflow: hidden; }';
           }
           </script>
 
@@ -54,7 +54,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
               if (checked) {
                 document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { overflow: hidden; }';
               } else {
-                document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { display: none; overflow: hidden; }';
+                document.getElementById('show_tag_style').innerHTML = '.show_tag_controled { width: 0; height: 0; overflow: hidden; }';
               }
             });
           });
