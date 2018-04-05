@@ -81,7 +81,7 @@
           <div class="ui active centered inline loader" id="hitokoto-loader"></div>
           <script>
           $.get('https://sslapi.hitokoto.cn/?c=a', function (data) {
-            data = JSON.parse(data);
+            if (typeof data === 'string') data = JSON.parse(data);
             $('#hitokoto-loader').removeClass('active');
             $('#hitokoto-content').css('display', '').text(data.hitokoto);
             if (data.from) {
