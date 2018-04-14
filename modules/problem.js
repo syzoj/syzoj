@@ -583,7 +583,10 @@ async function setPublic(req, res, is_public) {
     problem.publicizer_id = res.locals.user.id;
     await problem.save();
 
-    await syzoj.db.query("UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_id` SET `judge_state`.`is_public` = `problem`.`is_public` WHERE `problem`.`id` = " + id);
+    JudgeState.model.update(
+      { is_public: is_public },
+      { where: { problem_id: id } }
+    );
 
     res.redirect(syzoj.utils.makeUrl(['problem', id]));
   } catch (e) {
