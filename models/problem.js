@@ -244,17 +244,14 @@ let model = db.define('problem', {
   file_io_input_name: { type: Sequelize.TEXT },
   file_io_output_name: { type: Sequelize.TEXT },
 
-  create_time: { type: Sequelize.DATE },
-  last_update: { type: Sequelize.DATE },
+  publicize_time: { type: Sequelize.DATE },
 
   type: {
     type: Sequelize.ENUM,
     values: ['traditional', 'submit-answer', 'interaction']
   }
 }, {
-    timestamps: true,
-    createdAt: 'create_time',
-    updatedAt: 'last_update',
+    timestamps: false,
     tableName: 'problem',
     indexes: [
       {
@@ -264,10 +261,7 @@ let model = db.define('problem', {
         fields: ['user_id'],
       },
       {
-        fields: ['create_time'],
-      },
-      {
-        fields: ['last_update'],
+        fields: ['publicize_time'],
       },
     ]
   });

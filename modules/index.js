@@ -47,10 +47,10 @@ app.get('/', async (req, res) => {
 
     let contests = await Contest.query([1, 5], { is_public: true }, [['start_time', 'desc']]);
 
-    let problems = (await Problem.query([1, 5], { is_public: true }, [['last_update', 'desc']])).map(problem => ({
+    let problems = (await Problem.query([1, 5], { is_public: true }, [['publicize_time', 'desc']])).map(problem => ({
       id: problem.id,
       title: problem.title,
-      time: timeAgo.format(new Date(problem.last_update)),
+      time: timeAgo.format(new Date(problem.publicize_time)),
     }));
 
     res.render('index', {

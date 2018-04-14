@@ -581,6 +581,7 @@ async function setPublic(req, res, is_public) {
 
     problem.is_public = is_public;
     problem.publicizer_id = res.locals.user.id;
+    problem.publicize_time = new Date();
     await problem.save();
 
     JudgeState.model.update(
