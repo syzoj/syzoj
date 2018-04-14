@@ -92,6 +92,27 @@
           <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
           <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
         </div>
+      <h4 class="ui top attached block header">最新更新</h4>
+      <div class="ui bottom attached segment">
+	<table class="ui very basic center aligned table">
+          <thead>
+            <tr>
+              <th>题目</th>
+              <th>更新时间</th>
+            </tr>
+	  </thead>
+	  <tbody>
+	    <%
+	    for (let problem of problems) {
+	    %>
+	    <tr>
+	      <td><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %></a></td>
+	      <td><%= problem.time %></td>
+	    </tr>
+	    <% } %>
+	  </tbody>
+	</table>
+      </div>
         <%
         if (fortune) {
             let color;

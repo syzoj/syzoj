@@ -38,6 +38,7 @@
     "file-size": "^1.0.0",
     "fs-extra": "^4.0.1",
     "gravatar": "^1.5.2",
+    "javascript-time-ago": "^1.0.30",
     "js-yaml": "^3.9.0",
     "jsonwebtoken": "^7.4.3",
     "moemark-renderer": "^1.2.6",
