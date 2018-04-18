@@ -363,6 +363,6 @@ module.exports = {
   },
   async saveConfig() {
     let fs = require('fs-extra');
-    fs.writeFileAsync(syzoj.rootDir + '/config.json', JSON.stringify(syzoj.config, null, 2));
+    fs.writeFileAsync(syzoj.configDir, JSON.stringify(syzoj.config, null, 2));
   }
 };
