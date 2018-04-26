@@ -1,4 +1,6 @@
 # SYZOJ 2
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsyzoj%2Fsyzoj.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsyzoj%2Fsyzoj?ref=badge_shield)
+
 An OnlineJudge System for OI.
 
 The UI is powered by [Semantic UI](http://semantic-ui.com/).  
@@ -172,3 +174,7 @@ systemctl restart syzoj-judge
     }
   },
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsyzoj%2Fsyzoj.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsyzoj%2Fsyzoj?ref=badge_large)
