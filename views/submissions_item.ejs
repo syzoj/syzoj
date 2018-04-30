@@ -43,7 +43,7 @@ Vue.component('submission-item', {
     }
   },
   mounted() {
-    textFit(this.$refs.problemLabel, { maxFontSize: 14 });
+    textFit(this.$refs.problemLabelTextFit, { maxFontSize: 14 });
   }
 });
 </script>
@@ -51,7 +51,7 @@ Vue.component('submission-item', {
 <script id="submissionItemTemplate" type="text/x-template">
 <tr>
   <td><a :href="submissionLink">#{{ data.info.submissionId }}</a></td>
-  <td ref="problemLabel"><a style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;" :href="problemLink">#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}. {{ data.info.problemName }}</a></td>
+  <td ref="problemLabel"><a ref="problemLabelTextFit" style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;" :href="problemLink">#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}. {{ data.info.problemName }}</a></td>
   <td><a :href="submissionLink"><status-label :status="statusString"></status-label></a></td>
 
   <template v-if="data.result">
