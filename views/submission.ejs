@@ -295,5 +295,17 @@ if (token != null) {
   loadSocketIO();
 }
 </script>
+<script>
+  document.addEventListener('keydown', function (event) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      var sel = window.getSelection();
+      var rg = document.createRange()
+      rg.selectNodeContents(document.querySelector('code'));
+      sel.removeAllRanges();
+      sel.addRange(rg);
+      event.preventDefault();
+    }
+  });
+</script>
 </span>
 <% include footer %>
