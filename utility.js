@@ -100,7 +100,10 @@ module.exports = {
         })
       },
       whiteList: whiteList,
-      stripIgnoreTag: true
+      stripIgnoreTag: true,
+      onTagAttr: (tag, name, value, isWhiteAttr) => {
+        if (tag.toLowerCase() === 'img' && name.toLowerCase() === 'src' && value.startsWith('data:image/')) return name + '="' + XSS.escapeAttrValue(value) + '"';
+      }
     });
     let replaceXSS = s => {
       s = xss.process(s);
