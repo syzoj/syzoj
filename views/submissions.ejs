@@ -114,7 +114,7 @@ $(function () {
   $('#select_status').dropdown();
 });
 const itemList = <%- JSON.stringify(items) %>;
-const socketUrl = <%- syzoj.utils.judgeServer(pushType) %>;
+const socketUrl = "/rough";
 const displayConfig = <%- JSON.stringify(displayConfig) %>;
 
 const vueApp = new Vue({

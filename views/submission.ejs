@@ -136,7 +136,7 @@ Vue.component("code-box", {
     template: "#codeBoxTemplate",
     props: ['title', 'content', 'escape'],
 });
-const socketUrl = <%- syzoj.utils.judgeServer('detail') %>;
+const socketUrl = "/detail";
 const displayConfig = <%- JSON.stringify(displayConfig) %>;
 const token = <%- JSON.stringify(socketToken) %>;
 
