@@ -1,7 +1,7 @@
 <% include util %>
 <% include status_label %>
 
-<script src="//cdn.bootcss.com/textfit/2.3.1/textFit.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
 
 <script>
 const submissionUrl = <%- JSON.stringify(displayConfig.inContest ? 
@@ -69,8 +69,7 @@ Vue.component('submission-item', {
   <td><a :href="userLink">{{ data.info.user }}</a></td>
   <td>{{ data.info.submitTime }}</td>
   <td v-if="showRejudge">
-    <form class="have-csrf" :action="submissionLink + '/rejudge'" method="POST">
-      <input type="hidden" name="_csrf" value="<%= req.csrfToken() %>" />
+    <form :action="submissionLink + '/rejudge'" method="POST">
       <button type="submit" style="color: #000; padding: 0; border: none; background: none;" value="rejudge"><i class="repeat icon"></i></button>
     </form>
   </td>

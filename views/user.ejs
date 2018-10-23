@@ -91,7 +91,7 @@
                                           <h4 class="ui top attached block header">统计</h4>
                                           <div class="ui bottom attached segment">
                                             <div id="pie_chart_legend"></div>
-                                            <div style="width: 260px; height: 260px; margin-left: 33.5px; "><canvas style="width: 50%; " id="pie_chart"></canvas></div>
+                                            <div style="width: 260px; height: 260px; margin-left: 33.5px; "><canvas style="width: 260px; height: 260px; " id="pie_chart"></canvas></div>
                                           </div>
                                       </div>
                                   </div>
@@ -170,6 +170,7 @@ $(function () {
 <% } %>
 
   var pie = new Chart(document.getElementById('pie_chart').getContext('2d'), {
+    aspectRatio: 1,
     type: 'pie',
     data: {
       datasets: [

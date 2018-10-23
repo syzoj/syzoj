@@ -10,7 +10,7 @@
     "dialect": "sqlite",
     "storage": "syzoj.db"
   },
-  "register_mail": true,
+  "register_mail": false,
   "email": {
     "method": "aliyundm",
     "options": {
@@ -48,7 +48,7 @@
     "submit_code": 102400,
     "submit_answer": 10485760,
     "custom_test_input": 20971520,
-    "testdata_filecount": 5
+    "testdata_filecount": 100
   },
   "page": {
     "problem": 50,
@@ -168,5 +168,6 @@
   "session_secret": "233",
   "rabbitMQ": "amqp://localhost/",
   "judge_token": "233",
-  "email_jwt_secret": "test"
+  "email_jwt_secret": "test",
+  "google_analytics": "UA-XXXXXXXX-X"
 }

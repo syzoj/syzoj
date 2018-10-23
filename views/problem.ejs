@@ -23,7 +23,7 @@ div[class*=ace_br] {
     border-radius: 0 !important;
 }
 </style>
-<script src="/libs/ace/ace.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/ace/1.4.1/ace.js"></script>
 <div class="ui center aligned grid">
     <div class="row">
       <h1 class="ui header">
@@ -222,9 +222,9 @@ div[class*=ace_br] {
     <div class="row">
         <div class="column">
           <%
-          const formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest ? contest.id : undefined, _csrf: req.csrfToken() });
+          const formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest ? contest.id : undefined });
           %>
-          <form class="ui form have-csrf" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
+          <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
             <% if (problem.type === 'submit-answer') { %>
               <%
               let cases = [];

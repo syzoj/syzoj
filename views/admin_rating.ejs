@@ -18,8 +18,7 @@
 </form>
 
 注意：如果删除一个比赛的 Rating，则该比赛之上的所有比赛也将被删除，Rating 将还原至该比赛之前的状态！
-<form class="have-csrf" action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'delete']) %>" method="POST">
-  <input type="hidden" name="_csrf" value="<%= req.csrfToken() %>" />
+<form action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'delete']) %>" method="POST">
   <div class="ui relaxed divided list">
     <% for (const calc of calcs) { %>
       <div class="item">

@@ -215,7 +215,7 @@ module.exports = {
     });
   },
   gravatar(email, size) {
-    return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
+    return gravatar.url(email, { s: size, d: 'mm' }).replace('www.gravatar.com', 'gravatar.loli.net');
   },
   async parseTestdata(dir, submitAnswer) {
     if (!await syzoj.utils.isDir(dir)) return null;
