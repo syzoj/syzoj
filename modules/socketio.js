@@ -97,7 +97,7 @@ function initializeSocketIO(s) {
                 winston.info(`Client ${socket.id} connected.`);
                 let req;
                 try {
-                    req = jwt.verify(reqJwt, syzoj.config.judge_token);
+                    req = jwt.verify(reqJwt, syzoj.config.session_secret);
                     if (req.type !== name) {
                         throw new Error("Request type in token mismatch.");
                     }

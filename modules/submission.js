@@ -125,7 +125,7 @@ app.get('/submissions', async (req, res) => {
           taskId: x.task_id,
           type: 'rough',
           displayConfig: displayConfig
-        }, syzoj.config.judge_token) : null,
+        }, syzoj.config.session_secret) : null,
         result: getRoughResult(x, displayConfig),
         running: false,
       })),
@@ -178,7 +178,7 @@ app.get('/submission/:id', async (req, res) => {
         taskId: judge.task_id,
         type: 'detail',
         displayConfig: displayConfig
-      }, syzoj.config.judge_token) : null,
+      }, syzoj.config.session_secret) : null,
       displayConfig: displayConfig,
     });
   } catch (e) {
