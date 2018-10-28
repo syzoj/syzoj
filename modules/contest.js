@@ -61,6 +61,8 @@ app.get('/contest/:id/edit', async (req, res) => {
     if (!contest) {
       contest = await Contest.create();
       contest.id = 0;
+    } else {
+      await contest.loadRelationships();
     }
 
     let problems = [], admins = [];
@@ -86,19 +88,25 @@ app.post('/contest/:id/edit', async (req, res) => {
 
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
+    let ranklist = null;
     if (!contest) {
       contest = await Contest.create();
 
       contest.holder_id = res.locals.user.id;
 
-      let ranklist = await ContestRanklist.create();
-      await ranklist.save();
-      contest.ranklist_id = ranklist.id;
+      ranklist = await ContestRanklist.create();
 
       // Only new contest can be set type
       if (!['noi', 'ioi', 'acm'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
       contest.type = req.body.type;
+    } else {
+      await contest.loadRelationships();
+      ranklist = contest.ranklist;
     }
+
+    ranklist.ranking_params = JSON.parse(req.body.ranking_params);
+    await ranklist.save();
+    contest.ranklist_id = ranklist.id;
 
     if (!req.body.title.trim()) throw new ErrorMessage('比赛名不能为空。');
     contest.title = req.body.title;
@@ -131,7 +139,7 @@ app.get('/contest/:id', async (req, res) => {
 
     let contest = await Contest.fromID(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('无此比赛。');
+    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
     const isSupervisior = await contest.isSupervisior(curUser);
     contest.running = contest.isRunning();
@@ -168,6 +176,9 @@ app.get('/contest/:id', async (req, res) => {
             let judge_state = await JudgeState.fromID(player.score_details[problem.problem.id].judge_id);
             problem.status = judge_state.status;
             problem.judge_id = player.score_details[problem.problem.id].judge_id;
+            await contest.loadRelationships();
+            let multiplier = contest.ranklist.ranking_params[problem.problem.id] || 1.0;
+            problem.feedback = (judge_state.score * multiplier).toString() + ' / ' + (100 * multiplier).toString();
           }
         } else if (contest.type === 'acm') {
           if (player.score_details[problem.problem.id]) {
@@ -232,6 +243,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     const curUser = res.locals.user;
 
     if (!contest) throw new ErrorMessage('无此比赛。');
+    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
     if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
     contest.isEnded(),
     await contest.isSupervisior(curUser)].every(x => !x))
@@ -244,8 +256,20 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 
     let ranklist = await players_id.mapAsync(async player_id => {
       let player = await ContestPlayer.fromID(player_id);
+
+      if (contest.type === 'noi' || contest.type === 'ioi') {
+        player.score = 0;
+      }
+
       for (let i in player.score_details) {
         player.score_details[i].judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
+
+        /*** XXX: Clumsy duplication, see ContestRanklist::updatePlayer() ***/
+        if (contest.type === 'noi' || contest.type === 'ioi') {
+          let multiplier = contest.ranklist.ranking_params[i] || 1.0;
+          player.score_details[i].weighted_score = player.score_details[i].score == null ? null : Math.round(player.score_details[i].score * multiplier);
+          player.score += player.score_details[i].weighted_score;
+        }
       }
 
       let user = await User.fromID(player.user_id);
@@ -290,7 +314,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-    if (!contest) throw new ErrorMessage('无此比赛。');
+    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
     if (contest.isEnded()) {
       res.redirect(syzoj.utils.makeUrl(['submissions'], { contest: contest_id }));
@@ -366,7 +390,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
           taskId: x.task_id,
           type: pushType,
           displayConfig: displayConfig
-        }, syzoj.config.judge_token) : null,
+        }, syzoj.config.session_secret) : null,
         result: getRoughResult(x, displayConfig),
         running: false,
       })),
@@ -421,7 +445,7 @@ app.get('/contest/submission/:id', async (req, res) => {
         taskId: judge.task_id,
         displayConfig: displayConfig,
         type: 'detail'
-      }, syzoj.config.judge_token) : null,
+      }, syzoj.config.session_secret) : null,
       displayConfig: displayConfig,
       contest: contest,
     });
@@ -497,7 +521,7 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
     let problem = await Problem.fromID(problem_id);
 
     contest.ended = contest.isEnded();
-    if (!(contest.isRunning() || contest.idEnded())) {
+    if (!(contest.isRunning() || contest.isEnded())) {
       if (await problem.isAllowedUseBy(res.locals.user)) {
         return res.redirect(syzoj.utils.makeUrl(['problem', problem_id, 'download', 'additional_file']));
       }

@@ -38,8 +38,7 @@ function submitForm() {
         url: "/api/forget",
         type: 'POST',
         data: {
-            "email": $("#email").val(),
-            "_csrf": document.head.getAttribute('data-csrf-token')
+            "email": $("#email").val()
         },
         async: true,
         success: function(data) {

@@ -28,7 +28,7 @@
                 <a id="sign_up" class="ui button" href="javascript:submit();">注册</a>
             </form>
 </div>
-<script src="/libs/blueimp-md5/js/md5.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
 <script type="text/javascript">
 function show_error(error) {
     $("#error_info").text(error);
@@ -37,7 +37,7 @@ function show_error(error) {
 
 function success() {
     alert("注册成功！");
-    window.location.href = <%- JSON.stringify(req.query.url || '/') %>;
+    window.location.href = location.protocol + '//' + location.host + <%- JSON.stringify(req.query.url || '/') %>;
 }
 
 function mail_required() {
@@ -63,8 +63,7 @@ function submit() {
           username: $("#username").val(),
           password: password,
           email: $("#email").val(),
-          prevUrl: <%- JSON.stringify(req.query.url || '/') %>,
-          _csrf: document.head.getAttribute('data-csrf-token')
+          prevUrl: <%- JSON.stringify(req.query.url || '/') %>
         },
         success: function(data) {
             error_code = data.error_code;

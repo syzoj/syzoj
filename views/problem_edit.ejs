@@ -28,15 +28,15 @@
           <label for="title">题目名称</label>
           <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>">
           <label style="margin-top: 15px; " for="description">题目描述</label>
-          <textarea class="font-content" rows="15" id="description" name="description"><%= problem.description %></textarea>
+          <textarea class="markdown-edit" rows="15" id="description" name="description"><%= problem.description %></textarea>
           <label style="margin-top: 15px; " for="input_format">输入格式</label>
-          <textarea class="font-content" rows="10" id="input" name="input_format"><%= problem.input_format %></textarea>
+          <textarea class="markdown-edit" rows="10" id="input" name="input_format"><%= problem.input_format %></textarea>
           <label style="margin-top: 15px; " for="output_format">输出格式</label>
-          <textarea class="font-content" rows="10" id="output" name="output_format"><%= problem.output_format %></textarea>
+          <textarea class="markdown-edit" rows="10" id="output" name="output_format"><%= problem.output_format %></textarea>
           <label style="margin-top: 15px; ">样例</label>
-          <textarea class="font-content" rows="15" id="example" name="example"><%= problem.example %></textarea>
+          <textarea class="markdown-edit" rows="15" id="example" name="example"><%= problem.example %></textarea>
           <label style="margin-top: 15px; ">数据范围与提示</label>
-          <textarea class="font-content" rows="10" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
+          <textarea class="markdown-edit" rows="10" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
           <label style="margin-top: 15px; ">标签</label>
           <select class="ui fluid search dropdown" multiple="" id="search_tags" name="tags">
             <% for (let tag of problem.tags) { %>
@@ -71,7 +71,7 @@
 <script type="text/javascript">
 $(function () {
     function render(output, input) {
-      $.post('/api/markdown', { s: input.val(), _csrf: document.head.getAttribute('data-csrf-token') }, function (s) {
+      $.post('/api/markdown', { s: input.val() }, function (s) {
         // console.log(s);
         output.html(s);
       });

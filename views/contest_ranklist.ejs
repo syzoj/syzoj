@@ -122,9 +122,15 @@
                     </td>
                   <% } else if (contest.type === 'noi' || contest.type === 'ioi') { %>
                       <a href="<%= syzoj.utils.makeUrl(['submission', item.player.score_details[problem.id].judge_id]) %>">
-                        <span class="score score_<%= parseInt((item.player.score_details[problem.id].score / 10) || 0) %>">
-                          <%= item.player.score_details[problem.id].score %>
-                        </span>
+                        <% if (item.player.score_details[problem.id].weighted_score != null) { %>
+                          <span class="score score_<%= parseInt((item.player.score_details[problem.id].score / 10) || 0) %>">
+                            <%= Math.round(item.player.score_details[problem.id].weighted_score) %>
+                          </span>
+                        <% } else { %>
+                          <span class="status compile_error">
+                            0
+                          </span>
+                        <% } %>
                       </a>
                       <div class="submit_time">
                         <%= syzoj.utils.formatTime(item.player.score_details[problem.id].judge_state.submit_time - contest.start_time) %>

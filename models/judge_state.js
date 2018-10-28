@@ -60,7 +60,8 @@ let model = db.define('judge_state', {
    * use this way represent because it's easy to expand // Menci：这锅我不背，是 Chenyao 留下来的坑。
    */
   type: { type: Sequelize.INTEGER },
-  type_info: { type: Sequelize.INTEGER }
+  type_info: { type: Sequelize.INTEGER },
+  is_public: { type: Sequelize.BOOLEAN }
 }, {
     timestamps: false,
     tableName: 'judge_state',
@@ -79,6 +80,9 @@ let model = db.define('judge_state', {
       },
       {
         fields: ['task_id'],
+      },
+      {
+        fields: ['id', 'is_public', 'type_info', 'type']
       }
     ]
   });
@@ -104,7 +108,8 @@ class JudgeState extends Model {
       max_memory: null,
       status: 'Unknown',
       result: null,
-      task_id: randomstring.generate(10)
+      task_id: randomstring.generate(10),
+      is_public: false
     }, val)));
   }
 
@@ -194,6 +199,7 @@ class JudgeState extends Model {
         this.status = 'Waiting';
         await this.save();
       } catch (err) {
+        console.log("Error while connecting to judge frontend: " + err.toString());
         throw new ErrorMessage("无法开始评测。");
       }
     });

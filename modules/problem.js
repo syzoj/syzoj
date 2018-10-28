@@ -279,6 +279,7 @@ app.get('/problem/:id/export', async (req, res) => {
       file_io: problem.file_io,
       file_io_input_name: problem.file_io_input_name,
       file_io_output_name: problem.file_io_output_name,
+      type: problem.type,
       tags: []
     };
 
@@ -464,6 +465,7 @@ app.post('/problem/:id/import', async (req, res) => {
     problem.file_io = json.obj.file_io;
     problem.file_io_input_name = json.obj.file_io_input_name;
     problem.file_io_output_name = json.obj.file_io_output_name;
+    if (json.obj.type) problem.type = json.obj.type;
 
     let validateMsg = await problem.validate();
     if (validateMsg) throw new ErrorMessage('无效的题目数据配置。', null, validateMsg);
@@ -581,6 +583,11 @@ async function setPublic(req, res, is_public) {
     problem.publicizer_id = res.locals.user.id;
     await problem.save();
 
+    JudgeState.model.update(
+      { is_public: is_public },
+      { where: { problem_id: id } }
+    );
+
     res.redirect(syzoj.utils.makeUrl(['problem', id]));
   } catch (e) {
     syzoj.log(e);
@@ -634,7 +641,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code_length: size,
         language: null,
         user_id: curUser.id,
-        problem_id: req.params.id
+        problem_id: req.params.id,
+        is_public: problem.is_public
       });
     } else {
       let code;
@@ -652,7 +660,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code_length: code.length,
         language: req.body.language,
         user_id: curUser.id,
-        problem_id: req.params.id
+        problem_id: req.params.id,
+        is_public: problem.is_public
       });
     }
 

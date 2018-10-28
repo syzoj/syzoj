@@ -4,7 +4,17 @@ An OnlineJudge System for OI.
 The UI is powered by [Semantic UI](http://semantic-ui.com/).  
 Template designed & coded by [Sengxian](https://www.sengxian.com) and [Menci](https://men.ci).
 
+# Upgrading
+Because of an update to the database structure, users who upgrade from a commit BEFORE 4c673956959532d61b8f9ba0be3191a054b4371a **MUST** perform the following SQL on the database:
+```sql
+ALTER TABLE `judge_state` ADD `is_public` TINYINT(1) NOT NULL AFTER `compilation`;
+UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_id` SET `judge_state`.`is_public` = `problem`.`is_public`;
+ALTER TABLE `syzoj`.`judge_state` ADD INDEX `judge_state_is_public` (`id`, `is_public`, `type_info`, `type`);
+```
+
 # Deploying
+**Warning** The following content is **outdated**. Please refer to https://syzoj-demo.t123yh.xyz:20170/article/1 for a detailed guide and a demo server.
+
 There's currently *no* stable version of SYZOJ 2, but you can use the unstable version from git.
 
 ```

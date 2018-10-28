@@ -454,6 +454,7 @@ class Problem extends Model {
     if (this.time_limit > syzoj.config.limit.time_limit) return 'Time limit too large';
     if (this.memory_limit <= 0) return 'Invalid memory limit';
     if (this.memory_limit > syzoj.config.limit.memory_limit) return 'Memory limit too large';
+    if (!['traditional', 'submit-answer', 'interaction'].includes(this.type)) return 'Invalid problem type';
 
     if (this.type === 'traditional') {
       let filenameRE = /^[\w \-\+\.]*$/;

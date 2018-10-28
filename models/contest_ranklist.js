@@ -28,6 +28,7 @@ let ContestPlayer = syzoj.model('contest_player');
 
 let model = db.define('contest_ranklist', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+  ranking_params: { type: Sequelize.TEXT, json: true },
   ranklist: { type: Sequelize.TEXT, json: true }
 }, {
   timestamps: false,
@@ -38,6 +39,7 @@ let Model = require('./common');
 class ContestRanklist extends Model {
   static async create(val) {
     return ContestRanklist.fromRecord(ContestRanklist.model.build(Object.assign({
+      ranking_params: '{}',
       ranklist: '{}'
     }, val)));
   }
@@ -68,9 +70,17 @@ class ContestRanklist extends Model {
     if (contest.type === 'noi' || contest.type === 'ioi') {
       for (let player of players) {
         player.latest = 0;
+        player.score = 0;
+
         for (let i in player.score_details) {
           let judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
           player.latest = Math.max(player.latest, judge_state.submit_time);
+
+          if (player.score_details[i].score != null) {
+            let multiplier = this.ranking_params[i] || 1.0;
+            player.score_details[i].weighted_score = Math.round(player.score_details[i].score * multiplier);
+            player.score += player.score_details[i].weighted_score;
+          }
         }
       }
 

@@ -1,7 +1,7 @@
 <% this.title = '提交记录' %>
 <% include header %>
 <% include util %>
-<script src="/textFit.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
 <div class="padding">
   <% if (displayConfig.inContest) { %>
     <div class="ui large info message">
@@ -104,8 +104,8 @@
   <% include page %>
 </div>
 
-<script src="/libs/vue.min.js"></script>
-<script src="/libs/socket.io.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 
 <% include submissions_item %>
 <script>
@@ -114,7 +114,7 @@ $(function () {
   $('#select_status').dropdown();
 });
 const itemList = <%- JSON.stringify(items) %>;
-const socketUrl = <%- syzoj.utils.judgeServer(pushType) %>;
+const socketUrl = "/rough";
 const displayConfig = <%- JSON.stringify(displayConfig) %>;
 
 const vueApp = new Vue({

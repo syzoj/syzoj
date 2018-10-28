@@ -81,7 +81,7 @@
           <div class="ui active centered inline loader" id="hitokoto-loader"></div>
           <script>
           $.get('https://sslapi.hitokoto.cn/?c=a', function (data) {
-            data = JSON.parse(data);
+            if (typeof data === 'string') data = JSON.parse(data);
             $('#hitokoto-loader').removeClass('active');
             $('#hitokoto-content').css('display', '').text(data.hitokoto);
             if (data.from) {
@@ -191,7 +191,7 @@
         </table>
         <% } %>
       </div>
-      <% if (typeof links !== 'undefined' && links) { %>
+      <% if (typeof links !== 'undefined' && links && links.length) { %>
       <h4 class="ui top attached block header font-content">友情链接</h4>
       <div class="ui bottom attached segment">
         <ul style="margin: 0; padding-left: 20px; ">

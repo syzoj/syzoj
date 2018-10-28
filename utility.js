@@ -100,7 +100,10 @@ module.exports = {
         })
       },
       whiteList: whiteList,
-      stripIgnoreTag: true
+      stripIgnoreTag: true,
+      onTagAttr: (tag, name, value, isWhiteAttr) => {
+        if (tag.toLowerCase() === 'img' && name.toLowerCase() === 'src' && value.startsWith('data:image/')) return name + '="' + XSS.escapeAttrValue(value) + '"';
+      }
     });
     let replaceXSS = s => {
       s = xss.process(s);
@@ -212,7 +215,7 @@ module.exports = {
     });
   },
   gravatar(email, size) {
-    return gravatar.url(email, { s: size, d: 'mm' }).replace('www', 'cn');
+    return gravatar.url(email, { s: size, d: 'mm' }).replace('www.gravatar.com', 'gravatar.loli.net');
   },
   async parseTestdata(dir, submitAnswer) {
     if (!await syzoj.utils.isDir(dir)) return null;
@@ -363,6 +366,6 @@ module.exports = {
   },
   async saveConfig() {
     let fs = require('fs-extra');
-    fs.writeFileAsync(syzoj.rootDir + '/config.json', JSON.stringify(syzoj.config, null, 2));
+    fs.writeFileAsync(syzoj.configDir, JSON.stringify(syzoj.config, null, 2));
   }
 };

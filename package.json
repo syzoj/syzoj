@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/syzoj/syzoj#readme",
   "dependencies": {
+    "amqplib": "^0.5.2",
     "ansi-to-html": "^0.4.2",
     "async-lock": "^0.3.9",
     "body-parser": "^1.15.2",
@@ -30,7 +31,6 @@
     "command-line-args": "^4.0.7",
     "cookie-parser": "^1.4.3",
     "cssfilter": "0.0.10",
-    "csurf": "^1.9.0",
     "download": "^5.0.3",
     "ejs": "^2.5.2",
     "express": "^4.14.0",
@@ -39,9 +39,12 @@
     "fs-extra": "^4.0.1",
     "gravatar": "^1.5.2",
     "js-yaml": "^3.9.0",
+    "jsondiffpatch": "0.2.4",
     "jsonwebtoken": "^7.4.3",
+    "katex": "^0.10.0-rc.1",
     "moemark-renderer": "^1.2.6",
     "moment": "^2.15.0",
+    "msgpack-lite": "^0.1.26",
     "multer": "^1.2.0",
     "mysql": "^2.11.1",
     "node-7z": "^0.4.0",
@@ -53,10 +56,12 @@
     "sendmail": "^1.1.1",
     "sequelize": "^3.24.3",
     "session-file-store": "^1.0.0",
+    "socket.io": "^2.0.3",
     "sqlite3": "^3.1.4",
     "syzoj-divine": "^1.0.2",
     "tmp-promise": "^1.0.3",
     "waliyun": "^3.1.1",
+    "winston": "^2.3.1",
     "xss": "^0.3.3"
   }
 }

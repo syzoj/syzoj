@@ -59,10 +59,7 @@ app.get('/admin/info', async (req, res) => {
 
 let configItems = {
   'title': { name: '站点标题', type: String },
-  '邮箱验证': null,
-  'register_mail.enabled': { name: '启用', type: Boolean },
-  'register_mail.address': { name: '发件人地址', type: String },
-  'register_mail.key': { name: '密钥', type: String },
+  'google_analytics': { name: 'Google Analytics', type: String },
   '默认参数': null,
   'default.problem.time_limit': { name: '时间限制（单位：ms）', type: Number },
   'default.problem.memory_limit': { name: '空间限制（单位：MiB）', type: Number },
@@ -324,6 +321,14 @@ app.post('/admin/other', async (req, res) => {
       const articles = await Article.query();
       for (const a of articles) {
         await a.resetReplyCountAndTime();
+      }
+    } else if (req.body.type === 'reset_codelen') {
+      const submissions = await JudgeState.query();
+      for (const s of submissions) {
+        if (s.type !== 'submit-answer') {
+          s.code_length = s.code.length;
+          await s.save();
+        }
       }
     } else {
       throw new ErrorMessage("操作类型不正确");

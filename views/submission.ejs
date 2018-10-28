@@ -1,7 +1,34 @@
 <% this.title = '提交记录 #' + info.submissionId %>
 <% include util %>
 <% include header %>
-<script src="/textFit.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
+<style>
+.single-subtask {
+    box-shadow: none !important;
+}
+
+.single-subtask > .title {
+    display: none;
+}
+
+.single-subtask > .content {
+    padding: 0 !important;
+}
+
+.accordion > .content > .accordion {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.accordion > .content > .accordion > .content {
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
+.accordion > .content > .accordion > .content > :last-child {
+    margin-bottom: -10px !important;
+}
+</style>
 <span id="submission_content">
 <div class="padding" id="vueAppFuckSafari">
   <table class="ui very basic center aligned table" id="status_table">
@@ -28,7 +55,7 @@
   <code-box v-if="detailResult && detailResult.compile" :escape="false" title="编译信息" v-bind:content="detailResult.compile.message"></code-box>
   <code-box v-if="detailResult" title="系统信息" :escape="true" v-bind:content="detailResult.systemMessage"></code-box>
 
-  <div class="ui styled fluid accordion" v-if="detailResult && detailResult.judge && detailResult.judge.subtasks">
+  <div class="ui styled fluid accordion" :class="singleSubtask ? 'single-subtask' : '' "v-if="detailResult && detailResult.judge && detailResult.judge.subtasks">
     <template v-for="subtask, $index in detailResult.judge.subtasks">
       <div class="title" :class="singleSubtask ? 'active' : ''">
         <div class="ui grid">
@@ -39,8 +66,8 @@
           <div class="four wide column">
             <status-label :status="getSubtaskResult(subtask)"></status-label>
           </div>
-          <div class="three wide column" v-if="subtask.score != null">得分
-            <span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
+          <div class="three wide column" v-if="subtask.score != null">
+            得分：<span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
           </div>
         </div>
       </div>
@@ -57,22 +84,22 @@
                   <status-label :status="getTestcaseStatus(curCase)"></status-label>
                 </div>
                 <template v-if="checkTestcaseOK(curCase)">
-                  <div class="three wide column">得分率
-                      <span style="font-weight: normal; ">{{ Math.trunc(curCase.result.scoringRate * 100) }}</span>
+                  <div class="three wide column">
+                      得分：<span style="font-weight: normal; ">{{ Math.trunc(curCase.result.scoringRate * 100) }}</span>
                   </div>
-                  <div class="three wide column" v-if="curCase.result.time != null && curCase.result.time !== NaN">用时
-                      <span style="font-weight: normal; ">{{ curCase.result.time }} ms</span>
+                  <div class="three wide column" v-if="curCase.result.time != null && curCase.result.time !== NaN">
+                      用时：<span style="font-weight: normal; ">{{ curCase.result.time }} ms</span>
                   </div>
-                  <div class="three wide column" v-if="curCase.result.memory != null && curCase.result.memory !== NaN">内存
-                      <span style="font-weight: normal; ">{{ curCase.result.memory }} KiB</span>
+                  <div class="three wide column" v-if="curCase.result.memory != null && curCase.result.memory !== NaN">
+                      内存：<span style="font-weight: normal; ">{{ curCase.result.memory }} KiB</span>
                   </div>
                 </template>
               </div>
             </div>
               <div class="content">
                 <template v-if="checkTestcaseOK(curCase)">
-                  <code-box v-if="curCase.result.input" :title="'输入文件（'+ curCase.result.input.name +'）'" :content="curCase.result.input.content"></code-box>
-                  <code-box v-if="curCase.result.output" :title="'答案文件（'+ curCase.result.output.name +'）'" :content="curCase.result.output.content"></code-box>
+                  <code-box v-if="curCase.result.input" :title="'输入文件（<span style=\'font-family: monospace; \'>'+ curCase.result.input.name +'</span>）'" :content="curCase.result.input.content"></code-box>
+                  <code-box v-if="curCase.result.output" :title="'答案文件（<span style=\'font-family: monospace; \'>'+ curCase.result.output.name +'</span>）'" :content="curCase.result.output.content"></code-box>
                   <code-box title="用户输出" :content="curCase.result.userOutput"></code-box>
                   <code-box title="标准错误流" :content="curCase.result.userError"></code-box>
                   <code-box title="Special Judge 信息" :content="curCase.result.spjMessage"></code-box>
@@ -86,16 +113,17 @@
     </template>
   </div>
 </div>
-<script src="/libs/vue.min.js"></script>
-<script src="/libs/socket.io.js"></script>
-<script src="/libs/jsondiffpatch.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/vue/2.5.17/vue.min.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+<script src="https://cdnjs.loli.net/ajax/libs/jsondiffpatch/0.2.5/jsondiffpatch.min.js"></script>
 
 <% include submissions_item %>
 
 <script type="text/x-template" id="codeBoxTemplate">
-    <div style="" v-if="content != null && content !== ''">
-        <div></div>
-        <h3 v-if="title" class="ui header">{{ title }}</h3>
+    <div style="margin-top: 0px; margin-bottom: 14px; " v-if="content != null && content !== ''">
+        <p v-if="title" class="transition visible">
+           <strong v-html="title"></strong>
+        </p>
         <div class="ui existing segment">
           <pre v-if="escape" style="margin-top: 0; margin-bottom: 0; "><code>{{ content }}</code></pre>
           <pre v-if="!escape" style="margin-top: 0; margin-bottom: 0; "><code v-html="content"></code></pre>
@@ -108,7 +136,7 @@ Vue.component("code-box", {
     template: "#codeBoxTemplate",
     props: ['title', 'content', 'escape'],
 });
-const socketUrl = <%- syzoj.utils.judgeServer('detail') %>;
+const socketUrl = "/detail";
 const displayConfig = <%- JSON.stringify(displayConfig) %>;
 const token = <%- JSON.stringify(socketToken) %>;
 
@@ -266,6 +294,18 @@ if (token != null) {
   };
   loadSocketIO();
 }
+</script>
+<script>
+  document.addEventListener('keydown', function (event) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+      var sel = window.getSelection();
+      var rg = document.createRange()
+      rg.selectNodeContents(document.querySelector('code'));
+      sel.removeAllRanges();
+      sel.addRange(rg);
+      event.preventDefault();
+    }
+  });
 </script>
 </span>
 <% include footer %>
