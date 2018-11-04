@@ -51,7 +51,7 @@
               ++i;
             %>
                 <tr>
-                    <td><%= i %></td>
+                    <td><b><%= i %></b></td>
                     <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
                     <td style="font-content">
                       <script id="user-infomation-script-<%= i %>">
@@ -95,7 +95,7 @@
         <%
         if (fortune) {
             let color;
-            if (fortune.fortune.indexOf('吉') != -1) color = '#1fb752';
+            if (fortune.fortune.indexOf('吉') != -1) color = '#0ccf00';
             else if (fortune.fortune.indexOf('凶') != -1) color = '#f25e65';
             else color = '#444';
         %>
@@ -110,7 +110,7 @@
                 </div>
                 <div class="two column row">
                     <div class="column">
-                        <div style="color: #1fb752; ">
+                        <div style="color: #0ccf00; ">
                             <% if (fortune.good.length) { %>
                             <strong>宜：</strong><%= fortune.good[0].title %>
                             <br>
