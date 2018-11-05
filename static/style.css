@@ -100,14 +100,6 @@ body > .ui.page.dimmer {
   position: fixed !important;
 }
 
-/* status color */
-
-/*
-.accordion .status_detail {
-    transition: color .1s ease;
-}
-*/
-
 :not(.status_detail).status.success,
 .title:hover .status_detail.status.success,
 .title.active .status_detail.status.success,
