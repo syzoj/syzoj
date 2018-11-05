@@ -88,11 +88,50 @@ global.syzoj = {
   },
   async connectDatabase() {
     let Sequelize = require('sequelize');
+    let Op = Sequelize.Op;
+    let operatorsAliases = {
+      $eq: Op.eq,
+      $ne: Op.ne,
+      $gte: Op.gte,
+      $gt: Op.gt,
+      $lte: Op.lte,
+      $lt: Op.lt,
+      $not: Op.not,
+      $in: Op.in,
+      $notIn: Op.notIn,
+      $is: Op.is,
+      $like: Op.like,
+      $notLike: Op.notLike,
+      $iLike: Op.iLike,
+      $notILike: Op.notILike,
+      $regexp: Op.regexp,
+      $notRegexp: Op.notRegexp,
+      $iRegexp: Op.iRegexp,
+      $notIRegexp: Op.notIRegexp,
+      $between: Op.between,
+      $notBetween: Op.notBetween,
+      $overlap: Op.overlap,
+      $contains: Op.contains,
+      $contained: Op.contained,
+      $adjacent: Op.adjacent,
+      $strictLeft: Op.strictLeft,
+      $strictRight: Op.strictRight,
+      $noExtendRight: Op.noExtendRight,
+      $noExtendLeft: Op.noExtendLeft,
+      $and: Op.and,
+      $or: Op.or,
+      $any: Op.any,
+      $all: Op.all,
+      $values: Op.values,
+      $col: Op.col
+    };
+
     this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
       host: this.config.db.host,
       dialect: this.config.db.dialect,
       storage: this.config.db.storage ? this.utils.resolvePath(this.config.db.storage) : null,
-      logging: syzoj.production ? false : syzoj.log
+      logging: syzoj.production ? false : syzoj.log,
+      operatorsAliases: operatorsAliases
     });
     global.Promise = Sequelize.Promise;
     this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];

@@ -38,7 +38,7 @@ let model = db.define('custom_test', {
   pending: { type: Sequelize.BOOLEAN },
   memory: { type: Sequelize.INTEGER },
 
-  result: { type: Sequelize.TEXT('medium'), json: true },
+  result: { type: Sequelize.JSON },
 
   user_id: { type: Sequelize.INTEGER },
 
@@ -76,6 +76,7 @@ class CustomTest extends Model {
 
       time: 0,
       memory: 0,
+      result: {},
       status: 'Waiting',
     }, val)));
   }

@@ -28,8 +28,8 @@ let ContestPlayer = syzoj.model('contest_player');
 
 let model = db.define('contest_ranklist', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  ranking_params: { type: Sequelize.TEXT, json: true },
-  ranklist: { type: Sequelize.TEXT, json: true }
+  ranking_params: { type: Sequelize.JSON },
+  ranklist: { type: Sequelize.JSON }
 }, {
   timestamps: false,
   tableName: 'contest_ranklist'
@@ -39,8 +39,8 @@ let Model = require('./common');
 class ContestRanklist extends Model {
   static async create(val) {
     return ContestRanklist.fromRecord(ContestRanklist.model.build(Object.assign({
-      ranking_params: '{}',
-      ranklist: '{}'
+      ranking_params: {},
+      ranklist: {}
     }, val)));
   }
 

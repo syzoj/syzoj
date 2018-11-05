@@ -45,9 +45,9 @@ let model = db.define('judge_state', {
   max_memory: { type: Sequelize.INTEGER },
 
   // For NOI contest
-  compilation: { type: Sequelize.TEXT('medium'), json: true },
+  compilation: { type: Sequelize.JSON },
 
-  result: { type: Sequelize.TEXT('medium'), json: true },
+  result: { type: Sequelize.JSON },
 
   user_id: { type: Sequelize.INTEGER },
 
@@ -107,7 +107,8 @@ class JudgeState extends Model {
       total_time: null,
       max_memory: null,
       status: 'Unknown',
-      result: null,
+      compilation: {},
+      result: {},
       task_id: randomstring.generate(10),
       is_public: false
     }, val)));

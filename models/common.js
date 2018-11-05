@@ -19,6 +19,8 @@
 
 'use strict';
 
+let Sequelize = require('sequelize');
+
 class Model {
   constructor(record) {
     this.record = record;
@@ -29,9 +31,9 @@ class Model {
     let model = this.getModel();
     let obj = JSON.parse(JSON.stringify(this.record.get({ plain: true })));
     for (let key in obj) {
-      if (model.tableAttributes[key].json) {
+      if (model.tableAttributes[key].type instanceof Sequelize.JSON) {
         try {
-          this[key] = eval(`(${obj[key]})`);
+          this[key] = JSON.parse(obj[key]);
         } catch (e) {
           this[key] = {};
         }
@@ -43,8 +45,7 @@ class Model {
     let model = this.getModel();
     let obj = JSON.parse(JSON.stringify(this.record.get({ plain: true })));
     for (let key in obj) {
-      if (model.tableAttributes[key].json) obj[key] = JSON.stringify(this[key]);
-      else obj[key] = this[key];
+      obj[key] = this[key];
     }
     return obj;
   }
@@ -76,7 +77,7 @@ class Model {
   }
 
   static async fromID(id) {
-    return this.fromRecord(this.model.findById(id))
+    return this.fromRecord(this.model.findByPk(id));
   }
 
   static async findOne(options) {
