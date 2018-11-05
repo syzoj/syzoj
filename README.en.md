@@ -1,14 +1,14 @@
 # SYZOJ 2
-中文 | [English](README.en.md)
+[中文](README.md) | English
 
-一个用于算法竞赛的在线评测系统。
+An online judge system for algorithm competition.
 
-此项目为重写过的、原 Python/Flask 版 SYZOJ 的**官方**后继版本，由原作者 [@Chenyao2333](https://github.com/Chenyao2333) 授权。
+This project is the **official** successor and rewritten version of the original Python/Flask version of SYZOJ, which is authorized by the original author [@Chenyao2333](https://github.com/Chenyao2333).
 
-目前由 [LibreOJ](https://loj.ac) 维护。
+Currently maintained by [LibreOJ](https://loj.ac).
 
-# 升级须知
-因为一些数据库结构的更新，从该 commit [d5bcbe8fb79e80f9d603b764ac787295cceffa34](https://github.com/syzoj/syzoj/commit/d5bcbe8fb79e80f9d603b764ac787295cceffa34)（2018 年 4 月 21 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
+# Upgrading
+Because of updates to the database structure, users who upgrade from a commit BEFORE [d5bcbe8fb79e80f9d603b764ac787295cceffa34](https://github.com/syzoj/syzoj/commit/d5bcbe8fb79e80f9d603b764ac787295cceffa34) (Feb 21, 2018) **MUST** perform the following SQL on the database:
 
 ```sql
 ALTER TABLE `judge_state` ADD `is_public` TINYINT(1) NOT NULL AFTER `compilation`;
@@ -16,7 +16,7 @@ UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_i
 ALTER TABLE `syzoj`.`judge_state` ADD INDEX `judge_state_is_public` (`id`, `is_public`, `type_info`, `type`);
 ```
 
-从该 commit [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076)（2018 年 11 月 5 日）前更新且使用除 SQLite 外数据库软件的用户**必须**在其数据库上执行以下 SQL 语句。
+Who upgrade from a commit BEFORE [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076) (Nov 5, 2018) and not using SQLite **MUST** perform the following SQL on the database:
 
 ```sql
 ALTER TABLE contest_player CHANGE score_details score_details JSON NOT NULL;
@@ -27,20 +27,20 @@ ALTER TABLE judge_state CHANGE compilation compilation JSON NOT NULL;
 ALTER TABLE judge_state CHANGE result result JSON NOT NULL;
 ```
 
-# 部署
-之前的部署指南已经过期并已被删除。最新的部署指南将在不久后可用。
+# Deploying
+The previous tutorial for deploying is outdated and have been removed. Newest version of tutorial for deploying will be available soon.
 
-加入 QQ 群 [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) 或 Telegram 群 [@lojdev](https://t.me/lojdev) 以取得帮助。
+Join QQ group [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) or Telegram group [@lojdev](https://t.me/lojdev) for help.
 
-## 邮箱配置
+## Email Configuration
 ### register_mail
-是否启用注册邮件验证。
+Whether to enable register mail verification.
 
 ### email\_jwt\_secret
-用于邮件令牌签名的密钥，为了安全起见，请使用随机字符串填写。
+Secret used for email token, **for security** please fill with random string.
 
 ### email
-#### Sendmail（成功率低，不推荐）
+#### Sendmail(often fail, not recommended)
 ```js
   "email": {
     "method": "sendmail",
@@ -50,7 +50,7 @@ ALTER TABLE judge_state CHANGE result result JSON NOT NULL;
   },
 ```
 
-#### 阿里云邮件推送服务（成功率高，推荐）
+#### Aliyun Direct Mail(recommended)
 ```js
   "email": {
     "method": "aliyundm",
