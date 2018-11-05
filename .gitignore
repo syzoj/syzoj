@@ -3,6 +3,7 @@ config.json
 yarn.lock
 *.db
 .git.*
+package-lock.json
 
 # Logs
 logs
