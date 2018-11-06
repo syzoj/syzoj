@@ -244,6 +244,8 @@ let model = db.define('problem', {
   file_io_input_name: { type: Sequelize.TEXT },
   file_io_output_name: { type: Sequelize.TEXT },
 
+  publicize_time: { type: Sequelize.DATE },
+
   type: {
     type: Sequelize.ENUM,
     values: ['traditional', 'submit-answer', 'interaction']
@@ -257,7 +259,10 @@ let model = db.define('problem', {
       },
       {
         fields: ['user_id'],
-      }
+      },
+      {
+        fields: ['publicize_time'],
+      },
     ]
   });
 

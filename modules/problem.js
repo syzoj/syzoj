@@ -35,7 +35,7 @@ app.get('/problems', async (req, res) => {
   try {
     const sort = req.query.sort || syzoj.config.sorting.problem.field;
     const order = req.query.order || syzoj.config.sorting.problem.order;
-    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'publicize_time'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
 
@@ -581,6 +581,7 @@ async function setPublic(req, res, is_public) {
 
     problem.is_public = is_public;
     problem.publicizer_id = res.locals.user.id;
+    problem.publicize_time = new Date();
     await problem.save();
 
     JudgeState.model.update(
