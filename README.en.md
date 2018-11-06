@@ -7,6 +7,11 @@ This project is the **official** successor and rewritten version of the original
 
 Currently maintained by [LibreOJ](https://loj.ac).
 
+# Deploying
+Currently, the tutorial for deploying is only available in Chinese. It's [部署指南](https://github.com/syzoj/syzoj/wiki/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97) in this project's wiki.
+
+Join QQ group [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) or Telegram group [@lojdev](https://t.me/lojdev) for help.
+
 # Upgrading
 Because of updates to the database structure, users who upgrade from a commit BEFORE [d5bcbe8fb79e80f9d603b764ac787295cceffa34](https://github.com/syzoj/syzoj/commit/d5bcbe8fb79e80f9d603b764ac787295cceffa34) (Feb 21, 2018) **MUST** perform the following SQL on the database.
 
@@ -31,53 +36,4 @@ Who upgraded from a commit BEFORE [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](htt
 
 ```sql
 ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
-```
-
-# Deploying
-Currently, the tutorial for deploying is only available in Chinese. It's [SYZOJ 部署指南](https://github.com/syzoj/syzoj/wiki/SYZOJ-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97) in this project's wiki.
-
-Join QQ group [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) or Telegram group [@lojdev](https://t.me/lojdev) for help.
-
-## Email Configuration
-### register_mail
-Whether to enable register mail verification.
-
-### email\_jwt\_secret
-Secret used for email token, **for security** please fill with random string.
-
-### email
-#### Sendmail(often fail, not recommended)
-```js
-  "email": {
-    "method": "sendmail",
-    "options": {
-      "address": "sender@address.domain",
-    }
-  },
-```
-
-#### Aliyun Direct Mail(recommended)
-```js
-  "email": {
-    "method": "aliyundm",
-    "options": {
-      "AccessKeyId": "xxxx",
-      "AccessKeySecret": "xxxx",
-      "AccountName": "sender@address.domain"
-    }
-  },
-```
-
-#### SMTP
-```js
-  "email": {
-    "method": "smtp",
-    "options": {
-        "host": "smtp.163.com",
-        "port": 465,
-        "username": "xxx@163.com",
-        "password": "xxx",
-        "allowUnauthorizedTls": false
-    }
-  },
 ```

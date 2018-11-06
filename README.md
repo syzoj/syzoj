@@ -7,6 +7,11 @@
 
 目前由 [LibreOJ](https://loj.ac) 维护。
 
+# 部署
+见本项目 Wiki 中的 [部署指南](https://github.com/syzoj/syzoj/wiki/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
+
+加入 QQ 群 [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) 或 Telegram 群 [@lojdev](https://t.me/lojdev) 以取得帮助。
+
 # 升级须知
 因为一些数据库结构的更新，从该 commit [d5bcbe8fb79e80f9d603b764ac787295cceffa34](https://github.com/syzoj/syzoj/commit/d5bcbe8fb79e80f9d603b764ac787295cceffa34)（2018 年 4 月 21 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
 
@@ -31,53 +36,4 @@ ALTER TABLE `judge_state` CHANGE `result` `result` JSON NOT NULL;
 
 ```sql
 ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
-```
-
-# 部署
-见本项目 Wiki 中的 [SYZOJ 部署指南](https://github.com/syzoj/syzoj/wiki/SYZOJ-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
-
-加入 QQ 群 [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) 或 Telegram 群 [@lojdev](https://t.me/lojdev) 以取得帮助。
-
-## 邮箱配置
-### register_mail
-是否启用注册邮件验证。
-
-### email\_jwt\_secret
-用于邮件令牌签名的密钥，为了安全起见，请使用随机字符串填写。
-
-### email
-#### Sendmail（成功率低，不推荐）
-```js
-  "email": {
-    "method": "sendmail",
-    "options": {
-      "address": "sender@address.domain",
-    }
-  },
-```
-
-#### 阿里云邮件推送服务（成功率高，推荐）
-```js
-  "email": {
-    "method": "aliyundm",
-    "options": {
-      "AccessKeyId": "xxxx",
-      "AccessKeySecret": "xxxx",
-      "AccountName": "sender@address.domain"
-    }
-  },
-```
-
-#### SMTP
-```js
-  "email": {
-    "method": "smtp",
-    "options": {
-        "host": "smtp.163.com",
-        "port": 465,
-        "username": "xxx@163.com",
-        "password": "xxx",
-        "allowUnauthorizedTls": false
-    }
-  },
 ```
