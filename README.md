@@ -27,6 +27,12 @@ ALTER TABLE judge_state CHANGE compilation compilation JSON NOT NULL;
 ALTER TABLE judge_state CHANGE result result JSON NOT NULL;
 ```
 
+从该 commit [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](https://github.com/syzoj/syzoj/commit/84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23)（2018 年 11 月 6 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。**注意**：此语句尚未在除 MySQL 外的数据库系统中测试。
+
+```sql
+ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
+```
+
 # 部署
 之前的部署指南已经过期并已被删除。最新的部署指南将在不久后可用。
 
