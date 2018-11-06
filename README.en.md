@@ -34,7 +34,7 @@ ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIM
 ```
 
 # Deploying
-The previous tutorial for deploying is outdated and have been removed. Newest version of tutorial for deploying will be available soon.
+Currently, the tutorial for deploying is only available in Chinese. It's [SYZOJ 部署指南](https://github.com/syzoj/syzoj/wiki/SYZOJ-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97) in this project's wiki.
 
 Join QQ group [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) or Telegram group [@lojdev](https://t.me/lojdev) for help.
 

@@ -34,7 +34,7 @@ ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIM
 ```
 
 # 部署
-之前的部署指南已经过期并已被删除。最新的部署指南将在不久后可用。
+见本项目 Wiki 中的 [SYZOJ 部署指南](https://github.com/syzoj/syzoj/wiki/SYZOJ-%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
 
 加入 QQ 群 [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) 或 Telegram 群 [@lojdev](https://t.me/lojdev) 以取得帮助。
 
