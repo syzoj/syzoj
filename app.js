@@ -131,6 +131,7 @@ global.syzoj = {
       dialect: this.config.db.dialect,
       storage: this.config.db.storage ? this.utils.resolvePath(this.config.db.storage) : null,
       logging: syzoj.production ? false : syzoj.log,
+      timezone: require('moment')().format('Z'),
       operatorsAliases: operatorsAliases
     });
     global.Promise = Sequelize.Promise;
