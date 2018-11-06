@@ -19,12 +19,12 @@ ALTER TABLE `syzoj`.`judge_state` ADD INDEX `judge_state_is_public` (`id`, `is_p
 Who upgrade from a commit BEFORE [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076) (Nov 5, 2018) **MUST** perform the following SQL on the database.
 
 ```sql
-ALTER TABLE contest_player CHANGE score_details score_details JSON NOT NULL;
-ALTER TABLE contest_ranklist CHANGE ranking_params ranking_params JSON NOT NULL;
-ALTER TABLE contest_ranklist CHANGE ranklist ranklist JSON NOT NULL;
-ALTER TABLE custom_test CHANGE result result JSON NOT NULL;
-ALTER TABLE judge_state CHANGE compilation compilation JSON NOT NULL;
-ALTER TABLE judge_state CHANGE result result JSON NOT NULL;
+ALTER TABLE `contest_player` CHANGE `score_details` `score_details` JSON NOT NULL;
+ALTER TABLE `contest_ranklist` CHANGE `ranking_params` `ranking_params` JSON NOT NULL;
+ALTER TABLE `contest_ranklist` CHANGE `ranklist` `ranklist` JSON NOT NULL;
+ALTER TABLE `custom_test` CHANGE `result` `result` JSON NOT NULL;
+ALTER TABLE `judge_state` CHANGE `compilation` `compilation` JSON NOT NULL;
+ALTER TABLE `judge_state` CHANGE `result` `result` JSON NOT NULL;
 ```
 
 Who upgraded from a commit BEFORE [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](https://github.com/syzoj/syzoj/commit/84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23) (Nov 6, 2018) **MUST** perform the following SQL on the database.
