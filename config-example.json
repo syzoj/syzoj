@@ -3,12 +3,10 @@
   "hostname": "127.0.0.1",
   "port": "5283",
   "db": {
-    "database": null,
-    "username": null,
+    "database": "syzoj",
+    "username": "syzoj",
     "password": null,
-    "host": null,
-    "dialect": "sqlite",
-    "storage": "syzoj.db"
+    "host": "127.0.0.1"
   },
   "register_mail": false,
   "email": {

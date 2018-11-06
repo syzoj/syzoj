@@ -16,7 +16,7 @@ UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_i
 ALTER TABLE `syzoj`.`judge_state` ADD INDEX `judge_state_is_public` (`id`, `is_public`, `type_info`, `type`);
 ```
 
-从该 commit [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076)（2018 年 11 月 5 日）前更新且使用除 SQLite 外数据库软件的用户**必须**在其数据库上执行以下 SQL 语句。
+从该 commit [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076)（2018 年 11 月 5 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
 
 ```sql
 ALTER TABLE contest_player CHANGE score_details score_details JSON NOT NULL;
@@ -27,7 +27,7 @@ ALTER TABLE judge_state CHANGE compilation compilation JSON NOT NULL;
 ALTER TABLE judge_state CHANGE result result JSON NOT NULL;
 ```
 
-从该 commit [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](https://github.com/syzoj/syzoj/commit/84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23)（2018 年 11 月 6 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。**注意**：此语句尚未在除 MySQL 外的数据库系统中测试。
+从该 commit [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](https://github.com/syzoj/syzoj/commit/84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23)（2018 年 11 月 6 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
 
 ```sql
 ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
