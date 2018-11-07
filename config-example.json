@@ -52,6 +52,7 @@
     "problem": 50,
     "problem_statistics": 10,
     "judge_state": 10,
+    "ranklist_index": 20,
     "ranklist": 20,
     "discussion": 10,
     "article_comment": 10,
