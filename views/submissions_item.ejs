@@ -69,7 +69,13 @@ Vue.component('submission-item', {
   <td v-if="config.showScore"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></td>
   <% } %>
   <td v-if="config.showUsage">{{ (data.result.time || 0).toString() + ' ms' }}</td>
-  <td v-if="config.showUsage">{{ (data.result.memory || 0).toString() + ' KiB' }}</td>
+
+  <% if (active === 'submissions') { %>
+  <td v-if="config.showUsage">{{ data.result.memory }}</td>
+  <% } else { %>
+  <td v-if="config.showUsage">{{ (data.result.precise_memory || 0).toString() + ' K'}}</td>
+  <% } %>
+
   </template> <template v-else>
   <td v-if="config.showScore"/> <td v-if="config.showUsage"/> <td v-if="config.showUsage"/>
   </template>
