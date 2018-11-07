@@ -52,6 +52,7 @@
     "mysql2": "^1.6.2",
     "node-7z": "^0.4.0",
     "nodemailer": "^4.1.0",
+    "object-assign-deep": "^0.4.0",
     "pygmentize-bundled-cached": "^1.1.0",
     "randomstring": "^1.1.5",
     "request": "^2.74.0",
