@@ -1,4 +1,4 @@
-<% if (paginate.pageCnt) { %>
+<% if (paginate.pageCnt > 1) { %>
 <div style="text-align: center; ">
   <div class="ui pagination menu" style="box-shadow: none; ">
     <a class="<% if (paginate.currPage === 1) { %> disabled<% } %> icon item" <% if (paginate.currPage !== 1) { %>href="<%= syzoj.utils.makeUrl(req, Object.assign({}, req.query, { page: paginate.currPage - 1 })) %>" <% } %>id="page_prev">

@@ -50,28 +50,76 @@ Vue.component('submission-item', {
 
 <script id="submissionItemTemplate" type="text/x-template">
 <tr>
+  <% if (active === 'submissions') { %>
   <td><a :href="submissionLink"><b>#{{ data.info.submissionId }}</b></a></td>
-  <td ref="problemLabel"><a ref="problemLabelTextFit" style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;" :href="problemLink">#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}. {{ data.info.problemName }}</a></td>
+  <% } else { %>
+  <td><b>#{{ data.info.submissionId }}</b></td>
+  <% } %>
+  <td ref="problemLabel"><a ref="problemLabelTextFit" style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;" :href="problemLink"><b>#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}.</b> {{ data.info.problemName }}</a></td>
+  <% if (active === 'submissions') { %>
   <td><a :href="submissionLink"><b><status-label :status="statusString"></status-label></b></a></td>
+  <% } else { %>
+  <td><b><status-label :status="statusString"></status-label></b></td>
+  <% } %>
 
   <template v-if="data.result">
-  <td v-if="config.showScore"><a :href="submissionLink"><span class="score" :class="scoreClass">{{ (data.result.score != null && data.result.score !== NaN) ? Math.floor(data.result.score) : '' }}</span></a></td>
-  <td v-if="config.showUsage">{{ (data.result.time != null && data.result.time !== NaN) ? data.result.time.toString() + ' ms' : '' }}</td>
-  <td v-if="config.showUsage">{{ (data.result.memory != null && data.result.memory !== NaN) ? data.result.memory.toString() + ' KiB' : '' }}</td>
+  <% if (active === 'submissions') { %>
+  <td v-if="config.showScore"><a :href="submissionLink"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></a></td>
+  <% } else { %>
+  <td v-if="config.showScore"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></td>
+  <% } %>
+  <td v-if="config.showUsage">{{ (data.result.time || 0).toString() + ' ms' }}</td>
+  <td v-if="config.showUsage">{{ (data.result.memory || 0).toString() + ' KiB' }}</td>
   </template> <template v-else>
   <td v-if="config.showScore"/> <td v-if="config.showUsage"/> <td v-if="config.showUsage"/>
   </template>
 
   <td v-if="config.showCode">
-    <span v-if="data.info.language"><a :href="submissionLink">{{ data.info.language  }}</a> / </span>
+    <% if (active === 'submissions') { %>
+    <span v-if="data.info.language"><a :href="submissionLink"><b>{{ data.info.language }}</b></a> / </span>
+    <% } else { %>
+    <span v-if="data.info.language"><b>{{ data.info.language }}</b> / </span>
+    <% } %>
     {{ data.info.codeSize }}
   </td>
   <td><a :href="userLink">{{ data.info.user }}</a></td>
   <td>{{ data.info.submitTime }}</td>
   <td v-if="showRejudge">
-    <form :action="submissionLink + '/rejudge'" method="POST">
-      <button type="submit" style="color: #000; padding: 0; border: none; background: none;" value="rejudge"><i class="repeat icon"></i></button>
-    </form>
+    <a id="rejudge-button" :onclick="'check_rejudge(' + (statusString === 'Waiting' || statusString.startsWith('Running')).toString() + ')'" style="color: #000; " href="#"><i class="repeat icon"></i></a>
+    <% if (active === 'submission') { %>
+    <div class="ui basic modal" id="modal-rejudge">
+      <div class="ui icon header">
+        <i class="retweet icon"></i>
+        <p style="margin-top: 15px; ">重新评测</p>
+      </div>
+      <div class="content" style="text-align: center; ">
+        <p>确认重新评测该提交记录吗？</p>
+        <p id="warning_pending"><strong>警告：只有管理员可以重新评测一个未评测完成的记录，<br>这种情况一般发生在评测服务中断后，如果一个提交正在被评测，<br>则将其重新评测会导致系统错乱！</strong></p>
+      </div>
+      <div class="actions">
+        <div class="ui red basic cancel inverted button">
+          <i class="remove icon"></i>
+          否
+        </div>
+        <a class="ui green ok inverted button" :href-post="submissionLink + '/rejudge'">
+          <i class="checkmark icon"></i>
+          是
+        </a>
+      </div>
+    </div>
+    <% } %>
   </td>
 </tr>
 </script>
+<% if (active === 'submission') { %>
+<script>
+function check_rejudge(pending) {
+  if (pending) {
+    $('#warning_pending').css('display', '');
+  } else {
+    $('#warning_pending').css('display', 'none');
+  }
+  $('#modal-rejudge').modal('show');
+}
+</script>
+<% } %>
