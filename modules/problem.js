@@ -94,7 +94,7 @@ app.get('/problems/search', async (req, res) => {
 
     let where = {
       $or: {
-        title: { like: `%${req.query.keyword}%` },
+        title: { $like: `%${req.query.keyword}%` },
         id: id
       }
     };

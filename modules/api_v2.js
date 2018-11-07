@@ -30,7 +30,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
       conditions.push({ id: uid });
     }
     if (keyword != null && String(keyword).length >= 2) {
-      conditions.push({ username: { like: `%${req.params.keyword}%` } });
+      conditions.push({ username: { $like: `%${req.params.keyword}%` } });
     }
     if (conditions.length === 0) {
       res.send({ success: true, results: [] });
@@ -56,7 +56,7 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
 
     let keyword = req.params.keyword || '';
     let problems = await Problem.query(null, {
-      title: { like: `%${req.params.keyword}%` }
+      title: { $like: `%${req.params.keyword}%` }
     }, [['id', 'asc']]);
 
     let result = [];
@@ -89,7 +89,7 @@ app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
 
     let keyword = req.params.keyword || '';
     let tags = await ProblemTag.query(null, {
-      name: { like: `%${req.params.keyword}%` }
+      name: { $like: `%${req.params.keyword}%` }
     }, [['name', 'asc']]);
 
     let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);
