@@ -31,7 +31,7 @@ const options = commandLineArgs(optionDefinitions);
 
 global.syzoj = {
   rootDir: __dirname,
-  config: require(options.config),
+  config: Object.assign({}, require('./config-example.json'), require(options.config)),
   configDir: options.config,
   models: [],
   modules: [],
