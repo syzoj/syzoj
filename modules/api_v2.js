@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
   try {
     let User = syzoj.model('user');
@@ -30,7 +9,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
       conditions.push({ id: uid });
     }
     if (keyword != null && String(keyword).length >= 2) {
-      conditions.push({ username: { like: `%${req.params.keyword}%` } });
+      conditions.push({ username: { $like: `%${req.params.keyword}%` } });
     }
     if (conditions.length === 0) {
       res.send({ success: true, results: [] });
@@ -56,7 +35,7 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
 
     let keyword = req.params.keyword || '';
     let problems = await Problem.query(null, {
-      title: { like: `%${req.params.keyword}%` }
+      title: { $like: `%${req.params.keyword}%` }
     }, [['id', 'asc']]);
 
     let result = [];
@@ -89,7 +68,7 @@ app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
 
     let keyword = req.params.keyword || '';
     let tags = await ProblemTag.query(null, {
-      name: { like: `%${req.params.keyword}%` }
+      name: { $like: `%${req.params.keyword}%` }
     }, [['name', 'asc']]);
 
     let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);

@@ -35,16 +35,20 @@ body
     sans-serif;
 }
 
+a.black-link {
+  color: #000;
+}
+
+a.black-link:hover {
+  color: #4183c4;
+}
+
 .font-content {
   font-family: 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
 
 .markdown-edit {
   font-family: 'Fira Mono', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', monospace;
-}
-
-.main.container {
-    margin-top: 5.5em;
 }
 
 .padding {
@@ -91,14 +95,6 @@ table.center.aligned ul, table.center.aligned ol {
 body > .ui.page.dimmer {
   position: fixed !important;
 }
-
-/* status color */
-
-/*
-.accordion .status_detail {
-    transition: color .1s ease;
-}
-*/
 
 :not(.status_detail).status.success,
 .title:hover .status_detail.status.success,
@@ -271,4 +267,36 @@ code {
 .spinner.icon:before {
   animation: spinner-icon-rotate 3s linear infinite;
   display: block;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.25);
+  -webkit-transition: color 0.2s ease;
+  transition: color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 135, 139, 0.8);
+}
+
+.ui.top.attached.block.header i.icon {
+  font-size: 1em;
+  vertical-align: initial;
 }

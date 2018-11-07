@@ -71,15 +71,15 @@
   </div>
 
   <div style="text-align: center; ">
-    <button class="ui button" name="type" value="query">查询</button>
+    <button class="ui labeled icon button" name="type" value="query"><i class="ui search icon"></i>查询</button>
     <% if (form.type === 'rejudge') { %>
-      <button class="ui blue disabled button" name="type" value="rejudge">已重测 <%= count %> 条记录</button>
+      <button class="ui blue disabled labeled icon button" name="type" value="rejudge"><i class="ui checkmark icon"></i>已重测 <%= count %> 条记录</button>
     <% } else if (count !== null) { %>
-      <a onclick="$('#modal-rejudge').modal('show');" class="ui blue<% if (count === 0) { %> disabled<% } %> button"><% if (count === 0) { %>没有符合条件的记录<% } else { %>重测 <%= count %> 条记录<% } %></a>
+      <a onclick="$('#modal-rejudge').modal('show');" class="ui blue<% if (count === 0) { %> disabled<% } %> labeled icon button"><i class="ui repeat icon"></i><% if (count === 0) { %>没有符合条件的记录<% } else { %>重测 <%= count %> 条记录<% } %></a>
       <button id="submit_rejudge" name="type" value="rejudge" style="display: none; "></button>
       <div class="ui basic modal" id="modal-rejudge">
         <div class="ui icon header">
-          <i class="refresh icon"></i>
+          <i class="retweet icon"></i>
           <p style="margin-top: 15px; ">重新评测</p>
         </div>
         <div class="content" style="text-align: center; ">

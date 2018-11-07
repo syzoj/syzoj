@@ -1,174 +1,39 @@
 # SYZOJ 2
-An OnlineJudge System for OI.
+中文 | [English](README.en.md)
 
-The UI is powered by [Semantic UI](http://semantic-ui.com/).  
-Template designed & coded by [Sengxian](https://www.sengxian.com) and [Menci](https://men.ci).
+一个用于算法竞赛的在线评测系统。
 
-# Upgrading
-Because of an update to the database structure, users who upgrade from a commit BEFORE 4c673956959532d61b8f9ba0be3191a054b4371a **MUST** perform the following SQL on the database:
+此项目为重写过的、原 Python/Flask 版 SYZOJ 的**官方**后继版本，由原作者 [@Chenyao2333](https://github.com/Chenyao2333) 授权。
+
+目前由 [LibreOJ](https://loj.ac) 维护。
+
+# 部署
+见本项目 Wiki 中的 [部署指南](https://github.com/syzoj/syzoj/wiki/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
+
+加入 QQ 群 [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) 或 Telegram 群 [@lojdev](https://t.me/lojdev) 以取得帮助。
+
+# 升级须知
+因为一些数据库结构的更新，从该 commit [d5bcbe8fb79e80f9d603b764ac787295cceffa34](https://github.com/syzoj/syzoj/commit/d5bcbe8fb79e80f9d603b764ac787295cceffa34)（2018 年 4 月 21 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
+
 ```sql
 ALTER TABLE `judge_state` ADD `is_public` TINYINT(1) NOT NULL AFTER `compilation`;
 UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_id` SET `judge_state`.`is_public` = `problem`.`is_public`;
 ALTER TABLE `syzoj`.`judge_state` ADD INDEX `judge_state_is_public` (`id`, `is_public`, `type_info`, `type`);
 ```
 
-# Deploying
-**Warning** The following content is **outdated**. Please refer to https://syzoj-demo.t123yh.xyz:20170/article/1 for a detailed guide and a demo server.
+从该 commit [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076)（2018 年 11 月 5 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
 
-There's currently *no* stable version of SYZOJ 2, but you can use the unstable version from git.
-
-```
-git clone https://github.com/syzoj/syzoj
-cd syzoj
-```
-
-Install dependencies with `npm install` or `yarn`. Also, follow the instructions [here](https://www.npmjs.com/package/node-7z#installation) to install `7z` executable used by the `node-7z` package.
-
-Copy `config-example.json` to `config.json`, and make necessary changes.
-
-## Database
-SYZOJ 2 uses [Sequelize](http://sequelizejs.com), which supports many database systems, including MySQL and Sqlite.
-
-By default it use the Sqlite database `syzoj.db`, you can change it in `config.json`
-
-## Security
-You should change the `session_secret` and `judge_token` in `config.json`.
-
-# Administration
-In the database, the `is_admin` field in `user` table describes whether a user is admin or not.
-
-To make a user be an admin, the only way is via database.
-
-# Judge
-SYZOJ 2 uses a Docker-based sandboxed judger. Please go to [syzoj-judge](https://github.com/syzoj/syzoj-judge).
-
-# Advanced
-## System Service
-### Run SYZOJ 2
-Add SYZOJ 2 to system services.
-``` bash
-vim [syzoj2 path]/runsyzoj
-```
-Edit `runsyzoj` as as follows.
-``` bash
-#!/bin/bash
-cd [syzoj2 path]
-npm start > log.txt 2>&1
-```
-**Please change `[syzoj2 path]`.**
-### Run SYZOJ-JUDGE
-Add SYZOJ-JUDGE to system services.
-``` bash
-vim [syzoj-judge path]/runjudge
-```
-Edit `runjudge` as as follows.
-``` bash
-#!/bin/bash
-cd [syzoj-judge path]
-npm start > jlog.txt 2>&1
-```
-**Please change `[syzoj-judge path]`.**
-### Add To System Service
-``` bash
-vim /etc/systemd/system/syzoj.service
-```
-Edit `/etc/systemd/system/syzoj.service` as as follows.
-``` bash
-[Unit]
-Description=SYZOJ Online Judge
-After=network.target
-
-[Service]
-Type=simple
-PIDFile=/run/syzoj.pid
-WorkingDirectory=[syzoj2 path]
-ExecStart=[syzoj2 path]/runsyzoj
-StandardOutput=null
-StandardError=null
-
-[Install]
-WantedBy=multi-user.target
-```
-**Please change `[syzoj2 path]`.**
-
-``` bash
-vim /etc/systemd/system/syzoj-judge.service
-```
-Edit `/etc/systemd/system/syzoj-judge.service` as as follows.
-``` bash
-[Unit]
-Description=SYZOJ Judge Daemon
-After=network.target
-
-[Service]
-Type=simple
-PIDFile=/run/syzoj-judge.pid
-WorkingDirectory=[syzoj-judge path]
-ExecStart=[syzoj-judge path]/runjudge
-StandardOutput=null
-StandardError=null
-
-[Install]
-WantedBy=multi-user.target
-```
-**Please change `[syzoj-judge path]`.**
-### Usage
-#### Start
-``` bash
-systemctl start syzoj
-systemctl start syzoj-judge
-```
-#### Stop
-``` bash
-systemctl stop syzoj
-systemctl stop syzoj-judge
-```
-#### Restart
-``` bash
-systemctl restart syzoj
-systemctl restart syzoj-judge
+```sql
+ALTER TABLE `contest_player` CHANGE `score_details` `score_details` JSON NOT NULL;
+ALTER TABLE `contest_ranklist` CHANGE `ranking_params` `ranking_params` JSON NOT NULL;
+ALTER TABLE `contest_ranklist` CHANGE `ranklist` `ranklist` JSON NOT NULL;
+ALTER TABLE `custom_test` CHANGE `result` `result` JSON NOT NULL;
+ALTER TABLE `judge_state` CHANGE `compilation` `compilation` JSON NOT NULL;
+ALTER TABLE `judge_state` CHANGE `result` `result` JSON NOT NULL;
 ```
 
-## 邮件配置
-### register_mail
-是否启用注册邮件验证。
+从该 commit [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](https://github.com/syzoj/syzoj/commit/84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23)（2018 年 11 月 6 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
 
-### email\_jwt\_secret
-用于 Email Token 签名的 secret，脸滚键盘随意填写即可。
-
-### email
-#### Sendmail 直接发送（成功率低，不推荐）
-```js
-  "email": {
-    "method": "sendmail",
-    "options": {
-      "address": "xxxx", // 发件人地址
-    }
-  },
-```
-
-#### 阿里云邮件推送服务（成功率较高）
-```js
-  "email": {
-    "method": "aliyundm",
-    "options": {
-      "AccessKeyId": "xxxx",
-      "AccessKeySecret": "xxxx",
-      "AccountName": "xxxx" // 发件邮箱
-    }
-  },
-```
-
-#### SMTP 服务
-```js
-  "email": {
-    "method": "smtp",
-    "options": {
-        "host": "smtp.163.com",
-        "port": 465,
-        "username": "xxx@163.com",
-        "password": "xxx",
-        "allowUnauthorizedTls": false
-    }
-  },
+```sql
+ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
 ```

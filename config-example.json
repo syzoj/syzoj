@@ -3,12 +3,15 @@
   "hostname": "127.0.0.1",
   "port": "5283",
   "db": {
-    "database": null,
-    "username": null,
+    "database": "syzoj",
+    "username": "syzoj",
     "password": null,
-    "host": null,
-    "dialect": "sqlite",
-    "storage": "syzoj.db"
+    "host": "127.0.0.1"
+  },
+  "logo": {
+    "url": null,
+    "width": null,
+    "height": null
   },
   "register_mail": false,
   "email": {
@@ -54,7 +57,8 @@
     "problem": 50,
     "problem_statistics": 10,
     "judge_state": 10,
-    "ranklist": 20,
+    "ranklist_index": 20,
+    "ranklist": 50,
     "discussion": 10,
     "article_comment": 10,
     "contest": 10,

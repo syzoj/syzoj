@@ -1,23 +1,4 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
+let Sequelize = require('sequelize');
 
 class Model {
   constructor(record) {
@@ -29,9 +10,9 @@ class Model {
     let model = this.getModel();
     let obj = JSON.parse(JSON.stringify(this.record.get({ plain: true })));
     for (let key in obj) {
-      if (model.tableAttributes[key].json) {
+      if (model.tableAttributes[key].type instanceof Sequelize.JSON && typeof obj[key] === 'string') {
         try {
-          this[key] = eval(`(${obj[key]})`);
+          this[key] = JSON.parse(obj[key]);
         } catch (e) {
           this[key] = {};
         }
@@ -43,8 +24,7 @@ class Model {
     let model = this.getModel();
     let obj = JSON.parse(JSON.stringify(this.record.get({ plain: true })));
     for (let key in obj) {
-      if (model.tableAttributes[key].json) obj[key] = JSON.stringify(this[key]);
-      else obj[key] = this[key];
+      obj[key] = this[key];
     }
     return obj;
   }
@@ -76,7 +56,7 @@ class Model {
   }
 
   static async fromID(id) {
-    return this.fromRecord(this.model.findById(id))
+    return this.fromRecord(this.model.findByPk(id));
   }
 
   static async findOne(options) {
@@ -98,7 +78,7 @@ class Model {
     return this.model.count({ where: where });
   }
 
-  static async query(paginate, where, order) {
+  static async query(paginate, where, order, largeData) {
     let records = [];
 
     if (typeof paginate === 'string') {
@@ -120,11 +100,34 @@ class Model {
         options.limit = parseInt(paginate.perPage);
       }
 
-      records = await this.model.findAll(options);
+      if (!largeData) records = await this.model.findAll(options);
+      else {
+        let sql = await getSqlFromFindAll(this.model, options);
+        let i = sql.indexOf('FROM');
+        sql = 'SELECT id ' + sql.substr(i, sql.length - i);
+        sql = `SELECT a.* FROM (${sql}) AS b JOIN ${this.model.name} AS a ON a.id = b.id ORDER BY id DESC`;
+        records = await syzoj.db.query(sql, { model: this.model });
+      }
     }
 
     return records.mapAsync(record => (this.fromRecord(record)));
   }
+}
+
+function getSqlFromFindAll(Model, options) {
+  let id = require('uuid')();
+
+  return new Promise((resolve, reject) => {
+    Model.addHook('beforeFindAfterOptions', id, options => {
+      Model.removeHook('beforeFindAfterOptions', id);
+
+      resolve(Model.sequelize.dialect.QueryGenerator.selectQuery(Model.getTableName(), options, Model).slice(0, -1));
+
+      return new Promise(() => {});
+    });
+
+    return Model.findAll(options).catch(reject);
+  });
 }
 
 module.exports = Model;

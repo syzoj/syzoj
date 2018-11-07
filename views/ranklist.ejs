@@ -15,7 +15,7 @@
 	            <th style="width: 150px; "><%- createSortableTitle('username', '用户名', true) %></th>
 	            <th>个性签名</th>
 	            <th style="width: 100px; "><%- createSortableTitle('ac_num', '通过数量', false) %></th>
-	            <th style="width: 100px; "><%- createSortableTitle('rating', 'Rating', false) %></th>
+	            <th style="width: 100px; "><%- createSortableTitle('rating', '积分', false) %></th>
 	        </tr>
 	        </thead>
           <script>
@@ -37,7 +37,7 @@
               ++i;
             %>
             <tr>
-		        	<td><%= i %></td>
+		        	<td><b><%= i %></b></td>
 		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
 		        	<td class="font-content">
               <script id="user-infomation-script-<%= i %>">

@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 let Sequelize = require('sequelize');
 let db = syzoj.db;
 
@@ -31,7 +10,7 @@ let model = db.define('contest_player', {
   user_id: { type: Sequelize.INTEGER },
 
   score: { type: Sequelize.INTEGER },
-  score_details: { type: Sequelize.TEXT, json: true },
+  score_details: { type: Sequelize.JSON },
   time_spent: { type: Sequelize.INTEGER }
 }, {
     timestamps: false,
@@ -53,7 +32,7 @@ class ContestPlayer extends Model {
       contest_id: 0,
       user_id: 0,
       score: 0,
-      score_details: '{}',
+      score_details: {},
       time_spent: 0
     }, val)));
   }

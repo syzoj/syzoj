@@ -1,21 +1,21 @@
 <% include util %>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" style="position: fixed; width: 100%; overflow: hidden; ">
 <head>
     <meta charset="utf-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=1200">
     <title><%= title %> - <%= syzoj.config.title %></title>
-    <link href="https://cdnjs.loli.net/ajax/libs/semantic-ui/2.3.3/semantic.min.css" rel="stylesheet">
+    <link href="https://cdnjs.loli.net/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
     <link href="/tomorrow.css" rel="stylesheet">
-    <link href="/mathjax.css" rel="stylesheet">
-    <link href="https://cdnjs.loli.net/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css" rel="stylesheet">
+    <link href="/mathjax.css?20181105" rel="stylesheet">
+    <link href="https://cdnjs.loli.net/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet">
     <link href="https://cdnjs.loli.net/ajax/libs/morris.js/0.5.1/morris.css" rel="stylesheet">
-    <link href="/style.css?20181023" rel="stylesheet">
+    <link href="/style.css?20181108" rel="stylesheet">
     <link href="https://fonts.loli.net/css?family=Fira+Mono" rel="stylesheet">
     <link href="https://fonts.loli.net/css?family=Lato:400,700,400italic,700italic&subset=latin" rel="stylesheet">
     <link href="https://fonts.loli.net/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&amp;subset=latin-ext" rel="stylesheet">
-    <link href="https://fonts.loli.net/css?family=Raleway:300" rel="stylesheet">
+    <link href="https://fonts.loli.net/css?family=Exo+2:600" rel="stylesheet">
     <script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <% if (syzoj.config.google_analytics && syzoj.config.google_analytics !== 'UA-XXXXXXXX-X') { %>
     <script>
@@ -30,10 +30,18 @@
     </script>
     <% } %>
 </head>
-<body>
-    <div class="ui fixed borderless menu" style="position: fixed; ">
+<body style="position: relative; margin-top: 49px; height: calc(100% - 49px); overflow-y: overlay; ">
+    <div class="ui fixed borderless menu" style="position: fixed; height: 49px; ">
         <div class="ui container">
-            <a class="header item" href="/"><span style="font-family: Raleway; font-size: 1.5em; font-weight: 300; "><%= syzoj.config.title %></span></a>
+            <%
+            if (syzoj.config.logo.url) {
+              let width = syzoj.config.logo.width ? syzoj.config.logo.width + 'px' : 'auto';
+              let height = syzoj.config.logo.height ? syzoj.config.logo.height + 'px' : 'auto';
+            %>
+            <a class="header item" href="/"><img src="<%= syzoj.config.logo.url %>" style="width: <%= width %>; height: <%= height %>; "></a>
+            <% } else { %>
+            <a class="header item" href="/"><span style="font-family: 'Exo 2'; font-size: 1.5em; font-weight: 600; "><%= syzoj.config.title %></span></a>
+            <% } %>
             <a class="item<% if (active === '') { %> active<% } %>" href="/"><i class="home icon"></i> 首页</a>
             <a class="item<% if (active.startsWith('problem')) { %> active<% } %>" href="/problems"><i class="list icon"></i> 题库</a>
             <a class="item<% if (active.startsWith('contest')) { %> active<% } %>" href="/contests"><i class="calendar icon"></i> 比赛</a>
@@ -71,4 +79,5 @@
             </div>
         </div>
     </div>
+    <div style="margin-top: 28px; ">
     <div class="ui main container">

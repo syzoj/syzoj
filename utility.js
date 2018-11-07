@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 Array.prototype.forEachAsync = Array.prototype.mapAsync = async function (fn) {
   return Promise.all(this.map(fn));
 };
@@ -40,40 +19,13 @@ let Promise = require('bluebird');
 let path = require('path');
 let fs = Promise.promisifyAll(require('fs-extra'));
 let util = require('util');
-let renderer = require('moemark-renderer');
+let markdownRenderer = require('./libs/markdown');
 let moment = require('moment');
 let url = require('url');
 let querystring = require('querystring');
-let pygmentize = require('pygmentize-bundled-cached');
 let gravatar = require('gravatar');
 let filesize = require('file-size');
 let AsyncLock = require('async-lock');
-
-function escapeHTML(s) {
-  // Code from http://stackoverflow.com/questions/5251520/how-do-i-escape-some-html-in-javascript/5251551
-  return s.replace(/[^0-9A-Za-z ]/g, (c) => {
-    return "&#" + c.charCodeAt(0) + ";";
-  });
-}
-
-function highlightPygmentize(code, lang, cb) {
-  pygmentize({
-    lang: lang,
-    format: 'html',
-    options: {
-      nowrap: true,
-      classprefix: 'pl-'
-    }
-  }, code, (err, res) => {
-    if (err || res.toString() === 'undefined') {
-      cb(escapeHTML(code));
-    } else {
-      cb(res);
-    }
-  });
-}
-
-renderer.config.highlight = highlightPygmentize;
 
 module.exports = {
   resolvePath(s) {
@@ -137,13 +89,13 @@ module.exports = {
     return new Promise((resolve, reject) => {
       if (!keys) {
         if (!obj || !obj.trim()) resolve("");
-        else renderer(obj, { mathjaxUseHtml: true }, s => {
+        else markdownRenderer(obj, s => {
             resolve(replaceUI(replaceXSS(s)));
         });
       } else {
         let res = obj, cnt = keys.length;
         for (let key of keys) {
-          renderer(res[key], { mathjaxUseHtml: true }, (s) => {
+          markdownRenderer(res[key], (s) => {
             res[key] = replaceUI(replaceXSS(s));
             if (!--cnt) resolve(res);
           });
@@ -206,10 +158,9 @@ module.exports = {
     if (encoded) res += '?' + encoded;
     return res;
   },
-  escapeHTML: escapeHTML,
   highlight(code, lang) {
     return new Promise((resolve, reject) => {
-      highlightPygmentize(code, lang, res => {
+      require('./libs/highlight')(code, lang, res => {
         resolve(res);
       });
     });

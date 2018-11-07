@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 let statisticsStatements = {
   fastest:
   '\
@@ -244,6 +223,8 @@ let model = db.define('problem', {
   file_io_input_name: { type: Sequelize.TEXT },
   file_io_output_name: { type: Sequelize.TEXT },
 
+  publicize_time: { type: Sequelize.DATE },
+
   type: {
     type: Sequelize.ENUM,
     values: ['traditional', 'submit-answer', 'interaction']
@@ -257,7 +238,10 @@ let model = db.define('problem', {
       },
       {
         fields: ['user_id'],
-      }
+      },
+      {
+        fields: ['publicize_time'],
+      },
     ]
   });
 
@@ -340,7 +324,8 @@ class Problem extends Model {
       await fs.remove(dir);
       await fs.ensureDir(dir);
 
-      await p7zip.extract(path, dir);
+      let execFileAsync = Promise.promisify(require('child_process').execFile);
+      await execFileAsync(__dirname + '/../bin/unzip', ['-j', '-o', '-d', dir, path]);
       await fs.move(path, this.getTestdataArchivePath(), { overwrite: true });
     });
   }
@@ -363,6 +348,10 @@ class Problem extends Model {
       if (!noLimit && oldCount + !replace > syzoj.config.limit.testdata_filecount) throw new ErrorMessage('数据包中的文件太多。');
 
       await fs.move(filepath, path.join(dir, filename), { overwrite: true });
+
+      let execFileAsync = Promise.promisify(require('child_process').execFile);
+      try { await execFileAsync('dos2unix', [path.join(dir, filename)]); } catch (e) {}
+
       await fs.remove(this.getTestdataArchivePath());
     });
   }

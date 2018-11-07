@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 let fs = require('fs'),
     path = require('path');
 
@@ -31,7 +10,7 @@ const options = commandLineArgs(optionDefinitions);
 
 global.syzoj = {
   rootDir: __dirname,
-  config: require(options.config),
+  config: require('object-assign-deep')({}, require('./config-example.json'), require(options.config)),
   configDir: options.config,
   models: [],
   modules: [],
@@ -53,7 +32,7 @@ global.syzoj = {
     });
 
     // Set assets dir
-    app.use(Express.static(__dirname + '/static'));
+    app.use(Express.static(__dirname + '/static', { maxAge: syzoj.production ? '1y' : 0 }));
 
     // Set template engine ejs
     app.set('view engine', 'ejs');
@@ -88,11 +67,50 @@ global.syzoj = {
   },
   async connectDatabase() {
     let Sequelize = require('sequelize');
+    let Op = Sequelize.Op;
+    let operatorsAliases = {
+      $eq: Op.eq,
+      $ne: Op.ne,
+      $gte: Op.gte,
+      $gt: Op.gt,
+      $lte: Op.lte,
+      $lt: Op.lt,
+      $not: Op.not,
+      $in: Op.in,
+      $notIn: Op.notIn,
+      $is: Op.is,
+      $like: Op.like,
+      $notLike: Op.notLike,
+      $iLike: Op.iLike,
+      $notILike: Op.notILike,
+      $regexp: Op.regexp,
+      $notRegexp: Op.notRegexp,
+      $iRegexp: Op.iRegexp,
+      $notIRegexp: Op.notIRegexp,
+      $between: Op.between,
+      $notBetween: Op.notBetween,
+      $overlap: Op.overlap,
+      $contains: Op.contains,
+      $contained: Op.contained,
+      $adjacent: Op.adjacent,
+      $strictLeft: Op.strictLeft,
+      $strictRight: Op.strictRight,
+      $noExtendRight: Op.noExtendRight,
+      $noExtendLeft: Op.noExtendLeft,
+      $and: Op.and,
+      $or: Op.or,
+      $any: Op.any,
+      $all: Op.all,
+      $values: Op.values,
+      $col: Op.col
+    };
+
     this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
       host: this.config.db.host,
-      dialect: this.config.db.dialect,
-      storage: this.config.db.storage ? this.utils.resolvePath(this.config.db.storage) : null,
-      logging: syzoj.production ? false : syzoj.log
+      dialect: 'mysql',
+      logging: syzoj.production ? false : syzoj.log,
+      timezone: require('moment')().format('Z'),
+      operatorsAliases: operatorsAliases
     });
     global.Promise = Sequelize.Promise;
     this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];
@@ -132,7 +150,7 @@ global.syzoj = {
     let FileStore = require('session-file-store')(Session);
     let sessionConfig = {
       secret: this.config.session_secret,
-      cookie: {},
+      cookie: { httpOnly: false },
       rolling: true,
       saveUninitialized: true,
       resave: true,
@@ -140,7 +158,7 @@ global.syzoj = {
     };
     if (syzoj.production) {
       app.set('trust proxy', 1);
-      sessionConfig.cookie.secure = true;
+      sessionConfig.cookie.secure = false;
     }
     app.use(Session(sessionConfig));
 

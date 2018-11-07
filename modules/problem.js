@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let CustomTest = syzoj.model('custom_test');
@@ -35,7 +14,7 @@ app.get('/problems', async (req, res) => {
   try {
     const sort = req.query.sort || syzoj.config.sorting.problem.field;
     const order = req.query.order || syzoj.config.sorting.problem.order;
-    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'publicize_time'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
 
@@ -94,7 +73,7 @@ app.get('/problems/search', async (req, res) => {
 
     let where = {
       $or: {
-        title: { like: `%${req.query.keyword}%` },
+        title: { $like: `%${req.query.keyword}%` },
         id: id
       }
     };
@@ -581,6 +560,7 @@ async function setPublic(req, res, is_public) {
 
     problem.is_public = is_public;
     problem.publicizer_id = res.locals.user.id;
+    problem.publicize_time = new Date();
     await problem.save();
 
     JudgeState.model.update(

@@ -25,7 +25,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
           <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
             <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
               <div class="ui left icon input" style="width: 100%; ">
-                <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
+                <input class="prompt" style="width: 100%; " type="text" value="<%= req.query.keyword %>" placeholder="ID / 题目名 …" name="keyword">
                 <i class="search icon"></i>
               </div>
               <div class="results" style="width: 100%; "></div>
@@ -81,10 +81,10 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
     </div>
   </div>
 
+  <% if (problems.length) { %>
   <div style="margin-bottom: 30px; ">
     <% include page %>
   </div>
-
   <table class="ui very basic center aligned table">
     <thead>
       <tr>
@@ -113,7 +113,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
                 <% } %>
                 </td>
             <% } %>
-            <td><%= problem.id %></td>
+            <td><b><%= problem.id %></b></td>
             <td class="left aligned">
               <a style="vertical-align: middle; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
                 <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
@@ -149,6 +149,19 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
     </tbody>
   </table><br>
   <% include page  %>
+  <% } else { %>
+  <div class="ui placeholder segment">
+    <div class="ui icon header">
+      <% if (typeof req.query.keyword !== 'undefined') { %>
+      <i class="search icon" style="margin-bottom: 20px; "></i>
+      找不到符合条件的题目
+      <% } else { %>
+      <i class="list icon" style="margin-bottom: 20px; "></i>
+      暂无题目
+      <% } %>
+    </div>
+  </div>
+  <% } %>
 <script>
 document.addEventListener('keydown', function (event) {
   if (event.keyCode === 39) document.getElementById('page_next').click();

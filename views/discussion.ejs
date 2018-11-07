@@ -18,8 +18,8 @@
           <% } %>
         </div>
       </div>
-      <div class="six wide right aligned column">
-        <% if(in_problems) { %>
+      <div class="six wide right aligned column" style="margin-bottom: 10px; ">
+        <% if (in_problems) { %>
           <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['discussion', 'global']) %>" class="ui labeled icon mini blue button">
             <i class="world icon"></i>
             全局板块
@@ -36,14 +36,17 @@
               题目板块
             </a>
           <% } %>
+          <% if (articles.length && user) { %>
           <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui labeled icon mini button">
               <i class="write icon"></i>
               发帖
           </a>
+          <% } %>
         <% } %>
       </div>
     </div>
   </div>
+  <% if (articles.length) { %>
   <table class="ui very basic center aligned table">
     <thead>
       <tr>
@@ -71,6 +74,20 @@
     </tbody>
   </table>
   <br>
-    <% include page %>
+  <% include page %>
+  <% } else { %>
+  <div class="ui placeholder segment">
+    <div class="ui icon header">
+      <i class="chat icon" style="margin-bottom: 20px; "></i>
+      暂无讨论
+    </div>
+    <% if (!in_problems && user) { %>
+    <a href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui primary labeled icon button">
+      <i class="write icon"></i>
+      发帖
+    </a>
+    <% } %>
+  </div>
+  <% } %>
 </div>
 <% include footer %>

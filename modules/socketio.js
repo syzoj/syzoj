@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const socketio = require("socket.io");
 const diff = require("jsondiffpatch");

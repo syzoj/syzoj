@@ -18,12 +18,15 @@
     <% } %>
   </div>
   <h1><%= article.title %></h1>
- 	<p style="font_size: 0.7em"><img style="vertical-align: middle;" src="<%= syzoj.utils.gravatar(article.user.email, 64) %>" width="32" height="32">
- 		<a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %> 于 <%= syzoj.utils.formatDate(article.public_time) %> 发表，<%= syzoj.utils.formatDate(article.update_time) %> 最后更新
+ 	<p style="margin-bottom: -5px; ">
+	<img style="vertical-align: middle; margin-bottom: 2px; margin-right: 2px; " src="<%= syzoj.utils.gravatar(article.user.email, 34) %>" width="17" height="17">
+	<b style="margin-right: 30px; "><a class="black-link" href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></b>
+	<b style="margin-right: 30px; "><i class="calendar icon"></i> <%= syzoj.utils.formatDate(article.public_time) %></b>
+	<% if (article.public_time !== article.update_time) { %><b style="margin-right: 30px; "><i class="edit icon"></i> <%= syzoj.utils.formatDate(article.update_time) %></b><% } %>
         <% if (article.allowedEdit) { %>
-        <a class="ui mini red button" onclick="$('#modal-delete').modal('show')">删除文章</a>
-        <a class="ui mini button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>">编辑文章</a>
-        <div class="ui basic modal" id="modal-delete">
+        <a style="margin-top: -4px; " class="ui mini right floated labeled icon button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>"><i class="ui edit icon"></i>编辑</a>
+        <a style="margin-top: -4px; margin-right: 3px; " class="ui mini red right floated labeled icon button" onclick="$('#modal-delete').modal('show')"><i class="ui trash icon"></i>删除</a>
+        <div class="ui basic modal right floated" id="modal-delete">
           <div class="ui icon header">
             <i class="trash icon"></i>
             <p style="margin-top: 15px; ">删除文章</p>
@@ -96,9 +99,11 @@
       <div class="field">
         <textarea name="comment"></textarea>
       </div>
+      <div style="text-align: center; ">
       <button type="submit" class="ui labeled submit icon button">
         <i class="icon edit"></i> 回复
       </button>
+      </div>
    </form>
    <% } %>
 </div>

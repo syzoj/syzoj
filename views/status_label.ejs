@@ -20,7 +20,7 @@ const iconList = {
 };
 Vue.component('status-label', {
   template: '#statusIconTemplate',
-  props: ['status'],
+  props: ['status', 'indetail'],
   computed: {
     icon() {
       if (this.status in iconList) {
@@ -30,7 +30,7 @@ Vue.component('status-label', {
       }
     },
     colorClass() {
-      return this.status.toLowerCase().split(' ').join('_');
+      return (this.indetail ? 'status_detail ' : '') + this.status.toLowerCase().split(' ').join('_');
     }
   }
 })

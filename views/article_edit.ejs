@@ -15,6 +15,7 @@
       <div class="field">
         <label for="title">标题</label>
         <input type="text" id="title" name="title" value="<%= article.title %>">
+        <div style="margin-top: 15px; "></div>
         <label for="content">内容</label>
         <textarea rows="15" id="content" name="content" class="markdown-edit"><%= article.content %></textarea>
         <% if (user && user.is_admin) { %>
@@ -30,9 +31,11 @@
       <div class="ui header" id="pv-title"></div>
       <div id="pv-content" class="font-content"></div>
     </div>
+    <div style="text-align: center; ">
     <button type="submit" class="ui labeled submit icon button">
       <i class="icon edit"></i> 提交
     </button>
+    </div>
   </form>
 </div>
 

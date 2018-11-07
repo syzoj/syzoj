@@ -1,24 +1,3 @@
-/*
- *  This file is part of SYZOJ.
- *
- *  Copyright (c) 2016 Menci <huanghaorui301@gmail.com>
- *
- *  SYZOJ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  SYZOJ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with SYZOJ. If not, see <http://www.gnu.org/licenses/>.
- */
-
-'use strict';
-
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
 let Contest = syzoj.model('contest');
@@ -113,7 +92,7 @@ app.get('/submissions', async (req, res) => {
     }
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
-    let judge_state = await JudgeState.query(paginate, where, [['id', 'desc']]);
+    let judge_state = await JudgeState.query(paginate, where, [['id', 'desc']], true);
 
     await judge_state.forEachAsync(async obj => obj.loadRelationships());
 

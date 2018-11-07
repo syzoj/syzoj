@@ -64,7 +64,7 @@
             子任务 #{{ $index + 1 }}
           </div>
           <div class="four wide column">
-            <status-label :status="getSubtaskResult(subtask)"></status-label>
+            <status-label :status="getSubtaskResult(subtask)" :indetail="true"></status-label>
           </div>
           <div class="three wide column" v-if="subtask.score != null">
             得分：<span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
@@ -81,7 +81,7 @@
                     测试点 #{{ $caseIndex + 1 }}
                 </div>
                 <div class="four wide column">
-                  <status-label :status="getTestcaseStatus(curCase)"></status-label>
+                  <status-label :status="getTestcaseStatus(curCase)" :indetail="true"></status-label>
                 </div>
                 <template v-if="checkTestcaseOK(curCase)">
                   <div class="three wide column">

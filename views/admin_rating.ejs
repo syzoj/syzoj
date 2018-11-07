@@ -14,10 +14,10 @@
       </div>
     </div>
   </div>
-  <button class="ui blue button" name="type" value="doit" type="submit">计算此比赛的 Rating</button>
+  <button class="ui blue labeled icon button" name="type" value="doit" type="submit"><i class="ui calculator icon"></i>计算此比赛的积分</button>
 </form>
 
-注意：如果删除一个比赛的 Rating，则该比赛之上的所有比赛也将被删除，Rating 将还原至该比赛之前的状态！
+注意：如果删除一个比赛的积分，则该比赛之上的所有比赛也将被删除，积分将还原至该比赛之前的状态！
 <form action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'delete']) %>" method="POST">
   <div class="ui relaxed divided list">
     <% for (const calc of calcs) { %>
