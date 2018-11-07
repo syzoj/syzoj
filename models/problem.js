@@ -369,6 +369,10 @@ class Problem extends Model {
       if (!noLimit && oldCount + !replace > syzoj.config.limit.testdata_filecount) throw new ErrorMessage('数据包中的文件太多。');
 
       await fs.move(filepath, path.join(dir, filename), { overwrite: true });
+
+      let execFileAsync = Promise.promisify(require('child_process').execFile);
+      try { await execFileAsync('dos2unix', [path.join(dir, filename)]); } catch (e) {}
+
       await fs.remove(this.getTestdataArchivePath());
     });
   }
