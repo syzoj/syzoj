@@ -8,6 +8,11 @@
     "password": null,
     "host": "127.0.0.1"
   },
+  "logo": {
+    "url": null,
+    "width": null,
+    "height": null
+  },
   "register_mail": false,
   "email": {
     "method": "aliyundm",
