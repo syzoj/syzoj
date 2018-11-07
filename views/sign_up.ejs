@@ -42,10 +42,10 @@ function success() {
 
 function mail_required() {
     alert("注册确认邮件已经发送到您的邮箱的垃圾箱，点击邮件内的链接即可完成注册。");
-    var s = $("#email").val();
-    var mailWebsite = 'https://mail.' + s.substring(s.indexOf('@') + 1, s.length);
-    if (mailWebsite === 'https://mail.gmail.com') mailWebsite = 'https://mail.google.com';
-    window.location.href = mailWebsite;
+    // var s = $("#email").val();
+    // var mailWebsite = 'https://mail.' + s.substring(s.indexOf('@') + 1, s.length);
+    // if (mailWebsite === 'https://mail.gmail.com') mailWebsite = 'https://mail.google.com';
+    // window.location.href = mailWebsite;
 }
 
 function submit() {
