@@ -190,7 +190,7 @@ app.post('/article/:id/edit', async (req, res) => {
     article.title = req.body.title;
     article.content = req.body.content;
     article.update_time = time;
-    article.is_notice = res.locals.user && res.locals.user.is_admin && req.body.is_notice === 'on';
+    article.is_notice = (res.locals.user && res.locals.user.is_admin ? req.body.is_notice === 'on' : article.is_notice);
 
     await article.save();
 
