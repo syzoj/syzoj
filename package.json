@@ -17,7 +17,7 @@
     "express"
   ],
   "author": "Menci",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/syzoj/syzoj/issues"
   },
