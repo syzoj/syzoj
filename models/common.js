@@ -31,7 +31,7 @@ class Model {
     let model = this.getModel();
     let obj = JSON.parse(JSON.stringify(this.record.get({ plain: true })));
     for (let key in obj) {
-      if (model.tableAttributes[key].type instanceof Sequelize.JSON) {
+      if (model.tableAttributes[key].type instanceof Sequelize.JSON && typeof obj[key] === 'string') {
         try {
           this[key] = JSON.parse(obj[key]);
         } catch (e) {
