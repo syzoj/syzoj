@@ -99,7 +99,7 @@ class Model {
     return this.model.count({ where: where });
   }
 
-  static async query(paginate, where, order) {
+  static async query(paginate, where, order, largeData) {
     let records = [];
 
     if (typeof paginate === 'string') {
@@ -121,11 +121,34 @@ class Model {
         options.limit = parseInt(paginate.perPage);
       }
 
-      records = await this.model.findAll(options);
+      if (!largeData) records = await this.model.findAll(options);
+      else {
+        let sql = await getSqlFromFindAll(this.model, options);
+        let i = sql.indexOf('FROM');
+        sql = 'SELECT id ' + sql.substr(i, sql.length - i);
+        sql = `SELECT a.* FROM (${sql}) AS b JOIN ${this.model.name} AS a ON a.id = b.id ORDER BY id DESC`;
+        records = await syzoj.db.query(sql, { model: this.model });
+      }
     }
 
     return records.mapAsync(record => (this.fromRecord(record)));
   }
+}
+
+function getSqlFromFindAll(Model, options) {
+  let id = require('uuid')();
+
+  return new Promise((resolve, reject) => {
+    Model.addHook('beforeFindAfterOptions', id, options => {
+      Model.removeHook('beforeFindAfterOptions', id);
+
+      resolve(Model.sequelize.dialect.QueryGenerator.selectQuery(Model.getTableName(), options, Model).slice(0, -1));
+
+      return new Promise(() => {});
+    });
+
+    return Model.findAll(options).catch(reject);
+  });
 }
 
 module.exports = Model;
