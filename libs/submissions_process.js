@@ -18,7 +18,8 @@ const getRoughResult = (x, displayConfig) => {
             return {
                 result: x.status,
                 time: displayConfig.showUsage ? x.total_time : null,
-                memory: displayConfig.showUsage ? x.max_memory : null,
+                memory: displayConfig.showUsage ? syzoj.utils.formatSize((x.max_memory * 1024) || 0, 2) : null,
+                precise_memory: displayConfig.showUsage ? x.max_memory : null,
                 score: displayConfig.showScore ? x.score : null
             };
         }

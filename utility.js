@@ -121,8 +121,8 @@ module.exports = {
     }
     return sgn + util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
   },
-  formatSize(x) {
-    let res = filesize(x, { fixed: 1 }).calculate();
+  formatSize(x, precision) {
+    let res = filesize(x, { fixed: precision || 1 }).calculate();
     if (res.result === parseInt(res.result)) res.fixed = res.result.toString();
     if (res.suffix.startsWith('Byte')) res.suffix = 'B';
     else res.suffix = res.suffix.replace('iB', '');

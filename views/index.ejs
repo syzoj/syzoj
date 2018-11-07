@@ -3,7 +3,7 @@
 <div class="padding">
   <div class="ui three column grid">
     <div class="eleven wide column">
-      <h4 class="ui top attached block header">公告</h4>
+      <h4 class="ui top attached block header"><i class="ui info icon"></i>公告</h4>
       <div class="ui bottom attached segment">
         <table class="ui very basic table">
           <thead>
@@ -22,7 +22,7 @@
           </tbody>
         </table>
       </div>
-      <h4 class="ui top attached block header">排名</h4>
+      <h4 class="ui top attached block header"><i class="ui signal icon"></i>排名</h4>
       <div class="ui bottom attached segment">
         <table class="ui very basic center aligned table" style="table-layout: fixed; ">
           <thead>
@@ -76,7 +76,7 @@
       </div>
     </div>
     <div class="right floated five wide column">
-        <h4 class="ui top attached block header">一言（ヒトコト）</h4>
+        <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言（ヒトコト）</h4>
         <div class="ui bottom attached center aligned segment">
           <div class="ui active centered inline loader" id="hitokoto-loader"></div>
           <script>
@@ -92,13 +92,13 @@
           <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
           <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
         </div>
-      <h4 class="ui top attached block header">最近更新</h4>
+      <h4 class="ui top attached block header"><i class="ui rss icon"></i>最近更新</h4>
       <div class="ui bottom attached segment">
 	<table class="ui very basic center aligned table">
           <thead>
             <tr>
-              <th>题目</th>
-              <th>更新时间</th>
+              <th width="70%">题目</th>
+              <th width="30%">更新时间</th>
             </tr>
 	  </thead>
 	  <tbody>
@@ -120,7 +120,7 @@
             else if (fortune.fortune.indexOf('凶') != -1) color = '#f25e65';
             else color = '#444';
         %>
-        <h4 class="ui top attached block header">今日运势</h4>
+        <h4 class="ui top attached block header"><i class="ui magic icon"></i>今日运势</h4>
         <div class="ui bottom attached segment">
             <div style="height: 15px; "></div>
             <div class="ui two column center aligned padded grid">
@@ -166,7 +166,7 @@
             </div>
         </div>
         <% } %>
-      <h4 class="ui top attached block header">搜索题目</h4>
+      <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索题目</h4>
       <div class="ui bottom attached segment">
         <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
           <div class="ui search" style="width: 100%; ">
@@ -178,7 +178,7 @@
           </div>
         </form>
       </div>
-      <h4 class="ui top attached block header">近期比赛</h4>
+      <h4 class="ui top attached block header"><i class="ui calendar icon"></i>近期比赛</h4>
       <div class="ui bottom attached <% if (!contests || !contests.length) { %>center aligned <% } %>segment">
         <% if (!contests || !contests.length) { %>
         还没有举行过任何比赛
@@ -213,7 +213,7 @@
         <% } %>
       </div>
       <% if (typeof links !== 'undefined' && links && links.length) { %>
-      <h4 class="ui top attached block header font-content">友情链接</h4>
+      <h4 class="ui top attached block header font-content"><i class="ui linkify icon"></i>友情链接</h4>
       <div class="ui bottom attached segment">
         <ul style="margin: 0; padding-left: 20px; ">
           <% for (let link of links) { %>

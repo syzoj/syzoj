@@ -117,8 +117,8 @@ function getIcon(filename) {
               <label for="answer">上传文件（可一次性上传多个）</label>
               <input type="file" name="file" multiple id="upload_file">
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
-                <div class="ui button" onclick="check_replace()">提交</div>
-                <a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui blue button">返回题目</a>
+                <div class="ui labeled icon blue button" onclick="check_replace()"><i class="ui edit icon"></i>提交</div>
+                <a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui labeled icon button"><i class="ui angle left icon"></i>返回</a>
               </div>
             </div>
           </div>

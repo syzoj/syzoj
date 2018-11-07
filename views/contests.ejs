@@ -1,14 +1,16 @@
 <% this.title = '比赛' %>
 <% include header %>
 <div class="padding">
+    <% if (contests.length) { %>
     <% if (user && user.is_admin) { %>
-    <div class="ui grid">
-      <div class="row">
-        <div class="column">
-          <a href="<%= syzoj.utils.makeUrl(['contest', 0, 'edit']) %>" class="ui mini right floated button">添加比赛</a>
-        </div>
-      </div>
-    </div>
+    <form class="ui mini form">
+      <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
+        <a href="<%= syzoj.utils.makeUrl(['contest', 0, 'edit']) %>" class="ui mini labeled icon right floated button" style="margin-left: auto; ">
+          <i class="ui icon write"></i>
+          添加比赛
+        </a>
+     </div>
+    </form>
     <% } %>
     <table class="ui very basic center aligned table">
       <thead>
@@ -42,6 +44,20 @@
         <% } %>
       </tbody>
     </table>
+    <% } else { %>
+    <div class="ui placeholder segment">
+      <div class="ui icon header">
+        <i class="calendar icon" style="margin-bottom: 20px; "></i>
+        暂无比赛
+      </div>
+      <% if (user && user.is_admin) { %>
+      <a href="<%= syzoj.utils.makeUrl(['contest', 0, 'edit']) %>" class="ui primary labeled icon button">
+        <i class="ui icon write"></i>
+        添加第一场比赛
+      </a>
+      <% } %>
+    </div>
+    <% } %>
   <br>
   <% include page %>
 </div>

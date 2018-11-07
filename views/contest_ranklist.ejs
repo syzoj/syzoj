@@ -154,5 +154,14 @@
             <% } %>
             </tbody>
         </table>
+<% if (!ranklist.length) { %>
+<div style="background-color: #fff; height: 18px; margin-top: -18px; "></div>
+<div class="ui placeholder segment" style="margin-top: 0px; ">
+  <div class="ui icon header">
+    <i class="ui file icon" style="margin-bottom: 20px; "></i>
+    暂无选手提交
+  </div>
+</div>
+<% } %>
 </div>
 <% include footer %>

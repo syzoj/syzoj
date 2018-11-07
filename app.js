@@ -32,7 +32,7 @@ global.syzoj = {
     });
 
     // Set assets dir
-    app.use(Express.static(__dirname + '/static', { maxage: '1y' }));
+    app.use(Express.static(__dirname + '/static', { maxAge: syzoj.production ? '1y' : 0 }));
 
     // Set template engine ejs
     app.set('view engine', 'ejs');
