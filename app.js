@@ -53,7 +53,7 @@ global.syzoj = {
     });
 
     // Set assets dir
-    app.use(Express.static(__dirname + '/static'));
+    app.use(Express.static(__dirname + '/static', { maxage: '1y' }));
 
     // Set template engine ejs
     app.set('view engine', 'ejs');
@@ -171,7 +171,7 @@ global.syzoj = {
     let FileStore = require('session-file-store')(Session);
     let sessionConfig = {
       secret: this.config.session_secret,
-      cookie: {},
+      cookie: { httpOnly: false },
       rolling: true,
       saveUninitialized: true,
       resave: true,
@@ -179,7 +179,7 @@ global.syzoj = {
     };
     if (syzoj.production) {
       app.set('trust proxy', 1);
-      sessionConfig.cookie.secure = true;
+      sessionConfig.cookie.secure = false;
     }
     app.use(Session(sessionConfig));
 
