@@ -21,15 +21,15 @@ h4,
 h5,
 body
  {
-  font-family: 
+  font-family:
     Lato,
-    -apple-system, 
-    'PingFang SC',/* Apple */ 
-    'Source Han Sans SC', 
+    -apple-system,
+    'PingFang SC',/* Apple */
+    'Source Han Sans SC',
     'Noto Sans CJK SC', /* Google */
-    'Microsoft Yahei', 
-    'Lantinghei SC', 
-    'Hiragino Sans GB', 
+    'Microsoft Yahei',
+    'Lantinghei SC',
+    'Hiragino Sans GB',
     'Microsoft Sans Serif', /* M$ */
     'WenQuanYi Micro Hei', /* *nix */
     sans-serif;
@@ -299,4 +299,9 @@ code {
 .ui.top.attached.block.header i.icon {
   font-size: 1em;
   vertical-align: initial;
+}
+
+.ui.selection.dropdown .menu>.item {
+  padding-left: 0.8rem !important;
+  padding-right: 0 !important;
 }

@@ -20,7 +20,7 @@ const iconList = {
 };
 Vue.component('status-label', {
   template: '#statusIconTemplate',
-  props: ['status', 'indetail'],
+  props: ['status', 'indetail', 'progress'],
   computed: {
     icon() {
       if (this.status in iconList) {
@@ -31,6 +31,10 @@ Vue.component('status-label', {
     },
     colorClass() {
       return (this.indetail ? 'status_detail ' : '') + this.status.toLowerCase().split(' ').join('_');
+    },
+    outputStatus() {
+      if (this.status === 'Running' && this.progress) return 'Running ' + this.progress.finished + '/' + this.progress.total;
+      else return this.status;
     }
   }
 })
@@ -38,6 +42,6 @@ Vue.component('status-label', {
 <script type="text/x-template" id="statusIconTemplate">
   <span class="status" :class="colorClass">
     <i class="icon" :class="icon"></i>
-    {{ status }}
+    {{ outputStatus }}
   </span>
 </script>
