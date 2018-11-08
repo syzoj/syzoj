@@ -63,7 +63,7 @@
           <div class="metadata">
             <span class="date"><%= syzoj.utils.formatDate(comment.public_time) %></span>
           </div>
-          <div class="text font-content"><%- comment.content %></div>
+          <div class="text font-content" style="min-height: 19.5px; "><%- comment.content %></div>
           <% if (comment.allowedEdit) { %>
             <div class="actions"><a onclick="$('#modal-delete-<%= comment.id %>').modal('show')">删除</a></div>
             <div class="ui basic modal" id="modal-delete-<%= comment.id %>">
