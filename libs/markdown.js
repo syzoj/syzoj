@@ -35,10 +35,12 @@ let config = {
     highlight: require('./highlight')
 };
 
+let uuid = require('uuid');
+
 function render(s, cb) {
     if (!s.trim()) return cb('');
 
-    let mathCnt = 0, mathPending = 0, maths = new Array(), hlCnt = 0, hlPending = 0, hls = new Array(), res, callback, ss, cache = render.cache, cacheOption = render.cacheOption, finished = false;
+    let mathCnt = 0, mathPending = 0, maths = new Array(), mathID = new Array(), hlCnt = 0, hlPending = 0, hls = new Array(), hlID = new Array(), res, callback, ss, cache = render.cache, cacheOption = render.cacheOption, finished = false;
     if (cacheOption.result) {
         let x = cache.get('RES_' + s);
         if (x !== undefined) return cb(x);
@@ -59,7 +61,7 @@ function render(s, cb) {
                 if (cacheOption.highlight) cache.set('H_' + lang + '_' + code, res);
                 if (!--hlPending) finish();
             });
-            return '<span id="hl-' + id + '"></span>';
+            return hlID[id] = uuid();
         },
         mathRenderer: function(str, display) {
             if (cacheOption.math) {
@@ -86,7 +88,7 @@ function render(s, cb) {
                     if (!--mathPending) finish();
                 });
 
-                return '<span id="math-' + id + '"></span>';
+                return mathID[id] = uuid();
             }
         }
     });
@@ -95,15 +97,12 @@ function render(s, cb) {
         if (finished || !res || mathPending || hlPending) return;
         finished = true;
         if (maths.length || hls.length) {
-            let x = new (require('jsdom').JSDOM)().window.document.createElement('div');
-            x.innerHTML = res;
             for (let i = 0; i < maths.length; i++) {
-              x.querySelector('#math-' + i).outerHTML = maths[i];
+              res = res.replace(mathID[i], maths[i]);
             }
             for (let i = 0; i < hls.length; i++) {
-              x.querySelector('#hl-' + i).outerHTML = hls[i];
+              res = res.replace(hlID[i], hls[i]);
             }
-            res = x.innerHTML;
         }
         if (cacheOption.result) cache.set('RES_' + s, res);
         cb(res);
