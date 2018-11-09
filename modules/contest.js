@@ -120,7 +120,12 @@ app.get('/contest/:id', async (req, res) => {
     let contest = await Contest.fromID(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
     if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
-
+    if (!await contest.isSupervisior(curUser) && !(contest.isRunning() || contest.isEnded())) {
+      if (await problem.isAllowedUseBy(res.locals.user)) {
+        return res.redirect(syzoj.utils.makeUrl(['problem', problem_id]));
+      }
+      throw new ErrorMessage('比赛尚未开始。');
+    }
     const isSupervisior = await contest.isSupervisior(curUser);
     contest.running = contest.isRunning();
     contest.ended = contest.isEnded();
