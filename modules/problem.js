@@ -276,6 +276,7 @@ app.get('/problem/:id/export', async (req, res) => {
 
 app.get('/problem/:id/edit', async (req, res) => {
   try {
+    if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
 
@@ -307,6 +308,7 @@ app.get('/problem/:id/edit', async (req, res) => {
 
 app.post('/problem/:id/edit', async (req, res) => {
   try {
+    if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
     if (!problem) {
