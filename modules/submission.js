@@ -130,6 +130,7 @@ app.get('/submission/:id', async (req, res) => {
     const judge = await JudgeState.fromID(id);
     if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
     const curUser = res.locals.user;
+    if (judge.user_id !== curUser.id) throw new ErrorMessage('您没有权限进行此操作。');
     if (!await judge.isAllowedVisitBy(curUser)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
