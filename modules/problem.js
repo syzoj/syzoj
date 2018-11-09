@@ -49,6 +49,7 @@ app.get('/problems', async (req, res) => {
 
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
+      allowedManageProblem: res.locals.user && await res.locals.user.hasPrivilege('manage_problem'),
       problems: problems,
       paginate: paginate,
       curSort: sort,
@@ -368,6 +369,7 @@ app.post('/problem/:id/edit', async (req, res) => {
 
 app.get('/problem/:id/import', async (req, res) => {
   try {
+    if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
 
@@ -412,6 +414,8 @@ app.post('/problem/:id/import', async (req, res) => {
           if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
           problem.id = customID;
         } else if (id) problem.id = id;
+      } else {
+        throw new ErrorMessage('您没有权限进行此操作。');
       }
 
       problem.user_id = res.locals.user.id;
@@ -782,6 +786,7 @@ app.get('/problem/:id/testdata/download/:filename?', async (req, res) => {
     let problem = await Problem.fromID(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
+    if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     if (!req.params.filename) {

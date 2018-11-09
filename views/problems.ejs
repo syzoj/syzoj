@@ -61,22 +61,24 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
           </script>
           <label>显示分类标签</label>
         </div>
-        <div style="margin-left: 10px; display: inline-block; ">
-          <% if (allowedManageTag) { %>
-            <% if (typeof tags !== 'undefined' && tags.length === 1) { %>
-              <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', tags[0].id, 'edit']) %>" class="ui labeled icon mini blue button"><i class="write icon"></i> 编辑标签</a>
+        <% if(allowedManageProblem) { %>
+          <div style="margin-left: 10px; display: inline-block; ">
+            <% if (allowedManageTag) { %>
+              <% if (typeof tags !== 'undefined' && tags.length === 1) { %>
+                <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', tags[0].id, 'edit']) %>" class="ui labeled icon mini blue button"><i class="write icon"></i> 编辑标签</a>
+              <% } %>
+              <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', 0, 'edit']) %>" class="ui labeled icon mini green button"><i class="plus icon"></i> 添加标签</a>
             <% } %>
-            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', 0, 'edit']) %>" class="ui labeled icon mini green button"><i class="plus icon"></i> 添加标签</a>
-          <% } %>
-          <div style="margin-left: 10px; " class="ui mini buttons">
-            <div class="ui labeled icon mini dropdown button" id="add_problem_dropdown"><i class="plus icon"></i> 添加题目
-            <div class="menu">
-              <a class="item" href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>"><i class="file icon"></i> 新建题目</a>
-              <a class="item" href="<%= syzoj.utils.makeUrl(['problem', 0, 'import']) %>"><i class="cloud download icon"></i> 导入题目</a>
-            </div>
+            <div style="margin-left: 10px; " class="ui mini buttons">
+              <div class="ui labeled icon mini dropdown button" id="add_problem_dropdown"><i class="plus icon"></i> 添加题目
+              <div class="menu">
+                <a class="item" href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>"><i class="file icon"></i> 新建题目</a>
+                <a class="item" href="<%= syzoj.utils.makeUrl(['problem', 0, 'import']) %>"><i class="cloud download icon"></i> 导入题目</a>
+              </div>
+              </div>
             </div>
           </div>
-        </div>
+        <% } %>
       </div>
     </div>
   </div>
