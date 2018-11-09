@@ -371,7 +371,6 @@ app.post('/problem/:id/edit', async (req, res) => {
 
 app.get('/problem/:id/import', async (req, res) => {
   try {
-    if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.fromID(id);
 
@@ -383,6 +382,7 @@ app.get('/problem/:id/import', async (req, res) => {
       problem.new = true;
       problem.user_id = res.locals.user.id;
       problem.publicizer_id = res.locals.user.id;
+      if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
