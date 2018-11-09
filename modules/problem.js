@@ -120,6 +120,7 @@ app.get('/problems/search', async (req, res) => {
 
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
+      allowedManageProblem: res.locals.user && await res.locals.user.hasPrivilege('manage_problem'),
       problems: problems,
       paginate: paginate,
       curSort: sort,
@@ -184,6 +185,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
 
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
+      allowedManageProblem: res.locals.user && await res.locals.user.hasPrivilege('manage_problem'),
       problems: problems,
       tags: tags,
       paginate: paginate,
