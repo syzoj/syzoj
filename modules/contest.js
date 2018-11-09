@@ -226,7 +226,9 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 
     if (!contest) throw new ErrorMessage('无此比赛。');
     if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
-    if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
+    if (!await contest.isSupervisior(curUser) && !(contest.isRunning() || contest.isEnded())) {
+      throw new ErrorMessage('比赛尚未开始。');
+    }    if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
     contest.isEnded(),
     await contest.isSupervisior(curUser)].every(x => !x))
       throw new ErrorMessage('您没有权限进行此操作。');
