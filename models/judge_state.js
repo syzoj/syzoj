@@ -105,6 +105,7 @@ class JudgeState extends Model {
   async isAllowedVisitBy(user) {
     await this.loadRelationships();
 
+    if (user && user.id === this.user.id) return true;
     if (user && user.id === this.problem.user_id) return true;
     else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1) {
