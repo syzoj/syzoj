@@ -97,7 +97,7 @@
               </div>
             </div>
               <div class="content">
-                <template v-if="checkTestcaseOK(curCase)">
+                <template v-if="checkTestcaseOK(curCase) && allowedManageProblem">
                   <code-box v-if="curCase.result.input" :title="'输入文件（<span style=\'font-family: monospace; \'>'+ curCase.result.input.name +'</span>）'" :content="curCase.result.input.content"></code-box>
                   <code-box v-if="curCase.result.output" :title="'答案文件（<span style=\'font-family: monospace; \'>'+ curCase.result.output.name +'</span>）'" :content="curCase.result.output.content"></code-box>
                   <code-box title="用户输出" :content="curCase.result.userOutput"></code-box>
