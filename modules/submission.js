@@ -153,6 +153,7 @@ app.get('/submission/:id', async (req, res) => {
     }
 
     displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
+    console.log(res.locals.user && await res.locals.user.hasPrivilege('manage_problem'));
     res.render('submission', {
       info: getSubmissionInfo(judge, displayConfig),
       roughResult: getRoughResult(judge, displayConfig),
