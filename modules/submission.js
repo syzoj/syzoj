@@ -158,13 +158,13 @@ app.get('/submission/:id', async (req, res) => {
       roughResult: getRoughResult(judge, displayConfig),
       code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
       detailResult: processOverallResult(judge.result, displayConfig),
+      allowedManageProblem: res.locals.user && await res.locals.user.hasPrivilege('manage_problem'),
       socketToken: (judge.pending && judge.task_id != null) ? jwt.sign({
         taskId: judge.task_id,
         type: 'detail',
         displayConfig: displayConfig
       }, syzoj.config.session_secret) : null,
       displayConfig: displayConfig,
-      allowedManageProblem: res.locals.user && await res.locals.user.hasPrivilege('manage_problem'),
     });
   } catch (e) {
     syzoj.log(e);
