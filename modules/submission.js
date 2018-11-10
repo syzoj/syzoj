@@ -153,13 +153,11 @@ app.get('/submission/:id', async (req, res) => {
     }
 
     displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
-    console.log(res.locals.user && await res.locals.user.hasPrivilege('manage_problem'));
     res.render('submission', {
       info: getSubmissionInfo(judge, displayConfig),
       roughResult: getRoughResult(judge, displayConfig),
       code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
       detailResult: processOverallResult(judge.result, displayConfig),
-      allowedManageProblem: res.locals.user && await res.locals.user.hasPrivilege('manage_problem'),
       socketToken: (judge.pending && judge.task_id != null) ? jwt.sign({
         taskId: judge.task_id,
         type: 'detail',
