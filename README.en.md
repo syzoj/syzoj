@@ -1,4 +1,5 @@
-# SYZOJ 2
+<p align="center"><img src="static/syzoj.svg" width="250"></p>
+
 [中文](README.md) | English
 
 An online judge system for algorithm competition.
