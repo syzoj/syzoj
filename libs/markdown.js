@@ -64,32 +64,35 @@ function render(s, cb) {
             return hlID[id] = uuid();
         },
         mathRenderer: function(str, display) {
-            if (cacheOption.math) {
-                let x = cache.get('M_' + display + '_' + str);
-                if (x !== undefined) return x;
+            let mathFinish = (error, result) => {
+                if (error) maths[id] = '<p><div style="display: inline-block; border: 1px solid #000; "><strong>' + data.errors.toString() + '</strong></div></p>';
+                else if (display) maths[id] = '<p style="text-align: center; ">' + result + '</p>';
+                else maths[id] = result;
+                if (cacheOption.math) cache.set('M_' + display + '_' + str, maths[id]);
+                if (!--mathPending) finish();
             }
+
+            const id = mathCnt;
+            mathCnt++, mathPending++;
+
             try {
-                let res = katex.renderToString(str, { displayMode: display });
-                if (cacheOption.math) cache.set('M_' + display + '_' + str, res);
-                return res;
+                let x = cache.get('M_' + display + '_' + str);
+                if (x !== undefined) process.nextTick(() => mathFinish(null, x));
+                else {
+                    let res = katex.renderToString(str, { displayMode: display });
+                    process.nextTick(() => mathFinish(null, '<span style="zoom: 1.01; ">' + res + '</span>'));
+                }
             } catch (e) {
-                const id = mathCnt;
-                mathCnt++, mathPending++;
                 mj.typeset({
                     math: str,
                     format: display ? 'TeX' : 'inline-TeX',
-                    html: true, css: true,
+                    svg: true,
                     width: 0
-                }, function (data) {
-                    if (data.errors) maths[id] = '<p><div style="display: inline-block; border: 1px solid #000; "><strong>' + data.errors.toString() + '</strong></div></p>';
-                    else if (display) maths[id] = '<p style="text-align: center; ">' + data.html + '</p>';
-                    else maths[id] = data.html;
-                    if (cacheOption.math) cache.set('M_' + display + '_' + str, maths[id]);
-                    if (!--mathPending) finish();
+                }, data => {
+                    mathFinish(data.errors, data.svg);
                 });
-
-                return mathID[id] = uuid();
             }
+            return mathID[id] = uuid();
         }
     });
 
@@ -109,7 +112,28 @@ function render(s, cb) {
     }
 
     try {
-        res = MoeMark(s);
+        let XSS = require('xss');
+        let CSSFilter = require('cssfilter');
+        let whiteList = Object.assign({}, require('xss/lib/default').whiteList);
+        delete whiteList.audio;
+        delete whiteList.video;
+        for (let tag in whiteList) whiteList[tag] = whiteList[tag].concat(['style', 'class']);
+        let xss = new XSS.FilterXSS({
+          whiteList: whiteList,
+          stripIgnoreTag: true,
+          onTagAttr: (tag, name, value, isWhiteAttr) => {
+            if (tag.toLowerCase() === 'img' && name.toLowerCase() === 'src' && value.startsWith('data:image/')) return name + '="' + XSS.escapeAttrValue(value) + '"';
+          }
+        });
+        let replaceXSS = s => {
+          s = xss.process(s);
+          if (s) {
+            s = `<div style="position: relative; overflow: hidden; ">${s}</div>`;
+          }
+          return s;
+        };
+
+        res = replaceXSS(MoeMark(s));
         if (mathPending == 0 && hlPending == 0) {
             finish();
         }
