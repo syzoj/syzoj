@@ -9,13 +9,13 @@ const getOrderString = function(order) {
 }
 this.createSortableTitle = function(item, display, defaultOrder) {
   const isCurrent = curSort === item;
-  const url = syzoj.utils.makeUrl(req, 
-    Object.assign({}, req.query, { 
-      sort: item, 
+  const url = syzoj.utils.makeUrl(req,
+    Object.assign({}, req.query, {
+      sort: item,
       order: getOrderString(isCurrent ? (!curOrder) : defaultOrder)
     }));
   const triangle = isCurrent ? `<i class="${curOrder ? "angle up" : "angle down"} icon"></i>` : "";
-  return `<a href="${url}">${display}${triangle}</a>`;
+  return `<a class="black-link" href="${url}">${display}${triangle}</a>`;
 }
 
 this.isPending = (status) => {
