@@ -65,7 +65,7 @@ function render(s, cb) {
         },
         mathRenderer: function(str, display) {
             let mathFinish = (error, result) => {
-                if (error) maths[id] = '<p><div style="display: inline-block; border: 1px solid #000; "><strong>' + data.errors.toString() + '</strong></div></p>';
+                if (error) maths[id] = '<p><div style="display: inline-block; border: 1px solid #000; "><strong>' + error.toString() + '</strong></div></p>';
                 else if (display) maths[id] = '<p style="text-align: center; ">' + result + '</p>';
                 else maths[id] = result;
                 if (cacheOption.math) cache.set('M_' + display + '_' + str, maths[id]);
