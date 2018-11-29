@@ -5,7 +5,7 @@
   "db": {
     "database": "syzoj",
     "username": "syzoj",
-    "password": null,
+    "password": "@DATABASE_PASSWORD@",
     "host": "127.0.0.1"
   },
   "logo": {
@@ -175,8 +175,8 @@
       "url": "https://loj.ac/"
     }
   ],
-  "session_secret": "233",
+  "session_secret": "@SESSION_SECRET@",
   "rabbitMQ": "amqp://localhost/",
-  "email_jwt_secret": "test",
+  "email_jwt_secret": "@EMAIL_JWT_SECRET@",
   "google_analytics": "UA-XXXXXXXX-X"
 }
