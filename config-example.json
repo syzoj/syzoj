@@ -71,18 +71,27 @@
     "cpp17",
     "csharp",
     "c",
-    "vala",
     "java",
     "pascal",
-    "lua",
-    "luajit",
     "python2",
     "python3",
     "nodejs",
     "ruby",
-    "haskell",
-    "ocaml",
-    "vbnet"
+    "haskell"
+  ],
+  "filter_enabled_languages": [
+    "cpp",
+    "cpp11",
+    "cpp17",
+    "csharp",
+    "c",
+    "java",
+    "pascal",
+    "python2",
+    "python3",
+    "nodejs",
+    "ruby",
+    "haskell"
   ],
   "links": [
     {
