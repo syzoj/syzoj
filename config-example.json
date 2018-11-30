@@ -65,110 +65,25 @@
     "edit_contest_problem_list": 10,
     "edit_problem_tag_list": 10
   },
-  "languages": {
-    "cpp": {
-      "show": "C++",
-      "highlight": "cpp",
-      "version": "Clang 7.0.1",
-      "editor": "c_cpp"
-    },
-    "cpp11": {
-      "show": "C++ 11",
-      "highlight": "cpp",
-      "version": "Clang 7.0.1",
-      "editor": "c_cpp"
-    },
-    "cpp17": {
-      "show": "C++ 17",
-      "highlight": "cpp",
-      "version": "Clang 7.0.1",
-      "editor": "c_cpp"
-    },
-    "csharp": {
-      "show": "C#",
-      "highlight": "csharp",
-      "version": "Mono 5.16.0.220",
-      "editor": "csharp"
-    },
-    "c": {
-      "show": "C",
-      "highlight": "c",
-      "version": "Clang 7.0.1",
-      "editor": "c_cpp"
-    },
-    "vala": {
-      "show": "Vala",
-      "highlight": "vala",
-      "version": "Vala 0.40.8, Clang 7.0.1",
-      "editor": "vala"
-    },
-    "java": {
-      "show": "Java",
-      "highlight": "java",
-      "version": "OpenJDK 10.0.2",
-      "editor": "java"
-    },
-    "pascal": {
-      "show": "Pascal",
-      "highlight": "pascal",
-      "version": "Free Pascal 3.0.4",
-      "editor": "pascal"
-    },
-    "lua": {
-      "show": "Lua",
-      "highlight": "lua",
-      "version": "Lua 5.3.3",
-      "editor": "lua"
-    },
-    "luajit": {
-      "show": "LuaJIT",
-      "highlight": "lua",
-      "version": "LuaJIT 2.1.0",
-      "editor": "lua"
-    },
-    "python2": {
-      "show": "Python 2",
-      "highlight": "python",
-      "version": "PyPy 6.0.0 (Python 2.7.13)",
-      "editor": "python"
-    },
-    "python3": {
-      "show": "Python 3",
-      "highlight": "python",
-      "version": "PyPy 6.0.0 (Python 3.5.3)",
-      "editor": "python"
-    },
-    "nodejs": {
-      "show": "Node.js",
-      "highlight": "js",
-      "version": "10.14.0",
-      "editor": "javascript"
-    },
-    "ruby": {
-      "show": "Ruby",
-      "highlight": "ruby",
-      "version": "2.5.1",
-      "editor": "ruby"
-    },
-    "haskell": {
-      "show": "Haskell",
-      "highlight": "haskell",
-      "version": "GHC 8.6.2",
-      "editor": "haskell"
-    },
-    "ocaml": {
-      "show": "OCaml",
-      "highlight": "ocaml",
-      "version": "Ocaml 4.05.0",
-      "editor": "ocaml"
-    },
-    "vbnet": {
-      "show": "Visual Basic",
-      "highlight": "vbnet",
-      "version": "Mono 4.7",
-      "editor": "vbscript"
-    }
-  },
+  "enabled_languages": [
+    "cpp",
+    "cpp11",
+    "cpp17",
+    "csharp",
+    "c",
+    "vala",
+    "java",
+    "pascal",
+    "lua",
+    "luajit",
+    "python2",
+    "python3",
+    "nodejs",
+    "ruby",
+    "haskell",
+    "ocaml",
+    "vbnet"
+  ],
   "links": [
     {
       "title": "LibreOJ",

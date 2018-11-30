@@ -310,15 +310,15 @@ div[class*=ace_br] {
                 <div class="four wide column" style="margin-right: -25px; ">
                   <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <%
-                    let language = Object.getOwnPropertyNames(syzoj.config.languages).shift();
+                    let language = syzoj.config.enabled_languages;;
                     if (state) {
                       language = state.language;
                     } else if (lastLanguage) language = lastLanguage;
                     %>
-                    <% for (lang in syzoj.config.languages) { %>
-                      <a class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.config.languages[lang].editor %>">
-                        <%= syzoj.config.languages[lang].show %>
-                        <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= syzoj.config.languages[lang].version %></div>
+                    <% for (lang of syzoj.config.enabled_languages) { %>
+                      <a class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.languages[lang].editor %>">
+                        <%= syzoj.languages[lang].show %>
+                        <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= syzoj.languages[lang].version %></div>
                       </a>
                     <% } %>
                   </div>

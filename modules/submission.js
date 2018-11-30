@@ -147,7 +147,7 @@ app.get('/submission/:id', async (req, res) => {
 
     if (judge.problem.type !== 'submit-answer') {
       judge.codeLength = judge.code.length;
-      judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+      judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
     }
 
     displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);

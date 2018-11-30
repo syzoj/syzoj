@@ -38,8 +38,8 @@
           <div class="menu">
             <div class="item" data-value=""><b>不限</b></div>
             <div class="item" data-value="submit-answer"><b>提交答案</b></div>
-            <% for (let lang in syzoj.config.languages) { %>
-              <div class="item" data-value="<%= lang %>"><b><%= syzoj.config.languages[lang].show %></b></div>
+            <% for (let lang of syzoj.config.enabled_languages) { %>
+              <div class="item" data-value="<%= lang %>"><b><%= syzoj.languages[lang].show %></b></div>
             <% } %>
           </div>
         </div>
