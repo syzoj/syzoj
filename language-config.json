@@ -2,17 +2,29 @@
   "cpp": {
     "show": "C++",
     "highlight": "cpp",
-    "version": "Clang 7.0.1",
+    "version": "GCC 8.2.0",
     "editor": "c_cpp"
   },
   "cpp11": {
     "show": "C++ 11",
     "highlight": "cpp",
-    "version": "Clang 7.0.1",
+    "version": "GCC 8.2.0",
     "editor": "c_cpp"
   },
   "cpp17": {
     "show": "C++ 17",
+    "highlight": "cpp",
+    "version": "GCC 8.2.0",
+    "editor": "c_cpp"
+  },
+  "cpp11-clang": {
+    "show": "C++ 11 (Clang)",
+    "highlight": "cpp",
+    "version": "Clang 7.0.1",
+    "editor": "c_cpp"
+  },
+  "cpp17-clang": {
+    "show": "C++ 17 (Clang)",
     "highlight": "cpp",
     "version": "Clang 7.0.1",
     "editor": "c_cpp"
