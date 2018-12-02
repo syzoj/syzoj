@@ -17,6 +17,18 @@
     "version": "GCC 8.2.0",
     "editor": "c_cpp"
   },
+  "cpp-noilinux": {
+    "show": "C++ (NOI)",
+    "highlight": "cpp",
+    "version": "GCC 4.8.4 (NOILinux 1.4.1)",
+    "editor": "c_cpp"
+  },
+  "cpp11-noilinux": {
+    "show": "C++ 11 (NOI)",
+    "highlight": "cpp",
+    "version": "GCC 4.8.4 (NOILinux 1.4.1)",
+    "editor": "c_cpp"
+  },
   "cpp11-clang": {
     "show": "C++ 11 (Clang)",
     "highlight": "cpp",
@@ -29,17 +41,23 @@
     "version": "Clang 7.0.1",
     "editor": "c_cpp"
   },
-  "csharp": {
-    "show": "C#",
-    "highlight": "csharp",
-    "version": "Mono 5.16.0.220",
-    "editor": "csharp"
-  },
   "c": {
     "show": "C",
     "highlight": "c",
     "version": "Clang 7.0.1",
     "editor": "c_cpp"
+  },
+  "c-noilinux": {
+    "show": "C (NOI)",
+    "highlight": "c",
+    "version": "GCC 4.8.4 (NOILinux 1.4.1)",
+    "editor": "c_cpp"
+  },
+  "csharp": {
+    "show": "C#",
+    "highlight": "csharp",
+    "version": "Mono 5.16.0.220",
+    "editor": "csharp"
   },
   "vala": {
     "show": "Vala",
