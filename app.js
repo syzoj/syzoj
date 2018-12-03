@@ -11,6 +11,7 @@ const options = commandLineArgs(optionDefinitions);
 global.syzoj = {
   rootDir: __dirname,
   config: require('object-assign-deep')({}, require('./config-example.json'), require(options.config)),
+  languages: require('./language-config.json'),
   configDir: options.config,
   models: [],
   modules: [],

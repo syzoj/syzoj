@@ -5,7 +5,7 @@
   "db": {
     "database": "syzoj",
     "username": "syzoj",
-    "password": null,
+    "password": "@DATABASE_PASSWORD@",
     "host": "127.0.0.1"
   },
   "logo": {
@@ -65,112 +65,52 @@
     "edit_contest_problem_list": 10,
     "edit_problem_tag_list": 10
   },
-  "languages": {
-    "cpp": {
-      "show": "C++",
-      "highlight": "cpp",
-      "version": "GCC 5.4.0",
-      "editor": "c_cpp"
-    },
-    "cpp11": {
-      "show": "C++11",
-      "highlight": "cpp",
-      "version": "GCC 5.4.0",
-      "editor": "c_cpp"
-    },
-    "csharp": {
-      "show": "C#",
-      "highlight": "csharp",
-      "version": "MCS 4.8.0.0, Mono 4.8.0",
-      "editor": "csharp"
-    },
-    "c": {
-      "show": "C",
-      "highlight": "c",
-      "version": "GCC 5.4.0",
-      "editor": "c_cpp"
-    },
-    "vala": {
-      "show": "Vala",
-      "highlight": "vala",
-      "version": "Vala 0.30.1, GCC 5.4.0",
-      "editor": "vala"
-    },
-    "java": {
-      "show": "Java",
-      "highlight": "java",
-      "version": "GCC 5.4.0",
-      "editor": "java"
-    },
-    "pascal": {
-      "show": "Pascal",
-      "highlight": "pascal",
-      "version": "FPC 3.0.0",
-      "editor": "pascal"
-    },
-    "lua": {
-      "show": "Lua",
-      "highlight": "lua",
-      "version": "Lua 5.2.4",
-      "editor": "lua"
-    },
-    "luajit": {
-      "show": "LuaJIT",
-      "highlight": "lua",
-      "version": "LuaJIT 2.0.4",
-      "editor": "lua"
-    },
-    "python2": {
-      "show": "Python 2",
-      "highlight": "python",
-      "version": "CPython 2.7.12",
-      "editor": "python"
-    },
-    "python3": {
-      "show": "Python 3",
-      "highlight": "python",
-      "version": "CPython 3.5.2",
-      "editor": "python"
-    },
-    "nodejs": {
-      "show": "Node.js",
-      "highlight": "js",
-      "version": "7.7.3",
-      "editor": "javascript"
-    },
-    "ruby": {
-      "show": "Ruby",
-      "highlight": "ruby",
-      "version": "2.3.1",
-      "editor": "ruby"
-    },
-    "haskell": {
-      "show": "Haskell",
-      "highlight": "haskell",
-      "version": "GHC 7.10.3",
-      "editor": "haskell"
-    },
-    "ocaml": {
-      "show": "OCaml",
-      "highlight": "ocaml",
-      "version": "Ocamlbuild 4.02.3",
-      "editor": "ocaml"
-    },
-    "vbnet": {
-      "show": "Visual Basic",
-      "highlight": "vbnet",
-      "version": "VBNC 0.0.0.5943, Mono 4.8.0",
-      "editor": "vbscript"
-    }
-  },
+  "enabled_languages": [
+    "cpp",
+    "cpp11",
+    "cpp17",
+    "cpp-noilinux",
+    "cpp11-noilinux",
+    "cpp11-clang",
+    "cpp17-clang",
+    "c",
+    "c-noilinux",
+    "csharp",
+    "java",
+    "pascal",
+    "python2",
+    "python3",
+    "nodejs",
+    "ruby",
+    "haskell"
+  ],
+  "filter_enabled_languages": [
+    "cpp",
+    "cpp11",
+    "cpp17",
+    "cpp-noilinux",
+    "cpp11-noilinux",
+    "cpp11-clang",
+    "cpp17-clang",
+    "c",
+    "c-noilinux",
+    "csharp",
+    "java",
+    "pascal",
+    "python2",
+    "python3",
+    "nodejs",
+    "ruby",
+    "haskell"
+  ],
   "links": [
     {
       "title": "LibreOJ",
       "url": "https://loj.ac/"
     }
   ],
-  "session_secret": "233",
+  "session_secret": "@SESSION_SECRET@",
   "rabbitMQ": "amqp://localhost/",
-  "email_jwt_secret": "test",
+  "email_jwt_secret": "@EMAIL_JWT_SECRET@",
   "google_analytics": "UA-XXXXXXXX-X"
 }

@@ -5,11 +5,11 @@
     <div style="font-content">
         <h2 class="ui header">评测</h2>
         <p>
-            C++ 使用 <code>g++</code> 编译，命令为 &nbsp;<code>g++ source_file.cpp -o exec_file -O2 -lm -DONLINE_JUDGE -mx32</code>；
-            <br> C 使用 <code>gcc</code> 编译，命令为 &nbsp;<code>gcc source_file.c -o exec_file -O2 -lm -DONLINE_JUDGE -mx32</code>；
+            C++ 使用 <code>clang++</code> 或 <code>g++</code> 编译，命令形如 &nbsp;<code>clang++/g++ source_file.cpp -o exec_file -O2 -lm -DONLINE_JUDGE -mx32 -std=c++03</code>（对于 C++ 11 和 C++ 17，替换命令中的 <code>-std=</code> 参数）；
+            <br> C 使用 <code>clang</code> 编译，命令为 &nbsp;<code>clang source_file.c -o exec_file -O2 -lm -DONLINE_JUDGE -mx32</code>；
             <br> Pascal 使用 <code>fpc</code> 编译，命令为 &nbsp;<code>fpc source_file.pas -O2</code>。
             <br> Java 编译时会自动检测您的代码中 <code>public class</code>，如果您的代码中没有 <code>public class</code>，请将入口类命名为 <code>Main</code>。
-            <br> C# 与 Visual Basic 使用 Mono 平台的编译器与运行环境。
+            <br> C# 使用 Mono 平台的编译器与运行环境。
             <br>
         </p>
         <p>请根据题目中的说明选择使用<strong>标准输入输出</strong>或<strong>文件输入输出</strong>。</p>
@@ -82,7 +82,7 @@
 <p>Special Judge 程序运行时，其目录下会有四个文件 <code>input</code>、<code>user_out</code>、<code>answer</code>、<code>code</code>，分别对应该测试点的输入文件、用户输出、该测试点的输出文件、用户的代码（对于非提交答案题目）。</p>
 <p>Special Judge 程序运行完成后，应将该测试点的得分输出到标准输出（<code>stdout</code>）中（范围为 <code>0</code> 到 <code>100</code>，将自动折合为测试点分数），并将提供给用户的额外信息输出到标准错误输出（<code>stderr</code>）中。</p>
 <h4>语言简称</h4>
-<p>配置数据时，描述 Special Judge 或交互器的语言时使用语言的简称，它们是 <code>c</code>、<code>cpp</code>、<code>cpp11</code>、<code>csharp</code>、<code>haskell</code>、<code>java</code>、<code>lua</code>、<code>luajit</code>、<code>nodejs</code>、<code>pascal</code>、<code>python2</code>、<code>python3</code>、<code>ruby</code>、<code>vala</code>、<code>vbnet</code>、<code>ocaml</code>。</p>
+<p>配置数据时，描述 Special Judge 或交互器的语言时使用语言的简称，它们是 <code>c</code>、<code>cpp</code>、<code>cpp11</code>、<code>cpp17</code>、<code>cpp11-clang</code>、<code>cpp17-clang</code>、<code>csharp</code>、<code>haskell</code>、<code>java</code>、<code>nodejs</code>、<code>pascal</code>、<code>python2</code>、<code>python3</code>、<code>ruby</code>。</p>
     </div>
 </div>
 <% include footer %>

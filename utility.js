@@ -34,36 +34,6 @@ module.exports = {
     return path.resolve.apply(null, a);
   },
   markdown(obj, keys, noReplaceUI) {
-    let XSS = require('xss');
-    let CSSFilter = require('cssfilter');
-    let whiteList = Object.assign({}, require('xss/lib/default').whiteList);
-    delete whiteList.audio;
-    delete whiteList.video;
-    for (let tag in whiteList) whiteList[tag] = whiteList[tag].concat(['style', 'class']);
-    let xss = new XSS.FilterXSS({
-      css: {
-        whiteList: Object.assign({}, require('cssfilter/lib/default').whiteList, {
-          'vertical-align': true,
-          top: true,
-          bottom: true,
-          left: true,
-          right: true,
-          "white-space": true
-        })
-      },
-      whiteList: whiteList,
-      stripIgnoreTag: true,
-      onTagAttr: (tag, name, value, isWhiteAttr) => {
-        if (tag.toLowerCase() === 'img' && name.toLowerCase() === 'src' && value.startsWith('data:image/')) return name + '="' + XSS.escapeAttrValue(value) + '"';
-      }
-    });
-    let replaceXSS = s => {
-      s = xss.process(s);
-      if (s) {
-        s = `<div style="position: relative; overflow: hidden; ">${s}</div>`;
-      }
-      return s;
-    };
     let replaceUI = s => {
       if (noReplaceUI) return s;
 
@@ -90,13 +60,13 @@ module.exports = {
       if (!keys) {
         if (!obj || !obj.trim()) resolve("");
         else markdownRenderer(obj, s => {
-            resolve(replaceUI(replaceXSS(s)));
+            resolve(replaceUI(s));
         });
       } else {
         let res = obj, cnt = keys.length;
         for (let key of keys) {
           markdownRenderer(res[key], (s) => {
-            res[key] = replaceUI(replaceXSS(s));
+            res[key] = replaceUI(s);
             if (!--cnt) resolve(res);
           });
         }
@@ -121,8 +91,8 @@ module.exports = {
     }
     return sgn + util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
   },
-  formatSize(x) {
-    let res = filesize(x, { fixed: 1 }).calculate();
+  formatSize(x, precision) {
+    let res = filesize(x, { fixed: precision || 1 }).calculate();
     if (res.result === parseInt(res.result)) res.fixed = res.result.toString();
     if (res.suffix.startsWith('Byte')) res.suffix = 'B';
     else res.suffix = res.suffix.replace('iB', '');

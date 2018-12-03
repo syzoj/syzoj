@@ -4,17 +4,17 @@
 <script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
 
 <script>
-const submissionUrl = <%- JSON.stringify(displayConfig.inContest ? 
+const submissionUrl = <%- JSON.stringify(displayConfig.inContest ?
   syzoj.utils.makeUrl(['contest', 'submission', 'VanDarkholme']) :
   syzoj.utils.makeUrl(['submission', 'VanDarkholme'])) %>;
-const problemUrl = <%- JSON.stringify(displayConfig.inContest ? 
+const problemUrl = <%- JSON.stringify(displayConfig.inContest ?
   syzoj.utils.makeUrl(['contest', contest.id, 'problem', 'VanDarkholme']) :
   syzoj.utils.makeUrl(['problem', 'VanDarkholme'])) %>;
 const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', 'VanDarkholme'])) %>;
 
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
-  props: ['data', 'config', 'showRejudge'],
+  props: ['data', 'config', 'showRejudge', 'progress'],
   computed: {
     statusString() {
       const data = this.data;
@@ -57,9 +57,9 @@ Vue.component('submission-item', {
   <% } %>
   <td ref="problemLabel"><a ref="problemLabelTextFit" style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;" :href="problemLink"><b>#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}.</b> {{ data.info.problemName }}</a></td>
   <% if (active === 'submissions') { %>
-  <td><a :href="submissionLink"><b><status-label :status="statusString"></status-label></b></a></td>
+  <td><a :href="submissionLink"><b><status-label :status="statusString" :progress="progress"></status-label></b></a></td>
   <% } else { %>
-  <td><b><status-label :status="statusString"></status-label></b></td>
+  <td><b><status-label :status="statusString" :progress="progress"></status-label></b></td>
   <% } %>
 
   <template v-if="data.result">
@@ -69,7 +69,13 @@ Vue.component('submission-item', {
   <td v-if="config.showScore"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></td>
   <% } %>
   <td v-if="config.showUsage">{{ (data.result.time || 0).toString() + ' ms' }}</td>
-  <td v-if="config.showUsage">{{ (data.result.memory || 0).toString() + ' KiB' }}</td>
+
+  <% if (active === 'submissions') { %>
+  <td v-if="config.showUsage">{{ data.result.memory }}</td>
+  <% } else { %>
+  <td v-if="config.showUsage">{{ (data.result.precise_memory || 0).toString() + ' K'}}</td>
+  <% } %>
+
   </template> <template v-else>
   <td v-if="config.showScore"/> <td v-if="config.showUsage"/> <td v-if="config.showUsage"/>
   </template>

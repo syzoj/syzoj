@@ -1,4 +1,5 @@
-# SYZOJ 2
+<p align="center"><img src="static/syzoj.svg" width="250"></p>
+
 中文 | [English](README.en.md)
 
 一个用于算法竞赛的在线评测系统。

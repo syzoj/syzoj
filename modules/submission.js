@@ -71,9 +71,9 @@ app.get('/submissions', async (req, res) => {
       if (req.query.problem_id) {
         let problem_id = parseInt(req.query.problem_id);
         let problem = await Problem.fromID(problem_id);
-        if(!problem)
+        if (!problem)
           throw new ErrorMessage("无此题目。");
-        if(await problem.isAllowedUseBy(res.locals.user)) {
+        if (await problem.isAllowedUseBy(res.locals.user)) {
           where.problem_id = {
             $and: [
               { $eq: where.problem_id = problem_id }
@@ -90,6 +90,8 @@ app.get('/submissions', async (req, res) => {
     } else {
       if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id) || -1;
     }
+
+    let isFiltered = !!(where.problem_id || where.user_id || where.score || where.language || where.status);
 
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['id', 'desc']], true);
@@ -112,6 +114,7 @@ app.get('/submissions', async (req, res) => {
       pushType: 'rough',
       form: req.query,
       displayConfig: displayConfig,
+      isFiltered: isFiltered
     });
   } catch (e) {
     syzoj.log(e);
@@ -144,7 +147,7 @@ app.get('/submission/:id', async (req, res) => {
 
     if (judge.problem.type !== 'submit-answer') {
       judge.codeLength = judge.code.length;
-      judge.code = await syzoj.utils.highlight(judge.code, syzoj.config.languages[judge.language].highlight);
+      judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
     }
 
     displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);

@@ -47,7 +47,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr is="submission-item" v-bind:data="roughData" :config="displayConfig" :show-rejudge="showRejudge"></tr>
+      <tr is="submission-item" v-bind:data="roughData" :config="displayConfig" :show-rejudge="showRejudge" :progress="getProgress()"></tr>
     </tbody>
   </table>
 
@@ -64,7 +64,7 @@
             子任务 #{{ $index + 1 }}
           </div>
           <div class="four wide column">
-            <status-label :status="getSubtaskResult(subtask)" :indetail="true"></status-label>
+            <status-label :status="getSubtaskResult(subtask)" :indetail="true" :progress="getProgress($index)"></status-label>
           </div>
           <div class="three wide column" v-if="subtask.score != null">
             得分：<span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
@@ -74,7 +74,7 @@
       <div class="content" :class="singleSubtask ? 'active' : ''">
         <div class="accordion">
           <template v-for="curCase, $caseIndex in subtask.cases">
-            <div class="title">
+            <div class="title" :class="checkTestcaseOK(curCase) ? '' : 'unexpandable'">
               <div class="ui grid">
                 <div class="three wide column">
                     <i class="dropdown icon"></i>
@@ -234,10 +234,38 @@ const vueApp = new Vue({
     },
     checkTestcaseOK(c) {
       return c.status === TaskStatus.Done;
+    },
+    getProgress(i) {
+      if (!this.detailResult || !this.detailResult.judge || !this.detailResult.judge.subtasks) return {
+        finished: 0,
+        total: 0
+      };
+
+      let isPending = status => [TaskStatus.Waiting, TaskStatus.Running].includes(status);
+      let subtaskProgress = [], allFinished = 0, allTotal = 0;
+      for (let i in this.detailResult.judge.subtasks) {
+        let subtaskFinished = 0, subtaskTotal = 0;
+        for (let j in this.detailResult.judge.subtasks[i].cases) {
+          subtaskTotal++, allTotal++;
+          if (!isPending(this.detailResult.judge.subtasks[i].cases[j].status)) subtaskFinished++, allFinished++;
+        }
+
+        subtaskProgress.push({
+          finished: subtaskFinished,
+          total: subtaskTotal
+        });
+      }
+
+      let allProgress = {
+        finished: allFinished,
+        total: allTotal
+      };
+
+      return typeof i === 'undefined' ? allProgress : subtaskProgress[i];
     }
   },
   mounted() {
-    $(document).ready(function(){ $('.ui.accordion').accordion()});
+    $(document).ready(function(){ $('.ui.accordion').accordion({ selector: { trigger: '.title:not(.unexpandable)' } })});
   },
   updated() {
     $('.ui.accordion').accordion("refresh");

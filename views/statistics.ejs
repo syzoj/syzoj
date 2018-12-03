@@ -83,7 +83,7 @@ function getColorOfScore(score) {
               <% if (problem.type !== 'submit-answer') { %>
                 <td><%= judge.total_time %> ms</td>
                 <td><%= parseInt(judge.max_memory) || 0 %> K</td>
-                <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.config.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+                <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
               <% } else { %>
                 <td><%= syzoj.utils.formatSize(judge.max_memory) %></td>
               <% } %>
