@@ -3,55 +3,64 @@
     "show": "C++",
     "highlight": "cpp",
     "version": "GCC 8.2.0",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "cpp11": {
     "show": "C++ 11",
     "highlight": "cpp",
     "version": "GCC 8.2.0",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "cpp17": {
     "show": "C++ 17",
     "highlight": "cpp",
     "version": "GCC 8.2.0",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "cpp-noilinux": {
     "show": "C++ (NOI)",
     "highlight": "cpp",
     "version": "GCC 4.8.4 (NOILinux 1.4.1)",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "cpp11-noilinux": {
     "show": "C++ 11 (NOI)",
     "highlight": "cpp",
     "version": "GCC 4.8.4 (NOILinux 1.4.1)",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "cpp11-clang": {
     "show": "C++ 11 (Clang)",
     "highlight": "cpp",
     "version": "Clang 7.0.1",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "cpp17-clang": {
     "show": "C++ 17 (Clang)",
     "highlight": "cpp",
     "version": "Clang 7.0.1",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "cpp"
   },
   "c": {
     "show": "C",
     "highlight": "c",
     "version": "Clang 7.0.1",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "c"
   },
   "c-noilinux": {
     "show": "C (NOI)",
     "highlight": "c",
     "version": "GCC 4.8.4 (NOILinux 1.4.1)",
-    "editor": "c_cpp"
+    "editor": "c_cpp",
+    "format": "c"
   },
   "csharp": {
     "show": "C#",
@@ -69,13 +78,15 @@
     "show": "Java",
     "highlight": "java",
     "version": "OpenJDK 10.0.2",
-    "editor": "java"
+    "editor": "java",
+    "format": "java"
   },
   "pascal": {
     "show": "Pascal",
     "highlight": "pascal",
     "version": "Free Pascal 3.0.4",
-    "editor": "pascal"
+    "editor": "pascal",
+    "format": "pas"
   },
   "lua": {
     "show": "Lua",
@@ -105,7 +116,8 @@
     "show": "Node.js",
     "highlight": "js",
     "version": "10.14.0",
-    "editor": "javascript"
+    "editor": "javascript",
+    "format": "js"
   },
   "ruby": {
     "show": "Ruby",

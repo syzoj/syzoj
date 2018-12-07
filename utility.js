@@ -98,6 +98,12 @@ module.exports = {
     else res.suffix = res.suffix.replace('iB', '');
     return res.fixed + ' ' + res.suffix;
   },
+  getFormattedCodeKey(code, lang) {
+    if (syzoj.languages[lang].format) {
+      return syzoj.languages[lang].format + '\n' + syzoj.utils.md5(code);
+    }
+    return null;
+  },
   judgeServer(suffix) {
     return JSON.stringify(url.resolve(syzoj.config.judge_server_addr, suffix));
   },

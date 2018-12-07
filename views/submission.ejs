@@ -51,7 +51,18 @@
     </tbody>
   </table>
 
-  <code-box :escape="false" v-bind:content="code"></code-box>
+  <code-box :escape="false" v-bind:content="code">
+    <% if (formattedCode !== null) { %>
+      <a onclick="toggleFormattedCode()" class="ui button" style="position: absolute; top: 0px; right: -4px; border-top-left-radius: 0; border-bottom-right-radius: 0; ">
+        <template v-if="currentFormatted">
+          显示原始代码
+        </template>
+        <template v-if="!currentFormatted">
+          格式化代码
+        </template>
+      </a>
+    <% } %>
+  </code-box>
   <code-box v-if="detailResult && detailResult.compile" :escape="false" title="编译信息" v-bind:content="detailResult.compile.message"></code-box>
   <code-box v-if="detailResult" title="系统信息" :escape="true" v-bind:content="detailResult.systemMessage"></code-box>
 
@@ -125,6 +136,7 @@
            <strong v-html="title"></strong>
         </p>
         <div class="ui existing segment">
+          <slot></slot>
           <pre v-if="escape" style="margin-top: 0; margin-bottom: 0; "><code>{{ content }}</code></pre>
           <pre v-if="!escape" style="margin-top: 0; margin-bottom: 0; "><code v-html="content"></code></pre>
         </div>
@@ -134,7 +146,7 @@
 <script>
 Vue.component("code-box", {
     template: "#codeBoxTemplate",
-    props: ['title', 'content', 'escape'],
+    props: ['title', 'content', 'escape']
 });
 const socketUrl = "/detail";
 const displayConfig = <%- JSON.stringify(displayConfig) %>;
@@ -175,6 +187,19 @@ const TaskStatus = {};
     TaskStatus[TaskStatus["Skipped"] = 4] = "Skipped";
 })(TaskStatus);
 
+const unformattedCode = <%- JSON.stringify(code) %>;
+const formattedCode = <%- JSON.stringify(formattedCode) %>;
+
+function toggleFormattedCode() {
+  if (vueApp.currentFormatted) {
+    vueApp.currentFormatted = false;
+    vueApp.code = unformattedCode;
+  } else {
+    vueApp.currentFormatted = true;
+    vueApp.code = formattedCode;
+  }
+}
+
 const vueApp = new Vue({
   el: '#vueAppFuckSafari',
   data: {
@@ -184,7 +209,8 @@ const vueApp = new Vue({
       running: false,
       displayConfig: displayConfig
     },
-    code: <%- JSON.stringify(code) %>,
+    code: <%- JSON.stringify(preferFormattedCode && formattedCode !== null) -%> ? formattedCode : unformattedCode,
+    currentFormatted: <%- JSON.stringify(preferFormattedCode && formattedCode !== null) -%>,
     detailResult: <%- JSON.stringify(detailResult) %>,
     displayConfig: displayConfig,
   },

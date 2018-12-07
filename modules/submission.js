@@ -1,4 +1,5 @@
 let JudgeState = syzoj.model('judge_state');
+let FormattedCode = syzoj.model('formatted_code');
 let User = syzoj.model('user');
 let Contest = syzoj.model('contest');
 let Problem = syzoj.model('problem');
@@ -147,6 +148,19 @@ app.get('/submission/:id', async (req, res) => {
 
     if (judge.problem.type !== 'submit-answer') {
       judge.codeLength = judge.code.length;
+
+      let key = syzoj.utils.getFormattedCodeKey(judge.code, judge.language);
+      if (key) {
+        let formattedCode = await FormattedCode.findOne({
+          where: {
+            key: key
+          }
+        });
+
+        if (formattedCode) {
+          judge.formattedCode = await syzoj.utils.highlight(formattedCode.code, syzoj.languages[judge.language].highlight);
+        }
+      }
       judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
     }
 
@@ -155,6 +169,8 @@ app.get('/submission/:id', async (req, res) => {
       info: getSubmissionInfo(judge, displayConfig),
       roughResult: getRoughResult(judge, displayConfig),
       code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
+      formattedCode: judge.formattedCode ? judge.formattedCode.toString("utf8") : null,
+      preferFormattedCode: res.locals.user ? res.locals.user.prefer_formatted_code : false,
       detailResult: processOverallResult(judge.result, displayConfig),
       socketToken: (judge.pending && judge.task_id != null) ? jwt.sign({
         taskId: judge.task_id,

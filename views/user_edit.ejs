@@ -32,6 +32,13 @@
           <label>　</label>
         </div>
 	    </div>
+      <div class="inline field">
+        <label class="ui header">默认显示格式化后的代码（如果可用）</label>
+        <div class="ui toggle checkbox">
+          <input id="prefer_formatted_code" name="prefer_formatted_code" type="checkbox" <% if (edited_user.prefer_formatted_code) { %> checked<% } %>>
+          <label>　</label>
+        </div>
+	    </div>
 	    <div class="field">
 	    	<label for="information">个性签名</label>
 	    	<textarea class="font-content" rows="5" id="information" name="information"><%= edited_user.information %></textarea>

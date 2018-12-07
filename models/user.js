@@ -17,6 +17,7 @@ let model = db.define('user', {
   is_admin: { type: Sequelize.BOOLEAN },
   is_show: { type: Sequelize.BOOLEAN },
   public_email: { type: Sequelize.BOOLEAN },
+  prefer_formatted_code: { type: Sequelize.BOOLEAN },
 
   sex: { type: Sequelize.INTEGER },
   rating: { type: Sequelize.INTEGER },
@@ -65,7 +66,7 @@ class User extends Model {
       }
     }));
   }
-  
+
   static async fromName(name) {
     return User.fromRecord(User.model.findOne({
       where: {
