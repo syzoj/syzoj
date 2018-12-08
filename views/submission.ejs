@@ -294,7 +294,7 @@ const vueApp = new Vue({
     $(document).ready(function(){ $('.ui.accordion').accordion({ selector: { trigger: '.title:not(.unexpandable)' } })});
   },
   updated() {
-    $('.ui.accordion').accordion("refresh");
+    $('.ui.accordion').off().accordion({ selector: { trigger: '.title:not(.unexpandable)' } });
   }
 });
 if (token != null) {
