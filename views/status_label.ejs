@@ -39,8 +39,8 @@ Vue.component('status-label', {
 <script type="text/x-template" id="statusIconTemplate">
   <span class="status" :class="colorClass">
     <i class="icon" :class="icon"></i>
-    <template v-if="['Running', 'Waiting'].includes(status) && progress">
-      <span style="display: inline-block; width: 58px; ">{{ status }}</span>{{ progress.finished }}/{{ progress.total }}
+    <template v-if="['Running', 'Waiting'].includes(status) && progress && progress.total">
+      <span style="text-align: left; display: inline-block; width: 58px; ">{{ status }}</span>{{ progress.finished }}/{{ progress.total }}
     </template>
     <template v-else>
       {{ status }}
