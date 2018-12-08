@@ -10,6 +10,7 @@ const iconList = {
   'File Error': 'file outline',
   'Waiting': 'hourglass half',
   'Running': 'spinner',
+  'Compiling': 'spinner',
   'Compile Error': 'code',
   'Submitted': 'checkmark', // NOI contests
   'System Error': 'server',
@@ -31,10 +32,6 @@ Vue.component('status-label', {
     },
     colorClass() {
       return (this.indetail ? 'status_detail ' : '') + this.status.toLowerCase().split(' ').join('_');
-    },
-    outputStatus() {
-      if (this.status === 'Running' && this.progress) return 'Running ' + this.progress.finished + '/' + this.progress.total;
-      else return this.status;
     }
   }
 })
@@ -42,6 +39,11 @@ Vue.component('status-label', {
 <script type="text/x-template" id="statusIconTemplate">
   <span class="status" :class="colorClass">
     <i class="icon" :class="icon"></i>
-    {{ outputStatus }}
+    <template v-if="['Running', 'Waiting'].includes(status) && progress">
+      <span style="display: inline-block; width: 58px; ">{{ status }}</span>{{ progress.finished }}/{{ progress.total }}
+    </template>
+    <template v-else>
+      {{ status }}
+    </template>
   </span>
 </script>

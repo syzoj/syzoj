@@ -232,6 +232,13 @@ exports.updateCompileStatus = updateCompileStatus;
 function updateProgress(taskId, data) {
     winston.verbose(`Updating progress for #${taskId}`);
     currentJudgeList[taskId] = data;
+    const finalResult = judgeResult.convertResult(taskId, data);
+    const roughResult = {
+        result: "Running",
+        time: finalResult.time,
+        memory: finalResult.memory,
+        score: finalResult.score
+    };
     forAllClients(detailProgressNamespace, taskId, (client) => {
         winston.debug(`Pushing progress update to ${client}`);
         if (clientDetailProgressList[client] && clientDisplayConfigList[client]) {
@@ -242,7 +249,8 @@ function updateProgress(taskId, data) {
                 taskId: taskId,
                 from: version,
                 to: version + 1,
-                delta: diff.diff(original, updated)
+                delta: diff.diff(original, updated),
+                roughResult: roughResult
             });
             clientDetailProgressList[client].version++;
         }

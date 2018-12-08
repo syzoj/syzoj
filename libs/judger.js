@@ -48,6 +48,11 @@ async function connect () {
                 judge_state.result = convertedResult.result;
                 await judge_state.save();
                 await judge_state.updateRelatedInfo();
+            } else if(data.type === interface.ProgressReportType.Progress) {
+                if(!judge_state) return;
+                judge_state.score = convertedResult.score;
+                judge_state.total_time = convertedResult.time;
+                judge_state.max_memory = convertedResult.memory;
             } else if(data.type == interface.ProgressReportType.Compiled) {
                 if(!judge_state) return;
                 judge_state.compilation = data.progress;

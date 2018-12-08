@@ -6,7 +6,7 @@ const getSubmissionInfo = (s, displayConfig) => ({
     problemName: s.problem.title,
     problemId: s.problem_id,
     language: displayConfig.showCode ? ((s.language != null && s.language !== '') ? syzoj.languages[s.language].show : null) : null,
-    codeSize: displayConfig.showCode ? syzoj.utils.formatSize(s.code_length) : null,
+    codeSize: displayConfig.showCode ? s.code_length : null,
     submitTime: syzoj.utils.formatDate(s.submit_time),
 });
 
@@ -18,8 +18,7 @@ const getRoughResult = (x, displayConfig) => {
             return {
                 result: x.status,
                 time: displayConfig.showUsage ? x.total_time : null,
-                memory: displayConfig.showUsage ? syzoj.utils.formatSize((x.max_memory * 1024) || 0, 2) : null,
-                precise_memory: displayConfig.showUsage ? x.max_memory : null,
+                memory: displayConfig.showUsage ? x.max_memory : null,
                 score: displayConfig.showScore ? x.score : null
             };
         }

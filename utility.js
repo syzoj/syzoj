@@ -92,11 +92,11 @@ module.exports = {
     return sgn + util.format('%s:%s:%s', toStringWithPad(x / 3600), toStringWithPad(x / 60 % 60), toStringWithPad(x % 60));
   },
   formatSize(x, precision) {
-    let res = filesize(x, { fixed: precision || 1 }).calculate();
-    if (res.result === parseInt(res.result)) res.fixed = res.result.toString();
-    if (res.suffix.startsWith('Byte')) res.suffix = 'B';
-    else res.suffix = res.suffix.replace('iB', '');
-    return res.fixed + ' ' + res.suffix;
+      if (typeof x !== 'number') return '0 B';
+      let unit = 'B', units = ['K', 'M', 'G', 'T'];
+      for (let i in units) if (x > 1024) x /= 1024, unit = units[i];
+      var fixed = x === Math.round(x) ? x.toString() : x.toFixed(precision);
+      return fixed + ' ' + unit;
   },
   getFormattedCodeKey(code, lang) {
     if (syzoj.languages[lang].format) {

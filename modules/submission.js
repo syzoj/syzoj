@@ -97,7 +97,10 @@ app.get('/submissions', async (req, res) => {
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['id', 'desc']], true);
 
-    await judge_state.forEachAsync(async obj => obj.loadRelationships());
+    await judge_state.forEachAsync(async obj => {
+      await obj.loadRelationships();
+      obj.code_length = obj.code.length;
+    })
 
     res.render('submissions', {
       // judge_state: judge_state,
@@ -147,7 +150,7 @@ app.get('/submission/:id', async (req, res) => {
     await judge.loadRelationships();
 
     if (judge.problem.type !== 'submit-answer') {
-      judge.codeLength = judge.code.length;
+      judge.code_length = judge.code.length;
 
       let key = syzoj.utils.getFormattedCodeKey(judge.code, judge.language);
       if (key) {
