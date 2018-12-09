@@ -29,7 +29,7 @@ global.syzoj = {
 
     app.server = require('http').createServer(app);
 
-    if (module.parent) {
+    if (!module.parent) {
       // Loaded by `require()`, not node CLI.
       app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
         this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
