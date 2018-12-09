@@ -28,9 +28,13 @@ global.syzoj = {
     winstonLib.configureWinston(!syzoj.production);
 
     app.server = require('http').createServer(app);
-    app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
-      this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
-    });
+
+    if (module.parent) {
+      // Loaded by `require()`, not node CLI.
+      app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
+        this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
+      });
+    }
 
     // Set assets dir
     app.use(Express.static(__dirname + '/static', { maxAge: syzoj.production ? '1y' : 0 }));
