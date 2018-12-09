@@ -67,7 +67,9 @@ global.syzoj = {
     })());
 
     await this.connectDatabase();
-    await this.lib('judger').connect();
+    if (!module.parent) {
+      await this.lib('judger').connect();
+    }
     this.loadModules();
   },
   async connectDatabase() {
