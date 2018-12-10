@@ -145,6 +145,10 @@ body > .ui.page.dimmer {
     color: grey;
 }
 
+:not(.status_detail).status.unknown {
+    color: #e28989;
+}
+
 :not(.status_detail).status.running,
 .title:hover .status_detail.status.running,
 .title.active .status_detail.status.running,
