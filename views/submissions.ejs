@@ -38,6 +38,7 @@
           <div class="menu">
             <div class="item" data-value=""><b>不限</b></div>
             <div class="item" data-value="submit-answer"><b>提交答案</b></div>
+            <div class="item" data-value="non-submit-answer"><b>非提交答案</b></div>
             <% for (let lang of syzoj.config.filter_enabled_languages) { %>
               <div style="font-size: 12.5px; " class="item" data-value="<%= lang %>"><b><%= syzoj.languages[lang].show %></b></div>
             <% } %>

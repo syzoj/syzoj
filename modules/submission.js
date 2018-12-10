@@ -63,7 +63,8 @@ app.get('/submissions', async (req, res) => {
     }
 
     if (req.query.language) {
-      if (req.query.language === 'submit-answer') where.language = '';
+      if (req.query.language === 'submit-answer') where.language = { $or: [{ $eq: '',  }, { $eq: null }] };
+      else if (req.query.language === 'non-submit-answer') where.language = { $not: '' };
       else where.language = req.query.language;
     }
     if (req.query.status) where.status = { $like: req.query.status + '%' };

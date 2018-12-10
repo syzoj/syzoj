@@ -354,7 +354,8 @@ app.post('/admin/rejudge', async (req, res) => {
     };
 
     if (req.body.language) {
-      if (req.body.language === 'submit-answer') where.language = '';
+      if (req.body.language === 'submit-answer') where.language = { $or: [{ $eq: '',  }, { $eq: null }] };
+      else if (req.body.language === 'non-submit-answer') where.language = { $not: '' };
       else where.language = req.body.language;
     }
     if (req.body.status) where.status = { $like: req.body.status + '%' };

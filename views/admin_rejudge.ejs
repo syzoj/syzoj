@@ -17,10 +17,11 @@
         <i class="dropdown icon"></i>
         <div class="default text"></div>
         <div class="menu">
-          <div class="item" data-value="">不限</div>
-          <div class="item" data-value="submit-answer">提交答案</div>
+          <div class="item" data-value=""><b>不限</b></div>
+          <div class="item" data-value="submit-answer"><b>提交答案</b></div>
+          <div class="item" data-value="non-submit-answer"><b>非提交答案</b></div>
           <% for (let lang of syzoj.config.filter_enabled_languages) { %>
-            <div class="item" data-value="<%= lang %>"><%= syzoj.languages[lang].show %></div>
+            <div class="item" data-value="<%= lang %>"><b><%= syzoj.languages[lang].show %></b></div>
           <% } %>
         </div>
       </div>
@@ -32,10 +33,10 @@
         <i class="dropdown icon"></i>
         <div class="default text"></div>
         <div class="menu">
-          <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
+          <div class="item" data-value=""><b>不限</b><i class="dropdown icon" style="visibility: hidden; "></i></div>
           <% for (let status in this.icon) { %>
             <% if (this.iconHidden.includes(status)) continue; %>
-            <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <%= status %></div>
+            <div class="item" data-value="<%= status === 'Pending' ? 'Waiting' : status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <b><%= status %></b></div>
           <% } %>
         </div>
       </div>
