@@ -55,7 +55,7 @@
               <div class="item" data-value=""><b>不限</b><i class="dropdown icon" style="visibility: hidden; "></i></div>
               <% for (let status in this.icon) { %>
                 <% if (this.iconHidden.includes(status)) continue; %>
-                <div class="item" data-value="<%= status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <b><%= status %></b></div>
+                <div class="item" data-value="<%= status === 'Pending' ? 'Waiting' : status %>"><span class="status <%= status.toLowerCase().split(' ').join('_') %>"><i class="<%= this.icon[status] %> icon"></i> <b><%= status %></b></div>
               <% } %>
             </div>
           </div>
@@ -96,7 +96,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="item in items" :config="displayConfig" :show-rejudge="false" :data="item" is='submission-item'>
+      <tr v-for="item in items" :config="displayConfig" :show-rejudge="false" :data="item" is='submission-item' :rough="true">
       </tr>
     </tbody>
   </table>

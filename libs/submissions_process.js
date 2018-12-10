@@ -1,3 +1,5 @@
+const { getCachedJudgeState } = require('./judger');
+
 const getSubmissionInfo = (s, displayConfig) => ({
     submissionId: s.id,
     taskId: s.task_id,
@@ -10,10 +12,18 @@ const getSubmissionInfo = (s, displayConfig) => ({
     submitTime: syzoj.utils.formatDate(s.submit_time),
 });
 
-const getRoughResult = (x, displayConfig) => {
+const getRoughResult = (x, displayConfig, roughOnly) => {
     if (displayConfig.showResult) {
         if (x.pending) {
-            return null;
+            let res = getCachedJudgeState(x.task_id) || null
+            if (!res) return null;
+
+            if (roughOnly) {
+              res.result = 'Judging';
+              res.time = res.memory = res.score = 0;
+            }
+
+            return res;
         } else {
             return {
                 result: x.status,

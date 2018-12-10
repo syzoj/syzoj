@@ -20,7 +20,7 @@ const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', '20000528'])) %>
 
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
-  props: ['data', 'config', 'showRejudge', 'progress', 'compiling'],
+  props: ['data', 'config', 'showRejudge', 'progress', 'compiling', 'rough'],
   computed: {
     statusString() {
       const data = this.data;
@@ -28,6 +28,7 @@ Vue.component('submission-item', {
       if (data.result) {
         return data.result.result;
       } else if (data.running) {
+        if (this.rough) return 'Judging';
         if (this.compiling) return 'Compiling';
         return 'Running';
       } else return 'Waiting';

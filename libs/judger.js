@@ -13,6 +13,21 @@ let amqpConnection;
 let amqpSendChannel;
 let amqpConsumeChannel;
 
+const judgeStateCache = new Map();
+
+function getRunningTaskStatusString(result) {
+  let isPending = status => [0, 1].includes(status);
+  let allFinished = 0, allTotal = 0;
+  for (let subtask of result.judge.subtasks) {
+    for (let curr of subtask.cases) {
+      allTotal++;
+      if (!isPending(curr.status)) allFinished++;
+    }
+  }
+
+  return `Running ${allFinished}/${allTotal}`;
+}
+
 async function connect () {
     amqpConnection = await amqp.connect(syzoj.config.rabbitMQ);
     amqpSendChannel = await amqpConnection.createChannel();
@@ -48,11 +63,6 @@ async function connect () {
                 judge_state.result = convertedResult.result;
                 await judge_state.save();
                 await judge_state.updateRelatedInfo();
-            } else if(data.type === interface.ProgressReportType.Progress) {
-                if(!judge_state) return;
-                judge_state.score = convertedResult.score;
-                judge_state.total_time = convertedResult.time;
-                judge_state.max_memory = convertedResult.memory;
             } else if(data.type == interface.ProgressReportType.Compiled) {
                 if(!judge_state) return;
                 judge_state.compilation = data.progress;
@@ -60,6 +70,7 @@ async function connect () {
             } else {
                 winston.error("Unsupported result type: " + data.type);
             }
+
        })(msg).then(async() => {
             amqpConsumeChannel.ack(msg)
        }, async(err) => {
@@ -78,18 +89,35 @@ async function connect () {
         (async (result) => {
             if (result.type === interface.ProgressReportType.Started) {
                 socketio.createTask(result.taskId);
+                judgeStateCache.set(data.taskId, {
+                    result: 'Compiling',
+                    score: 0,
+                    time: 0,
+                    memory: 0
+                })
             } else if (result.type === interface.ProgressReportType.Compiled) {
                 socketio.updateCompileStatus(result.taskId, result.progress);
             } else if (result.type === interface.ProgressReportType.Progress) {
+                const convertedResult = judgeResult.convertResult(data.taskId, data.progress);
+                judgeStateCache.set(data.taskId, {
+                    result: getRunningTaskStatusString(data.progress),
+                    score: convertedResult.score,
+                    time: convertedResult.time,
+                    memory: convertedResult.memory
+                });
                 socketio.updateProgress(result.taskId, result.progress);
             } else if (result.type === interface.ProgressReportType.Finished) {
                 socketio.updateResult(result.taskId, result.progress);
+                setTimeout(() => {
+                  judgeStateCache.delete(result.taskId);
+                }, 5000);
             } else if (result.type === interface.ProgressReportType.Reported) {
                 socketio.cleanupProgress(result.taskId);
             }
         })(data).then(async() => {
             progressChannel.ack(msg)
         }, async(err) => {
+            console.log(err);
             winston.error('Error handling progress', err);
             progressChannel.nack(msg, false, false);
         });
@@ -144,3 +172,5 @@ module.exports.judge = async function (judge_state, problem, priority) {
 
     amqpSendChannel.sendToQueue('judge', msgPack.encode({ content: content, extraData: extraData }), { priority: priority });
 }
+
+module.exports.getCachedJudgeState = taskId => judgeStateCache.get(taskId);

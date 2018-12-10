@@ -261,17 +261,17 @@ const vueApp = new Vue({
     checkTestcaseOK(c) {
       return c.status === TaskStatus.Done;
     },
-    getProgress(i) {
+    getProgress(index) {
       if (!this.detailResult || !this.detailResult.judge || !this.detailResult.judge.subtasks) return {
         finished: 0,
         total: 0
       };
 
-      let isPending = status => [TaskStatus.Waiting, TaskStatus.Running].includes(status);
-      let subtaskProgress = [], allFinished = 0, allTotal = 0;
-      for (let i in this.detailResult.judge.subtasks) {
-        let subtaskFinished = 0, subtaskTotal = 0;
-        for (let j in this.detailResult.judge.subtasks[i].cases) {
+      var isPending = status => [TaskStatus.Waiting, TaskStatus.Running].includes(status);
+      var subtaskProgress = [], allFinished = 0, allTotal = 0;
+      for (var i in this.detailResult.judge.subtasks) {
+        var subtaskFinished = 0, subtaskTotal = 0;
+        for (var j in this.detailResult.judge.subtasks[i].cases) {
           subtaskTotal++, allTotal++;
           if (!isPending(this.detailResult.judge.subtasks[i].cases[j].status)) subtaskFinished++, allFinished++;
         }
@@ -282,12 +282,12 @@ const vueApp = new Vue({
         });
       }
 
-      let allProgress = {
+      var allProgress = {
         finished: allFinished,
         total: allTotal
       };
 
-      return typeof i === 'undefined' ? allProgress : subtaskProgress[i];
+      return typeof index === 'undefined' ? allProgress : subtaskProgress[index];
     }
   },
   mounted() {
@@ -336,9 +336,9 @@ if (token != null) {
             socket.close();
           } else {
             if (data.running) {
-              vueApp.roughData.running = true;
+              // vueApp.roughData.running = true;
               vueApp.detailResult = data.current.content;
-              vueApp.roughData.result = data.roughResult;
+              // vueApp.roughData.result = data.roughResult;
               currentVersion = data.current.version;
             }
           }
