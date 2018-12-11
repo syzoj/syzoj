@@ -240,19 +240,23 @@ function updateProgress(taskId, data) {
         score: finalResult.score
     };
     forAllClients(detailProgressNamespace, taskId, (client) => {
-        winston.debug(`Pushing progress update to ${client}`);
-        if (clientDetailProgressList[client] && clientDisplayConfigList[client]) {
-            const original = clientDetailProgressList[client].content;
-            const updated = processOverallResult(currentJudgeList[taskId], clientDisplayConfigList[client]);
-            const version = clientDetailProgressList[client].version;
-            detailProgressNamespace.sockets[client].emit('update', {
-                taskId: taskId,
-                from: version,
-                to: version + 1,
-                delta: diff.diff(original, updated),
-                roughResult: roughResult
-            });
-            clientDetailProgressList[client].version++;
+        try {
+            winston.debug(`Pushing progress update to ${client}`);
+           if (clientDetailProgressList[client] && clientDisplayConfigList[client]) {
+                const original = clientDetailProgressList[client].content;
+                const updated = processOverallResult(currentJudgeList[taskId], clientDisplayConfigList[client]);
+                const version = clientDetailProgressList[client].version;
+                detailProgressNamespace.sockets[client].emit('update', {
+                    taskId: taskId,
+                    from: version,
+                    to: version + 1,
+                    delta: diff.diff(original, updated),
+                    roughResult: roughResult
+                });
+                clientDetailProgressList[client].version++;
+            }
+        } catch (e) {
+            console.log(e);
         }
     });
 }
