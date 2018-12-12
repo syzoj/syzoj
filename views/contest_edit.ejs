@@ -48,7 +48,7 @@
               </div>
             </div>
             <div class="field">
-                <label>排行参数</label>
+                <label>排行参数（格式：<code>{ "题目 ID": 分值倍数 }</code>）</label>
                 <input type="text" name="ranking_params" value="<%= contest.ranklist ? JSON.stringify(contest.ranklist.ranking_params) : '' %>">
             </div>
             <div class="field">
