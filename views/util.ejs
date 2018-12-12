@@ -74,4 +74,12 @@ this.lib = uri => {
   }
 }
 
+this.selfLib = uri => {
+  if (useLocalLibs || !syzoj.config.self_cdn_url) {
+    return syzoj.utils.makeUrl(['self', uri]);
+  } else {
+    return syzoj.config.self_cdn_url + '/' + uri;
+  }
+}
+
 %>
