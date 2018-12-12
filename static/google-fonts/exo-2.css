@@ -1,0 +1,13 @@
+/* exo-2-600 - latin_latin-ext_cyrillic */
+@font-face {
+  font-family: 'Exo 2';
+  font-style: normal;
+  font-weight: 600;
+  src: url('fonts/exo-2-v4-latin_latin-ext_cyrillic-600.eot'); /* IE9 Compat Modes */
+  src: local('Exo 2 Semi Bold'), local('Exo2-SemiBold'),
+       url('fonts/exo-2-v4-latin_latin-ext_cyrillic-600.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/exo-2-v4-latin_latin-ext_cyrillic-600.woff2') format('woff2'), /* Super Modern Browsers */
+       url('fonts/exo-2-v4-latin_latin-ext_cyrillic-600.woff') format('woff'), /* Modern Browsers */
+       url('fonts/exo-2-v4-latin_latin-ext_cyrillic-600.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('fonts/exo-2-v4-latin_latin-ext_cyrillic-600.svg#Exo2') format('svg'); /* Legacy iOS */
+}
