@@ -1,7 +1,7 @@
 <% this.title = '提交记录 #' + info.submissionId %>
 <% include util %>
 <% include header %>
-<script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
+<script src="<%- lib('textfit/2.3.1/textFit.min.js') %>"></script>
 <style>
 .single-subtask {
     box-shadow: none !important;
@@ -124,9 +124,9 @@
     </template>
   </div>
 </div>
-<script src="https://cdnjs.loli.net/ajax/libs/vue/2.5.17/vue.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/jsondiffpatch/0.2.5/jsondiffpatch.min.js"></script>
+<script src="<%- lib('vue/2.5.21/vue.min.js') %>"></script>
+<script src="<%- lib('socket.io/2.2.0/socket.io.js') %>"></script>
+<script src="<%- lib('jsondiffpatch/0.2.5/jsondiffpatch.min.js') %>"></script>
 
 <% include submissions_item %>
 

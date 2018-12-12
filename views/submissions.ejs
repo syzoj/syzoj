@@ -1,7 +1,7 @@
 <% this.title = '提交记录' %>
 <% include header %>
 <% include util %>
-<script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
+<script src="<%- lib('textfit/2.3.1/textFit.min.js') %>"></script>
 <div class="padding">
   <% if (displayConfig.inContest) { %>
     <div class="ui large info message">
@@ -120,8 +120,8 @@
   <% } %>
 </div>
 
-<script src="https://cdnjs.loli.net/ajax/libs/vue/2.4.2/vue.min.js"></script>
-<script src="https://cdnjs.loli.net/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<script src="<%- lib('vue/2.5.21/vue.min.js') %>"></script>
+<script src="<%- lib('socket.io/2.2.0/socket.io.js') %>"></script>
 
 <% include submissions_item %>
 <script>
