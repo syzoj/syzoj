@@ -67,7 +67,7 @@ this.iconHidden = [
 ];
 
 this.lib = uri => {
-  if (!syzoj.config.cdnjs_url) {
+  if (useLocalLibs || !syzoj.config.cdnjs_url) {
     return syzoj.utils.makeUrl(['cdnjs', uri]);
   } else {
     return syzoj.config.cdnjs_url + '/' + uri;

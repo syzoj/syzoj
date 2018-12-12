@@ -12,7 +12,7 @@
     <link href="<%- lib('KaTeX/0.10.0/katex.min.css') %>" rel="stylesheet">
     <link href="<%- lib('morris.js/0.5.1/morris.css') %>" rel="stylesheet">
     <link href="/style.css?20181212" rel="stylesheet">
-    <% if (!syzoj.config.google_fonts_url) { %>
+    <% if (useLocalLibs || !syzoj.config.google_fonts_url) { %>
       <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'fira-mono.css']) %>" rel="stylesheet">
       <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'lato.css']) %>" rel="stylesheet">
       <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'open-sans.css']) %>" rel="stylesheet">
