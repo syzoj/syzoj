@@ -1,4 +1,4 @@
-<p align="center"><img src="static/syzoj.svg" width="250"></p>
+<p align="center"><img src="static/self/syzoj.svg" width="250"></p>
 
 中文 | [English](README.en.md)
 
