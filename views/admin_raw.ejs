@@ -2,7 +2,8 @@
 <% include admin_header %>
 <form method="post" class="ui form">
 
-<div id="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "><%= data %></div>
+<div id="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "></div>
+<script>$('#editor').text(<%- JSON.stringify(data) %>)</script>
 <input type="hidden" name="data">
 
 <script src="<%- lib('ace/1.4.2/ace.js') %>"></script>
