@@ -96,16 +96,16 @@ div[class*=ace_br] {
           <% } %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', problem.type === 'submit-answer' ? 'min' : 'fastest']) %>">统计</a>
-          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['discussion', 'problem', problem.id]) %>" style="position: relative; ">
-            讨论
-            <% if (discussionCount) { %>
-              <div class="floating ui red tiny circular label"><%= discussionCount %></div>
-            <% } %>
-          </a>
           <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata']) %>">测试数据</a>
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>">附加文件</a>
           <% } %>
+          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['discussion', 'problem', problem.id]) %>" style="position: relative; ">
+            讨论
+            <% if (discussionCount) { %>
+              <div class="floating ui red tiny circular label" style="background-color: #8c5633 !important; top: -0.6em; "><%= discussionCount %></div>
+            <% } %>
+          </a>
         <% } %>
       </div>
       <% if (!contest) { %>
