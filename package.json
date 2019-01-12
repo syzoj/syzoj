@@ -49,7 +49,7 @@
     "moment": "^2.23.0",
     "msgpack-lite": "^0.1.26",
     "multer": "^1.2.0",
-    "mysql2": "^1.6.4",
+    "mariadb": "^2.0.2-rc",
     "node-7z": "^0.4.0",
     "nodemailer": "^4.7.0",
     "object-assign-deep": "^0.4.0",

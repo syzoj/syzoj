@@ -114,7 +114,7 @@ global.syzoj = {
 
     this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
       host: this.config.db.host,
-      dialect: 'mysql',
+      dialect: 'mariadb',
       logging: syzoj.production ? false : syzoj.log,
       timezone: require('moment')().format('Z'),
       operatorsAliases: operatorsAliases
