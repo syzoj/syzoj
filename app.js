@@ -169,19 +169,6 @@ global.syzoj = {
     }
     app.use(Session(sessionConfig));
 
-    app.use(require('express-minify-html')({
-      override: true,
-      htmlMinifier: {
-        removeComments: true,
-        collapseWhitespace: true,
-        collapseBooleanAttributes: true,
-        removeAttributeQuotes: true,
-        removeEmptyAttributes: true,
-        minifyJS: true,
-        minifyCSS: true
-      }
-    }));
-
     app.use((req, res, next) => {
       res.locals.useLocalLibs = !!parseInt(req.headers['syzoj-no-cdn']);
 
