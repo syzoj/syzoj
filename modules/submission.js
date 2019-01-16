@@ -144,7 +144,7 @@ app.get('/submission/:id', async (req, res) => {
 
       if ((!contest.ended || !contest.is_public) &&
         !(await judge.problem.isAllowedEditBy(res.locals.user) || await contest.isSupervisior(curUser))) {
-        throw new Error("比赛没有结束或者没有公开哦");
+        throw new Error("比赛未结束或未公开。");
       }
     }
 
