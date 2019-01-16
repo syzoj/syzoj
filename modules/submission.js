@@ -100,7 +100,7 @@ app.get('/submissions', async (req, res) => {
 
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
-      obj.code_length = obj.code.length;
+      if (obj.problem.type !== 'submit-answer') obj.code_length = obj.code.length;
     })
 
     res.render('submissions', {
