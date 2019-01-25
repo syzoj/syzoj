@@ -145,9 +145,19 @@ body > .ui.page.dimmer {
     color: grey;
 }
 
+:not(.status_detail).status.unknown {
+    color: #e28989;
+}
+
 :not(.status_detail).status.running,
 .title:hover .status_detail.status.running,
-.title.active .status_detail.status.running {
+.title.active .status_detail.status.running,
+:not(.status_detail).status.pending,
+.title:hover .status_detail.status.pending,
+.title.active .status_detail.status.pending,
+:not(.status_detail).status.judging,
+.title:hover .status_detail.status.judging,
+.title.active .status_detail.status.judging {
     color: #6cf;
 }
 
@@ -240,14 +250,11 @@ body > .ui.page.dimmer {
 
 /* code tag */
 :not(pre) > code {
-    background-color: rgba(0, 0, 0, 0.08);
-    border-radius: 3px;
     display: inline-block;
-    font-size: 0.9em;
+    font-size: 0.94em;
     font-weight: bold;
-    padding: 1px 6px;
-    vertical-align: baseline;
-    color: #444;
+    padding: 0 1px;
+    vertical-align: bottom;
 }
 
 code {

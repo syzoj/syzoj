@@ -232,19 +232,31 @@ exports.updateCompileStatus = updateCompileStatus;
 function updateProgress(taskId, data) {
     winston.verbose(`Updating progress for #${taskId}`);
     currentJudgeList[taskId] = data;
+    const finalResult = judgeResult.convertResult(taskId, data);
+    const roughResult = {
+        result: "Running",
+        time: finalResult.time,
+        memory: finalResult.memory,
+        score: finalResult.score
+    };
     forAllClients(detailProgressNamespace, taskId, (client) => {
-        winston.debug(`Pushing progress update to ${client}`);
-        if (clientDetailProgressList[client] && clientDisplayConfigList[client]) {
-            const original = clientDetailProgressList[client].content;
-            const updated = processOverallResult(currentJudgeList[taskId], clientDisplayConfigList[client]);
-            const version = clientDetailProgressList[client].version;
-            detailProgressNamespace.sockets[client].emit('update', {
-                taskId: taskId,
-                from: version,
-                to: version + 1,
-                delta: diff.diff(original, updated)
-            });
-            clientDetailProgressList[client].version++;
+        try {
+            winston.debug(`Pushing progress update to ${client}`);
+           if (clientDetailProgressList[client] && clientDisplayConfigList[client]) {
+                const original = clientDetailProgressList[client].content;
+                const updated = processOverallResult(currentJudgeList[taskId], clientDisplayConfigList[client]);
+                const version = clientDetailProgressList[client].version;
+                detailProgressNamespace.sockets[client].emit('update', {
+                    taskId: taskId,
+                    from: version,
+                    to: version + 1,
+                    delta: diff.diff(original, updated),
+                    roughResult: roughResult
+                });
+                clientDetailProgressList[client].version++;
+            }
+        } catch (e) {
+            console.log(e);
         }
     });
 }

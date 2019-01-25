@@ -1,4 +1,4 @@
-<p align="center"><img src="static/syzoj.svg" width="250"></p>
+<p align="center"><img src="static/self/syzoj.svg" width="250"></p>
 
 [中文](README.md) | English
 
@@ -37,4 +37,10 @@ Who upgraded from a commit BEFORE [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](htt
 
 ```sql
 ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
+```
+
+Who upgraded from a commit BEFORE [d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3](https://github.com/syzoj/syzoj/commit/d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3) (Dec 7, 2018) **MUST** perform the following SQL on the database.
+
+```sql
+ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL AFTER `public_email`;
 ```

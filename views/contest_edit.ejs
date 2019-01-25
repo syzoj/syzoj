@@ -8,7 +8,7 @@
             </div>
             <div class="field">
                 <label>比赛描述</label>
-                <input type="text" name="subtitle markdown-edit" value="<%= contest.subtitle %>">
+                <input type="text" name="subtitle" class="markdown-edit" value="<%= contest.subtitle %>">
             </div>
             <div class="field">
                 <label>试题列表</label>
@@ -43,12 +43,12 @@
               <div class="field">
                 <div class="ui radio checkbox">
                   <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-acm" value="acm"<% if (contest.type === 'acm') { %> checked="checked"<% } %>>
-                  <label for="type-acm">ACM</label>
+                  <label for="type-acm">ICPC</label>
                 </div>
               </div>
             </div>
             <div class="field">
-                <label>排行参数</label>
+                <label>排行参数（格式：<code>{ "题目 ID": 分值倍数 }</code>）</label>
                 <input type="text" name="ranking_params" value="<%= contest.ranklist ? JSON.stringify(contest.ranklist.ranking_params) : '' %>">
             </div>
             <div class="field">

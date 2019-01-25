@@ -10,31 +10,42 @@ const iconList = {
   'File Error': 'file outline',
   'Waiting': 'hourglass half',
   'Running': 'spinner',
+  'Compiling': 'spinner',
+  'Judging': 'spinner',
   'Compile Error': 'code',
   'Submitted': 'checkmark', // NOI contests
   'System Error': 'server',
   'No Testdata': 'folder open outline',
   'Partially Correct': 'minus',
   'Judgement Failed': 'server',
-  'Skipped': 'fast forward'
+  'Skipped': 'fast forward',
+  'Unknown': 'question circle'
 };
 Vue.component('status-label', {
   template: '#statusIconTemplate',
   props: ['status', 'indetail', 'progress'],
   computed: {
     icon() {
-      if (this.status in iconList) {
-        return iconList[this.status];
+      var x = this.status.startsWith('Running') ? 'Running' : this.status;
+      if (x in iconList) {
+        return iconList[x];
       } else {
-        return 'man';
+        return 'question circle';
       }
     },
     colorClass() {
-      return (this.indetail ? 'status_detail ' : '') + this.status.toLowerCase().split(' ').join('_');
+      var x = this.status.startsWith('Running') ? 'Running' : this.status;
+      return (this.indetail ? 'status_detail ' : '') + x.toLowerCase().split(' ').join('_');
     },
-    outputStatus() {
-      if (this.status === 'Running' && this.progress) return 'Running ' + this.progress.finished + '/' + this.progress.total;
-      else return this.status;
+    displayStatus() {
+      return this.status.startsWith('Running') ? 'Running' : this.status;
+    },
+    getProgress() {
+      if (this.status.startsWith('Running ')) {
+        var tmp = this.status.split(' ')[1].trim().split('/');
+        return { total: tmp[1], finished: tmp[0] };
+      }
+      return this.progress;
     }
   }
 })
@@ -42,6 +53,11 @@ Vue.component('status-label', {
 <script type="text/x-template" id="statusIconTemplate">
   <span class="status" :class="colorClass">
     <i class="icon" :class="icon"></i>
-    {{ outputStatus }}
+    <template v-if="['Running', 'Waiting'].includes(displayStatus) && getProgress && getProgress.total">
+      <span style="text-align: left; display: inline-block; width: 58px; ">{{ displayStatus }}</span>{{getProgress.finished }}/{{ getProgress.total }}
+    </template>
+    <template v-else>
+      {{ displayStatus }}
+    </template>
   </span>
 </script>

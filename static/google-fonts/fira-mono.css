@@ -1,0 +1,26 @@
+/* fira-mono-regular - greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-regular.eot'); /* IE9 Compat Modes */
+  src: local('Fira Mono Regular'), local('FiraMono-Regular'),
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-regular.woff') format('woff'), /* Modern Browsers */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-regular.svg#FiraMono') format('svg'); /* Legacy iOS */
+}
+/* fira-mono-500 - greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 500;
+  src: url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-500.eot'); /* IE9 Compat Modes */
+  src: local('Fira Mono Medium'), local('FiraMono-Medium'),
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-500.woff2') format('woff2'), /* Super Modern Browsers */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-500.woff') format('woff'), /* Modern Browsers */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-500.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('fonts/fira-mono-v6-greek_latin_latin-ext_greek-ext_cyrillic-ext_cyrillic-500.svg#FiraMono') format('svg'); /* Legacy iOS */
+}

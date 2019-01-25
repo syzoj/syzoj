@@ -1,5 +1,6 @@
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
+let FormattedCode = syzoj.model('formatted_code');
 let CustomTest = syzoj.model('custom_test');
 let WaitingJudge = syzoj.model('waiting_judge');
 let Contest = syzoj.model('contest');
@@ -9,6 +10,7 @@ let Article = syzoj.model('article');
 const Sequelize = require('sequelize');
 
 let Judger = syzoj.lib('judger');
+let CodeFormatter = syzoj.lib('code_formatter');
 
 app.get('/problems', async (req, res) => {
   try {
@@ -664,6 +666,27 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       await judge_state.save();
     }
     await judge_state.updateRelatedInfo(true);
+
+    if (problem.type !== 'submit-answer' && syzoj.languages[req.body.language].format) {
+      let key = syzoj.utils.getFormattedCodeKey(judge_state.code, req.body.language);
+      let formattedCode = await FormattedCode.findOne({
+        where: {
+          key: key
+        }
+      });
+
+      if (!formattedCode) {
+        let formatted = await CodeFormatter(judge_state.code, syzoj.languages[req.body.language].format);
+        if (formatted) {
+          formattedCode = await FormattedCode.create({
+            key: key,
+            code: formatted
+          });
+
+          await formattedCode.save();
+        }
+      }
+    }
 
     try {
       await Judger.judge(judge_state, problem, contest_id ? 3 : 2);

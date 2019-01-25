@@ -1,37 +1,46 @@
 <% include util %>
 <% include status_label %>
 
-<script src="https://cdnjs.loli.net/ajax/libs/textfit/2.3.1/textFit.min.js"></script>
-
 <script>
+function formatSize(x, precision) {
+  if (typeof x !== 'number') return '0 B';
+  var unit = 'B', units = ['K', 'M', 'G', 'T'];
+  for (var i in units) if (x > 1024) x /= 1024, unit = units[i];
+  var fixed = x === Math.round(x) ? x.toString() : x.toFixed(precision);
+  return fixed + ' ' + unit;
+}
+
 const submissionUrl = <%- JSON.stringify(displayConfig.inContest ?
-  syzoj.utils.makeUrl(['contest', 'submission', 'VanDarkholme']) :
-  syzoj.utils.makeUrl(['submission', 'VanDarkholme'])) %>;
+  syzoj.utils.makeUrl(['contest', 'submission', '20000528']) :
+  syzoj.utils.makeUrl(['submission', '20000528'])) %>;
 const problemUrl = <%- JSON.stringify(displayConfig.inContest ?
-  syzoj.utils.makeUrl(['contest', contest.id, 'problem', 'VanDarkholme']) :
-  syzoj.utils.makeUrl(['problem', 'VanDarkholme'])) %>;
-const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', 'VanDarkholme'])) %>;
+  syzoj.utils.makeUrl(['contest', contest.id, 'problem', '20000528']) :
+  syzoj.utils.makeUrl(['problem', '20000528'])) %>;
+const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', '20000528'])) %>;
 
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',
-  props: ['data', 'config', 'showRejudge', 'progress'],
+  props: ['data', 'config', 'showRejudge', 'progress', 'compiling', 'rough'],
   computed: {
     statusString() {
       const data = this.data;
+
       if (data.result) {
         return data.result.result;
       } else if (data.running) {
-        return this.config.showResult ? 'Running' : 'Compiling';
+        if (this.rough) return 'Judging';
+        if (this.compiling) return 'Compiling';
+        return 'Running';
       } else return 'Waiting';
     },
     submissionLink() {
-      return submissionUrl.replace('VanDarkholme', this.data.info.submissionId);
+      return submissionUrl.replace('20000528', this.data.info.submissionId);
     },
     problemLink() {
-      return problemUrl.replace('VanDarkholme', this.data.info.problemId);
+      return problemUrl.replace('20000528', this.data.info.problemId);
     },
     userLink() {
-      return userUrl.replace('VanDarkholme', this.data.info.userId);
+      return userUrl.replace('20000528', this.data.info.userId);
     },
     scoreClass() {
       return "score_" + (parseInt(this.data.result.score / 10) || 0).toString();
@@ -71,13 +80,15 @@ Vue.component('submission-item', {
   <td v-if="config.showUsage">{{ (data.result.time || 0).toString() + ' ms' }}</td>
 
   <% if (active === 'submissions') { %>
-  <td v-if="config.showUsage">{{ data.result.memory }}</td>
+  <td v-if="config.showUsage">{{ formatSize(data.result.memory * 1024, 2) }}</td>
   <% } else { %>
-  <td v-if="config.showUsage">{{ (data.result.precise_memory || 0).toString() + ' K'}}</td>
+  <td v-if="config.showUsage">{{ (data.result.memory || 0).toString() + ' K'}}</td>
   <% } %>
 
   </template> <template v-else>
-  <td v-if="config.showScore"/> <td v-if="config.showUsage"/> <td v-if="config.showUsage"/>
+  <td v-if="config.showScore"><a :href="submissionLink"><span class="score score_0">0</span></a></td>
+  <td v-if="config.showUsage">0 ms</td>
+  <td v-if="config.showUsage">0 B</td>
   </template>
 
   <td v-if="config.showCode">
@@ -86,7 +97,7 @@ Vue.component('submission-item', {
     <% } else { %>
     <span v-if="data.info.language"><b>{{ data.info.language }}</b> / </span>
     <% } %>
-    {{ data.info.codeSize }}
+    {{ formatSize(data.info.codeSize, 1) }}
   </td>
   <td><a :href="userLink">{{ data.info.user }}</a></td>
   <td>{{ data.info.submitTime }}</td>

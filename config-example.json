@@ -112,5 +112,12 @@
   "session_secret": "@SESSION_SECRET@",
   "rabbitMQ": "amqp://localhost/",
   "email_jwt_secret": "@EMAIL_JWT_SECRET@",
-  "google_analytics": "UA-XXXXXXXX-X"
+  "google_analytics": "UA-XXXXXXXX-X",
+  "gravatar_url": "https://cdn.v2ex.com/gravatar",
+  "cdnjs_url": "https://cdnjs.loli.net/ajax/libs",
+  "self_cdn_url": "",
+  "google_fonts": {
+    "type": "like-google-fonts",
+    "url": "https://fonts.loli.net"
+  }
 }

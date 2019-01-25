@@ -1,4 +1,5 @@
 let JudgeState = syzoj.model('judge_state');
+let FormattedCode = syzoj.model('formatted_code');
 let User = syzoj.model('user');
 let Contest = syzoj.model('contest');
 let Problem = syzoj.model('problem');
@@ -62,7 +63,8 @@ app.get('/submissions', async (req, res) => {
     }
 
     if (req.query.language) {
-      if (req.query.language === 'submit-answer') where.language = '';
+      if (req.query.language === 'submit-answer') where.language = { $or: [{ $eq: '',  }, { $eq: null }] };
+      else if (req.query.language === 'non-submit-answer') where.language = { $not: '' };
       else where.language = req.query.language;
     }
     if (req.query.status) where.status = { $like: req.query.status + '%' };
@@ -96,7 +98,10 @@ app.get('/submissions', async (req, res) => {
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['id', 'desc']], true);
 
-    await judge_state.forEachAsync(async obj => obj.loadRelationships());
+    await judge_state.forEachAsync(async obj => {
+      await obj.loadRelationships();
+      if (obj.problem.type !== 'submit-answer') obj.code_length = obj.code.length;
+    })
 
     res.render('submissions', {
       // judge_state: judge_state,
@@ -107,7 +112,7 @@ app.get('/submissions', async (req, res) => {
           type: 'rough',
           displayConfig: displayConfig
         }, syzoj.config.session_secret) : null,
-        result: getRoughResult(x, displayConfig),
+        result: getRoughResult(x, displayConfig, true),
         running: false,
       })),
       paginate: paginate,
@@ -139,22 +144,37 @@ app.get('/submission/:id', async (req, res) => {
 
       if ((!contest.ended || !contest.is_public) &&
         !(await judge.problem.isAllowedEditBy(res.locals.user) || await contest.isSupervisior(curUser))) {
-        throw new Error("比赛没有结束或者没有公开哦");
+        throw new Error("比赛未结束或未公开。");
       }
     }
 
     await judge.loadRelationships();
 
     if (judge.problem.type !== 'submit-answer') {
-      judge.codeLength = judge.code.length;
+      judge.code_length = judge.code.length;
+
+      let key = syzoj.utils.getFormattedCodeKey(judge.code, judge.language);
+      if (key) {
+        let formattedCode = await FormattedCode.findOne({
+          where: {
+            key: key
+          }
+        });
+
+        if (formattedCode) {
+          judge.formattedCode = await syzoj.utils.highlight(formattedCode.code, syzoj.languages[judge.language].highlight);
+        }
+      }
       judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
     }
 
     displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);
     res.render('submission', {
       info: getSubmissionInfo(judge, displayConfig),
-      roughResult: getRoughResult(judge, displayConfig),
+      roughResult: getRoughResult(judge, displayConfig, false),
       code: (judge.problem.type !== 'submit-answer') ? judge.code.toString("utf8") : '',
+      formattedCode: judge.formattedCode ? judge.formattedCode.toString("utf8") : null,
+      preferFormattedCode: res.locals.user ? res.locals.user.prefer_formatted_code : false,
       detailResult: processOverallResult(judge.result, displayConfig),
       socketToken: (judge.pending && judge.task_id != null) ? jwt.sign({
         taskId: judge.task_id,

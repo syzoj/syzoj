@@ -28,9 +28,13 @@ global.syzoj = {
     winstonLib.configureWinston(!syzoj.production);
 
     app.server = require('http').createServer(app);
-    app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
-      this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
-    });
+
+    if (!module.parent) {
+      // Loaded by `require()`, not node CLI.
+      app.server.listen(parseInt(syzoj.config.port), syzoj.config.hostname, () => {
+        this.log(`SYZOJ is listening on ${syzoj.config.hostname}:${parseInt(syzoj.config.port)}...`);
+      });
+    }
 
     // Set assets dir
     app.use(Express.static(__dirname + '/static', { maxAge: syzoj.production ? '1y' : 0 }));
@@ -63,7 +67,9 @@ global.syzoj = {
     })());
 
     await this.connectDatabase();
-    await this.lib('judger').connect();
+    if (!module.parent) {
+      await this.lib('judger').connect();
+    }
     this.loadModules();
   },
   async connectDatabase() {
@@ -108,7 +114,7 @@ global.syzoj = {
 
     this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
       host: this.config.db.host,
-      dialect: 'mysql',
+      dialect: 'mariadb',
       logging: syzoj.production ? false : syzoj.log,
       timezone: require('moment')().format('Z'),
       operatorsAliases: operatorsAliases
@@ -164,7 +170,8 @@ global.syzoj = {
     app.use(Session(sessionConfig));
 
     app.use((req, res, next) => {
-      // req.session.user_id = 1;
+      res.locals.useLocalLibs = !!parseInt(req.headers['syzoj-no-cdn']);
+
       let User = syzoj.model('user');
       if (req.session.user_id) {
         User.fromID(req.session.user_id).then((user) => {
@@ -175,7 +182,7 @@ global.syzoj = {
           res.locals.user = null;
           req.session.user_id = null;
           next();
-        })
+        });
       } else {
         if (req.cookies.login) {
           let obj;

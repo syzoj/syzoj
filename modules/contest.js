@@ -83,7 +83,11 @@ app.post('/contest/:id/edit', async (req, res) => {
       ranklist = contest.ranklist;
     }
 
-    ranklist.ranking_params = JSON.parse(req.body.ranking_params);
+    try {
+      ranklist.ranking_params = JSON.parse(req.body.ranking_params);
+    } catch (e) {
+      ranklist.ranking_params = {};
+    }
     await ranklist.save();
     contest.ranklist_id = ranklist.id;
 

@@ -1,3 +1,5 @@
+const { getCachedJudgeState } = require('./judger');
+
 const getSubmissionInfo = (s, displayConfig) => ({
     submissionId: s.id,
     taskId: s.task_id,
@@ -6,20 +8,27 @@ const getSubmissionInfo = (s, displayConfig) => ({
     problemName: s.problem.title,
     problemId: s.problem_id,
     language: displayConfig.showCode ? ((s.language != null && s.language !== '') ? syzoj.languages[s.language].show : null) : null,
-    codeSize: displayConfig.showCode ? syzoj.utils.formatSize(s.code_length) : null,
+    codeSize: displayConfig.showCode ? s.code_length : null,
     submitTime: syzoj.utils.formatDate(s.submit_time),
 });
 
-const getRoughResult = (x, displayConfig) => {
+const getRoughResult = (x, displayConfig, roughOnly) => {
     if (displayConfig.showResult) {
         if (x.pending) {
-            return null;
+            let res = getCachedJudgeState(x.task_id) || null
+            if (!res) return null;
+
+            if (roughOnly) {
+              res.result = 'Judging';
+              res.time = res.memory = res.score = 0;
+            }
+
+            return res;
         } else {
             return {
                 result: x.status,
                 time: displayConfig.showUsage ? x.total_time : null,
-                memory: displayConfig.showUsage ? syzoj.utils.formatSize((x.max_memory * 1024) || 0, 2) : null,
-                precise_memory: displayConfig.showUsage ? x.max_memory : null,
+                memory: displayConfig.showUsage ? x.max_memory : null,
                 score: displayConfig.showScore ? x.score : null
             };
         }

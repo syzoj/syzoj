@@ -44,18 +44,42 @@ this.icon = {
   'Waiting': 'hourglass half',
   'Running': 'spinner',
   'Compiling': 'spinner',
+  'Judging': 'spinner',
+  'Pending': 'hourglass half',
   'Compile Error': 'code',
   'Submitted': 'checkmark', // NOI contests
   'System Error': 'server',
   'No Testdata': 'folder open outline',
   'Partially Correct': 'minus',
   'Judgement Failed': 'server',
-  'Skipped': 'ban'
+  'Skipped': 'ban',
+  'Unknown': 'question circle'
 };
 
 this.iconHidden = [
   'Success',
-  'Submitted'
+  'Submitted',
+  'Compiling',
+  'Running',
+  'Waiting',
+  'Judging',
+  'Skipped'
 ];
+
+this.lib = uri => {
+  if (useLocalLibs || !syzoj.config.cdnjs_url) {
+    return syzoj.utils.makeUrl(['cdnjs', uri]);
+  } else {
+    return syzoj.config.cdnjs_url + '/' + uri;
+  }
+}
+
+this.selfLib = uri => {
+  if (useLocalLibs || !syzoj.config.self_cdn_url) {
+    return syzoj.utils.makeUrl(['self', uri]);
+  } else {
+    return syzoj.config.self_cdn_url + '/' + uri;
+  }
+}
 
 %>
