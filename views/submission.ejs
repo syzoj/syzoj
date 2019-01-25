@@ -51,7 +51,7 @@
     </tbody>
   </table>
 
-  <code-box :escape="false" v-bind:content="code">
+  <code-box no-escape v-bind:content="code">
     <% if (formattedCode !== null) { %>
       <a onclick="toggleFormattedCode()" class="ui button" style="position: absolute; top: 0px; right: -4px; border-top-left-radius: 0; border-bottom-right-radius: 0; ">
         <template v-if="currentFormatted">
@@ -63,8 +63,8 @@
       </a>
     <% } %>
   </code-box>
-  <code-box v-if="detailResult && detailResult.compile" :escape="false" title="编译信息" v-bind:content="detailResult.compile.message"></code-box>
-  <code-box v-if="detailResult" title="系统信息" :escape="true" v-bind:content="detailResult.systemMessage"></code-box>
+  <code-box v-if="detailResult && detailResult.compile" no-escape title="编译信息" v-bind:content="detailResult.compile.message"></code-box>
+  <code-box v-if="detailResult" title="系统信息" v-bind:content="detailResult.systemMessage"></code-box>
 
   <div class="ui styled fluid accordion" :class="singleSubtask ? 'single-subtask' : '' " v-if="detailResult && detailResult.judge && detailResult.judge.subtasks">
     <template v-for="subtask, $index in detailResult.judge.subtasks">
@@ -137,8 +137,8 @@
         </p>
         <div class="ui existing segment">
           <slot></slot>
-          <pre v-if="escape" style="margin-top: 0; margin-bottom: 0; "><code>{{ content }}</code></pre>
-          <pre v-if="!escape" style="margin-top: 0; margin-bottom: 0; "><code v-html="content"></code></pre>
+          <pre v-if="!noEscape" style="margin-top: 0; margin-bottom: 0; "><code>{{ content }}</code></pre>
+          <pre v-if="noEscape" style="margin-top: 0; margin-bottom: 0; "><code v-html="content"></code></pre>
         </div>
     </div>
 </script>
@@ -146,7 +146,14 @@
 <script>
 Vue.component("code-box", {
     template: "#codeBoxTemplate",
-    props: ['title', 'content', 'escape']
+    props: {
+        title: String,
+        content: String,
+        noEscape: {
+            type: Boolean,
+            default: false
+        }
+    }
 });
 const socketUrl = "/detail";
 const displayConfig = <%- serializejs(displayConfig) %>;
