@@ -237,7 +237,7 @@ div[class*=ace_br] {
               }
               %>
               <script>
-              var cases = <%- JSON.stringify(cases) %>, currCase = 0;
+              var cases = <%- serializejs(cases) %>, currCase = 0;
               </script>
               <div class="ui grid">
                 <% if (testcases) { %>
@@ -325,7 +325,7 @@ div[class*=ace_br] {
                 </div>
                 <div class="twelve wide stretched column" style="padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 1px + 25px) !important; ">
                   <div id="editor" style="border: 1px solid #D4D4D5; "></div>
-                  <% if (state) { %><script>$('#editor').text(<%- JSON.stringify(state.code) %>)</script><% } %>
+                  <% if (state) { %><script>$('#editor').text(<%- serializejs(state.code) %>)</script><% } %>
                 </div>
                 <div class="inline fields" style="width: 100%; ">
                 <div class="field" style="margin: 0 auto; ">

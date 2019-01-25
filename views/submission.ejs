@@ -149,8 +149,8 @@ Vue.component("code-box", {
     props: ['title', 'content', 'escape']
 });
 const socketUrl = "/detail";
-const displayConfig = <%- JSON.stringify(displayConfig) %>;
-const token = <%- JSON.stringify(socketToken) %>;
+const displayConfig = <%- serializejs(displayConfig) %>;
+const token = <%- serializejs(socketToken) %>;
 
 const TestcaseResultType = {};
 (function (TestcaseResultType) {
@@ -187,8 +187,8 @@ const TaskStatus = {};
     TaskStatus[TaskStatus["Skipped"] = 4] = "Skipped";
 })(TaskStatus);
 
-const unformattedCode = <%- JSON.stringify(code) %>;
-const formattedCode = <%- JSON.stringify(formattedCode) %>;
+const unformattedCode = <%- serializejs(code) %>;
+const formattedCode = <%- serializejs(formattedCode) %>;
 
 function toggleFormattedCode() {
   if (vueApp.currentFormatted) {
@@ -204,14 +204,14 @@ const vueApp = new Vue({
   el: '#vueAppFuckSafari',
   data: {
     roughData: {
-      info: <%- JSON.stringify(info) %>,
-      result: <%- JSON.stringify(roughResult) %>,
+      info: <%- serializejs(info) %>,
+      result: <%- serializejs(roughResult) %>,
       running: false,
       displayConfig: displayConfig
     },
-    code: <%- JSON.stringify(preferFormattedCode && formattedCode !== null) -%> ? formattedCode : unformattedCode,
-    currentFormatted: <%- JSON.stringify(preferFormattedCode && formattedCode !== null) -%>,
-    detailResult: <%- JSON.stringify(detailResult) %>,
+    code: <%- serializejs(preferFormattedCode && formattedCode !== null) -%> ? formattedCode : unformattedCode,
+    currentFormatted: <%- serializejs(preferFormattedCode && formattedCode !== null) -%>,
+    detailResult: <%- serializejs(detailResult) %>,
     displayConfig: displayConfig,
   },
   computed: {

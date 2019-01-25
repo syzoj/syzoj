@@ -37,7 +37,7 @@ function show_error(error) {
 
 function success() {
     alert("注册成功！");
-    window.location.href = location.protocol + '//' + location.host + <%- JSON.stringify(req.query.url || '/') %>;
+    window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
 }
 
 function mail_required() {
@@ -63,7 +63,7 @@ function submit() {
           username: $("#username").val(),
           password: password,
           email: $("#email").val(),
-          prevUrl: <%- JSON.stringify(req.query.url || '/') %>
+          prevUrl: <%- serializejs(req.query.url || '/') %>
         },
         success: function(data) {
             error_code = data.error_code;

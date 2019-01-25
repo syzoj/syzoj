@@ -103,7 +103,7 @@ function getColorOfScore(score) {
   <script type="text/javascript">
   new Morris.Bar({
   	element: 'score-distribution-chart',
-  	data: <%- JSON.stringify(statistics.scoreDistribution) %>,
+  	data: <%- serializejs(statistics.scoreDistribution) %>,
   	barColors: function(r, s, type) {
   		return getColorOfScore(r.label);
   	},
@@ -129,7 +129,7 @@ function getColorOfScore(score) {
   %>
   new Morris.Line({
   	element: 'score-distribution-chart-pre',
-    data: <%- JSON.stringify(statistics.prefixSum) %>,
+    data: <%- serializejs(statistics.prefixSum) %>,
   	xkey: 'score',
   	ykeys: ['count'],
   	labels: ['number'],
@@ -161,7 +161,7 @@ function getColorOfScore(score) {
   %>
   new Morris.Line({
   	element: 'score-distribution-chart-suf',
-    data: <%- JSON.stringify(statistics.suffixSum) %>,
+    data: <%- serializejs(statistics.suffixSum) %>,
   	xkey: 'score',
   	ykeys: ['count'],
   	labels: ['number'],

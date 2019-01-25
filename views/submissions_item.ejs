@@ -10,13 +10,13 @@ function formatSize(x, precision) {
   return fixed + ' ' + unit;
 }
 
-const submissionUrl = <%- JSON.stringify(displayConfig.inContest ?
+const submissionUrl = <%- serializejs(displayConfig.inContest ?
   syzoj.utils.makeUrl(['contest', 'submission', '20000528']) :
   syzoj.utils.makeUrl(['submission', '20000528'])) %>;
-const problemUrl = <%- JSON.stringify(displayConfig.inContest ?
+const problemUrl = <%- serializejs(displayConfig.inContest ?
   syzoj.utils.makeUrl(['contest', contest.id, 'problem', '20000528']) :
   syzoj.utils.makeUrl(['problem', '20000528'])) %>;
-const userUrl = <%- JSON.stringify(syzoj.utils.makeUrl(['user', '20000528'])) %>;
+const userUrl = <%- serializejs(syzoj.utils.makeUrl(['user', '20000528'])) %>;
 
 Vue.component('submission-item', {
   template: '#submissionItemTemplate',

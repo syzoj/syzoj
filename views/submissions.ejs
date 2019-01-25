@@ -74,7 +74,7 @@
       <script>
       $(function () {
         $('#my_submit').click(function () {
-          $('[name=submitter]').val(<%- JSON.stringify(user.username) %>);
+          $('[name=submitter]').val(<%- serializejs(user.username) %>);
           $('#form').submit();
         });
       });
@@ -129,9 +129,9 @@ $(function () {
   $('#select_language').dropdown();
   $('#select_status').dropdown();
 });
-const itemList = <%- JSON.stringify(items) %>;
+const itemList = <%- serializejs(items) %>;
 const socketUrl = "/rough";
-const displayConfig = <%- JSON.stringify(displayConfig) %>;
+const displayConfig = <%- serializejs(displayConfig) %>;
 
 const vueApp = new Vue({
   el: '#vueAppFuckSafari',

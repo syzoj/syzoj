@@ -42,7 +42,7 @@
 		        	<td class="font-content">
               <script id="user-infomation-script-<%= i %>">
               (function () {
-                var html = <%- JSON.stringify(user.information) %>;
+                var html = <%- serializejs(user.information) %>;
                 var elem = document.createElement('div');
                 elem.style = 'overflow: hidden; width: 100%; position: relative; ';
                 elem.style.maxHeight = lineHeight + 'px';

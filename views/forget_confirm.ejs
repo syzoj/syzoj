@@ -50,7 +50,7 @@ function submitForm() {
         url: "/api/reset_password",
         type: 'POST',
         data: {
-            "token": <%- JSON.stringify(token) %>,
+            "token": <%- serializejs(token) %>,
             "password": password
         },
         async: true,

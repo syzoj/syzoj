@@ -3,7 +3,7 @@
 <form method="post" class="ui form">
 
 <div id="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "></div>
-<script>$('#editor').text(<%- JSON.stringify(data) %>)</script>
+<script>$('#editor').text(<%- serializejs(data) %>)</script>
 <input type="hidden" name="data">
 
 <script src="<%- lib('ace/1.4.2/ace.js') %>"></script>

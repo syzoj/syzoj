@@ -62,7 +62,7 @@ this.adminPage = 'links';
 </form>
 
 <script>
-var links = <%- JSON.stringify(links) %>;
+var links = <%- serializejs(links) %>;
 $('.remove_link').click(function () {
   links.splice($(this).data('id'), 1);
   $('#submit_data').val(JSON.stringify(links));

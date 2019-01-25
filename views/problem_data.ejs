@@ -145,7 +145,7 @@ function getIcon(filename) {
         </div>
         <script>
         function check_replace() {
-          var old_files = <%- JSON.stringify((testdata && testdata.files ? testdata.files : []).map(function(x) { return x.filename; })) %>;
+          var old_files = <%- serializejs((testdata && testdata.files ? testdata.files : []).map(function(x) { return x.filename; })) %>;
           var replaced_files = Array.prototype.slice.call($('#upload_file')[0].files).map(function (x) { return x.name; }).filter(function (x) { return old_files.includes(x); });
           var s = '';
           for (let file of replaced_files) s += '<samp>' + file + '</samp><br>';
