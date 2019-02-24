@@ -39,7 +39,7 @@ class RatingCalculation extends Model {
             await history.destroy();
             const ratingItem = (await RatingHistory.findOne({
                 where: { user_id: user.id },
-                order: 'rating_calculation_id DESC'
+                order: [['rating_calculation_id','DESC']]
             }));
             user.rating = ratingItem ? ratingItem.rating_after : syzoj.config.default.user.rating;
             await user.save();
