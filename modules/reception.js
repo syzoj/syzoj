@@ -39,7 +39,9 @@ app.get('/reception/info', async (req, res) => {
 
 app.get('/reception/register', async (req, res) => {
     try {
-        let username = User.getLastUsername();
+        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+        let username = res.locals.user.getLastUsername();
         if(username && /^[0-9]+$/.test(username)) {
             username = parseInt(username) + 1;
         }
