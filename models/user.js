@@ -4,6 +4,7 @@ let db = syzoj.db;
 let model = db.define('user', {
   id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
   username: { type: Sequelize.STRING(80), unique: true },
+  realname: { type: Sequelize.STRING(80) },
   email: { type: Sequelize.STRING(120) },
   password: { type: Sequelize.STRING(120) },
   phone: {type: Sequelize.STRING(20)},
@@ -45,6 +46,7 @@ let Model = require('./common');
 class User extends Model {
   static async create(val) {
     return User.fromRecord(User.model.build(Object.assign({
+      realname: '',
       username: '',
       password: '',
       email: '',
