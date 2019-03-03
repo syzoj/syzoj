@@ -5,27 +5,29 @@ const Contest = syzoj.model('contest');
 const ContestPlayer = syzoj.model('contest_player');
 let UserApply = syzoj.model('user_apply');
 
-app.get('/reception', async (req, res) => {
-    try{
-        const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
-        const order = req.query.order || syzoj.config.sorting.ranklist.order;
-        if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
-        throw new ErrorMessage('错误的排序参数。');
-        }
-        let paginate = syzoj.utils.paginate(await User.count({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
-        let ranklist = await User.query(paginate, { is_show: true }, [[sort, order]]);
-        await ranklist.forEachAsync(async x => x.renderInformation());
-
-        res.render('reception_info', {
-        ranklist: ranklist,
-        paginate: paginate,
-        curSort: sort,
-        curOrder: order === 'asc'
+app.get('/reception/info', async (req, res) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+    
+        let allSubmissionsCount = await JudgeState.count();
+        let todaySubmissionsCount = await JudgeState.count({ submit_time: { $gte: syzoj.utils.getCurrentDate(true) } });
+        let problemsCount = await Problem.count();
+        let articlesCount = await Article.count();
+        let contestsCount = await Contest.count();
+        let usersCount = await User.count();
+    
+        res.render('admin_info', {
+          allSubmissionsCount: allSubmissionsCount,
+          todaySubmissionsCount: todaySubmissionsCount,
+          problemsCount: problemsCount,
+          articlesCount: articlesCount,
+          contestsCount: contestsCount,
+          usersCount: usersCount
         });
-    } catch (e) {
+      } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e
-        });
-    }
+          err: e
+        })
+      }
 });
