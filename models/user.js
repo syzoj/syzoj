@@ -6,6 +6,7 @@ let model = db.define('user', {
   username: { type: Sequelize.STRING(80), unique: true },
   email: { type: Sequelize.STRING(120) },
   password: { type: Sequelize.STRING(120) },
+  phone: {type: Sequelize.STRING(20)},
 
   nickname: { type: Sequelize.STRING(80) },
   nameplate: { type: Sequelize.TEXT },

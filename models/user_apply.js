@@ -1,7 +1,7 @@
 let Sequelize = require('sequelize');
 let db = syzoj.db;
 
-let model = db.defin('user_apply', {
+let model = db.define('user_apply', {
     user_id: { type: Sequelize.INTEGER, primaryKey: true },
     school: { type: Sequelize.STRING(120) },
     cur_class: { type: Sequelize.STRING(120) },
@@ -13,10 +13,10 @@ let model = db.defin('user_apply', {
     tableName: 'user_apply',
     indexes: [
         {
-            fields: ['training_type']
+            fields: ['training_type'],
         },
         {
-            fields: ['training_class']
+            fields: ['training_class'],
         }
     ]
 });
