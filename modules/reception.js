@@ -43,7 +43,7 @@ app.get('/reception/register', async (req, res) => {
 
         let username = res.locals.user.getLastUsername();
         if(username && /^[0-9]+$/.test(username)) {
-            username = parseInt(username) + 1;
+            username = 'username';
         }
         res.render('reception_register', {
             username: 'username'
