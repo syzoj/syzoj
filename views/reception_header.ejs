@@ -13,7 +13,7 @@ let items = {
   <div class="three wide column">
     <div class="ui vertical fluid tabular menu" style="height: 100%; ">
     <% for (let x in items) { %>
-      <a class="item<% if (this.receptionPage === x) { %> active<% } %>"<% if (this.receptionPage !== x) { %> href="<%= syzoj.utils.makeUrl(['admin', x]) %>"<% } %>>
+      <a class="item<% if (this.receptionPage === x) { %> active<% } %>"<% if (this.receptionPage !== x) { %> href="<%= syzoj.utils.makeUrl(['reception', x]) %>"<% } %>>
         <%= items[x] %>
       </a>
     <% } %>
