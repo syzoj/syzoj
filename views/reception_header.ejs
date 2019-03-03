@@ -1,0 +1,95 @@
+<% include util %>
+<!DOCTYPE html>
+<html lang="zh-CN" style="position: fixed; width: 100%; overflow: hidden; ">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=1200">
+    <title><%= title %> - <%= syzoj.config.title %></title>
+    <link href="<%- lib('semantic-ui/2.4.1/semantic.min.css') %>" rel="stylesheet">
+    <link href="<%- selfLib('tomorrow.css') %>" rel="stylesheet">
+    <link href="<%- selfLib('mathjax.css') %>?20181105" rel="stylesheet">
+    <link href="<%- selfLib('style.css') %>?20181212" rel="stylesheet">
+    <link href="<%- lib('KaTeX/0.10.1/katex.min.css') %>" rel="stylesheet">
+    <link href="<%- lib('morris.js/0.5.1/morris.css') %>" rel="stylesheet">
+    <% if (useLocalLibs || !syzoj.config.google_fonts || !syzoj.config.google_fonts.url || !['like-google-fonts', 'like-local'].includes(syzoj.config.google_fonts.type)) { %>
+      <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'fira-mono.css']) %>" rel="stylesheet">
+      <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'lato.css']) %>" rel="stylesheet">
+      <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'open-sans.css']) %>" rel="stylesheet">
+      <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'exo-2.css']) %>" rel="stylesheet">
+    <% } else if (syzoj.config.google_fonts.type === 'like-local') { %>
+      <link href="<%- syzoj.config.google_fonts.url %>/google-fonts/fira-mono.css" rel="stylesheet">
+      <link href="<%- syzoj.config.google_fonts.url %>/google-fonts/lato.css" rel="stylesheet">
+      <link href="<%- syzoj.config.google_fonts.url %>/google-fonts/open-sans.css" rel="stylesheet">
+      <link href="<%- syzoj.config.google_fonts.url %>/google-fonts/exo-2.css" rel="stylesheet">
+    <% } else { %>
+      <link href="<%- syzoj.config.google_fonts.url %>/css?family=Fira+Mono" rel="stylesheet">
+      <link href="<%- syzoj.config.google_fonts.url %>/css?family=Lato:400,700,400italic,700italic&subset=latin" rel="stylesheet">
+      <link href="<%- syzoj.config.google_fonts.url %>/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&amp;subset=latin-ext" rel="stylesheet">
+      <link href="<%- syzoj.config.google_fonts.url %>/css?family=Exo+2:600" rel="stylesheet">
+    <% } %>
+    <script src="<%- lib('jquery/3.3.1/jquery.min.js') %>"></script>
+    <% if (syzoj.config.google_analytics && syzoj.config.google_analytics !== 'UA-XXXXXXXX-X') { %>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '<%= syzoj.config.google_analytics %>', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    <% } %>
+</head>
+<body style="position: relative; margin-top: 49px; height: calc(100% - 49px); overflow-y: overlay; ">
+    <div class="ui fixed borderless menu" style="position: fixed; height: 49px; ">
+        <div class="ui container">
+            <%
+            if (syzoj.config.logo.url) {
+              let width = syzoj.config.logo.width ? syzoj.config.logo.width + 'px' : 'auto';
+              let height = syzoj.config.logo.height ? syzoj.config.logo.height + 'px' : 'auto';
+            %>
+            <a class="header item" href="/"><img src="<%= syzoj.config.logo.url %>" style="width: <%= width %>; height: <%= height %>; "></a>
+            <% } else { %>
+            <a class="header item" href="/"><span style="font-family: 'Exo 2'; font-size: 1.5em; font-weight: 600; "><%= syzoj.config.title %></span></a>
+            <% } %>
+            <a class="item<% if (active === 'reception') { %> active<% } %>" href="/reception"><i class="home icon"></i> 概览</a>
+            <a class="item<% if (active.startsWith('problem')) { %> active<% } %>" href="/problems"><i class="list icon"></i> 题库</a>
+            <a class="item<% if (active.startsWith('contest')) { %> active<% } %>" href="/contests"><i class="calendar icon"></i> 比赛</a>
+            <a class="item<% if (active.startsWith('submission')) { %> active<% } %>" href="/submissions"><i class="tasks icon"></i> 评测</a>
+            <a class="item<% if (active.startsWith('ranklist')) { %> active<% } %>" href="/ranklist"><i class="signal icon"></i> 排名</a>
+            <a class="item<% if (active.startsWith('discussion') || active.startsWith('article')) { %> active<% } %>" href="/discussion/global"><i class="comments icon"></i> 讨论</a>
+            <a class="item<% if (active.startsWith('help')) { %> active<% } %>" href="/help"><i class="help circle icon"></i> 帮助</a>
+            <% if (typeof contest !== 'undefined' && contest && contest.id) { %>
+              <a id="back_to_contest" class="item" href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>"><i class="arrow left icon"></i> 返回比赛</a>
+            <% } %>
+            <div class="right menu">
+              <% if (user) { %>
+              <a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>" style="color: inherit; ">
+              <div class="ui simple dropdown item">
+                <%= user.username %><% if (user.nameplate) { %><%- user.nameplate %><% } %> <i class="dropdown icon"></i>
+                <div class="menu">
+                  <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="edit icon"></i>修改资料</a>
+                  <% if (user.is_admin) { %>
+                    <a class="item" href="<%= syzoj.utils.makeUrl(['admin', 'info']) %>"><i class="settings icon"></i>后台管理</a>
+                  <% } %>
+                  <a class="item" href-post="<%= syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }) %>"><i class="power icon"></i>注销</a>
+                </div>
+              </div>
+              </a>
+                <% } else { %>
+                <div class="item">
+                    <a class="ui button" style="margin-right: 0.5em; " href="<%= syzoj.utils.makeUrl(['login'], { url: this.noPreserveUrl ? undefined : req.originalUrl }) %>">
+                        登录
+                    </a>
+                    <a class="ui primary button" href="<%= syzoj.utils.makeUrl(['sign_up'], { url: this.noPreserveUrl ? undefined : req.originalUrl }) %>">
+                        注册
+                    </a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top: 28px; ">
+    <div class="ui main container">
