@@ -1,4 +1,5 @@
 let User = syzoj.model('user');
+let JudgeState = syzoj.model('judge_state');
 const RatingCalculation = syzoj.model('rating_calculation');
 const RatingHistory = syzoj.model('rating_history');
 const Contest = syzoj.model('contest');
