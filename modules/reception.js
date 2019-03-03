@@ -21,7 +21,7 @@ app.get('/reception/info', async (req, res) => {
         let contestsCount = await Contest.count();
         let usersCount = await User.count();
     
-        res.render('admin_info', {
+        res.render('reception_info', {
           allSubmissionsCount: allSubmissionsCount,
           todaySubmissionsCount: todaySubmissionsCount,
           problemsCount: problemsCount,
