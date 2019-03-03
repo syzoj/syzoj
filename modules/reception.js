@@ -16,7 +16,7 @@ app.get('/reception', async (req, res) => {
         let ranklist = await User.query(paginate, { is_show: true }, [[sort, order]]);
         await ranklist.forEachAsync(async x => x.renderInformation());
 
-        res.render('reception_user_list', {
+        res.render('reception_info', {
         ranklist: ranklist,
         paginate: paginate,
         curSort: sort,
