@@ -1,10 +1,14 @@
 let User = syzoj.model('user');
 let JudgeState = syzoj.model('judge_state');
 const RatingCalculation = syzoj.model('rating_calculation');
-const RatingHistory = syzoj.model('rating_history');
 const Contest = syzoj.model('contest');
-const ContestPlayer = syzoj.model('contest_player');
 let UserApply = syzoj.model('user_apply');
+let Problem = syzoj.model('problem');
+let Article = syzoj.model('article');
+let UserPrivilege = syzoj.model('user_privilege');
+const RatingHistory = syzoj.model('rating_history');
+let ContestPlayer = syzoj.model('contest_player');
+const calcRating = require('../libs/rating');
 
 app.get('/reception/info', async (req, res) => {
     try {
