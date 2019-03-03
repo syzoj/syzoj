@@ -36,7 +36,7 @@
       
       function success() {
           alert("注册成功！");
-          window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
+          window.location.href = '/reception/register';
       }
       
       function mail_required() {
