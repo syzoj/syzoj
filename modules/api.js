@@ -177,9 +177,6 @@ app.post('/api/reception_sign_up', async (req, res) => {
       });
       await user.save();
 
-      req.session.user_id = user.id;
-      setLoginCookie(user.username, user.password, res);
-
       res.send(JSON.stringify({ error_code: 1 }));
     }
   } catch (e) {
