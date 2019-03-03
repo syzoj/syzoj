@@ -1,0 +1,66 @@
+<% this.title = '排名' %>
+<% include header %>
+
+<div class="padding">
+  <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" class="ui mini form" method="get" role="form" style="margin-bottom: 25px; text-align: right; ">
+    <div class="ui action left icon input inline" style="width: 180px; margin-right: 77px; ">
+      <i class="search icon"></i><input name="nickname" placeholder="用户名" type="text">
+      <button class="ui mini button" type="submit">查找用户</button>
+    </div>
+  </form>
+	    <table class="ui very basic center aligned table" style="table-layout: fixed; ">
+	        <thead>
+	        <tr>
+	            <th style="width: 60px; ">#</th>
+	            <th style="width: 150px; "><%- createSortableTitle('username', '用户名', true) %></th>
+	            <th>个性签名</th>
+	            <th style="width: 100px; "><%- createSortableTitle('ac_num', '通过数量', false) %></th>
+	            <th style="width: 100px; "><%- createSortableTitle('rating', '积分', false) %></th>
+	        </tr>
+	        </thead>
+          <script>
+          var lineHeight = 0;
+          (function () {
+            var div = document.createElement('div');
+            div.style.position = 'fixed';
+            div.style.left = -10000;
+            div.style.visibility = 'hidden';
+            div.innerText = '测试，Test.';
+            document.body.appendChild(div);
+            lineHeight = div.clientHeight;
+          })();
+          </script>
+	        <tbody>
+	        <%
+            let i = (paginate.currPage - 1) * paginate.perPage;
+            for (let user of ranklist) {
+              ++i;
+            %>
+            <tr>
+		        	<td><b><%= i %></b></td>
+		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
+		        	<td class="font-content">
+              <script id="user-infomation-script-<%= i %>">
+              (function () {
+                var html = <%- serializejs(user.information) %>;
+                var elem = document.createElement('div');
+                elem.style = 'overflow: hidden; width: 100%; position: relative; ';
+                elem.style.maxHeight = lineHeight + 'px';
+                elem.innerHTML = html;
+                var imgs = Array.prototype.slice.call(elem.getElementsByTagName('img'));
+                for (var i in imgs) imgs[i].parentNode.removeChild(imgs[i]);
+                var script = document.getElementById('user-infomation-script-<%= i %>');
+                script.parentNode.replaceChild(elem, script);
+              })();
+              </script>
+              </td>
+		        	<td><%= user.ac_num %></td>
+		        	<td><%= user.rating %></td>
+		        </tr>
+		    <% } %>
+	        </tbody>
+	    </table>
+    <br>
+<% include page %>
+</div>
+<% include footer %>
