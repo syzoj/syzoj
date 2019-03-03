@@ -139,7 +139,7 @@ app.post('/api/reception_sign_up', async (req, res) => {
     let syzoj2_xxx_md5 = '59cb65ba6f9ad18de0dcd12d5ae11bd2';
     if (req.body.password === syzoj2_xxx_md5) throw 2007;
     if (!syzoj.utils.isValidUsername(req.body.username)) throw 2002;
-    if (!syzoj.utils.isValidRealname(req.body.realname)) throw 3002;
+    if (req.body.realname) throw 3002;
     
 
     if (syzoj.config.register_mail) {

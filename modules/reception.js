@@ -51,7 +51,7 @@ app.get('/reception/register', async (req, res) => {
         }
         else {
             let date = new Date;
-            username = parseInt(date.getFullYear().toString)/100 * 10000;
+            username = parseInt(parseInt(date.getFullYear().toString())%100)*10000;
         }
         res.render('reception_register', {
             username: username
