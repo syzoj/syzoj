@@ -55,7 +55,8 @@ class User extends Model {
       sex: 0,
       is_show: syzoj.config.default.user.show,
       rating: syzoj.config.default.user.rating,
-      register_time: parseInt((new Date()).getTime() / 1000)
+      register_time: parseInt((new Date()).getTime() / 1000),
+      prefer_formatted_code: true
     }, val)));
   }
 
