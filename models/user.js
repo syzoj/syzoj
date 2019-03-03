@@ -48,6 +48,7 @@ class User extends Model {
       username: '',
       password: '',
       email: '',
+      phone: '',
 
       nickname: '',
       is_admin: false,
