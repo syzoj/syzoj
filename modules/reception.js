@@ -41,12 +41,12 @@ app.get('/reception/register', async (req, res) => {
     try {
         if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
-        let username = res.locals.user.getLastUsername();
+        let username = User.query([1, 1], [['id', 'desc']]);
         if(username && /^[0-9]+$/.test(username)) {
-            username = 'username';
+            //username = 'username';
         }
         res.render('reception_register', {
-            username: 'username'
+            username: username
         });
       } catch (e) {
         syzoj.log(e);
