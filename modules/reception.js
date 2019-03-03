@@ -7,6 +7,7 @@ let UserApply = syzoj.model('user_apply');
 
 app.get('/reception', async (req, res) => {
     try{
+        const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
         const order = req.query.order || syzoj.config.sorting.ranklist.order;
         if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
         throw new ErrorMessage('错误的排序参数。');
