@@ -47,7 +47,11 @@ app.get('/reception/register', async (req, res) => {
             username = lastuser[0].username;
         }
         if(username && /^[0-9]+$/.test(username)) {
-            //username = 'username';
+            username = parseInt(username) + 1;
+        }
+        else {
+            let date = new Date;
+            username = parseInt(date.getFullYear().toString)/100 * 10000;
         }
         res.render('reception_register', {
             username: username
