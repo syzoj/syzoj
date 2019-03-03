@@ -36,3 +36,14 @@ app.get('/reception/info', async (req, res) => {
         })
       }
 });
+
+app.get('/reception/register', async (req, res) => {
+    try {
+        res.render('reception_register');
+      } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+          err: e
+        })
+      }
+});
