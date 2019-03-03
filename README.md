@@ -42,5 +42,5 @@ ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIM
 从该 commit [d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3](https://github.com/syzoj/syzoj/commit/d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3)（2018 年 12 月 7 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
 
 ```sql
-ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 0 AFTER `public_email`;
+ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 1 AFTER `public_email`;
 ```

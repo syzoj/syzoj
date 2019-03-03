@@ -42,5 +42,5 @@ ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIM
 Who upgraded from a commit BEFORE [d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3](https://github.com/syzoj/syzoj/commit/d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3) (Dec 7, 2018) **MUST** perform the following SQL on the database.
 
 ```sql
-ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 0 AFTER `public_email`;
+ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 1 AFTER `public_email`;
 ```
