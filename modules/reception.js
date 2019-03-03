@@ -1,4 +1,8 @@
 let User = syzoj.model('user');
+const RatingCalculation = syzoj.model('rating_calculation');
+const RatingHistory = syzoj.model('rating_history');
+const Contest = syzoj.model('contest');
+const ContestPlayer = syzoj.model('contest_player');
 let UserApply = syzoj.model('user_apply');
 
 app.get('/reception', async (req, res) => {
