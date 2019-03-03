@@ -39,7 +39,13 @@ app.get('/reception/info', async (req, res) => {
 
 app.get('/reception/register', async (req, res) => {
     try {
-        res.render('reception_register');
+        let username = User.getLastUsername();
+        if(username && /^[0-9]+$/.test(username)) {
+            username = parseInt(username) + 1;
+        }
+        res.render('reception_register', {
+            username: username
+        });
       } catch (e) {
         syzoj.log(e);
         res.render('error', {

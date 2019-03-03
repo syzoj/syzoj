@@ -1,18 +1,18 @@
-<% this.receptionPage = 'info'; %>
+<% this.receptionPage = 'register'; %>
 <% include reception_header %>
 <div class="padding">
-        <h1>注册</h1>
+        <h1>注册用户</h1>
         <div class="ui error message" id="error" data-am-alert hidden>
           <p id="error_info"></p>
         </div>
                 <form class="ui form">
                       <div class="field">
                           <label for="username">用户名</label>
-                          <input type="text" placeholder="" id="username">
+                          <input type="text" placeholder="<%=username%>" id="username">
                       </div>
                       <div class="field">
-                          <label for="email">邮箱</label>
-                          <input type="email" placeholder="" id="email">
+                            <label for="realname">真实姓名</label>
+                            <input type="text" placeholder="" id="realname">
                       </div>
                       <div class="two fields">
                           <div class="field">
@@ -55,7 +55,7 @@
           password = md5($("#password1").val() + "syzoj2_xxx")
           $("#sign_up").addClass("loading");
           $.ajax({
-              url: '/api/sign_up',
+              url: '/api/reception_sign_up',
               type: 'POST',
               async: true,
               data: {
@@ -73,6 +73,9 @@
                       case 2005:
                       case 2002:
                           show_error("用户名需要大于 3 个字符小于 16 个字符，仅允许字母数字和下划线");
+                          break;
+                      case 3002:
+                          show_error("请输入正确的姓名");
                           break;
                       case 2007:
                       case 2003:

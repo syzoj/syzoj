@@ -234,6 +234,13 @@ class User extends Model {
     return null;
   }
 
+  async getLastUsername() {
+    let a = await self.query([1, 1], [['id', 'desc']]);
+    if (a[0]) return a[0].username;
+
+    return null;
+  }
+
   getModel() { return model; }
 }
 
