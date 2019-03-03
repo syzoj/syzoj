@@ -46,7 +46,7 @@ app.get('/reception/register', async (req, res) => {
             username = parseInt(username) + 1;
         }
         res.render('reception_register', {
-            username: username
+            username: 'username'
         });
       } catch (e) {
         syzoj.log(e);
