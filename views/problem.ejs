@@ -225,6 +225,7 @@ div[class*=ace_br] {
           const formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest ? contest.id : undefined });
           %>
           <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
+            <%= problem.type %>
             <% if (problem.type === 'submit-answer') { %>
               <%
               let cases = [];
