@@ -80,10 +80,10 @@
               </a>
                 <% } else { %>
                 <div class="item">
-                    <a class="ui button" style="margin-right: 0.5em; " href="<%= syzoj.utils.makeUrl(['login'], { url: this.noPreserveUrl ? undefined : req.originalUrl }) %>">
+                    <a class="ui button" style="margin-right: 0.5em; " href="<%= syzoj.utils.makeUrl(['login'], { url: req.query['url'] || req.originalUrl }) %>">
                         登录
                     </a>
-                    <a class="ui primary button" href="<%= syzoj.utils.makeUrl(['sign_up'], { url: this.noPreserveUrl ? undefined : req.originalUrl }) %>">
+                    <a class="ui primary button" href="<%= syzoj.utils.makeUrl(['sign_up'], { url: req.query['url'] || req.originalUrl }) %>">
                         注册
                     </a>
                 </div>
