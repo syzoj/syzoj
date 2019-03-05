@@ -355,6 +355,8 @@ app.get('/contest/:id/submissions', async (req, res) => {
     where.type = 1;
     where.type_info = contest_id;
 
+    let isFiltered = !!(where.problem_id || where.user_id || where.score || where.language || where.status);
+
     let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.query(paginate, where, [['submit_time', 'desc']]);
 
@@ -380,7 +382,8 @@ app.get('/contest/:id/submissions', async (req, res) => {
       paginate: paginate,
       form: req.query,
       displayConfig: displayConfig,
-      pushType: pushType
+      pushType: pushType,
+      isFiltered: isFiltered
     });
   } catch (e) {
     syzoj.log(e);
