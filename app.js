@@ -18,6 +18,7 @@ global.syzoj = {
   modules: [],
   db: null,
   log(obj) {
+    if (obj instanceof ErrorMessage) return;
     console.log(obj);
   },
   async run() {
