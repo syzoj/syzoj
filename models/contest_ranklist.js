@@ -53,6 +53,8 @@ class ContestRanklist extends Model {
 
         for (let i in player.score_details) {
           let judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
+          if (!judge_state) continue;
+
           player.latest = Math.max(player.latest, judge_state.submit_time);
 
           if (player.score_details[i].score != null) {
