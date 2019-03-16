@@ -79,7 +79,7 @@ class Contest extends Model {
   }
 
   allowedSeeingOthers() {
-    if (this.type === 'acm') return true;
+    if (this.type === 'ioi' || this.type === 'acm') return true;
     else return false;
   }
 
