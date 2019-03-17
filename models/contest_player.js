@@ -31,6 +31,8 @@ class ContestPlayer extends Model {
     return ContestPlayer.fromRecord(ContestPlayer.model.build(Object.assign({
       contest_id: 0,
       user_id: 0,
+      name: "",
+      school: "",
       score: 0,
       score_details: {},
       time_spent: 0
