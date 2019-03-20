@@ -10,7 +10,7 @@ const { getSubmissionInfo, getRoughResult, processOverallResult } = require('../
 
 app.get('/contests', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let where;
     if (res.locals.user && res.locals.user.is_admin) where = {}
     else where = { is_public: true };
@@ -118,7 +118,7 @@ app.post('/contest/:id/edit', async (req, res) => {
 
 app.get('/contest/:id', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     const curUser = res.locals.user;
     let contest_id = parseInt(req.params.id);
 
@@ -223,7 +223,7 @@ app.get('/contest/:id', async (req, res) => {
 
 app.get('/contest/:id/ranklist', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
     const curUser = res.locals.user;
@@ -298,7 +298,7 @@ function getDisplayConfig(contest) {
 
 app.get('/contest/:id/submissions', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
     if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
@@ -400,7 +400,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
 
 app.get('/contest/submission/:id', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     const id = parseInt(req.params.id);
     const judge = await JudgeState.fromID(id);
     if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
@@ -452,7 +452,7 @@ app.get('/contest/submission/:id', async (req, res) => {
 
 app.get('/contest/:id/problem/:pid', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
@@ -502,7 +502,7 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
 
 app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let id = parseInt(req.params.id);
     let contest = await Contest.fromID(id);
     if (!contest) throw new ErrorMessage('无此比赛。');

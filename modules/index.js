@@ -10,7 +10,7 @@ const timeAgo = new TimeAgo('zh-CN');
 
 app.get('/', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let ranklist = await User.query([1, syzoj.config.page.ranklist_index], { is_show: true }, [[syzoj.config.sorting.ranklist.field, syzoj.config.sorting.ranklist.order]]);
     await ranklist.forEachAsync(async x => x.renderInformation());
 

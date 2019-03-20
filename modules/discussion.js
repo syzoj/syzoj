@@ -5,7 +5,7 @@ let User = syzoj.model('user');
 
 app.get('/discussion/:type?', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     if (!['global', 'problems'].includes(req.params.type)) {
       res.redirect(syzoj.utils.makeUrl(['discussion', 'global']));
     }
@@ -43,7 +43,7 @@ app.get('/discussion/:type?', async (req, res) => {
 
 app.get('/discussion/problem/:pid', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let pid = parseInt(req.params.pid);
     let problem = await Problem.fromID(pid);
     if (!problem) throw new ErrorMessage('无此题目。');
@@ -73,7 +73,7 @@ app.get('/discussion/problem/:pid', async (req, res) => {
 
 app.get('/article/:id', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let id = parseInt(req.params.id);
     let article = await Article.fromID(id);
     if (!article) throw new ErrorMessage('无此帖子。');
@@ -120,7 +120,7 @@ app.get('/article/:id', async (req, res) => {
 
 app.get('/article/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);

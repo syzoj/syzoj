@@ -7,7 +7,7 @@ const ContestPlayer = syzoj.model('contest_player');
 // Ranklist
 app.get('/ranklist', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
     const order = req.query.order || syzoj.config.sorting.ranklist.order;
     if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
@@ -33,7 +33,7 @@ app.get('/ranklist', async (req, res) => {
 
 app.get('/find_user', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let user = await User.fromName(req.query.nickname);
     if (!user) throw new ErrorMessage('无此用户。');
     res.redirect(syzoj.utils.makeUrl(['user', user.id]));
@@ -77,7 +77,7 @@ app.post('/logout', async (req, res) => {
 // User page
 app.get('/user/:id', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     let id = parseInt(req.params.id);
     let user = await User.fromID(id);
     if (!user) throw new ErrorMessage('无此用户。');
