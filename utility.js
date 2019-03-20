@@ -279,7 +279,7 @@ module.exports = {
   },
   makeUserUrl(username, id, rating) {
     let res = '';
-    res += '< a href="/user/' + id + '">';
+    res += '<a href="/user/' + id + '">';
     res += '<class = "rated-user user-';
     if (rating < 1000) {
       res += 'gray>';
