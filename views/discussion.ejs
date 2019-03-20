@@ -66,7 +66,7 @@
             <% if (in_problems) { %>
               <td><a href="<%= syzoj.utils.makeUrl(['discussion', 'problem', article.problem_id]) %>"><%= article.problem.title %></a></td>
             <% } %>
-            <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><span class="rated-user <%= syzoj.utils.ratingStyle([show_user.rating])%>"><%= article.user.username %></span></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
+            <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><span class="rated-user <%= syzoj.utils.ratingStyle([ariticle.user.rating])%>"><%= article.user.username %></span></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
             <td><%= article.comments_num %></td>
             <td><%= syzoj.utils.formatDate(article.sort_time) %></td>
         </tr>
