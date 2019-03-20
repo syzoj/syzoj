@@ -87,7 +87,7 @@ function getColorOfScore(score) {
               <% } else { %>
                 <td><%= syzoj.utils.formatSize(judge.max_memory) %></td>
               <% } %>
-              <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><%= judge.user.username %></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['user', judge.user_id]) %>"><span class="rated-user <%= syzoj.utils.ratingStyle([show_user.rating])%>"><%= judge.user.username %></span></a><% if (judge.user.nameplate) { %><%- judge.user.nameplate %><% } %></td>
               <td><%= syzoj.utils.formatDate(judge.submit_time) %></td>
           </tr>
       <% } %>
