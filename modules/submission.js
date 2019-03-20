@@ -22,6 +22,7 @@ const displayConfig = {
 // s is JudgeState
 app.get('/submissions', async (req, res) => {
   try {
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
     const curUser = res.locals.user;
     let user = await User.fromName(req.query.submitter || '');
     let where = {};
@@ -131,6 +132,7 @@ app.get('/submissions', async (req, res) => {
 
 app.get('/submission/:id', async (req, res) => {
   try {
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
     const id = parseInt(req.params.id);
     const judge = await JudgeState.fromID(id);
     if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
@@ -193,6 +195,7 @@ app.get('/submission/:id', async (req, res) => {
 
 app.post('/submission/:id/rejudge', async (req, res) => {
   try {
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
     let id = parseInt(req.params.id);
     let judge = await JudgeState.fromID(id);
 
