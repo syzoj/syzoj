@@ -36,7 +36,8 @@ class Model {
     for (let key in obj) this.record.set(key, obj[key]);
 
     let isNew = this.record.isNewRecord;
-    await this.record.save();
+
+    await syzoj.utils.withTimeoutRetry(() => this.record.save());
     if (!isNew) return;
 
     await this.reload();
