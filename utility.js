@@ -277,6 +277,29 @@ module.exports = {
     let decipher = crypto.createDecipher('aes-256-ctr', password);
     return Buffer.concat([decipher.update(buffer), decipher.final()]);
   },
+  makeUserUrl(username, id, rating) {
+    let res = '';
+    res += '< a href="/user/' + id + '">';
+    res += '<class = "rated-user user-';
+    if (rating < 1000) {
+      res += 'gray>';
+    } else if (rating < 1400) {
+      res += 'green>';
+    } else if (rating < 1600) {
+      res += 'cyan>';
+    } else if (rating < 1800) {
+      res += 'blue>';
+    } else if (rating < 2000) {
+      res += 'violet>';
+    } else if (rating < 2200) {
+      res += 'yellow>';
+    } else {
+      res += 'red>';
+    }
+    res += username;
+    res += '</class>'
+    res += '</a>'
+  },
   async isFile(path) {
     try {
       return (await fs.statAsync(path)).isFile();

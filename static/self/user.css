@@ -1,0 +1,64 @@
+.recent-actions {
+    margin: 1em;
+    font-size: 0.9em;
+}
+
+.rated-user {
+    /*font-family: arial;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-decoration: none !important;
+    font-weight: bold;
+}
+
+.user-black {
+    color: black !important;
+    font-weight: normal !important;
+}
+
+.legendary-user-first-letter {
+    color: black !important;
+}
+
+.user-legendary {
+    color: red !important;
+}
+
+.user-red {
+    color: red !important;
+}
+
+.user-fire {
+    color: red !important;
+}
+
+.user-yellow {
+    color: #bb0 !important;
+}
+
+.user-violet {
+    color: #a0a !important;
+}
+
+.user-orange {
+    color: #FF8C00 !important;
+}
+
+.user-blue {
+    color: blue !important;
+}
+
+.user-cyan {
+    color: #03A89E !important;
+}
+
+.user-green {
+    color: green !important;
+}
+
+.user-gray {
+    color: gray !important;
+}
+
+.user-admin {
+    color: black !important;
+}
