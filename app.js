@@ -22,6 +22,14 @@ global.syzoj = {
     console.log(obj);
   },
   async run() {
+    // Check config
+    if (syzoj.config.session_secret === '@SESSION_SECRET@'
+     || syzoj.config.email_jwt_secret === '@EMAIL_JWT_SECRET@'
+     || syzoj.config.db.password === '@DATABASE_PASSWORD@') {
+      console.log('Please generate and fill the secrets in config!');
+      process.exit();
+    }
+
     let Express = require('express');
     global.app = Express();
 
