@@ -52,7 +52,7 @@
             %>
                 <tr>
                     <td><b><%= i %></b></td>
-                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><span class="rated-user <%= syzoj.utils.ratingStyle([user.rating])%>"><%= user.username %></span></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
                     <td style="font-content">
                       <script id="user-infomation-script-<%= i %>">
                       (function () {

@@ -25,7 +25,7 @@
                     <img style="margin-top: -100%; " src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
                 </div>
                 <div class="content">
-                    <div class="header"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
+                    <div class="header"><span class="rated-user <%= syzoj.utils.ratingStyle([show_user.rating])%>"><%= show_user.username %></span><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
                     <div class="meta">
                         <a class="group"><%= show_user.is_admin ? '管理员' : '普通用户' %></a>
                     </div>
