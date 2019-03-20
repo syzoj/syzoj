@@ -299,7 +299,7 @@ module.exports = {
     res += username;
     res += '</class>';
     res += '</a>';
-    return res;
+    return res.html();
   },
   async isFile(path) {
     try {
