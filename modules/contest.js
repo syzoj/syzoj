@@ -10,7 +10,7 @@ const { getSubmissionInfo, getRoughResult, processOverallResult } = require('../
 
 app.get('/contests', async (req, res) => {
   try {
-    if (!res.locals.user || res.locals.user.name == "") throw new ErrorMessage('Please contact to admin.');
+    if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('Please contact to admin.');
     let where;
     if (res.locals.user && res.locals.user.is_admin) where = {}
     else where = { is_public: true };
