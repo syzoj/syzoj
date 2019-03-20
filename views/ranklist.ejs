@@ -40,7 +40,9 @@
             %>
             <tr>
 		        	<td><b><%= i %></b></td>
-		        	<td><%= syzoj.utils.makeUserUrl(user.username, user.id, user.rating) %></td>
+		        	<td>
+                <%= syzoj.utils.makeUserUrl(user.username, user.id, user.rating) %>
+              </td>
               <td><%= user.name %></td>
               <td><%= user.school %></td>
 		        	<td class="font-content">
