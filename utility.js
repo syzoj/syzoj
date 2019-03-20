@@ -297,8 +297,9 @@ module.exports = {
       res += 'red>';
     }
     res += username;
-    res += '</class>'
-    res += '</a>'
+    res += '</class>';
+    res += '</a>';
+    return res;
   },
   async isFile(path) {
     try {
