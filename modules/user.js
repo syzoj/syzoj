@@ -10,7 +10,7 @@ app.get('/ranklist', async (req, res) => {
     if (!res.locals.user || res.locals.user.name == "" || res.locals.user.name == null) throw new ErrorMessage('您没有登录或没有访问此OJ的权限，请联系管理员。');
     const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
     const order = req.query.order || syzoj.config.sorting.ranklist.order;
-    if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
+    if (!['ac_num', 'rating', 'id', 'username', 'name', 'school'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
     let paginate = syzoj.utils.paginate(await User.count({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
