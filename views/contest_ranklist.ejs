@@ -82,7 +82,7 @@
                   <%= rank %>
                   </div>
                 </td>
-                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a><% if (item.user.nameplate) { %><%- item.user.nameplate %><% } %></td>
+                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><span class="rated-user <%= syzoj.utils.ratingStyle([show_user.rating])%>"><%= item.user.username %></span></a><% if (item.user.nameplate) { %><%- item.user.nameplate %><% } %></td>
                 <td><%= item.user.name %></td>
                 <td><%= item.user.school %></td>
                 <% if (contest.type === 'acm') { %>
