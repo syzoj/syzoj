@@ -40,7 +40,7 @@
             %>
             <tr>
 		        	<td><b><%= i %></b></td>
-              <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><class "rated-user <%= syzoj.utils.ratingStyle([user.rating])%>"><%= user.username %></class></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><span class="rated-user <%= syzoj.utils.ratingStyle([user.rating])%>"><%= user.username %></span></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
               <td><%= user.name %></td>
               <td><%= user.school %></td>
 		        	<td class="font-content">
