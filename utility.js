@@ -278,18 +278,22 @@ module.exports = {
     return Buffer.concat([decipher.update(buffer), decipher.final()]);
   },
   ratingStyle(rating) {
-    if (rating < 1000) {
+    if (rating == 0) {
+      return 'user-admin';
+    } else if (rating < 1000) {
       return 'user-gray';
-    } else if (rating < 1400) {
+    } else if (rating < 1300) {
       return 'user-green';
-    } else if (rating < 1600) {
+    } else if (rating < 1500) {
       return 'user-cyan';
-    } else if (rating < 1800) {
+    } else if (rating < 1700) {
       return 'user-blue';
-    } else if (rating < 2000) {
+    } else if (rating < 1900) {
       return 'user-violet';
-    } else if (rating < 2200) {
+    } else if (rating < 2100) {
       return 'user-yellow';
+    } else if (rating < 2300) {
+      return 'user-orange';
     } else {
       return 'user-red';
     }
