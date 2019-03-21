@@ -45,6 +45,9 @@ Vue.component('submission-item', {
     scoreClass() {
       return "score_" + (parseInt(this.data.result.score / 10) || 0).toString();
     }
+    userColor() {
+      return "rated-user " + this.data.info.user_color
+    }
   },
   methods: {
     alpha(number) {
@@ -99,7 +102,7 @@ Vue.component('submission-item', {
     <% } %>
     {{ formatSize(data.info.codeSize, 1) }}
   </td>
-  <td><a :href="userLink"><span class="rated-user {{data.info.user_color}}">{{ data.info.user }}</span></a></td>
+  <td><a :href="userLink"><span :class="userColor">{{ data.info.user }}</span></a></td>
   <td>{{ data.info.submitTime }}</td>
   <td v-if="showRejudge">
     <a id="rejudge-button" :onclick="'check_rejudge(' + (statusString === 'Waiting' || statusString.startsWith('Running')).toString() + ')'" style="color: #000; " href="#"><i class="repeat icon"></i></a>
