@@ -693,7 +693,9 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
             code: formatted
           });
 
-          await formattedCode.save();
+          try {
+            await formattedCode.save();
+          } catch (e) {}
         }
       }
     }
