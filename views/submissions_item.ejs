@@ -99,7 +99,7 @@ Vue.component('submission-item', {
     <% } %>
     {{ formatSize(data.info.codeSize, 1) }}
   </td>
-  <td><a :href="userLink">{{ data.info.user }}{{ syzoj.util.ratingStyle([data.info.rating]) }}{{ data.info.rating }}</a></td>
+  <td><a :href="userLink">{{ data.info.user }}<%= syzoj.util.ratingStyle([data.info.user_rating]) %>{{ data.info.user_rating }}</a></td>
   <td>{{ data.info.submitTime }}</td>
   <td v-if="showRejudge">
     <a id="rejudge-button" :onclick="'check_rejudge(' + (statusString === 'Waiting' || statusString.startsWith('Running')).toString() + ')'" style="color: #000; " href="#"><i class="repeat icon"></i></a>
