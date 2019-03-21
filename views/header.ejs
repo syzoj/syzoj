@@ -8,9 +8,8 @@
     <title><%= title %> - <%= syzoj.config.title %></title>
     <link href="<%- lib('semantic-ui/2.4.1/semantic.min.css') %>" rel="stylesheet">
     <link href="<%- selfLib('tomorrow.css') %>" rel="stylesheet">
-    <link href="<%- selfLib('mathjax.css') %>?20181105" rel="stylesheet">
+    <link href="<%- selfLib('math.css') %>" rel="stylesheet">
     <link href="<%- selfLib('style.css') %>?20181212" rel="stylesheet">
-    <link href="<%- lib('KaTeX/0.10.1/katex.min.css') %>" rel="stylesheet">
     <link href="<%- lib('morris.js/0.5.1/morris.css') %>" rel="stylesheet">
     <% if (useLocalLibs || !syzoj.config.google_fonts || !syzoj.config.google_fonts.url || !['like-google-fonts', 'like-local'].includes(syzoj.config.google_fonts.type)) { %>
       <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'fira-mono.css']) %>" rel="stylesheet">
