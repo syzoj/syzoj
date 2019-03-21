@@ -111,6 +111,7 @@
   ],
   "session_secret": "@SESSION_SECRET@",
   "rabbitMQ": "amqp://localhost/",
+  "redis": "redis://127.0.0.1:6379",
   "email_jwt_secret": "@EMAIL_JWT_SECRET@",
   "google_analytics": "UA-XXXXXXXX-X",
   "gravatar_url": "https://cdn.v2ex.com/gravatar",

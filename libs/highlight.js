@@ -1,5 +1,6 @@
 const { highlight } = require('syzoj-renderer');
+const objectHash = require('object-hash');
 
-module.exports = (code, lang, cb) => {
-  highlight(code, lang).then(cb);
+module.exports = async (code, lang, cb) => {
+  highlight(code, lang, syzoj.redisCache).then(cb);
 }

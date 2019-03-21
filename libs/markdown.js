@@ -20,16 +20,6 @@ const xss = new XSS.FilterXSS({
   }
 });
 
-const defaultCache = {
-    data: {},
-    get(key) {
-        return this.data[key];
-    },
-    set(key, val) {
-        this.data[key] = val;
-    }
-};
-
 function filter(html) {
   html = xss.process(html);
   if (html) {
@@ -39,5 +29,5 @@ function filter(html) {
 };
 
 module.exports = (markdownCode, callback) => {
-  markdown(markdownCode, defaultCache, filter).then(callback);
+  markdown(markdownCode, syzoj.redisCache, filter).then(callback);
 };

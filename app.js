@@ -1,5 +1,6 @@
 let fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    util = require('util');
 const serializejs = require('serialize-javascript');
 
 const commandLineArgs = require('command-line-args');
@@ -81,6 +82,15 @@ global.syzoj = {
     if (!module.parent) {
       await this.lib('judger').connect();
     }
+
+    // redis and redisCache is for syzoj-renderer
+    const redis = require('redis');
+    this.redis = redis.createClient(this.config.redis);
+    this.redisCache = {
+      get: util.promisify(this.redis.get).bind(this.redis),
+      set: util.promisify(this.redis.set).bind(this.redis)
+    };
+
     this.loadModules();
   },
   async connectDatabase() {
