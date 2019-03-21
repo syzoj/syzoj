@@ -650,7 +650,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         language: req.body.language,
         user_id: curUser.id,
         problem_id: req.params.id,
-        is_public: problem.is_public
+        is_public: problem.is_public,
+        user_rating: curUser.rating
       });
     }
 
