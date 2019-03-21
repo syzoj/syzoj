@@ -90,7 +90,8 @@ class JudgeState extends Model {
       compilation: {},
       result: {},
       task_id: randomstring.generate(10),
-      is_public: false
+      is_public: false,
+      user_rating: null,
     }, val)));
   }
 
