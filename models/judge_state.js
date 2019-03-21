@@ -41,7 +41,8 @@ let model = db.define('judge_state', {
   type: { type: Sequelize.INTEGER },
   type_info: { type: Sequelize.INTEGER },
   is_public: { type: Sequelize.BOOLEAN },
-  user_rating: { type: Sequelize.INTEGER }
+  user_rating: { type: Sequelize.INTEGER },
+  user_color: { type: Sequelize.STRING(50) },
 }, {
     timestamps: false,
     tableName: 'judge_state',
@@ -92,6 +93,7 @@ class JudgeState extends Model {
       task_id: randomstring.generate(10),
       is_public: false,
       user_rating: null,
+      user_color: '',
     }, val)));
   }
 

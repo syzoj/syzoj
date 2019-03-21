@@ -631,7 +631,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         user_id: curUser.id,
         problem_id: req.params.id,
         is_public: problem.is_public,
-        user_rating: curUser.rating
+        user_rating: curUser.rating,
+        user_color: syzoj.utils.ratingStyle([curUser.rating])
       });
     } else {
       let code;
@@ -651,7 +652,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         user_id: curUser.id,
         problem_id: req.params.id,
         is_public: problem.is_public,
-        user_rating: curUser.rating
+        user_rating: curUser.rating,
+        user_color: syzoj.utils.ratingStyle([curUser.rating])
       });
     }
 
