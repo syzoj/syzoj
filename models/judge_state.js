@@ -40,7 +40,8 @@ let model = db.define('judge_state', {
    */
   type: { type: Sequelize.INTEGER },
   type_info: { type: Sequelize.INTEGER },
-  is_public: { type: Sequelize.BOOLEAN }
+  is_public: { type: Sequelize.BOOLEAN },
+  user_rating: { type: Sequelize.INTEGER }
 }, {
     timestamps: false,
     tableName: 'judge_state',
