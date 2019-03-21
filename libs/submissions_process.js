@@ -11,6 +11,7 @@ const getSubmissionInfo = (s, displayConfig) => ({
     codeSize: displayConfig.showCode ? s.code_length : null,
     submitTime: syzoj.utils.formatDate(s.submit_time),
     user_rating: s.user_rating,
+    user_color: s.user_color
 });
 
 const getRoughResult = (x, displayConfig, roughOnly) => {
