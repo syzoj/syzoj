@@ -26,6 +26,7 @@ let querystring = require('querystring');
 let gravatar = require('gravatar');
 let filesize = require('file-size');
 let AsyncLock = require('async-lock');
+let JSDOM = require('jsdom').JSDOM;
 
 module.exports = {
   resolvePath(s) {
@@ -41,20 +42,16 @@ module.exports = {
            .split('<table>').join('<table class="ui celled table">')
            .split('<blockquote>').join('<div class="ui message">').split('</blockquote>').join('</div>');
 
-      let cheerio = require('cheerio');
-      let $ = cheerio.load('<html><head></head><body></body></html>');
-      let body = $('body');
-      body.html(s);
+      let jsdom = new JSDOM(), document = jsdom.window.document;
+      document.body.innerHTML = s;
 
-      let a = $('img:only-child');
+      let a = document.querySelectorAll('p > img:only-child');
       for (let img of Array.from(a)) {
-        if (!img.prev && !img.next) {
-          $(img).css('display', 'block');
-          $(img).css('margin', '0 auto');
-        }
+        img.style.display = 'block';
+        img.style.margin = '0 auto';
       }
 
-      return body.html();
+      return document.body.innerHTML;
     };
     return new Promise((resolve, reject) => {
       if (!keys) {

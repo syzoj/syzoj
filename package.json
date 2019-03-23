@@ -40,6 +40,7 @@
     "gravatar": "^1.8.0",
     "javascript-time-ago": "^1.0.30",
     "js-yaml": "^3.9.0",
+    "jsdom": "^14.0.0",
     "jsondiffpatch": "0.2.5",
     "jsonwebtoken": "^8.4.0",
     "katex": "^0.10.1",
