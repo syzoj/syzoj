@@ -44,3 +44,5 @@ Who upgraded from a commit BEFORE [d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3](htt
 ```sql
 ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 1 AFTER `public_email`;
 ```
+
+Who upgraded from a commit BEFORE [c192e8001ac81cab132ae033b39f09a094587633](https://github.com/syzoj/syzoj/commit/c192e8001ac81cab132ae033b39f09a094587633) (Mar 23, 2019) **MUST** install `redis-server` and [pygments](http://pygments.org/) on the web server. Markdown contents may be broken by switching to new renderer, [migrates/html-table-merge-cell-to-md.js](migrates/html-table-merge-cell-to-md.js) may help the migration。
