@@ -1,0 +1,163 @@
+/* syzoj dark theme */
+
+/* 导航栏 */
+div.ui.fixed.borderless.menu, div.ui.fixed.borderless.menu a{
+    background-color: #111 !important;
+    color: #fff !important;
+}
+a.header>img{
+    filter: invert(1);
+}
+
+/* 页面文字及背景 */
+h1,h2,h3,h4,h5,h6,body,th,td,table,label,div.column,p,div.title{
+    color: #fff !important;
+}
+body{
+    background-color: #2d2d2d;
+}
+.ui.header.top, div.pagination, div.selection, input, div.message{
+    background-color: #454545 !important;
+    color: #fff !important
+}
+.ui.segment, .ui.table, tbody, thead, td, th, p{
+    background-color: #44444400 !important;
+    color: #fff !important;
+}
+.ui.footer{
+    background-color: #2d2d2d !important;
+}
+div.accordion{
+    background-color: #44444400 !important;
+}
+
+/* 各类超链接 */
+a{
+    color: #66ccff;
+}
+a.item{
+    color: #000 !important;
+}
+a.black-link{
+    color: #fff !important;
+}
+a.author{
+    color: #33aacc !important;
+}
+
+/* 比赛 1A 底色 */
+td[style="background: rgb(244, 255, 245); "]{
+    background-color: #3d3d3d !important;
+}
+
+/* 「一言」的来源 */
+#hitokoto-from{
+    color: #ddd !important;
+}
+
+
+/* 代码显示框 */
+code{
+    color: #ccc !important;
+}
+.pl-p, .pl-n{
+    color: #cccccc !important;
+}
+
+/* ACE Editor */
+#editor, #languages-menu, div.ace_gutter{
+    background-color: #333 !important;
+}
+#languages-menu>a, div.ace_gutter{
+    color: #eee !important;
+}
+div.ace_active-line, div.ace_gutter-active-line, div.ace_selection{
+    background-color: #444 !important;
+}
+span.ace_paren, span.ace_identifier{
+    color: #eee !important;
+}
+span.ace_operator{
+     color: #aaa !important;
+}
+#languages-menu a.item.active{
+    background-color: #4a4a4a !important;
+}
+
+/* 评测状态 */
+span.status.accepted,
+span.score.score_10{
+    color: #00d000 !important;
+}
+span.status.wrong_answer{
+    color: red !important;
+}
+span.status.runtime_error, 
+span.status.invalid_interaction,
+span.status.file_error{
+    color: #bb54ee !important;
+}
+span.status.time_limit_exceeded,
+span.status.memory_limit_exceeded,
+span.status.output_limit_exceeded{
+    color: #f4a460 !important;
+}
+span.status.compile_error{
+    color: blue !important;
+}
+span.status.partially_correct{
+    color: cyan !important;
+}
+
+/* 按钮增加透明度, 防止颜色太突出 */
+a.ui.button{
+    opacity: 0.9;
+}
+
+/* 标签及显示分类标签 */
+span.ui.label{
+    background-color: #666;
+    color: #eee;
+}
+#show_tag_title_div{
+    background-color: #454545;
+    
+}
+#show_tag_button{
+    color: #fff !important;
+}
+
+/* textarea */
+textarea.markdown-edit, textarea[name="comment"]{
+    background-color: #454545 !important;
+    color: #fff !important;
+}
+
+/* 选择栏 */
+div.menu > div.item[data-value]{
+    background-color: #454545 !important;
+    border-top: 1px solid #333333 !important;
+    color: #fff !important;
+}
+div.results{
+    background-color: #454545 !important;
+    color: #eee !important;
+}
+a.result:hover{
+    background-color: #666 !important;
+}
+
+/* 个人中心 */
+#user_card div.content{
+    background-color: #2d2d2d !important;
+    color: #fff !important;
+}
+#user_card div.header,#user_card div.meta,#user_card a.group{
+    color: #fff !important;
+}
+#user_card div.extra.content>a{
+    color: #fff !important;
+}
+#user_card div.extra.content>a:hover{
+    color: #1e70bf !important;
+}
