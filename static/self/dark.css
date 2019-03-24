@@ -143,7 +143,7 @@ div.results{
     background-color: #454545 !important;
     color: #eee !important;
 }
-a.result:hover{
+a.result:hover, a.result.active{
     background-color: #666 !important;
 }
 
@@ -160,4 +160,13 @@ a.result:hover{
 }
 #user_card div.extra.content>a:hover{
     color: #1e70bf !important;
+}
+
+/* 表格 */
+.ui.celled.table tr td, .ui.celled.table tr th{
+	border: 1px solid #888 !important;
+}
+.ui.celled.table tr th{
+    background-color: #454545 !important;
+    border-radius: 0px !important;
 }
