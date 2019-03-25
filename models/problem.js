@@ -490,8 +490,8 @@ class Problem extends Model {
   async resetSubmissionCount() {
     let JudgeState = syzoj.model('judge_state');
     await syzoj.utils.lock(['Problem::resetSubmissionCount', this.id], async () => {
-      this.submit_num = await JudgeState.count({ score: { $not: null }, problem_id: this.id, type: { $not: 1 } });
-      this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id, type: { $not: 1 } });
+      this.submit_num = await JudgeState.count({ score: { $not: null }, problem_id: this.id });
+      this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id });
       await this.save();
     });
   }
