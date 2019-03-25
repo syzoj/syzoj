@@ -215,6 +215,7 @@ app.post('/admin/rating/add', async (req, res) => {
       await newHistory.save();
     }
 
+    await db.query('UPDATE `judge_state` SET `type` = 2 WHERE `type` = 1 AND `type_info` = ' + contest.id);
     res.redirect(syzoj.utils.makeUrl(['admin', 'rating']));
   } catch (e) {
     syzoj.log(e);

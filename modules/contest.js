@@ -408,7 +408,7 @@ app.get('/contest/submission/:id', async (req, res) => {
     const curUser = res.locals.user;
     if ((!curUser) || judge.user_id !== curUser.id) throw new ErrorMessage("您没有权限执行此操作。");
 
-    if (judge.type !== 1) {
+    if (judge.type !== 1 && judge.type !== 2) {
       return res.redirect(syzoj.utils.makeUrl(['submission', id]));
     }
 

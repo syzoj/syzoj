@@ -143,7 +143,7 @@ app.get('/submission/:id', async (req, res) => {
     if (!await judge.isAllowedVisitBy(curUser)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
-    if (judge.type === 1) {
+    if (judge.type === 1 || judge.type === 2) {
       contest = await Contest.fromID(judge.type_info);
       contest.ended = contest.isEnded();
 

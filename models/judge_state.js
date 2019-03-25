@@ -111,7 +111,7 @@ class JudgeState extends Model {
 
     if (user && user.id === this.problem.user_id) return true;
     else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
-    else if (this.type === 1) {
+    else if (this.type === 1 || this.type === 2) {
       let contest = await Contest.fromID(this.type_info);
       if (contest.isRunning()) {
         return user && await contest.isSupervisior(user);
@@ -124,11 +124,12 @@ class JudgeState extends Model {
   async updateRelatedInfo(newSubmission) {
     await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'problem', this.problem_id], async () => {
       await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'user', this.user_id], async () => {
-        await this.loadRelationships();
-        await this.user.refreshSubmitInfo();
-        await this.user.save();
-        await this.problem.resetSubmissionCount();
-        if (this.type === 1) {
+        if (this.type === 0) {
+          await this.loadRelationships();
+          await this.user.refreshSubmitInfo();
+          await this.user.save();
+          await this.problem.resetSubmissionCount();
+        } else if (this.type === 1) {
           let contest = await Contest.fromID(this.type_info);
           await contest.newSubmission(this);
         }
@@ -171,7 +172,7 @@ class JudgeState extends Model {
         await this.user.save();
       }
 
-      if (this.type === 1) {
+      if (this.type === 1 || this.type === 2) {
         let contest = await Contest.fromID(this.type_info);
         await contest.newSubmission(this);
       }

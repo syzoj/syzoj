@@ -7,7 +7,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `total_time` ASC \
     LIMIT 1 \
 	) AS `id`, \
@@ -15,13 +15,13 @@ SELECT \
 		SELECT \
 			`total_time` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `total_time` ASC \
     LIMIT 1 \
 	) AS `total_time` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `total_time` ASC \
 ',
   slowest:
@@ -32,7 +32,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `total_time` DESC \
     LIMIT 1 \
 	) AS `id`, \
@@ -40,13 +40,13 @@ SELECT \
 		SELECT \
 			`total_time` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `total_time` DESC \
     LIMIT 1 \
 	) AS `total_time` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `total_time` DESC \
 ',
   shortest:
@@ -57,7 +57,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY LENGTH(`code`) ASC \
     LIMIT 1 \
 	) AS `id`, \
@@ -65,13 +65,13 @@ SELECT \
 		SELECT \
 			LENGTH(`code`) \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY LENGTH(`code`) ASC \
     LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `code_length` ASC \
 ',
   longest:
@@ -82,7 +82,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY LENGTH(`code`) DESC \
     LIMIT 1 \
 	) AS `id`, \
@@ -90,13 +90,13 @@ SELECT \
 		SELECT \
 			LENGTH(`code`) \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY LENGTH(`code`) DESC \
     LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `code_length` DESC \
 ',
   earliest:
@@ -107,7 +107,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `submit_time` ASC \
     LIMIT 1 \
 	) AS `id`, \
@@ -115,13 +115,13 @@ SELECT \
 		SELECT \
 			`submit_time` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `submit_time` ASC \
     LIMIT 1 \
 	) AS `submit_time` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `submit_time` ASC \
 ',
   min:
@@ -132,7 +132,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `max_memory` ASC \
     LIMIT 1 \
 	) AS `id`, \
@@ -140,13 +140,13 @@ SELECT \
 		SELECT \
 			`max_memory` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `max_memory` ASC \
     LIMIT 1 \
 	) AS `max_memory` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `max_memory` ASC \
 ',
   max:
@@ -157,7 +157,7 @@ SELECT \
 		SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `max_memory` ASC \
     LIMIT 1 \
 	) AS `id`, \
@@ -165,13 +165,13 @@ SELECT \
 		SELECT \
 			`max_memory` \
 		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
+		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` != 1 \
 		ORDER BY `max_memory` ASC \
     LIMIT 1 \
 	) AS `max_memory` \
 FROM `judge_state` `outer_table` \
 WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
+	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` != 1 \
 ORDER BY `max_memory` DESC \
 '
 };
@@ -527,7 +527,7 @@ class Problem extends Model {
     let JudgeState = syzoj.model('judge_state');
     statistics.judge_state = await a.mapAsync(async x => JudgeState.fromID(x.id));
 
-    a = (await db.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id)))[0];
+    a = (await db.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` != 1 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id)))[0];
 
     let scoreCount = [];
     for (let score of a) {
