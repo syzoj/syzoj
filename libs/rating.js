@@ -62,11 +62,11 @@ function calculateDeltas(allContestants) {
     const inc = -deltaSum / numberOfContestants + 10;
     deltas = deltas.map(d => d + inc);
 
-    // Sum of top-4*sqrt should be adjusted to zero.
-    const zeroSumCount = Math.min(Math.trunc(4 * Math.round(Math.sqrt(numberOfContestants))), numberOfContestants);
-    const deltaSum2 = _.sum(deltas.slice(0, zeroSumCount));
-    const inc2 = Math.min(Math.max(-deltaSum2 / zeroSumCount, -10), 0);
-    deltas = deltas.map(d => d + inc2);
+    // // Sum of top-4*sqrt should be adjusted to zero.
+    // const zeroSumCount = Math.min(Math.trunc(4 * Math.round(Math.sqrt(numberOfContestants))), numberOfContestants);
+    // const deltaSum2 = _.sum(deltas.slice(0, zeroSumCount));
+    // const inc2 = Math.min(Math.max(-deltaSum2 / zeroSumCount, -10), 0);
+    // deltas = deltas.map(d => d + inc2);
 
     return deltas;
 }
