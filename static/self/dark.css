@@ -80,6 +80,12 @@ span.ace_paren, span.ace_identifier{
 span.ace_operator{
      color: #aaa !important;
 }
+span.ace_operator{
+     color: #aaa !important;
+}
+div.ace_cursor{
+    border-color: #aaa !important;
+}
 #languages-menu a.item.active{
     background-color: #4a4a4a !important;
 }
@@ -111,7 +117,7 @@ span.status.partially_correct{
 
 /* 按钮增加透明度, 防止颜色太突出 */
 a.ui.button{
-    opacity: 0.9;
+    opacity: 0.85;
 }
 
 /* 标签及显示分类标签 */
