@@ -59,7 +59,7 @@ function calculateDeltas(allContestants) {
 
     // Total sum should not be more than zero.
     const deltaSum = _.sum(deltas);
-    const inc = -deltaSum / numberOfContestants - 1;
+    const inc = -deltaSum / numberOfContestants + 10;
     deltas = deltas.map(d => d + inc);
 
     // Sum of top-4*sqrt should be adjusted to zero.
