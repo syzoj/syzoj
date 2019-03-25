@@ -170,10 +170,15 @@ a.result:hover, a.result.active{
 
 /* 表格 */
 .ui.celled.table tr td, .ui.celled.table tr th{
-	border: 1px solid #888 !important;
+	border-right: 1px solid #888 !important;
+	border-bottom: 1px solid #888 !important;
+}
+.ui.celled.table td:first-child, .ui.celled.table th:first-child{
+	border-left: 1px solid #888 !important;
 }
 .ui.celled.table tr th{
     background-color: #454545 !important;
+    border-top: 1px solid #888 !important;
     border-radius: 0px !important;
 }
 
