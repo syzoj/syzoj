@@ -297,7 +297,7 @@ app.post('/admin/other', async (req, res) => {
     } else if (req.body.type === 'reset_user_count') {
       const users = await User.query();
       for (const u of users) {
-        await u.resetSubmissonCount();
+        await u.getACProblems();//resetSubmissonCount();
       }
     } 
     else {
