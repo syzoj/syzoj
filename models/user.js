@@ -123,7 +123,7 @@ class User extends Model {
         user_id: this.id,
         status: 'Accepted',
         type: {
-          $ne: 1 // Not a contest submissio
+          // $ne: 1 // Not a contest submissio
         }
       }
     });
