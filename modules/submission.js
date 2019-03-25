@@ -35,6 +35,9 @@ app.get('/submissions', async (req, res) => {
     } else {
       const contestId = Number(req.query.contest);
       const contest = await Contest.fromID(contestId);
+      if (contest == null) {
+        throw new ErrorMessage('没有该场比赛。');
+      }
       contest.ended = contest.isEnded();
       if ((contest.ended && contest.is_public) || // If the contest is ended and is not hidden
         (curUser && await contest.isSupervisior(curUser)) // Or if the user have the permission to check
