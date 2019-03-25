@@ -112,7 +112,7 @@ class User extends Model {
 
       this.submit_num = cnt;
     });
-    this.save();
+    await this.save();
   }
 
   async getACProblems() {
