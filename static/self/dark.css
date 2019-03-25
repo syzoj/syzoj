@@ -1,3 +1,5 @@
+/* syzoj dark theme */
+
 /* 导航栏 */
 div.ui.fixed.borderless.menu, div.ui.fixed.borderless.menu a{
     background-color: #111 !important;
@@ -48,11 +50,6 @@ td[style="background: rgb(244, 255, 245); "]{
     background-color: #3d3d3d !important;
 }
 
-/* submit_time */
-div.submit_time{
-    color: #999 !important;
-}
-
 /* 「一言」的来源 */
 #hitokoto-from{
     color: #ddd !important;
@@ -74,11 +71,8 @@ code{
 #languages-menu>a, div.ace_gutter{
     color: #eee !important;
 }
-div.ace_active-line, div.ace_gutter-active-line{
+div.ace_active-line, div.ace_gutter-active-line, div.ace_selection{
     background-color: #444 !important;
-}
-div.ace_selection{
-    background-color: #666 !important;
 }
 span.ace_paren, span.ace_identifier{
     color: #eee !important;
@@ -90,14 +84,34 @@ span.ace_operator{
     background-color: #4a4a4a !important;
 }
 
-/* "Accept" 的颜色变浅 */
-span.status.accepted, span.score.score_10{
+/* 评测状态 */
+span.status.accepted,
+span.score.score_10{
     color: #00d000 !important;
+}
+span.status.wrong_answer{
+    color: red !important;
+}
+span.status.runtime_error, 
+span.status.invalid_interaction,
+span.status.file_error{
+    color: #bb54ee !important;
+}
+span.status.time_limit_exceeded,
+span.status.memory_limit_exceeded,
+span.status.output_limit_exceeded{
+    color: #f4a460 !important;
+}
+span.status.compile_error{
+    color: blue !important;
+}
+span.status.partially_correct{
+    color: cyan !important;
 }
 
 /* 按钮增加透明度, 防止颜色太突出 */
 a.ui.button{
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 /* 标签及显示分类标签 */
@@ -129,7 +143,7 @@ div.results{
     background-color: #454545 !important;
     color: #eee !important;
 }
-a.result:hover{
+a.result:hover, a.result.active{
     background-color: #666 !important;
 }
 
@@ -146,4 +160,13 @@ a.result:hover{
 }
 #user_card div.extra.content>a:hover{
     color: #1e70bf !important;
+}
+
+/* 表格 */
+.ui.celled.table tr td, .ui.celled.table tr th{
+	border: 1px solid #888 !important;
+}
+.ui.celled.table tr th{
+    background-color: #454545 !important;
+    border-radius: 0px !important;
 }
