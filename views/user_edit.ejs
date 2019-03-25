@@ -21,6 +21,14 @@
           <option value="-1" <%= edited_user.sex == -1 ? 'selected': '' %>>女</option>
         </select>
 	    </div>
+      <div class="field">
+        <label for="name">姓名</label>
+        <input class="font-content" type="text" id="name" name="name" value="<%= edited_user.name %>"<% if (!user.allowedManage) { %> readonly<% } %>>
+      </div>
+      <div class="field">
+        <label for="name">学校</label>
+        <input class="font-content" type="text" id="school" name="school" value="<%= edited_user.school %>"<% if (!user.allowedManage) { %> readonly<% } %>>
+      </div>
 	    <div class="field">
 	    	<label for="email">Email</label>
 	    	<input class="font-content" type="email" id="email" name="email" value="<%= edited_user.email %>"<% if (!user.allowedManage) { %> readonly<% } %>>
@@ -75,17 +83,6 @@
         <div class="ui toggle <% if (!allowedManagePrivilege) { %>disabled <% } %>checkbox checkbox_privilege" data-name="manage_user">
           <input <% if (!allowedManagePrivilege) { %>disabled="disabled" <% } %>type="checkbox"<% if (edited_user.privileges.includes('manage_user')) { %> checked<% } %>>
           <label>管理用户</label>
-        </div>
-      </div>
-        <div class="inline field">
-        <div class="field">
-          <label for="name">姓名</label>
-          <input class="font-content" type="text" id="name" name="name" value="<%= edited_user.name %>"<% if (!user.allowedManage) { %> readonly<% } %>>
-        </div>
-        <div class="inline field">
-        <div class="field">
-          <label for="name">学校</label>
-          <input class="font-content" type="text" id="school" name="school" value="<%= edited_user.school %>"<% if (!user.allowedManage) { %> readonly<% } %>>
         </div>
       </div>
       <div style="text-align: center; margin-top: 30px; ">
