@@ -176,3 +176,8 @@ a.result:hover, a.result.active{
     background-color: #454545 !important;
     border-radius: 0px !important;
 }
+
+/* 比赛中的‘提交时间’ */
+div.submit_time{
+    color: #888 !important;
+}
