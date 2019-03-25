@@ -31,7 +31,7 @@ app.get('/submissions', async (req, res) => {
     else if (req.query.submitter) where.user_id = -1;
 
     if (!req.query.contest) {
-      where.type = { $eq: 0 };
+      //where.type = { $eq: 0 };
     } else {
       const contestId = Number(req.query.contest);
       const contest = await Contest.fromID(contestId);
