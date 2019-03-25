@@ -20,7 +20,7 @@ function getContestantSeed(contestantIndex, allContestants) {
 }
 
 function getRatingSeed(rating, allContestants) {
-    return 0.5 + _.sum(allContestants.map(c => getEloWinProbability(c.currentRating, rating)));
+    return 1 + _.sum(allContestants.map(c => getEloWinProbability(c.currentRating, rating)));
 }
 
 function getAverageRank(contestant, allContestants) {
