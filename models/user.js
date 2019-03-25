@@ -93,9 +93,9 @@ class User extends Model {
         where: {
           user_id: this.id,
           status: 'Accepted',
-          type: {
-            $ne: 1 // Not a contest submission
-          }
+          // type: {
+          //   $ne: 1 // Not a contest submission
+          // }
         }
       });
 
@@ -105,21 +105,12 @@ class User extends Model {
 
       let cnt = await JudgeState.count({
         user_id: this.id,
-        type: {
-          $ne: 1 // Not a contest submission
-        }
+        // type: {
+        //   $ne: 1 // Not a contest submission
+        // }
       });
 
       this.submit_num = cnt;
-    });
-  }
-
-  async resetSubmissionCount() {
-    let JudgeState = syzoj.model('judge_state');
-    await syzoj.utils.lock(['Problem::resetSubmissionCount', this.id], async () => {
-      this.submit_num = await JudgeState.count({ score: { $not: null }, user_id: this.id });
-      this.ac_num = getACProblems().size();
-      await this.save();
     });
   }
 
