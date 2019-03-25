@@ -114,6 +114,15 @@ class User extends Model {
     });
   }
 
+  async resetSubmissionCount() {
+    let JudgeState = syzoj.model('judge_state');
+    await syzoj.utils.lock(['Problem::resetSubmissionCount', this.id], async () => {
+      this.submit_num = await JudgeState.count({ score: { $not: null }, user_id: this.id });
+      this.ac_num = getACProblems().size();
+      await this.save();
+    });
+  }
+
   async getACProblems() {
     let JudgeState = syzoj.model('judge_state');
 

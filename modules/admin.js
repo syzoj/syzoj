@@ -294,7 +294,13 @@ app.post('/admin/other', async (req, res) => {
           await s.save();
         }
       }
-    } else {
+    } else if (req.body.type === 'reset_user_count') {
+      const users = await User.query();
+      for (const u of users) {
+        await u.resetSubmissonCount();
+      }
+    } 
+    else {
       throw new ErrorMessage("操作类型不正确");
     }
 
