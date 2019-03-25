@@ -31,7 +31,7 @@ app.get('/submissions', async (req, res) => {
     else if (req.query.submitter) where.user_id = -1;
 
     if (!req.query.contest) {
-      where.type = { $eq: 0 };
+      where.type = { $ne: 1 };
     } else {
       const contestId = Number(req.query.contest);
       const contest = await Contest.fromID(contestId);
@@ -42,7 +42,7 @@ app.get('/submissions', async (req, res) => {
       if ((contest.ended && contest.is_public) || // If the contest is ended and is not hidden
         (curUser && await contest.isSupervisior(curUser)) // Or if the user have the permission to check
       ) {
-        where.type = { $eq: 1 };
+        where.type = { $ne: 0 };
         where.type_info = { $eq: contestId };
         inContest = true;
       } else {
