@@ -142,8 +142,12 @@ textarea.markdown-edit, textarea[name="comment"]{
 /* 选择栏 */
 div.menu > div.item[data-value]{
     background-color: #454545 !important;
-    border-top: 1px solid #333333 !important;
+    border-top: 1px solid #3d3d3d !important;
     color: #fff !important;
+    transition: 0.1s ease;
+}
+div.menu > div.item[data-value]:hover{
+    background-color: #666 !important;
 }
 div.results{
     background-color: #454545 !important;
