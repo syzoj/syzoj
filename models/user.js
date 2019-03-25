@@ -122,9 +122,9 @@ class User extends Model {
       where: {
         user_id: this.id,
         status: 'Accepted',
-        type: {
-          // $ne: 1 // Not a contest submissio
-        }
+        // type: {
+        //   $ne: 1 // Not a contest submissio
+        // }
       }
     });
 
