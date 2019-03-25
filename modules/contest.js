@@ -303,10 +303,10 @@ app.get('/contest/:id/submissions', async (req, res) => {
     let contest = await Contest.fromID(contest_id);
     if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
-    if (contest.isEnded()) {
-      res.redirect(syzoj.utils.makeUrl(['submissions'], { contest: contest_id }));
-      return;
-    }
+    // if (contest.isEnded()) {
+    //   res.redirect(syzoj.utils.makeUrl(['submissions'], { contest: contest_id }));
+    //   return;
+    // }
 
     const displayConfig = getDisplayConfig(contest);
     let problems_id = await contest.getProblems();
