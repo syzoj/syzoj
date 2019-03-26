@@ -336,7 +336,6 @@ div[class*=ace_br] {
               </div>
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
                 <button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>提交</button>
-                <!--div onclick="show_custom_test()" class="ui positive button">自定义测试</div-->
               </div>
             <% } %>
           </form>
@@ -384,93 +383,6 @@ div[class*=ace_br] {
   });
   </script>
 
-  <script src="https://cdn.staticfile.org/css-element-queries/0.4.0/ResizeSensor.min.js"></script>
-  <div class="ui modal" id="modal-custom-test">
-    <div class="header">
-      自定义测试
-    </div>
-    <div class="content" style="padding-bottom: 0; ">
-      <div class="ui form">
-        <form id="form-custom-test" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'custom-test']) %>">
-          <input type="hidden" name="code">
-          <input type="hidden" name="language">
-          <div class="field">
-            <label>输入文件</label>
-            <textarea name="input_file_textarea" style="font-family: 'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace; "></textarea>
-          </div>
-          <div class="inline fields" style="width: 100%; ">
-            <div class="field" style="margin: 0 auto; ">
-              <label for="answer">或者，上传输入文件</label>
-              <input type="file" name="input_file">
-            </div>
-          </div>
-        </form>
-      </div>
-      <div id="custom-test-result"></div>
-    </div>
-    <div class="actions" style="text-align: center; ">
-      <div class="ui green button" id="submit-custom-test">提交</div>
-    </div>
-  </div>
-
-  <script>
-  var custom_test_id;
-
-  $('#submit-custom-test').click(function () {
-    $('#submit-custom-test').addClass('disabled');
-
-    var form = document.getElementById('form-custom-test');
-    $(form).find('[name=language]').val($('#languages-menu .item.active').data('value'));
-    $(form).find('[name=code]').val(editor.getValue());
-
-    var code_upload = $('#answer')[0].cloneNode(true);
-    code_upload.style.display = 'none';
-    code_upload.name = 'code_upload';
-    form.appendChild(code_upload);
-
-    $.ajax({
-      url: form.action,
-      type: 'post',
-      data: new FormData(form),
-      cache: false,
-      contentType: false,
-      processData: false,
-      success: function (data) {
-        custom_test_id = data.id;
-        update_custom_test_result();
-      }
-    });
-
-    form.removeChild(code_upload);
-  });
-
-  function show_custom_test() {
-    $('#modal-custom-test').modal('show');
-    new ResizeSensor($('#modal-custom-test'), function () {
-      $(window).resize();
-    });
-  }
-
-  function update_custom_test_result() {
-    $.get('/custom-test/' + custom_test_id + '/ajax', function (data) {
-      if (data.err) {
-        alert(data.err);
-      }
-
-      if ($('#custom-test-result').html() !== data.html) {
-        $('#custom-test-result').html(data.html);
-      }
-
-      if (data.pending) {
-        setTimeout(function () {
-          update_custom_test_result();
-        }, 500);
-      } else {
-        $('#submit-custom-test').removeClass('disabled');
-      }
-    });
-  }
-  </script>
 <% } else { %>
   <script>
   function submit_code() {
