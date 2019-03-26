@@ -74,7 +74,7 @@ code{
 #languages-menu>a, div.ace_gutter{
     color: #eee !important;
 }
-div.ace_active-line, div.ace_gutter-active-line, div.ace_selection{
+div.ace_active-line, div.ace_gutter-active-line{
     background-color: #444 !important;
 }
 span.ace_paren, span.ace_identifier{
@@ -83,8 +83,8 @@ span.ace_paren, span.ace_identifier{
 span.ace_operator{
      color: #aaa !important;
 }
-span.ace_operator{
-     color: #aaa !important;
+div.ace_selection{
+     background-color: #626262 !important;
 }
 div.ace_cursor{
     border-color: #aaa !important;
