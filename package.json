@@ -62,7 +62,7 @@
     "socket.io": "^2.2.0",
     "stream-to-string": "^1.2.0",
     "syzoj-divine": "^1.0.2",
-    "syzoj-renderer": "^1.0.4",
+    "syzoj-renderer": "^1.0.5",
     "tempfile": "^2.0.0",
     "tmp-promise": "^1.0.3",
     "waliyun": "^3.1.1",
