@@ -19,8 +19,14 @@ function getContestantSeed(contestantIndex, allContestants) {
     return seed;
 }
 
-function getRatingSeed(rating, allContestants) {
-    return 1 + _.sum(allContestants.map(c => getEloWinProbability(c.currentRating, rating)));
+function getRatingSeed(contestantIndex, rating, allContestants) {
+	let seed = 1;
+	for (let i = 0; i < allContestants.length; i++) {
+		if (contestantIndex != i) {
+			seed += getEloWinProbability(allContestants[i].currentRating, rating);
+		}
+	}
+	return seed;
 }
 
 function getAverageRank(contestant, allContestants) {
@@ -39,7 +45,7 @@ function getRatingToRank(contestantIndex, allContestants) {
 
     while (right - left > 1) {
         const mid = (left + right) / 2;
-        const seed = getRatingSeed(mid, allContestants);
+        const seed = getRatingSeed(contestantIndex, mid, allContestants);
         if (seed < averageRank) {
             right = mid;
         } else {
