@@ -30,6 +30,9 @@ body{
 div.accordion{
     background-color: #44444400 !important;
 }
+div.ui.header{
+    color: #66ccff !important;
+}
 
 /* 各类超链接 */
 a{
