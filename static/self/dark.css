@@ -6,9 +6,12 @@ div.ui.fixed.borderless.menu, div.ui.fixed.borderless.menu a{
     color: #fff !important;
 }
 div.ui.menu a.item{
-    transition: .2s;
+    transition: .1s;
 }
 div.ui.menu a.item:hover{
+    background-color: #555 !important;
+}
+div.ui.menu a.item.active{
     background-color: #555 !important;
 }
 a.header>img{
