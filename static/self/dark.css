@@ -42,6 +42,12 @@ div.accordion{
 div.ui.header{
     color: #66ccff !important;
 }
+span.date{
+    color: #bbb !important;
+}
+div.actions>a{
+    color: #777 !important;
+}
 
 /* 各类超链接 */
 a{
