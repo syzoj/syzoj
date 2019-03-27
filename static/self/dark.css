@@ -150,6 +150,9 @@ span.ui.label{
 #show_tag_button{
     color: #fff !important;
 }
+i.search.icon{
+    color: #eee !important;
+}
 
 /* textarea */
 textarea.markdown-edit, textarea[name="comment"]{
