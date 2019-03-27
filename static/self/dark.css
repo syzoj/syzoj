@@ -5,6 +5,12 @@ div.ui.fixed.borderless.menu, div.ui.fixed.borderless.menu a{
     background-color: #111 !important;
     color: #fff !important;
 }
+div.ui.menu a.item{
+    transition: .2s;
+}
+div.ui.menu a.item:hover{
+    background-color: #555 !important;
+}
 a.header>img{
     filter: invert(1);
 }
