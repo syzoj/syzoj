@@ -153,6 +153,9 @@ span.ui.label{
 i.search.icon{
     color: #eee !important;
 }
+.ui.toggle.checkbox input:checked~label{
+    color: #fff !important;
+}
 
 /* textarea */
 textarea.markdown-edit, textarea[name="comment"]{
