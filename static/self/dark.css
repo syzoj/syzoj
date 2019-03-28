@@ -29,6 +29,9 @@ body{
     background-color: #454545 !important;
     color: #fff !important
 }
+div.pagination>a{
+    color: #aaa !important;
+}
 .ui.segment, .ui.table, tbody, thead, td, th, p{
     background-color: #44444400 !important;
     color: #fff !important;
