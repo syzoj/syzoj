@@ -2,20 +2,33 @@
 
 /* 导航栏 */
 div.ui.fixed.borderless.menu, div.ui.fixed.borderless.menu a{
-    background-color: #111 !important;
+    background-color: #222 !important;
     color: #fff !important;
 }
 div.ui.menu a.item{
     transition: .1s;
 }
 div.ui.menu a.item:hover{
-    background-color: #555 !important;
+    background-color: #444 !important;
 }
 div.ui.menu a.item.active{
     background-color: #555 !important;
 }
 a.header>img{
     filter: invert(1);
+}
+div.menu.fixed div.right.menu div.menu{
+    background-color: #111 !important;
+}
+div.menu.fixed div.right.menu div.menu a.item{
+    background-color: #111 !important;
+    border: none !important;
+    color: #fff !important;
+}
+div.menu.fixed div.right.menu div.menu a.item:hover{
+    background-color: #333 !important;
+    border: none !important;
+    color: #fff !important;
 }
 
 /* 页面文字及背景 */
@@ -160,6 +173,16 @@ i.search.icon{
     color: #fff !important;
 }
 
+/* 页面右上角, 功能性按钮 */
+form[action="/find_user"] button{
+    color: #eee !important;
+    background-color: #5f5f5f !important;
+}
+form[action="/find_user"] button:hover{
+    color: #eee !important;
+    background-color: #555 !important;
+}
+
 /* textarea */
 textarea.markdown-edit, textarea[name="comment"]{
     background-color: #454545 !important;
@@ -183,9 +206,16 @@ div.results{
 a.result:hover, a.result.active{
     background-color: #666 !important;
 }
-div.menu.transition, div.menu.transition>a{
+div.menu.transition:not(.pagination), div.menu.transition:not(.pagination)>a{
     background-color: #444 !important;
     color: #eee !important;
+}
+div.menu:not(.pagination) > a.item{
+    background-color: #333 !important;
+    transition: .1s;
+}
+div.menu:not(.pagination) > a.item:hover{
+    background-color: #555 !important;
 }
 
 /* 个人中心 */
