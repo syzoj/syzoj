@@ -183,6 +183,10 @@ div.results{
 a.result:hover, a.result.active{
     background-color: #666 !important;
 }
+div.menu.transition, div.menu.transition>a{
+    background-color: #444 !important;
+    color: #eee !important;
+}
 
 /* 个人中心 */
 #user_card div.content{
