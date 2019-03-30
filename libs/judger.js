@@ -59,7 +59,7 @@ async function connect() {
       ack();
 
       if (waitingForTask) {
-        winston.verbose(`Judge client ${socket.id} emitted waitForTask, but already waiting, ignoring.`);
+        winston.warn(`Judge client ${socket.id} emitted waitForTask, but already waiting, ignoring.`);
         return;
       }
 
@@ -74,14 +74,14 @@ async function connect() {
       }
 
       if (!obj) {
-        winston.verbose(`Judge client ${socket.id} disconnected, stop poll the queue.`);
+        winston.warn(`Judge client ${socket.id} disconnected, stop poll the queue.`);
         // Socket disconnected and no task got.
         return;
       }
 
       // Re-push to queue if got task but judge client already disconnected.
       if (socket.disconnected) {
-        winston.verbose(`Judge client ${socket.id} got task but disconnected re-pushing task to queue.`);
+        winston.warn(`Judge client ${socket.id} got task but disconnected re-pushing task to queue.`);
         judgeQueue.push(obj.data, obj.priority);
         return;
       }
@@ -99,7 +99,7 @@ async function connect() {
     });
 
     socket.on('disconnect', reason => {
-      winston.info(`Judge client ${socket.id} disconnected, reason = ${util.inspect(reason)}.`);
+      winston.warn(`Judge client ${socket.id} disconnected, reason = ${util.inspect(reason)}.`);
       if (pendingAckTaskObj) {
         // A task sent but not acked, push to queue again.
         winston.warn(`Re-pushing task ${pendingAckTaskObj.data.content.taskId} to judge queue.`);
