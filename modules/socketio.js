@@ -203,6 +203,8 @@ function initializeSocketIO(s) {
             };
         }
     });
+
+    return ioInstance;
 }
 exports.initializeSocketIO = initializeSocketIO;
 function createTask(taskId) {
@@ -306,4 +308,4 @@ function cleanupProgress(taskId) {
 exports.cleanupProgress = cleanupProgress;
 //# sourceMappingURL=socketio.js.map
 
-initializeSocketIO(app.server);
+syzoj.socketIO = initializeSocketIO(app.server);

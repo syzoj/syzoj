@@ -79,9 +79,6 @@ global.syzoj = {
     })());
 
     await this.connectDatabase();
-    if (!module.parent) {
-      await this.lib('judger').connect();
-    }
 
     // redis and redisCache is for syzoj-renderer
     const redis = require('redis');
@@ -90,6 +87,10 @@ global.syzoj = {
       get: util.promisify(this.redis.get).bind(this.redis),
       set: util.promisify(this.redis.set).bind(this.redis)
     };
+
+    if (!module.parent) {
+      await this.lib('judger').connect();
+    }
 
     this.loadModules();
   },
