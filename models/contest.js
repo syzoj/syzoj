@@ -118,7 +118,7 @@ class Contest extends Model {
   }
 
   async newSubmission(judge_state) {
-    if (!(judge_state.submit_time >= this.start_time && judge_state.submit_time <= this.end_time)) {
+    if (judge_state.type == 1 && !(judge_state.submit_time >= this.start_time && judge_state.submit_time <= this.end_time)) {
       return;
     }
     let problems = await this.getProblems();
