@@ -173,6 +173,7 @@ class JudgeState extends Model {
       }
 
       if (this.type === 1 || this.type === 2) {
+        throw new ErrorMessage("test");
         let contest = await Contest.fromID(this.type_info);
         await contest.newSubmission(this);
       }
