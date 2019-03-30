@@ -1,0 +1,46 @@
+<% this.title = '重启服务' %>
+<% include header %>
+
+<div class="ui success icon message">
+  <i class="redo icon"></i>
+  <div class="content">
+    <div class="header" style="margin-bottom: 10px; ">
+      服务重启中
+    </div>
+    <p>已等待 <span id="elapsed-wait-time">0</span> 秒。</p>
+  </div>
+</div>
+
+<script>
+var span = $('#elapsed-wait-time'),
+    time = 0;
+setInterval(function () {
+    span.text((++time).toString());
+}, 1000);
+
+var checkInterval = 500,
+    delayBeforeRedirect = 1000,
+    currentServiceID = <%- serializejs(syzoj.serviceID) %>;
+function checkServiceUp() {
+    function retry() {
+        setTimeout(checkServiceUp, 500);
+    }
+    $.ajax({
+        url: '/admin/serviceID',
+        success: function (data, textStatus, xhr) {
+            if (data.serviceID && data.serviceID !== currentServiceID) {
+                setTimeout(function () {
+                    location = <%- serializejs(req.query.url || '/') %>;
+                }, delayBeforeRedirect);
+            } else retry();
+        },
+        complete: function (xhr, textStatus) {
+            retry();
+        }
+    });
+}
+
+checkServiceUp();
+</script>
+
+<% include footer %>

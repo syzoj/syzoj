@@ -442,3 +442,35 @@ app.post('/admin/raw', async (req, res) => {
     })
   }
 });
+
+app.post('/admin/restart', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    syzoj.restart();
+
+    res.render('admin_restart', {
+      data: JSON.stringify(syzoj.config, null, 2)
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
+app.get('/admin/serviceID', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    res.send({
+        serviceID: syzoj.serviceID
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});

@@ -6,8 +6,6 @@ const fs = Promise.promisifyAll(require('fs-extra'));
 const interface = require('./judger_interfaces');
 const judgeResult = require('./judgeResult');
 
-const JudgeState = syzoj.model('judge_state');
-
 const judgeStateCache = new Map();
 const progressPusher = require('../modules/socketio');
 
@@ -27,6 +25,8 @@ function getRunningTaskStatusString(result) {
 let judgeQueue;
 
 async function connect() {
+  const JudgeState = syzoj.model('judge_state');
+
   judgeQueue = {
     redisZADD: util.promisify(syzoj.redis.zadd).bind(syzoj.redis),
     redisBZPOPMAX: util.promisify(syzoj.redis.bzpopmax).bind(syzoj.redis),

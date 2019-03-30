@@ -48,3 +48,5 @@ ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 1 AFT
 为使代码格式化功能正常工作，`clang-format` 需要被安装。[migrates/format-old-codes.js](migrates/format-old-codes.js) 可能对格式化旧提交记录的代码有帮助。
 
 从该 commit [c192e8001ac81cab132ae033b39f09a094587633](https://github.com/syzoj/syzoj/commit/c192e8001ac81cab132ae033b39f09a094587633)（2019 年 3 月 23 日）前更新的用户**必须**在网站服务器上安装 `redis-server` 与 [pygments](http://pygments.org/)。旧的 Markdown 内容可能因切换到新渲染器被破坏，[migrates/html-table-merge-cell-to-md.js](migrates/html-table-merge-cell-to-md.js) 可能对迁移有所帮助。
+
+从该 commit [7b03706821c604f59fe8263286203d57d634c421](https://github.com/syzoj/syzoj/commit/c192e8001ac81cab132ae033b39f09a094587633)（2019 年 3 月 27 日）前更新的用户**必须**在其 systemd 配置文件 `syzoj-web.service` 中的 `[Service]` 中加入一行 `RemainAfterExit=yes`，以使得重启服务功能正常工作。
