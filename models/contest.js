@@ -124,7 +124,6 @@ class Contest extends Model {
     let problems = await this.getProblems();
     if (!problems.includes(judge_state.problem_id)) throw new ErrorMessage('当前比赛中无此题目。');
 
-    throw new ErrorMessage("ok");
     await syzoj.utils.lock(['Contest::newSubmission', judge_state.user_id], async () => {
       let player = await ContestPlayer.findInContest({
         contest_id: this.id,
