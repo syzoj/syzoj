@@ -28,6 +28,7 @@ global.syzoj = {
   async run() {
     // Check config
     if (syzoj.config.session_secret === '@SESSION_SECRET@'
+     || syzoj.config.judge_token === '@JUDGE_TOKEN@'
      || (syzoj.config.email_jwt_secret === '@EMAIL_JWT_SECRET@' && syzoj.config.register_mail)
      || syzoj.config.db.password === '@DATABASE_PASSWORD@') {
       console.log('Please generate and fill the secrets in config!');
