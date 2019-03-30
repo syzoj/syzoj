@@ -15,15 +15,17 @@ const getSubmissionInfo = (s, displayConfig) => ({
 const getRoughResult = (x, displayConfig, roughOnly) => {
     if (displayConfig.showResult) {
         if (x.pending) {
-            let res = getCachedJudgeState(x.task_id) || null
+            let res = getCachedJudgeState(x.task_id) || null;
             if (!res) return null;
 
             if (roughOnly) {
-              res.result = 'Judging';
-              res.time = res.memory = res.score = 0;
-            }
-
-            return res;
+              return Object.assign({}, res, {
+                result: 'Judging',
+                time: 0,
+                memory: 0,
+                score: 0
+              });
+            } else return res;
         } else {
             return {
                 result: x.status,
