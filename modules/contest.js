@@ -357,7 +357,9 @@ app.get('/contest/:id/submissions', async (req, res) => {
     }
 
     if (req.query.problem_id) where.problem_id = problems_id[parseInt(req.query.problem_id) - 1];
-    where.type = 1;
+    where.type = {
+      $ne: 0
+    };
     where.type_info = contest_id;
 
     let isFiltered = !!(where.problem_id || where.user_id || where.score || where.language || where.status);
