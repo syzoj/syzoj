@@ -183,7 +183,11 @@ form[action="/find_user"] button:hover{
     background-color: #555 !important;
 }
 #add_problem_dropdown{
-    background-color: #777 !important;
+    background-color: #5f5f5f !important;
+    color: #fff !important;
+}
+#add_problem_dropdown:hover{
+    background-color: #555 !important;
 }
 
 /* textarea */
