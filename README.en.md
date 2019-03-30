@@ -48,3 +48,7 @@ ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 1 AFT
 To make code formatting work, `clang-format` needs to be installed. [migrates/format-old-codes.js](migrates/format-old-codes.js) may help formating old submissions' codes.
 
 Who upgraded from a commit BEFORE [c192e8001ac81cab132ae033b39f09a094587633](https://github.com/syzoj/syzoj/commit/c192e8001ac81cab132ae033b39f09a094587633) (Mar 23, 2019) **MUST** install `redis-server` and [pygments](http://pygments.org/) on the web server. Markdown contents may be broken by switching to new renderer, [migrates/html-table-merge-cell-to-md.js](migrates/html-table-merge-cell-to-md.js) may help the migration。
+
+Who upgraded from a commit BEFORE [7b03706821c604f59fe8263286203d57d634c421](https://github.com/syzoj/syzoj/commit/7b03706821c604f59fe8263286203d57d634c421) (Mar 27, 2019) **MUST** add `RemainAfterExit=yes` to the systemd config file `syzoj-web.service`'s `[Service]` section to make sure that restart service can work properly.
+
+Who upgraded from a commit BEFORE [d1d019383e5cb0c96ed2191f900970654e4055c0](https://github.com/syzoj/syzoj/commit/d1d019383e5cb0c96ed2191f900970654e4055c0) (Mar 30, 2019) **MUST** upgrade web server's Redis to at least version 5, and fill web config's `judge_token` with random key. Judge server must be upgraded together, and `daemon-config.json`'s  `ServerUrl` and `ServerToken` (= `judge_token`) must be filled. If judge and web run on different server, it's recommend to move RabbitMQ to judge server.
