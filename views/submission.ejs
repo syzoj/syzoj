@@ -109,8 +109,8 @@
             </div>
               <div class="content">
                 <template v-if="checkTestcaseOK(curCase)">
-                  <code-box v-if="curCase.result.input" :title="'输入文件（<span style=\'font-family: monospace; \'>'+ curCase.result.input.name +'</span>）'" :content="curCase.result.input.content"></code-box>
-                  <code-box v-if="curCase.result.output" :title="'答案文件（<span style=\'font-family: monospace; \'>'+ curCase.result.output.name +'</span>）'" :content="curCase.result.output.content"></code-box>
+                  <code-box v-if="curCase.result.input" :title="'输入文件（<span style=\'font-family: monospace; \'>'+ curCase.result.input.name +'</span>）'" :content="curCase.result.input.content" :download="<%= serializejs(syzoj.utils.makeUrl(['problem', info.problemId, 'testdata', 'download'])) %> + '/' + curCase.result.input.name"></code-box>
+                  <code-box v-if="curCase.result.output" :title="'答案文件（<span style=\'font-family: monospace; \'>'+ curCase.result.output.name +'</span>）'" :content="curCase.result.output.content" :download="<%= serializejs(syzoj.utils.makeUrl(['problem', info.problemId, 'testdata', 'download'])) %> + '/' + curCase.result.output.name"></code-box>
                   <code-box title="用户输出" :content="curCase.result.userOutput"></code-box>
                   <code-box title="标准错误流" :content="curCase.result.userError"></code-box>
                   <code-box title="Special Judge 信息" :content="curCase.result.spjMessage"></code-box>
@@ -134,6 +134,7 @@
     <div style="margin-top: 0px; margin-bottom: 14px; " v-if="content != null && content !== ''">
         <p v-if="title" class="transition visible">
            <strong v-html="title"></strong>
+           <a v-if="download" style="color: #000; " :href="download"><i class="download icon"></i></a>
         </p>
         <div class="ui existing segment">
           <slot></slot>
@@ -152,7 +153,8 @@ Vue.component("code-box", {
         noEscape: {
             type: Boolean,
             default: false
-        }
+        },
+        download: String
     }
 });
 const socketUrl = "/detail";
