@@ -238,7 +238,6 @@ div[class*=ace_br] {
               %>
               <script>
               var cases = <%- serializejs(cases) %>, currCase = 0;
-              cases = cases.slice(3, 4);
               </script>
               <div class="ui grid">
                 <% if (testcases) { %>
@@ -311,12 +310,18 @@ div[class*=ace_br] {
                 <div class="four wide column" style="margin-right: -25px; ">
                   <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <%
-                    let language = syzoj.config.enabled_languages[0];
-                    if (state) {
-                      language = state.language;
-                    } else if (lastLanguage) language = lastLanguage;
+                      let language = syzoj.config.enabled_languages[0];
+                      if (state) {
+                        language = state.language;
+                      } else if (lastLanguage) language = lastLanguage;
+                      if (contest && contest.type == 'noi' && language.indexOf('noilinux') == -1) {
+                        language = 'cpp-noilinux';
+                      }
                     %>
-                    <% for (lang of syzoj.config.enabled_languages) { %>
+                    <% 
+                      for (lang of syzoj.config.enabled_languages) { 
+                        if (contest && contest.type == 'noi' && lang.indexOf('noilinux') == -1) continue;
+                    %>
                       <a class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.languages[lang].editor %>">
                         <%= syzoj.languages[lang].show %>
                         <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= syzoj.languages[lang].version %></div>
