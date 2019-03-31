@@ -129,7 +129,7 @@ class JudgeState extends Model {
           await this.user.refreshSubmitInfo();
           await this.user.save();
           await this.problem.resetSubmissionCount();
-        } else if (this.type === 1) {
+        } else {
           let contest = await Contest.fromID(this.type_info);
           await contest.newSubmission(this);
         }
