@@ -238,6 +238,9 @@ div[class*=ace_br] {
               %>
               <script>
               var cases = <%- serializejs(cases) %>, currCase = 0;
+              if (contest && contest.type == "noi") {
+                cases = cases.slice(3, 4);
+              }
               </script>
               <div class="ui grid">
                 <% if (testcases) { %>
