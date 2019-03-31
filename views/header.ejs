@@ -72,7 +72,26 @@
                   <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="edit icon"></i>修改资料</a>
                   <% if (user.is_admin) { %>
                     <a class="item" href="<%= syzoj.utils.makeUrl(['admin', 'info']) %>"><i class="settings icon"></i>后台管理</a>
-                    <a class="item" href-post="<%= syzoj.utils.makeUrl(['admin', 'restart'], { url: req.query['url'] || req.originalUrl }) %>"><i class="redo icon"></i>重启服务</a>
+                    <div class="ui basic modal" id="modal-restart">
+                      <div class="ui icon header">
+                        <i class="redo icon"></i>
+                        <p style="margin-top: 15px; ">重启服务</p>
+                      </div>
+                      <div class="content" style="text-align: center; ">
+                        <p>确认重新启动 SYZOJ Web 服务吗？</p>
+                      </div>
+                      <div class="actions">
+                        <div class="ui red basic cancel inverted button">
+                          <i class="remove icon"></i>
+                          否
+                        </div>
+                        <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['admin', 'restart'], { url: req.query['url'] || req.originalUrl }) %>">
+                          <i class="checkmark icon"></i>
+                          是
+                        </a>
+                      </div>
+                    </div>
+                    <a class="item" href="#" onclick="$('#modal-restart').modal('show')"><i class="redo icon"></i>重启服务</a>
                   <% } %>
                   <a class="item" href-post="<%= syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }) %>"><i class="power icon"></i>注销</a>
                 </div>
