@@ -75,8 +75,10 @@
                   <a href="<%= syzoj.utils.makeUrl(['contest', 'submission', problem.judge_id]) %>">
                   <% if (typeof problem.status === 'string') { %>
                     <span class="status <%= problem.status.toLowerCase().split(' ').join('_') %>">
+                      <b>
                       <i class="<%= icon[getStatusMeta(problem.status)] || 'remove' %> icon"></i>
                       <%= problem.feedback || problem.status %>
+                      </b>
                     </span>
                   <% } else if (typeof problem.status === 'object') { %>
                     <% if (problem.status.accepted) { %>
