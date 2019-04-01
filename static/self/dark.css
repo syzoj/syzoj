@@ -264,18 +264,17 @@ div.submit_time{
 }
 
 /* segment */
-/*
 div.segment{
     border-color: #555 !important;
 }
 div.accordion{
-    box-shadow: 0px 1px 1px #666 !important;
-}*/
+    box-shadow: 0px 0px 1px 1px #555 !important;
+}
 /*
 不太想加, 加了之后好丑啊...
 */
 div.segment, .ui.top.attached.block.header{
-    border-color: #777 !important;
+    border-color: #555 !important;
 }
 
 /* div.message */
