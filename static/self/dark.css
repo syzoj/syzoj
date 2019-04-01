@@ -72,6 +72,9 @@ a{
 a.item{
     color: #000 !important;
 }
+div.tabular a.item{
+    color: #eee !important;
+}
 a.black-link{
     color: #fff !important;
 }
@@ -165,7 +168,7 @@ span.ui.label{
 }
 #show_tag_title_div{
     background-color: #454545;
-    
+    border-color: #777 !important;
 }
 #show_tag_button{
     color: #fff !important;
