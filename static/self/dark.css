@@ -274,7 +274,7 @@ div.accordion{
 不太想加, 加了之后好丑啊...
 */
 div.segment, .ui.top.attached.block.header{
-    border-color: #555 !important;
+    border-color: #777 !important;
 }
 
 /* div.message */
