@@ -99,14 +99,15 @@ code{
 }
 
 /* ACE Editor */
-#editor, #languages-menu, div.ace_gutter{
+#editor, #languages-menu, #testcase-menu, div.ace_gutter, div.ace_editor{
     background-color: #333 !important;
+    color: #eee !important;
 }
-#languages-menu>a, div.ace_gutter{
+#languages-menu>a, div.ace_gutter, #testcase-menu>a{
     color: #eee !important;
 }
 div.ace_active-line, div.ace_gutter-active-line{
-    background-color: #444 !important;
+    background-color: #404040 !important;
 }
 span.ace_paren, span.ace_identifier{
     color: #eee !important;
@@ -115,13 +116,16 @@ span.ace_operator{
      color: #aaa !important;
 }
 div.ace_selection{
-     background-color: #626262 !important;
+     background-color: #4a4a4a !important;
 }
 div.ace_cursor{
     border-color: #aaa !important;
 }
 #languages-menu a.item.active{
     background-color: #4a4a4a !important;
+}
+span.ace_constant, span.ace_other{
+    color: #aaa !important;
 }
 
 /* 评测状态 */
