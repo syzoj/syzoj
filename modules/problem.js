@@ -257,7 +257,7 @@ app.get('/problem/:id/export', async (req, res) => {
       limit_and_hint: problem.limit_and_hint,
       time_limit: problem.time_limit,
       memory_limit: problem.memory_limit,
-      additional_file_id: problem.additional_file_id,
+      have_additional_file_id: problem.additional_file_id !== null,
       file_io: problem.file_io,
       file_io_input_name: problem.file_io_input_name,
       file_io_output_name: problem.file_io_output_name,
@@ -466,7 +466,7 @@ app.post('/problem/:id/import', async (req, res) => {
       let data = await download(req.body.url + (req.body.url.endsWith('/') ? 'testdata/download' : '/testdata/download'));
       await fs.writeFileAsync(tmpFile.path, data);
       await problem.updateTestdata(tmpFile.path, await res.locals.user.hasPrivilege('manage_problem'));
-      if (json.obj.additional_file_id != null) {
+      if (json.obj.have_additional_file) {
         let additional_file = await download(req.body.url + (req.body.url.endsWith('/') ? 'download/additional_file' : '/download/additional_file'));
         await fs.writeFileAsync(tmpFile.path, additional_file);
         await problem.updateFile(tmpFile.path, 'additional_file', await res.locals.user.hasPrivilege('manage_problem'));
