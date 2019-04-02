@@ -14,6 +14,7 @@ const finishedJudgeList = {};
 const compiledList = [];
 const clientDetailProgressList = {};
 const clientDisplayConfigList = {};
+const debug = false;
 
 function processOverallResult(source, config) {
     if (source == null)
@@ -75,25 +76,25 @@ function forAllClients(ns, taskId, exec) {
             });
         }
         else {
-            winston.warn(`Error while listing socketio clients in ${taskId}`, err);
+            if (debug) winston.warn(`Error while listing socketio clients in ${taskId}`, err);
         }
     });
 }
 function initializeSocketIO(s) {
     ioInstance = socketio(s);
     const initializeNamespace = (name, exec) => {
-        winston.debug('initializing socketIO', name);
+        if (debug) winston.debug('initializing socketIO', name);
         const newNamespace = ioInstance.of('/' + name);
         newNamespace.on('connection', (socket) => {
             socket.on('disconnect', () => {
-                winston.info(`Client ${socket.id} disconnected.`);
+                if (debug) winston.info(`Client ${socket.id} disconnected.`);
                 delete clientDisplayConfigList[socket.id];
                 if (clientDetailProgressList[socket.id]) {
                     delete clientDetailProgressList[socket.id];
                 }
             });
             socket.on('join', (reqJwt, cb) => {
-                winston.info(`Client ${socket.id} connected.`);
+                if (debug) winston.info(`Client ${socket.id} connected.`);
                 let req;
                 try {
                     req = jwt.verify(reqJwt, syzoj.config.session_secret);
@@ -102,12 +103,12 @@ function initializeSocketIO(s) {
                     }
                     clientDisplayConfigList[socket.id] = req.displayConfig;
                     const taskId = req.taskId;
-                    winston.verbose(`A client trying to join ${name} namespace for ${taskId}.`);
+                    if (debug) winston.verbose(`A client trying to join ${name} namespace for ${taskId}.`);
                     socket.join(taskId.toString());
                     exec(req, socket).then(x => cb(x), err => cb({ ok: false, message: err.toString() }));
                 }
                 catch (err) {
-                    winston.info('Error while joining.');
+                    if (debug) winston.info('Error while joining.');
                     cb({
                         ok: false,
                         message: err.toString()
@@ -121,7 +122,7 @@ function initializeSocketIO(s) {
     detailProgressNamespace = initializeNamespace('detail', async (req, socket) => {
         const taskId = req.taskId;
         if (finishedJudgeList[taskId]) {
-            winston.debug(`Judge task #${taskId} has been finished, ${JSON.stringify(currentJudgeList[taskId])}`);
+            if (debug) winston.debug(`Judge task #${taskId} has been finished, ${JSON.stringify(currentJudgeList[taskId])}`);
             return {
                 ok: true,
                 running: false,
@@ -131,7 +132,7 @@ function initializeSocketIO(s) {
             };
         }
         else {
-            winston.debug(`Judge task #${taskId} has not been finished`);
+            if (debug) winston.debug(`Judge task #${taskId} has not been finished`);
             if (currentJudgeList[taskId]) {
                 clientDetailProgressList[socket.id] = {
                     version: 0,
@@ -208,7 +209,7 @@ function initializeSocketIO(s) {
 }
 exports.initializeSocketIO = initializeSocketIO;
 function createTask(taskId) {
-    winston.debug(`Judge task #${taskId} has started`);
+    if (debug) winston.debug(`Judge task #${taskId} has started`);
     currentJudgeList[taskId] = {};
     finishedJudgeList[taskId] = null;
     forAllClients(detailProgressNamespace, taskId, (clientId) => {
@@ -223,7 +224,7 @@ function createTask(taskId) {
 }
 exports.createTask = createTask;
 function updateCompileStatus(taskId, result) {
-    winston.debug(`Updating compilation status for #${taskId}`);
+    if (debug) winston.debug(`Updating compilation status for #${taskId}`);
     compiledList[taskId] = { result: result.status === interfaces.TaskStatus.Done ? 'Submitted' : 'Compile Error' };
     compileProgressNamespace.to(taskId.toString()).emit('finish', {
         taskId: taskId,
@@ -232,7 +233,7 @@ function updateCompileStatus(taskId, result) {
 }
 exports.updateCompileStatus = updateCompileStatus;
 function updateProgress(taskId, data) {
-    winston.verbose(`Updating progress for #${taskId}`);
+    if (debug) winston.verbose(`Updating progress for #${taskId}`);
     currentJudgeList[taskId] = data;
     const finalResult = judgeResult.convertResult(taskId, data);
     const roughResult = {
@@ -243,7 +244,7 @@ function updateProgress(taskId, data) {
     };
     forAllClients(detailProgressNamespace, taskId, (client) => {
         try {
-            winston.debug(`Pushing progress update to ${client}`);
+            if (debug) winston.debug(`Pushing progress update to ${client}`);
            if (clientDetailProgressList[client] && clientDisplayConfigList[client]) {
                 const original = clientDetailProgressList[client].content;
                 const updated = processOverallResult(currentJudgeList[taskId], clientDisplayConfigList[client]);
@@ -283,7 +284,7 @@ function updateResult(taskId, data) {
     };
     finishedJudgeList[taskId] = roughResult;
     forAllClients(roughProgressNamespace, taskId, (client) => {
-        winston.debug(`Pushing rough result to ${client}`);
+        if (debug) winston.debug(`Pushing rough result to ${client}`);
         roughProgressNamespace.sockets[client].emit('finish', {
             taskId: taskId,
             result: processRoughResult(finishedJudgeList[taskId], clientDisplayConfigList[client])
@@ -291,7 +292,7 @@ function updateResult(taskId, data) {
     });
     forAllClients(detailProgressNamespace, taskId, (client) => {
         if (clientDisplayConfigList[client]) {
-            winston.debug(`Pushing detail result to ${client}`);
+            if (debug) winston.debug(`Pushing detail result to ${client}`);
             detailProgressNamespace.sockets[client].emit('finish', {
                 taskId: taskId,
                 result: processOverallResult(currentJudgeList[taskId], clientDisplayConfigList[client]),
