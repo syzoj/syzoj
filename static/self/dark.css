@@ -226,10 +226,18 @@ span.status.compile_error {
     color: blue !important;
 }
 
-span.status.partially_correct {
+span.status.partially_correct{
     color: cyan !important;
 }
 
+span.status.running{
+    color: rgb(102, 204, 255) !important;
+}
+
+span.status.skipped,
+span.status.waiting{
+    color: #aaa !important;
+}
 
 /* 按钮增加透明度, 防止颜色太突出 */
 a.ui.button {
