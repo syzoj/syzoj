@@ -257,7 +257,7 @@ app.get('/problem/:id/export', async (req, res) => {
       limit_and_hint: problem.limit_and_hint,
       time_limit: problem.time_limit,
       memory_limit: problem.memory_limit,
-      have_additional_file: problem.additional_file_id !== null,
+      have_additional_file: problem.additional_file_id != null,
       file_io: problem.file_io,
       file_io_input_name: problem.file_io_input_name,
       file_io_output_name: problem.file_io_output_name,
