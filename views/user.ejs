@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="extra content">
-                    <a><i class="check icon"></i>通过 <%= show_user.ac_problems.length %> 题</a>
+                    <a href="<%= syzoj.utils.ac_submission([show_user.username])%>"><i class="check icon"></i>通过 <%= show_user.ac_problems.length %> 题</a>
                     <a style="float: right; "><i class="star icon"></i>积分 <%= show_user.rating %></a>
                 </div>
             </div>

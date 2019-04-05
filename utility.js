@@ -277,6 +277,9 @@ module.exports = {
     let decipher = crypto.createDecipher('aes-256-ctr', password);
     return Buffer.concat([decipher.update(buffer), decipher.final()]);
   },
+  ac_submission(username) {
+    return '/submissions?submitter=' + username + '?status=Accepted';
+  },
   ratingStyle(rating) {
     if (rating == 0) {
       return 'user-admin';
