@@ -278,7 +278,7 @@ module.exports = {
     return Buffer.concat([decipher.update(buffer), decipher.final()]);
   },
   ac_submission(username) {
-    return '/submissions&submitter=' + username + '?status=Accepted';
+    return '/submissions?submitter=' + username + '&status=Accepted';
   },
   ratingStyle(rating) {
     if (rating == 0) {
