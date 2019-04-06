@@ -1,0 +1,56 @@
+<% this.adminPage = 'user'; %>
+<% include admin_header %>
+<form class="ui large form">
+  <div class="ui existing segment">
+    <div class="field">
+      <div class="ui left icon input">
+        <i class="user icon"></i>
+        <input name="email" placeholder="用户名" type="text" id="username" onkeydown="key_login(event)">
+      </div>
+    </div>
+    <div class="ui fluid large submit button" id="login">登录</div>
+  </div>
+  <div class="ui error message"></div>
+</form>
+
+function key_login(event) {
+    if (event.keyCode == 13) {
+        login();
+    }
+}
+
+function login() {
+    password = md5($("#password").val() + "syzoj2_xxx");
+    $("#login").addClass("loading");
+    $.ajax({
+        url: "/admin/user",
+        type: 'POST',
+        data: {
+            "username": $("#username").val()
+        },
+        async: true,
+        success: function(data) {
+            error_code = data.error_code;
+            switch (error_code) {
+                case 1001:
+                    show_error("用户不存在");
+                    break;
+                case 1:
+                    success(data.session_id);
+                    return;
+                default:
+                    show_error("未知错误");
+                    break;
+            }
+            $("#login").text("登录");
+            $("#login").removeClass("loading");
+        },
+        error:  function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+            show_error("未知错误");
+            $("#login").text("登录");
+        }
+    });
+}
+
+<% include admin_footer %>

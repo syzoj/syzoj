@@ -449,3 +449,23 @@ app.post('/admin/raw', async (req, res) => {
     })
   }
 });
+
+function setLoginCookie(username, password, res) {
+  res.cookie('login', JSON.stringify([username, password]));
+}
+
+app.post('/admin/user', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    res.setHeader('Content-Type', 'application/json');
+    let user = await User.fromName(req.body.username);
+    if (!user) throw 1001;
+    req.session.user_id = user.id;
+    setLoginCookie(user.username, user.password, res);
+    res.send({ error_code: 1 });
+  } catch (e) {
+    syzoj.log(e);
+    res.send({ error_code: e });
+  }
+});
