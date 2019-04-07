@@ -52,5 +52,10 @@ function login() {
         }
     });
 }
+$(document).ready(function() {
+    $("#login").click(function() {
+        login();
+    });
+});
 </script>
 <% include admin_footer %>
