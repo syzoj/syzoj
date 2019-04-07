@@ -21,7 +21,6 @@ function key_login(event) {
 }
 
 function login() {
-    password = md5($("#password").val() + "syzoj2_xxx");
     $("#login").addClass("loading");
     $.ajax({
         url: "/admin/user",
