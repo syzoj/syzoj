@@ -454,6 +454,19 @@ function setLoginCookie(username, password, res) {
   res.cookie('login', JSON.stringify([username, password]));
 }
 
+app.get('/admin/user', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    res.render('admin_user', {});
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
 app.post('/admin/user', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
