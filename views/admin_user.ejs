@@ -19,7 +19,13 @@ function key_login(event) {
         login();
     }
 }
-
+function show_error(error) {
+    $("#error").text(error);
+    $("#error").show();
+}
+function success(session_id) {
+    window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
+}
 function login() {
     $("#login").addClass("loading");
     $.ajax({
