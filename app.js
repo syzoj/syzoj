@@ -217,7 +217,7 @@ global.syzoj = {
     app.use(Session(sessionConfig));
 
     app.use((req, res, next) => {
-      res.locals.useLocalLibs = !!parseInt(req.headers['syzoj-no-cdn']);
+      res.locals.useLocalLibs = !!parseInt(req.headers['syzoj-no-cdn']) || syzoj.config.no_cdn;
 
       let User = syzoj.model('user');
       if (req.session.user_id) {
