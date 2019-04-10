@@ -36,7 +36,7 @@ app.get('/contest/:id/edit', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-    if (!res.locals.user || !await contest.isSupervisior(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    if (!res.locals.user || contest && !await contest.isSupervisior(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     if (!contest) {
       contest = await Contest.create();
@@ -66,7 +66,7 @@ app.post('/contest/:id/edit', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.fromID(contest_id);
-    if (!res.locals.user || !await contest.isSupervisior(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    if (!res.locals.user || contest && !await contest.isSupervisior(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let ranklist = null;
     if (!contest) {
