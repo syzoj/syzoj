@@ -41,8 +41,8 @@ div[class*=ace_br] {
           <% if (problem.type === 'interaction') { %>
             <span class="ui label">题目类型：交互</span>
           <% } else if (problem.file_io) { %>
-            <span class="ui label">输入文件: <%= problem.file_io_input_name %></span>
-            <span class="ui label">输出文件: <%= problem.file_io_output_name %></span>
+            <span class="ui label">输入文件：<%= problem.file_io_input_name %></span>
+            <span class="ui label">输出文件：<%= problem.file_io_output_name %></span>
           <% } else { %>
             <span class="ui label">标准输入输出</span>
           <% } %>
