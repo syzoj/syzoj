@@ -9,21 +9,18 @@ if (contest) {
 %>
 <% include header %>
 <style>
-.ace_cursor {
-  border-left-width: 1px !important;
-  color: #000 !important;
-}
-
 #languages-menu::-webkit-scrollbar, #testcase-menu::-webkit-scrollbar {
     width: 0px;
     background: transparent;
 }
 
-div[class*=ace_br] {
-    border-radius: 0 !important;
+#languages-menu .item::after, #testcase-menu .item::after {
+    display: none;
 }
 </style>
-<script src="<%- lib('ace/1.4.2/ace.js') %>"></script>
+
+<% include monaco-editor %>
+
 <div class="ui center aligned grid">
     <div class="row">
       <h1 class="ui header">
@@ -224,7 +221,7 @@ div[class*=ace_br] {
           <%
           const formUrl = syzoj.utils.makeUrl(['problem', problem.id, 'submit'], { contest_id: contest ? contest.id : undefined });
           %>
-          <form class="ui form" action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
+          <form action="<%= formUrl %>" method="post" onsubmit="return submit_code()" id="submit_code" enctype="multipart/form-data">
             <% if (problem.type === 'submit-answer') { %>
               <%
               let cases = [];
@@ -252,55 +249,47 @@ div[class*=ace_br] {
                 </div>
                 <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 12px) !important; ">
                   <% for (let i = 0; i < cases.length; i++) { %>
-                    <div id="editor-<%= i %>" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; <%= i === 0 ? '' : 'visibility: hidden; ' %>"></div>
+                    <div id="editor-<%= i %>" class="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; <%= i === 0 ? '' : 'visibility: hidden; ' %>"></div>
                   <% } %>
                 </div>
                 <% } %>
                 <input id="answer_by_editor" name="answer_by_editor" type="hidden">
                 <script>
-                var editors = [];
-                for (var i = 0; i < cases.length; i++) {
-                  var editor = ace.edit("editor-" + i);
-                  var lastSubmitted = '';
+                window.onEditorLoaded(function () {
+                  window.editors = [];
+                  for (var i = 0; i < cases.length; i++) {
+                    var editor = window.createEditor(document.getElementById("editor-" + i));
+                    editors[i] = editor;
+                  }
 
-                  editor.setTheme("ace/theme/tomorrow");
-                  // editor.getSession().setMode("ace/mode/" + $('#languages-menu .item.active').data('mode'));
-                  editor.getSession().setUseSoftTabs(false);
+                  $(function () {
+                    $('#testcase-menu .item').click(function() {
+                      $(this)
+                        .addClass('active')
+                        .closest('.ui.menu')
+                        .find('.item')
+                          .not($(this))
+                          .removeClass('active')
+                      ;
 
-                  editor.container.style.lineHeight = 1.6;
-                  editor.container.style.fontSize = '14px';
-                  editor.container.style.fontFamily = "'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace";
-                  editor.setShowPrintMargin(false);
-                  editor.renderer.updateFontSize();
-
-                  editors[i] = editor;
-                }
-
-                $(function () {
-                  $('#testcase-menu .item').click(function() {
-                    $(this)
-                      .addClass('active')
-                      .closest('.ui.menu')
-                      .find('.item')
-                        .not($(this))
-                        .removeClass('active')
-                    ;
-
-                    var x = $(this).attr('data-value');
-                    if (currCase != x) {
-                      $('#editor-' + currCase).css('visibility', 'hidden');
-                      $('#editor-' + x).css('visibility', 'visible');
-                      currCase = x;
-                    }
+                      var x = $(this).attr('data-value');
+                      if (currCase != x) {
+                        $('#editor-' + currCase).css('visibility', 'hidden');
+                        $('#editor-' + x).css('visibility', 'visible');
+                        currCase = x;
+                      }
+                    });
                   });
                 });
                 </script>
-                <div class="inline fields" style="width: 100%; ">
-                <div class="field" style="margin: 0 auto; ">
-                  <label for="answer">或者，上传答案（请使用 ZIP 格式压缩）</label>
-                  <input type="file" id="answer" name="answer">
+                <div class="ui form" style="width: 100%; ">
+                  <div class="inline fields" style="width: 100%; ">
+                    <div class="field" style="margin: 0 auto; ">
+                      <label for="answer">或者，上传答案（请使用 ZIP 格式压缩）</label>
+                      <input type="file" id="answer" name="answer">
+                    </div>
+                  </div>
                 </div>
-              </div>
               </div>
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; "><button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>提交</button></div>
             <% } else { %>
@@ -324,15 +313,16 @@ div[class*=ace_br] {
                   </div>
                 </div>
                 <div class="twelve wide stretched column" style="padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 1px + 25px) !important; ">
-                  <div id="editor" style="border: 1px solid #D4D4D5; "></div>
-                  <% if (state) { %><script>$('#editor').text(<%- serializejs(state.code) %>)</script><% } %>
+                  <div id="editor" style="border: 1px solid #D4D4D5; " class="editor"></div>
                 </div>
-                <div class="inline fields" style="width: 100%; ">
-                <div class="field" style="margin: 0 auto; ">
-                  <label for="answer">或者，上传代码文件</label>
-                  <input type="file" id="answer" name="answer">
+                <div class="ui form" style="width: 100%; ">
+                  <div class="inline fields" style="width: 100%; ">
+                    <div class="field" style="margin: 0 auto; ">
+                      <label for="answer">或者，上传代码文件</label>
+                      <input type="file" id="answer" name="answer">
+                    </div>
+                  </div>
                 </div>
-              </div>
               </div>
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
                 <button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>提交</button>
@@ -345,19 +335,17 @@ div[class*=ace_br] {
 </div>
 
 <% if (problem.type !== 'submit-answer') { %>
-  <script type="text/javascript">
-  var editor = ace.edit("editor");
+<script type="text/javascript">
+  var editor;
+  window.onEditorLoaded(function () {
+    var editorElement = document.getElementById('editor');
+    var content = '';
+    <% if (state) { %>content = <%- serializejs(state.code) %>;<% } %>
+    editor = window.createEditor(editorElement, 'ace_' + $('#languages-menu .item.active').data('mode'), content);
+    window.editor = editor;
+  });
+
   var lastSubmitted = '';
-
-  editor.setTheme("ace/theme/tomorrow");
-  editor.getSession().setMode("ace/mode/" + $('#languages-menu .item.active').data('mode'));
-  editor.getSession().setUseSoftTabs(false);
-
-  editor.container.style.lineHeight = 1.6;
-  editor.container.style.fontSize = '14px';
-  editor.container.style.fontFamily = "'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace";
-  editor.setShowPrintMargin(false);
-  editor.renderer.updateFontSize();
 
   function submit_code() {
     if (!$('#submit_code input[name=answer]').val().trim() && !editor.getValue().trim()) return false;
@@ -378,10 +366,10 @@ div[class*=ace_br] {
           .not($(this))
           .removeClass('active')
       ;
-      editor.getSession().setMode("ace/mode/" + $(this).data('mode'));
+      monaco.editor.setModelLanguage(editor.getModel(), 'ace_' + $(this).data('mode'));
     });
   });
-  </script>
+</script>
 
 <% } else { %>
   <script>

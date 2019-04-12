@@ -1,0 +1,37 @@
+.editor {
+    background: #fff;
+    font-family: "Fira Mono", "Bitstream Vera Sans Mono", Menlo, Consolas, "Lucida Console", monospace;
+}
+
+.monaco-editor .inputarea {
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    color: rgba(0, 0, 0, 0) !important;
+}
+
+.monaco-editor-background.textAreaCover.line-numbers {
+    visibility: hidden;
+}
+
+.monaco-editor .selected-text, .monaco-editor .monaco-editor-background {
+    border-radius: 0 !important;
+}
+
+.monaco-editor .mtk1 {
+    color: #4d4d4c !important;
+}
+
+.monaco-editor .cursor {
+    color: #000 !important;
+    border-color: #000 !important;
+    background-color: #000 !important;
+}
+
+.monaco-editor .line-numbers {
+    color: #4d4d4c !important;
+}
+
+.monaco-editor .margin-view-overlays .current-line {
+    background-color: #efefef !important;
+}

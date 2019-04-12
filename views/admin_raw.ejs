@@ -1,32 +1,24 @@
 <% this.adminPage = 'raw'; %>
 <% include admin_header %>
-<form method="post" class="ui form">
+<form method="post">
 
-<div id="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "></div>
-<script>$('#editor').text(<%- serializejs(data) %>)</script>
+<div id="editor" class="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "></div>
 <input type="hidden" name="data">
 
-<script src="<%- lib('ace/1.4.2/ace.js') %>"></script>
+<% include monaco-editor %>
 <script type="text/javascript">
-var editor = ace.edit("editor");
-
-editor.setTheme("ace/theme/tomorrow");
-editor.getSession().setMode("ace/mode/json");
-editor.getSession().setUseSoftTabs(false);
-
-editor.container.name = 'data';
-editor.container.style.lineHeight = 1.6;
-editor.container.style.fontSize = '14px';
-editor.container.style.fontFamily = "'Roboto Mono', 'Bitstream Vera Sans Mono', 'Menlo', 'Consolas', 'Lucida Console', monospace";
-editor.setShowPrintMargin(false);
-editor.renderer.updateFontSize();
-
+var originalData = <%- serializejs(data) %>;
 var input = $('[name="data"]');
-editor.getSession().on("change", function () {
-  input.val(editor.getSession().getValue());
+input.val(originalData);
+
+window.onEditorLoaded(function () {
+  var editor;
+  window.editor = editor = window.createEditor(document.getElementById("editor"), "json", originalData);
+  $('form').on('submit', function () {
+    input.val(editor.getValue());
+  });
 });
 </script>
-
 
 <div style="text-align: center; ">
   <button class="ui blue labeled icon button"><i class="ui edit icon"></i>提交</button>
