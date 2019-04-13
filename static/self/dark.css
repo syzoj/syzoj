@@ -23,6 +23,14 @@ a.header > img {
     filter: invert(1);
 }
 
+div.ui.menu div.right.menu a.button{
+    background-color: #444 !important;
+}
+
+div.ui.menu div.right.menu a.button.primary{
+    background-color: #2789d3 !important;
+}
+
 div.menu.fixed div.right.menu div.menu {
     background-color: #222 !important;
 }
@@ -407,3 +415,11 @@ div.message .header,
 div.message .description {
     color: #fff !important;
 }
+
+
+/* 登录界面的按钮 */
+div #login{
+    background-color: #666 !important;
+    color: #eee !important;
+}
+
