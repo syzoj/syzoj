@@ -5,14 +5,15 @@
     text-align: center;
   }
 </style>
+<% include monaco-editor %>
 <div class="padding">
-    <form class="ui form" method="post" action="<%= syzoj.utils.makeUrl(['problem', req.params.id, 'edit']) %>">
+    <form method="post" action="<%= syzoj.utils.makeUrl(['problem', req.params.id, 'edit']) %>">
       <div class="ui top attached tabular menu">
         <a class="item active" data-tab="edit">编辑</a>
         <a class="item" data-tab="preview" id="preview_tab">预览</a>
       </div>
       <div class="ui bottom attached tab segment active" data-tab="edit">
-        <div class="field">
+        <div class="ui form"><div class="field">
           <% if (problem.allowedManage) { %>
             <label for="id">
               <% if (problem.new) { %>
@@ -27,16 +28,47 @@
           <% } %>
           <label for="title">题目名称</label>
           <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>">
-          <label style="margin-top: 15px; " for="description">题目描述</label>
-          <textarea class="markdown-edit" rows="15" id="description" name="description"><%= problem.description %></textarea>
-          <label style="margin-top: 15px; " for="input_format">输入格式</label>
-          <textarea class="markdown-edit" rows="10" id="input" name="input_format"><%= problem.input_format %></textarea>
-          <label style="margin-top: 15px; " for="output_format">输出格式</label>
-          <textarea class="markdown-edit" rows="10" id="output" name="output_format"><%= problem.output_format %></textarea>
-          <label style="margin-top: 15px; ">样例</label>
-          <textarea class="markdown-edit" rows="15" id="example" name="example"><%= problem.example %></textarea>
-          <label style="margin-top: 15px; ">数据范围与提示</label>
-          <textarea class="markdown-edit" rows="10" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
+        
+        <label style="margin-top: 15px; " for="description">题目描述</label>
+        </div></div>
+        <div class="editor editor-with-border" id="description" style="width: 100%; height: 300px; ">
+          <%- this.showLoadingEditor(); %>
+        </div>
+        <input type="hidden" name="description">
+        <div class="ui form"><div class="field">
+
+        <label style="margin-top: 15px; " for="input_format">输入格式</label>
+        </div></div>
+        <div class="editor editor-with-border" id="input_format" style="width: 100%; height: 200px; ">
+          <%- this.showLoadingEditor(); %>
+        </div>
+        <input type="hidden" name="input_format">
+        <div class="ui form"><div class="field">
+
+        <label style="margin-top: 15px; " for="output_format">输出格式</label>
+        </div></div>
+        <div class="editor editor-with-border" id="output_format" style="width: 100%; height: 200px; ">
+          <%- this.showLoadingEditor(); %>
+        </div>
+        <input type="hidden" name="output_format">
+        <div class="ui form"><div class="field">
+
+        <label style="margin-top: 15px; " for="example">样例</label>
+        </div></div>
+        <div class="editor editor-with-border" id="example" style="width: 100%; height: 300px; ">
+          <%- this.showLoadingEditor(); %>
+        </div>
+        <input type="hidden" name="example">
+        <div class="ui form"><div class="field">
+  
+        <label style="margin-top: 15px; " for="limit_and_hint">数据范围与提示</label>
+        </div></div>
+        <div class="editor editor-with-border" id="limit_and_hint" style="width: 100%; height: 200px; ">
+          <%- this.showLoadingEditor(); %>
+        </div>
+        <input type="hidden" name="limit_and_hint">
+        <div class="ui form"><div class="field">
+  
           <label style="margin-top: 15px; ">标签</label>
           <select class="ui fluid search dropdown" multiple="" id="search_tags" name="tags">
             <% for (let tag of problem.tags) { %>
@@ -48,7 +80,7 @@
             <label><strong>匿名上传</strong></label>
             <p style="margin-top: 5px; ">选择后，上传者的用户名将不在题目页面中显示。</p>
           </div>
-        </div>
+        </div></div>
       </div>
       <div class="ui bottom attached tab segment" data-tab="preview" id="preview">
         <h1 class="ui header problem_header" id="pv-title"></h1>
@@ -73,21 +105,37 @@
     </form>
 </div>
 <script type="text/javascript">
+var editors = {
+  description: { defaultValue: <%- serializejs(problem.description) %> },
+  input_format: { defaultValue: <%- serializejs(problem.input_format) %> },
+  output_format: { defaultValue: <%- serializejs(problem.output_format) %> },
+  example: { defaultValue: <%- serializejs(problem.example) %> },
+  limit_and_hint: { defaultValue: <%- serializejs(problem.limit_and_hint) %> }
+};
+
+window.onEditorLoaded(function () {
+  for (var name in editors) {
+    var editor = editors[name];
+    var editorElement = document.getElementById(name);
+    var input = document.getElementsByName(name)[0];
+    editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
+  }
+});
+
 $(function () {
     function render(output, input) {
-      $.post('/api/markdown', { s: input.val() }, function (s) {
-        // console.log(s);
+      $.post('/api/markdown', { s: editors[input].editor.getValue() }, function (s) {
         output.html(s);
       });
     }
     $("#preview_tab").click(function () {
       $("#pv-title").text($("#title").val());
       $("#pv-description, #pv-input, #pv-output, #pv-example, #pv-hint").text('Loading...');
-      render($("#pv-description"), $("#description"));
-      render($("#pv-input"), $("#input"));
-      render($("#pv-output"), $("#output"));
-      render($("#pv-example"), $("#example"));
-      render($("#pv-hint"), $("#hint"));
+      render($("#pv-description"), "description");
+      render($("#pv-input"), "input_format");
+      render($("#pv-output"), "output_format");
+      render($("#pv-example"), "example");
+      render($("#pv-hint"), "limit_and_hint");
     });
     $('.tabular.menu .item').tab();
 });

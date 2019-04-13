@@ -1,15 +1,22 @@
 <% this.title = contest.id ? '编辑比赛' : '新建比赛' %>
 <% include header %>
+<% include monaco-editor %>
 <div class="padding">
-        <form class="ui form" action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>" method="post">
-            <div class="field">
+        <form action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>" method="post">
+          <div class="ui form">
+              <div class="field">
                 <label>比赛名称</label>
                 <input type="text" name="title" value="<%= contest.title %>">
-            </div>
-            <div class="field">
+              </div>
+              <div class="field">
                 <label>比赛描述</label>
-                <input type="text" name="subtitle" class="markdown-edit" value="<%= contest.subtitle %>">
-            </div>
+              </div>
+          </div>
+          <div id="subtitle" class="editor editor-with-border" style="height: 100px; width: 100%; margin-bottom: 1em; ">
+            <%- this.showLoadingEditor(); %>
+          </div>
+          <input type="hidden" name="subtitle">
+          <div class="ui form">
             <div class="field">
                 <label>试题列表</label>
                 <select class="ui fluid search dropdown" multiple="" id="search_problems" name="problems">
@@ -53,8 +60,13 @@
             </div>
             <div class="field">
                 <label>比赛公告</label>
-                <textarea class="" rows="5" id="doc-ta-1" name="information" class="markdown-edit"><%= contest.information %></textarea>
             </div>
+          </div>
+          <div id="information" class="editor editor-with-border" style="height: 100px; width: 100%; margin-bottom: 1em; ">
+            <%- this.showLoadingEditor(); %>
+          </div>
+          <input type="hidden" name="information">
+          <div class="ui form">
             <div class="field">
                 <label>开始时间</label>
                 <input type="text" name="start_time" value="<%= syzoj.utils.formatDate(contest.start_time || syzoj.utils.getCurrentDate()) %>">
@@ -78,8 +90,23 @@
               </div>
             </div>
             <div style="text-align: center; "><button type="submit" class="ui labeled icon blue button"><i class="ui edit icon"></i>提交</button></div>
+          </div>
         </form>
 <script>
+var editors = {
+  subtitle: { defaultValue: <%- serializejs(contest.subtitle) %> },
+  information: { defaultValue: <%- serializejs(contest.information) %> }
+};
+
+window.onEditorLoaded(function () {
+  for (var name in editors) {
+    var editor = editors[name];
+    var editorElement = document.getElementById(name);
+    var input = document.getElementsByName(name)[0];
+    editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
+  }
+});
+
 $(function () {
   $('#search_admins')
     .dropdown({

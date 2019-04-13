@@ -1,31 +1,39 @@
 <% this.title = article.id ? '编辑帖子' : '发表帖子'; %>
 <% include header %>
+<% include monaco-editor %>
 <style type="text/css">
     .am-panel-title{
     font-size: 1.6em;
     }
 </style>
 <div class="padding">
-  <form class="ui form" method="post">
+  <form class="" method="post">
     <div class="ui top attached tabular menu">
       <a class="item active" data-tab="edit">编辑</a>
       <a class="item" data-tab="preview" id="preview_tab">预览</a>
     </div>
     <div class="ui bottom attached tab segment active" data-tab="edit">
-      <div class="field">
-        <label for="title">标题</label>
-        <input type="text" id="title" name="title" value="<%= article.title %>">
-        <div style="margin-top: 15px; "></div>
-        <label for="content">内容</label>
-        <textarea rows="15" id="content" name="content" class="markdown-edit"><%= article.content %></textarea>
-        <% if (user && user.is_admin) { %>
-          <div class="ui <% if (article.is_notice) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
-            <input <% if (article.is_notice) { %>checked=""<% } %> name="is_notice" type="checkbox">
-            <label><strong>公告</strong></label>
-            <p style="margin-top: 5px; ">选择后将显示在首页公告栏。</p>
-          </div>
-        <% } %>
+      <div class="ui form">
+        <div class="field">
+          <label for="title">标题</label>
+          <input type="text" id="title" name="title" value="<%= article.title %>">
+        </div>
+        <div class="field">
+          <label for="content">内容</label>
+        </div>
       </div>
+      <div class="editor editor-with-border" id="content" style="width: 100%; height: 400px; margin-bottom: 1em; ">
+        <%- this.showLoadingEditor(); %>
+      </div>
+      <input type="hidden" name="content">
+
+    <% if (user && user.is_admin) { %>
+        <div class="ui <% if (article.is_notice) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
+          <input <% if (article.is_notice) { %>checked=""<% } %> name="is_notice" type="checkbox">
+          <label><strong>公告</strong></label>
+          <p style="margin-top: 5px; ">选择后将显示在首页公告栏。</p>
+        </div>
+      <% } %>
     </div>
     <div class="ui bottom attached tab segment" data-tab="preview">
       <div class="ui header" id="pv-title"></div>
@@ -40,17 +48,29 @@
 </div>
 
 <script type="text/javascript">
+var editors = {
+  content: { defaultValue: <%- serializejs(article.content) %> },
+};
+
+window.onEditorLoaded(function () {
+  for (var name in editors) {
+    var editor = editors[name];
+    var editorElement = document.getElementById(name);
+    var input = document.getElementsByName(name)[0];
+    editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
+  }
+});
+
 $(function () {
     function render(output, input) {
-      $.post('/api/markdown', { s: input.val() }, function (s) {
-        // console.log(s);
+      $.post('/api/markdown', { s: editors[input].editor.getValue() }, function (s) {
         output.html(s);
       });
     }
     $("#preview_tab").click(function () {
       $("#pv-title").text($("#title").val());
       $("#pv-content").text('Loading...');
-      render($("#pv-content"), $("#content"));
+      render($("#pv-content"), "content");
     });
     $('.tabular.menu .item').tab();
 })

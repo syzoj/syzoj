@@ -241,15 +241,17 @@ if (contest) {
                 <div class="four wide column" style="margin-right: -25px; ">
                   <div class="ui attached vertical fluid pointing menu" id="testcase-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <% for (let i = 0; i < cases.length; i++) { %>
-                      <a class="item<%= i === 0 ? ' active' : '' %>" data-value="<%= i %>">
+                      <a style="border-radius: 0; " class="item<%= i === 0 ? ' active' : '' %>" data-value="<%= i %>">
                         <%= cases[i] %>
                       </a>
                     <% } %>
                   </div>
                 </div>
-                <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 12px) !important; ">
+                <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 13px) !important; ">
                   <% for (let i = 0; i < cases.length; i++) { %>
-                    <div id="editor-<%= i %>" class="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; <%= i === 0 ? '' : 'visibility: hidden; ' %>"></div>
+                    <div id="editor-<%= i %>" class="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; overflow: hidden; <%= i === 0 ? '' : 'visibility: hidden; ' %>">
+                      <%- this.showLoadingEditor(); %>
+                    </div>
                   <% } %>
                 </div>
                 <% } %>
@@ -258,7 +260,7 @@ if (contest) {
                 window.onEditorLoaded(function () {
                   window.editors = [];
                   for (var i = 0; i < cases.length; i++) {
-                    var editor = window.createEditor(document.getElementById("editor-" + i));
+                    var editor = window.createCodeEditor(document.getElementById("editor-" + i));
                     editors[i] = editor;
                   }
 
@@ -305,15 +307,17 @@ if (contest) {
                     } else if (lastLanguage) language = lastLanguage;
                     %>
                     <% for (lang of syzoj.config.enabled_languages) { %>
-                      <a class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.languages[lang].editor %>">
+                      <a style="border-radius: 0; " class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.languages[lang].editor %>">
                         <%= syzoj.languages[lang].show %>
                         <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= syzoj.languages[lang].version %></div>
                       </a>
                     <% } %>
                   </div>
                 </div>
-                <div class="twelve wide stretched column" style="padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 1px + 25px) !important; ">
-                  <div id="editor" style="border: 1px solid #D4D4D5; " class="editor"></div>
+                <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 13px) !important; ">
+                  <div id="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; overflow: hidden; " class="editor">
+                    <%- this.showLoadingEditor(); %>
+                  </div>
                 </div>
                 <div class="ui form" style="width: 100%; ">
                   <div class="inline fields" style="width: 100%; ">
@@ -341,7 +345,7 @@ if (contest) {
     var editorElement = document.getElementById('editor');
     var content = '';
     <% if (state) { %>content = <%- serializejs(state.code) %>;<% } %>
-    editor = window.createEditor(editorElement, 'ace_' + $('#languages-menu .item.active').data('mode'), content);
+    editor = window.createCodeEditor(editorElement, $('#languages-menu .item.active').data('mode'), content);
     window.editor = editor;
   });
 
@@ -366,7 +370,7 @@ if (contest) {
           .not($(this))
           .removeClass('active')
       ;
-      monaco.editor.setModelLanguage(editor.getModel(), 'ace_' + $(this).data('mode'));
+      monaco.editor.setModelLanguage(editor.getModel(), $(this).data('mode'));
     });
   });
 </script>

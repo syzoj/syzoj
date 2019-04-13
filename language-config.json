@@ -3,63 +3,63 @@
     "show": "C++",
     "highlight": "cpp",
     "version": "GCC 8.2.0",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "cpp11": {
     "show": "C++ 11",
     "highlight": "cpp",
     "version": "GCC 8.2.0",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "cpp17": {
     "show": "C++ 17",
     "highlight": "cpp",
     "version": "GCC 8.2.0",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "cpp-noilinux": {
     "show": "C++ (NOI)",
     "highlight": "cpp",
     "version": "GCC 4.8.4 (NOILinux 1.4.1)",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "cpp11-noilinux": {
     "show": "C++ 11 (NOI)",
     "highlight": "cpp",
     "version": "GCC 4.8.4 (NOILinux 1.4.1)",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "cpp11-clang": {
     "show": "C++ 11 (Clang)",
     "highlight": "cpp",
     "version": "Clang 7.0.1",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "cpp17-clang": {
     "show": "C++ 17 (Clang)",
     "highlight": "cpp",
     "version": "Clang 7.0.1",
-    "editor": "c_cpp",
+    "editor": "cpp",
     "format": "cpp"
   },
   "c": {
     "show": "C",
     "highlight": "c",
     "version": "Clang 7.0.1",
-    "editor": "c_cpp",
+    "editor": "c",
     "format": "c"
   },
   "c-noilinux": {
     "show": "C (NOI)",
     "highlight": "c",
     "version": "GCC 4.8.4 (NOILinux 1.4.1)",
-    "editor": "c_cpp",
+    "editor": "c",
     "format": "c"
   },
   "csharp": {

@@ -11,7 +11,6 @@
     <link href="<%- selfLib('math.css') %>" rel="stylesheet">
     <link href="<%- selfLib('style.css') %>?20181212" rel="stylesheet">
     <link href="<%- lib('morris.js/0.5.1/morris.css') %>" rel="stylesheet">
-    <link href="<%- lib('monaco-editor/0.16.2/min/vs/editor/editor.main.css') %>" rel="stylesheet">
     <% if (useLocalLibs || !syzoj.config.google_fonts || !syzoj.config.google_fonts.url || !['like-google-fonts', 'like-local'].includes(syzoj.config.google_fonts.type)) { %>
       <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'fira-mono.css']) %>" rel="stylesheet">
       <link href="<%- syzoj.utils.makeUrl(['google-fonts', 'lato.css']) %>" rel="stylesheet">

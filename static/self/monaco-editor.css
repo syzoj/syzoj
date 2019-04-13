@@ -1,6 +1,26 @@
 .editor {
     background: #fff;
-    font-family: "Fira Mono", "Bitstream Vera Sans Mono", Menlo, Consolas, "Lucida Console", monospace;
+    position: relative;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+}
+
+.editor.editor-with-border {
+    border-radius: .28571429rem;
+    overflow: hidden;
+    outline: none;
+}
+
+.editor.editor-with-border:focus-within {
+    border-color: #85b7d9;
+}
+
+.editor.editor-with-border .monaco-editor .margin {
+    visibility: hidden;
+}
+
+.editor.editor-with-border .monaco-editor .lines-content.monaco-editor-background {
+    margin-top: 9px;
+    margin-left: 4px;
 }
 
 .monaco-editor .inputarea {
@@ -29,9 +49,22 @@
 }
 
 .monaco-editor .line-numbers {
-    color: #4d4d4c !important;
+    color: #575756 !important;
 }
 
-.monaco-editor .margin-view-overlays .current-line {
-    background-color: #efefef !important;
+.monaco-editor .margin-view-overlays .current-line ~ .line-numbers {
+    color: #000 !important;
+    font-weight: 500;
+}
+
+.editor.editor-with-border .monaco-editor .monaco-scrollable-element .scrollbar.vertical {
+    background: rgba(0,0,0,.1);
+    border-radius: 0;
+}
+
+.editor.editor-with-border .monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider {
+    border-radius: 5px;
+    background: rgba(0,0,0,.25);
+    -webkit-transition: color .2s ease;
+    transition: color .2s ease;
 }

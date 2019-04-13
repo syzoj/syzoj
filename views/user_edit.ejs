@@ -1,5 +1,6 @@
 <% this.title = '修改资料'; %>
 <% include header %>
+<% include monaco-editor %>
 <div class="padding">
     <div class="ui <% if (error_info === '') { %>success<% } else { %>error<% } %> message" id="error" <% if (error_info === null) { %>hidden<% } %>>
       <% if (error_info !== null) {
@@ -8,7 +9,8 @@
       	<p id="error_info"><%= error_info %></p>
       <% } %>
     </div>
-		<form id="form" class="ui form" action="<%= syzoj.utils.makeUrl(['user', edited_user.id, 'edit']) %>" method="post" onsubmit="return check()">
+		<form id="form" action="<%= syzoj.utils.makeUrl(['user', edited_user.id, 'edit']) %>" method="post" onsubmit="return check()">
+      <div class="ui form">
       <div class="field">
 	    	<label for="username">用户名</label>
 	    	<input type="text" id="username" name="username" value="<%= edited_user.username %>"<% if (!user.allowedManage) { %> readonly<% } %>>
@@ -40,9 +42,16 @@
         </div>
 	    </div>
 	    <div class="field">
-	    	<label for="information">个性签名</label>
-	    	<textarea class="font-content" rows="5" id="information" name="information"><%= edited_user.information %></textarea>
-	    </div>
+        <label for="information">个性签名</label>
+      </div>
+      
+      </div>
+      <div class="editor editor-with-border" id="information" style="width: 100%; height: 100px; margin-bottom: 1em; ">
+        <%- this.showLoadingEditor(); %>
+      </div>
+      <input type="hidden" name="information">
+      <div class="ui form">
+
       <div class="field">
       <label class="ui header">密码</label>
         <input type="password" placeholder="原密码（留空则不修改）" name="old_password" id="old_password">
@@ -81,11 +90,25 @@
         <button type="submit" class="ui blue labeled icon button"><i class="ui icon edit"></i>修改</button>
         <a href="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>" class="ui labeled icon button"><i class="ui icon angle left"></i>返回</a>
       </div>
+      </div>
 		</form>
 	</div>
 </div>
 <script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
 <script type="text/javascript">
+var editors = {
+  information: { defaultValue: <%- serializejs(edited_user.information) %> },
+};
+
+window.onEditorLoaded(function () {
+  for (var name in editors) {
+    var editor = editors[name];
+    var editorElement = document.getElementById(name);
+    var input = document.getElementsByName(name)[0];
+    editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
+  }
+});
+
 function make_md5(tag) {
 	if (tag.val()) {
 		tag.val(md5(tag.val() + "syzoj2_xxx"));

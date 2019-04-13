@@ -2,10 +2,12 @@
 <% include admin_header %>
 <form method="post">
 
-<div id="editor" class="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; "></div>
+<% include monaco-editor %>
+<div id="editor" class="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; ">
+  <%- this.showLoadingEditor(); %>
+</div>
 <input type="hidden" name="data">
 
-<% include monaco-editor %>
 <script type="text/javascript">
 var originalData = <%- serializejs(data) %>;
 var input = $('[name="data"]');
@@ -13,7 +15,7 @@ input.val(originalData);
 
 window.onEditorLoaded(function () {
   var editor;
-  window.editor = editor = window.createEditor(document.getElementById("editor"), "json", originalData);
+  window.editor = editor = window.createCodeEditor(document.getElementById("editor"), "json", originalData);
   $('form').on('submit', function () {
     input.val(editor.getValue());
   });
