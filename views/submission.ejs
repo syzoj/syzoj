@@ -85,7 +85,7 @@
       <div class="content" :class="singleSubtask ? 'active' : ''">
         <div class="accordion">
           <template v-for="curCase, $caseIndex in subtask.cases">
-            <div class="title" :class="checkTestcaseOK(curCase) ? '' : 'unexpandable'">
+            <div class="title" :class="checkTestcaseOK(curCase) || curCase.errorMessage ? '' : 'unexpandable'">
               <div class="ui grid">
                 <div class="three wide column">
                     <i class="dropdown icon"></i>

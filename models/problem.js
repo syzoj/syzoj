@@ -58,15 +58,15 @@ SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) ASC \
+		ORDER BY `code_length` ASC \
     LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
-			LENGTH(`code`) \
+			`code_length` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) ASC \
+		ORDER BY `code_length` ASC \
     LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
@@ -83,15 +83,15 @@ SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) DESC \
+		ORDER BY `code_length` DESC \
     LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
-			LENGTH(`code`) \
+			`code_length` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) DESC \
+		ORDER BY `code_length` DESC \
     LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \

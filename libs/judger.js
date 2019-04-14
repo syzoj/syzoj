@@ -66,7 +66,7 @@ async function connect() {
 
       waitingForTask = true;
 
-      winston.verbose(`Judge client ${socket.id} emitted waitForTask.`);
+      winston.warn(`Judge client ${socket.id} emitted waitForTask.`);
 
       // Poll the judge queue, timeout = 10s.
       let obj;
@@ -80,9 +80,11 @@ async function connect() {
         return;
       }
 
+      winston.warn(`Judge task ${obj.data.content.taskId} poped from queue.`);
+
       // Re-push to queue if got task but judge client already disconnected.
       if (socket.disconnected) {
-        winston.warn(`Judge client ${socket.id} got task but disconnected re-pushing task to queue.`);
+        winston.warn(`Judge client ${socket.id} got task but disconnected re-pushing task ${obj.data.content.taskId} to queue.`);
         judgeQueue.push(obj.data, obj.priority);
         return;
       }
@@ -90,10 +92,10 @@ async function connect() {
       // Send task to judge client, and wait for ack.
       const task = obj.data;
       pendingAckTaskObj = obj;
-      winston.verbose(`Sending task ${task.content.taskId} to judge client ${socket.id}.`);
+      winston.warn(`Sending task ${task.content.taskId} to judge client ${socket.id}.`);
       socket.emit('onTask', msgPack.encode(task), () => {
         // Acked.
-        winston.verbose(`Judge client ${socket.id} acked task ${task.content.taskId}.`);
+        winston.warn(`Judge client ${socket.id} acked task ${task.content.taskId}.`);
         pendingAckTaskObj = null;
         waitingForTask = false;
       });
@@ -232,6 +234,8 @@ module.exports.judge = async function (judge_state, problem, priority) {
     content: content,
     extraData: extraData
   }, priority);
+
+  winston.warn(`Judge task ${content.taskId} enqueued.`);
 }
 
 module.exports.getCachedJudgeState = taskId => judgeStateCache.get(taskId);
