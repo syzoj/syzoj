@@ -108,6 +108,8 @@ class User extends Model {
       });
 
       this.submit_num = cnt;
+
+      await this.save();
     });
   }
 
