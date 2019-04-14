@@ -118,19 +118,16 @@ class JudgeState extends Model {
   }
 
   async updateRelatedInfo(newSubmission) {
-    await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'problem', this.problem_id], async () => {
-      await syzoj.utils.lock(['JudgeState::updateRelatedInfo', 'user', this.user_id], async () => {
-        if (this.type === 0) {
-          await this.loadRelationships();
-          await this.user.refreshSubmitInfo();
-          await this.user.save();
-          await this.problem.resetSubmissionCount();
-        } else if (this.type === 1) {
-          let contest = await Contest.fromID(this.type_info);
-          await contest.newSubmission(this);
-        }
-      });
-    });
+    if (this.type === 0) {
+      await this.loadRelationships();
+
+      // No need to await them.
+      this.user.refreshSubmitInfo();
+      this.problem.resetSubmissionCount();
+    } else if (this.type === 1) {
+      let contest = await Contest.fromID(this.type_info);
+      await contest.newSubmission(this);
+    }
   }
 
   async rejudge() {
