@@ -609,8 +609,11 @@ require(['vs/editor/editor.main'], function () {
           });
         };
 
-        window.createMarkdownEditor = function (editorElement, content, input) {
-          editorElement.innerHTML = '';
+        window.createMarkdownEditor = function (wrapperElement, content, input) {
+          wrapperElement.innerHTML = '';
+          var editorElement = document.createElement('div');
+          editorElement.classList.add('editor-wrapped');
+          wrapperElement.appendChild(editorElement);
           var editor = monaco.editor.create(editorElement, {
             value: content,
             language: 'markdown',

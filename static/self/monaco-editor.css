@@ -10,6 +10,13 @@
     outline: none;
 }
 
+.editor > .editor-wrapped {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 9px;
+}
+
 .editor.editor-with-border:focus-within {
     border-color: #85b7d9;
 }
@@ -19,7 +26,6 @@
 }
 
 .editor.editor-with-border .monaco-editor .lines-content.monaco-editor-background {
-    margin-top: 9px;
     margin-left: 4px;
 }
 
@@ -58,8 +64,17 @@
 }
 
 .editor.editor-with-border .monaco-editor .monaco-scrollable-element .scrollbar.vertical {
+    top: -9px !important;
     background: rgba(0,0,0,.1);
     border-radius: 0;
+}
+
+.editor.editor-with-border .monaco-editor .monaco-scrollable-element.editor-scrollable {
+    overflow: visible !important;
+}
+
+.editor.editor-with-border .monaco-editor .overflow-guard {
+    overflow: visible !important;
 }
 
 .editor.editor-with-border .monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider {
