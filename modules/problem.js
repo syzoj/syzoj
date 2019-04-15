@@ -667,6 +667,10 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       if (!problems_id.includes(id)) throw new ErrorMessage('无此题目。');
 
       judge_state.type = 1;
+      if (contest.type == 'prac') {
+        judge_state.type = 2;
+      }
+      
       judge_state.type_info = contest_id;
 
       await judge_state.save();
