@@ -58,15 +58,15 @@ SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) ASC \
+		ORDER BY `code_length` ASC \
     LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
-			LENGTH(`code`) \
+			`code_length` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) ASC \
+		ORDER BY `code_length` ASC \
     LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
@@ -83,15 +83,15 @@ SELECT \
 			`id` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) DESC \
+		ORDER BY `code_length` DESC \
     LIMIT 1 \
 	) AS `id`, \
 	( \
 		SELECT \
-			LENGTH(`code`) \
+			`code_length` \
 		FROM `judge_state` `inner_table` \
 		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY LENGTH(`code`) DESC \
+		ORDER BY `code_length` DESC \
     LIMIT 1 \
 	) AS `code_length` \
 FROM `judge_state` `outer_table` \
@@ -490,7 +490,7 @@ class Problem extends Model {
   async resetSubmissionCount() {
     let JudgeState = syzoj.model('judge_state');
     await syzoj.utils.lock(['Problem::resetSubmissionCount', this.id], async () => {
-      this.submit_num = await JudgeState.count({ score: { $not: null }, problem_id: this.id, type: { $not: 1 } });
+      this.submit_num = await JudgeState.count({ problem_id: this.id, type: { $not: 1 } });
       this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id, type: { $not: 1 } });
       await this.save();
     });

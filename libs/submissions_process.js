@@ -66,6 +66,7 @@ const processOverallResult = (source, config) => {
                 score: st.score,
                 cases: st.cases.map(cs => ({
                     status: cs.status,
+                    errorMessage: cs.errorMessage,
                     result: cs.result && {
                         type: cs.result.type,
                         time: config.showUsage ? cs.result.time : undefined,

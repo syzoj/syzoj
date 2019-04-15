@@ -71,19 +71,21 @@ function getColorOfScore(score) {
       <% for (let judge of statistics.judge_state) { %>
           <% include util %>
           <tr>
-              <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">#<%= judge.id %></a></td>
-              <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>">#<%= judge.problem_id %>. <%= judge.problem.title %></a></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><b>#<%= judge.id %></b></a></td>
+              <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>"><b>#<%= judge.problem_id %>.</b> <%= judge.problem.title %></a></td>
               <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>">
+                  <b>
                   <span class="status <%= getStatusMeta(judge.status).toLowerCase().split(' ').join('_') %>">
                   <i class="<%= icon[getStatusMeta(judge.status)] || 'remove' %> icon"></i>
                   <%= judge.status %>
                   </span>
+                  </b>
               </a></td>
               <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><span class="score score_<%= parseInt(judge.score / 10) || 0 %>"><%= judge.score %></span></a></td>
               <% if (problem.type !== 'submit-answer') { %>
                 <td><%= judge.total_time %> ms</td>
                 <td><%= parseInt(judge.max_memory) || 0 %> K</td>
-                <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><%= syzoj.languages[judge.language].show %></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
+                <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><b><%= syzoj.languages[judge.language].show %></b></a> / <%= syzoj.utils.formatSize(judge.code.length) %></td>
               <% } else { %>
                 <td><%= syzoj.utils.formatSize(judge.max_memory) %></td>
               <% } %>
