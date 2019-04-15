@@ -100,7 +100,7 @@ class ContestPlayer extends Model {
         if (this.score != null)
           this.score += this.score_details[x].score;
       }
-    } else if (this.contest.type === 'acm') {
+    } else if (this.contest.type === 'acm' || this.contest.type === 'prac') {
       if (!judge_state.pending) {
         if (!this.score_details[judge_state.problem_id]) {
           this.score_details[judge_state.problem_id] = {

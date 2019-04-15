@@ -20,7 +20,7 @@ let model = db.define('contest', {
       key: 'id'
     }
   },
-  // type: noi, ioi, acm
+  // type: noi, ioi, acm, prac
   type: { type: Sequelize.STRING(10) },
 
   information: { type: Sequelize.TEXT },
@@ -79,7 +79,7 @@ class Contest extends Model {
   }
 
   allowedSeeingOthers() {
-    if (this.type === 'ioi' || this.type === 'acm') return true;
+    if (this.type === 'ioi' || this.type === 'acm' || this.type === 'prac') return true;
     else return false;
   }
 
@@ -89,7 +89,7 @@ class Contest extends Model {
   }
 
   allowedSeeingResult() { // If not, then the user can only see compile progress
-    if (this.type === 'ioi' || this.type === 'acm') return true;
+    if (this.type === 'ioi' || this.type === 'acm' || this.type === 'prac') return true;
     else return false;
   }
 
