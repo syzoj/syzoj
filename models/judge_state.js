@@ -113,7 +113,7 @@ class JudgeState extends Model {
     else if (this.type === 0) return this.problem.is_public || (user && (await user.hasPrivilege('manage_problem')));
     else if (this.type === 1 || this.type === 2) {
       let contest = await Contest.fromID(this.type_info);
-      if (contest.isRunning()) {
+      if (contest.isRunning() && !contest.type === "prac") {
         return user && await contest.isSupervisior(user);
       } else {
         return true;

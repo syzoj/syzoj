@@ -40,7 +40,8 @@ app.get('/submissions', async (req, res) => {
       }
       contest.ended = contest.isEnded();
       if ((contest.ended && contest.is_public) || // If the contest is ended and is not hidden
-        (curUser && await contest.isSupervisior(curUser)) // Or if the user have the permission to check
+        (curUser && await contest.isSupervisior(curUser) ||  // Or if the user have the permission to check
+          contest.type === 'prac') // Or is practice mode
       ) {
         where.type = { $ne: 0 };
         where.type_info = { $eq: contestId };
