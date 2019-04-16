@@ -90,7 +90,7 @@ require(['vs/editor/editor.main'], function () {
               end: new RegExp("^\\s*#pragma\\s+endregion\\b")
             }
           }
-        });  
+        });
       }
 
       var csharpAliases = ['csharp', 'cs', 'c#'];
@@ -133,7 +133,7 @@ require(['vs/editor/editor.main'], function () {
           }
         });
       }
-      
+
       monaco.languages.register({ id: 'haskell' });
       MonacoAceTokenizer.registerRulesForLanguage('haskell', new HaskellDefinition.default);
       monaco.languages.setLanguageConfiguration('haskell', {
@@ -203,7 +203,7 @@ require(['vs/editor/editor.main'], function () {
             }
         }
       });
-      
+
       var javascriptAliases = ['javascript', 'js'];
       for (var i in javascriptAliases) {
         var alias = javascriptAliases[i];
@@ -258,7 +258,7 @@ require(['vs/editor/editor.main'], function () {
                   end: new RegExp("^\\s*//\\s*#?endregion\\b")
               }
           }
-        });  
+        });
       }
 
       var pascalAliases = ['pascal', 'pas'];
@@ -346,7 +346,7 @@ require(['vs/editor/editor.main'], function () {
                   end: new RegExp("^\\s*#endregion\\b")
               }
           }
-        });  
+        });
       }
 
       monaco.languages.register({ id: 'ruby' });
@@ -416,107 +416,107 @@ require(['vs/editor/editor.main'], function () {
         monaco.languages.setMonarchTokensProvider(alias, {
           defaultToken: '',
           tokenPostfix: '.md',
-        
+
           // escape codes
           control: /[\\`*_\[\]{}()#+\-\.!\$]/,
           noncontrol: /[^\\`*_\[\]{}()#+\-\.!\$]/,
           escapes: /\\(?:@control)/,
-        
+
           // escape codes for javascript/CSS strings
           jsescapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
-        
+
           // non matched elements
           empty: [
             'area', 'base', 'basefont', 'br', 'col', 'frame',
             'hr', 'img', 'input', 'isindex', 'link', 'meta', 'param'
           ],
-        
+
           tokenizer: {
             root: [
-        
+
               // headers (with #)
               [/^(\s{0,3})(#+)((?:[^\\#]|@escapes)+)((?:#+)?)/, ['white', 'keyword', 'keyword', 'keyword']],
-        
+
               // headers (with =)
               [/^\s*(=+|\-+)\s*$/, 'keyword'],
-        
+
               // headers (with ***)
               [/^\s*((\*[ ]?)+)\s*$/, 'meta.separator'],
-        
+
               // quote
               [/^\s*>+/, 'comment'],
-        
+
               // list (starting with * or number)
               [/^\s*([\*\-+:]|\d+\.)\s/, 'keyword'],
-        
+
               // code block (4 spaces indent)
               [/^(\t|[ ]{4})[^ ].*$/, 'string'],
-        
+
               // code block (3 tilde)
               [/^\s*~~~\s*((?:\w|[\/\-#])+)?\s*$/, { token: 'string', next: '@codeblock' }],
-        
+
               // display math
               [/\$\$/, { token: 'string', next: '@displaymath' }],
-        
+
               // github style code blocks (with backticks and language)
               [/^\s*```\s*((?:\w|[\/\-#\+])+)\s*$/, { token: 'string', next: '@codeblockgh', nextEmbedded: '$1' }],
-        
+
               // github style code blocks (with backticks but no language)
               [/^\s*```\s*$/, { token: 'string', next: '@codeblock' }],
-        
+
               // markup within lines
               { include: '@linecontent' },
             ],
-        
+
             displaymath: [
               [/\\\$/, 'variable.source'],
               [/\$\$/, { token: 'string', next: '@pop' }],
               [/./, 'variable.source']
             ],
-        
+
             codeblock: [
               [/^\s*~~~\s*$/, { token: 'string', next: '@pop' }],
               [/^\s*```\s*$/, { token: 'string', next: '@pop' }],
               [/.*$/, 'variable.source'],
             ],
-        
+
             // github style code blocks
             codeblockgh: [
               [/```\s*$/, { token: 'variable.source', next: '@pop', nextEmbedded: '@pop' }],
               [/[^`]+/, 'variable.source'],
             ],
-        
+
             linecontent: [
-        
+
               // inline math
               [/\$/, { token: 'string', next: '@inlinemath' }],
-        
+
               // escapes
               [/&\w+;/, 'string.escape'],
               [/@escapes/, 'escape'],
-        
+
               // various markup
               [/\b__([^\\_]|@escapes|_(?!_))+__\b/, 'strong'],
               [/\*\*([^\\*]|@escapes|\*(?!\*))+\*\*/, 'strong'],
               [/\b_[^_]+_\b/, 'emphasis'],
               [/\*([^\\*]|@escapes)+\*/, 'emphasis'],
               [/`([^\\`]|@escapes)+`/, 'variable'],
-        
+
               // links
               [/\{+[^}]+\}+/, 'string.target'],
               [/(!?\[)((?:[^\]\\]|@escapes)*)(\]\([^\)]+\))/, ['string.link', '', 'string.link']],
               [/(!?\[)((?:[^\]\\]|@escapes)*)(\])/, 'string.link'],
-        
+
               // or html
               { include: 'html' },
             ],
-        
+
             inlinemath: [
               [/\\\$/, 'variable.source'],
               [/\$/, { token: 'string', next: '@pop' }],
               [/./, 'variable.source']
             ],
-        
+
             // Note: it is tempting to rather switch to the real HTML mode instead of building our own here
             // but currently there is a limitation in Monarch that prevents us from doing it: The opening
             // '<' would start the HTML mode, however there is no way to jump 1 character back to let the
@@ -532,17 +532,17 @@ require(['vs/editor/editor.main'], function () {
                 }
               }],
               [/<\/(\w+)\s*>/, { token: 'tag' }],
-        
+
               [/<!--/, 'comment', '@comment']
             ],
-        
+
             comment: [
               [/[^<\-]+/, 'comment.content'],
               [/-->/, 'comment', '@pop'],
               [/<!--/, 'comment.content.invalid'],
               [/[<\-]/, 'comment.content']
             ],
-        
+
             // Almost full HTML tag matching, complete with embedded scripts & styles
             tag: [
               [/[ \t\r\n]+/, 'white'],
@@ -568,20 +568,20 @@ require(['vs/editor/editor.main'], function () {
                 }
               }],
             ],
-        
+
             embeddedStyle: [
               [/[^<]+/, ''],
               [/<\/style\s*>/, { token: '@rematch', next: '@pop', nextEmbedded: '@pop' }],
               [/</, '']
             ],
-        
+
             embeddedScript: [
               [/[^<]+/, ''],
               [/<\/script\s*>/, { token: '@rematch', next: '@pop', nextEmbedded: '@pop' }],
               [/</, '']
             ],
           }
-        });  
+        });
       }
 
       $.getScript(window.pathSelfLib + "monaco-editor-tomorrow.js", function () {
@@ -605,7 +605,8 @@ require(['vs/editor/editor.main'], function () {
               vertical: 'hidden'
             },
             overviewRulerBorder: false,
-            hideCursorInOverviewRuler: true
+            hideCursorInOverviewRuler: true,
+            contextmenu: false
           });
         };
 
@@ -644,7 +645,8 @@ require(['vs/editor/editor.main'], function () {
               verticalScrollbarSize: 10
             },
             overviewRulerBorder: false,
-            hideCursorInOverviewRuler: true
+            hideCursorInOverviewRuler: true,
+            contextmenu: false
           });
 
           input.form.addEventListener('submit', function () {
