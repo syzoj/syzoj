@@ -1,32 +1,26 @@
-let Sequelize = require('sequelize');
-let db = syzoj.db;
+import * as TypeORM from "typeorm";
+import Model from "./common";
 
-let User = syzoj.model('user');
-let Problem = syzoj.model('problem');
-let ContestPlayer = syzoj.model('contest_player');
+declare var syzoj: any;
 
-let model = db.define('contest_ranklist', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  ranking_params: { type: Sequelize.JSON },
-  ranklist: { type: Sequelize.JSON }
-}, {
-  timestamps: false,
-  tableName: 'contest_ranklist'
-});
+import ContestPlayer from "./contest_player";
+import JudgeState from "./judge_state";
 
-let Model = require('./common');
-class ContestRanklist extends Model {
-  static async create(val) {
-    return ContestRanklist.fromRecord(ContestRanklist.model.build(Object.assign({
-      ranking_params: {},
-      ranklist: {}
-    }, val)));
-  }
+@TypeORM.Entity()
+export default class ContestRanklist extends Model {
+  @TypeORM.PrimaryGeneratedColumn()
+  id: number;
+
+  @TypeORM.Column({ nullable: true, type: "json" })
+  ranking_params: any;
+
+  @TypeORM.Column({ nullable: true, type: "json" })
+  ranklist: any;
 
   async getPlayers() {
     let a = [];
     for (let i = 1; i <= this.ranklist.player_num; i++) {
-      a.push(await ContestPlayer.fromID(this.ranklist[i]));
+      a.push(await ContestPlayer.findById(this.ranklist[i]));
     }
     return a;
   }
@@ -44,15 +38,13 @@ class ContestRanklist extends Model {
       players.push(player);
     }
 
-    let JudgeState = syzoj.model('judge_state');
-
     if (contest.type === 'noi' || contest.type === 'ioi') {
       for (let player of players) {
         player.latest = 0;
         player.score = 0;
 
         for (let i in player.score_details) {
-          let judge_state = await JudgeState.fromID(player.score_details[i].judge_id);
+          let judge_state = await JudgeState.findById(player.score_details[i].judge_id);
           if (!judge_state) continue;
 
           player.latest = Math.max(player.latest, judge_state.submit_time);
@@ -94,10 +86,4 @@ class ContestRanklist extends Model {
     this.ranklist = { player_num: players.length };
     for (let i = 0; i < players.length; i++) this.ranklist[i + 1] = players[i].id;
   }
-
-  getModel() { return model; }
 }
-
-ContestRanklist.model = model;
-
-module.exports = ContestRanklist;

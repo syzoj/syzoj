@@ -10,10 +10,15 @@ const timeAgo = new TimeAgo('zh-CN');
 
 app.get('/', async (req, res) => {
   try {
-    let ranklist = await User.query([1, syzoj.config.page.ranklist_index], { is_show: true }, [[syzoj.config.sorting.ranklist.field, syzoj.config.sorting.ranklist.order]]);
+    let ranklist = await User.queryRange([1, syzoj.config.page.ranklist_index], { is_show: true }, {
+      [syzoj.config.sorting.ranklist.field]: syzoj.config.sorting.ranklist.order
+    });
     await ranklist.forEachAsync(async x => x.renderInformation());
 
-    let notices = (await Article.query(null, { is_notice: true }, [['public_time', 'desc']])).map(article => ({
+    let notices = (await Article.find({
+      where: { is_notice: true }, 
+      order: { public_time: 'DESC' }
+    })).map(article => ({
       title: article.title,
       url: syzoj.utils.makeUrl(['article', article.id]),
       date: syzoj.utils.formatDate(article.public_time, 'L')
@@ -24,9 +29,13 @@ app.get('/', async (req, res) => {
       fortune = Divine(res.locals.user.username, res.locals.user.sex);
     }
 
-    let contests = await Contest.query([1, 5], { is_public: true }, [['start_time', 'desc']]);
+    let contests = await Contest.queryRange([1, 5], { is_public: true }, {
+      start_time: 'DESC'
+    });
 
-    let problems = (await Problem.query([1, 5], { is_public: true }, [['publicize_time', 'desc']])).map(problem => ({
+    let problems = (await Problem.queryRange([1, 5], { is_public: true }, {
+      publicize_time: 'DESC'
+    })).map(problem => ({
       id: problem.id,
       title: problem.title,
       time: timeAgo.format(new Date(problem.publicize_time)),

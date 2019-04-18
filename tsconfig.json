@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "outDir": "./models-built",
+        "rootDir": "./models",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
+    }
+}
