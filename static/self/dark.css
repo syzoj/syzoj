@@ -332,3 +332,15 @@ div.statistic > div.value,
 div.statistic > div.label {
     color: #eee !important;
 }
+
+/* 重新评测 按钮及界面 */
+#rejudge-button{
+    color: #ddd !important;
+}
+#modal-rejudge i{
+    color: #ddd !important;
+}
+#modal-rejudge a.green,
+#modal-rejudge a.green i{
+    color: #2ecc40 !important;
+}
