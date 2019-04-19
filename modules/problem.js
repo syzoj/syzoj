@@ -91,28 +91,21 @@ app.get('/problems/search', async (req, res) => {
            .orWhere('id = :id', { id: id })
     }
 
+    query.orderBy('id = ' + id.toString(), 'DESC');
     if (sort === 'ac_rate') {
-      query = query.orderBy('ac_num / submit_num', order.toUpperCase());
+      query = query.addOrderBy('ac_num / submit_num', order.toUpperCase());
     } else {
-      query = query.orderBy(sort, order.toUpperCase());
+      query = query.addOrderBy(sort, order.toUpperCase());
     }
 
     let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.queryPage(paginate, query);
 
-    let problemMatchedID = null;
-    problems = (await problems.mapAsync(async problem => {
+    await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.judge_state = await problem.getJudgeState(res.locals.user, true);
       problem.tags = await problem.getTags();
-
-      if (problem.id === id) {
-        problemMatchedID = problem;
-        return null;
-      } else return problem;
-    })).filter(x => x);
-
-    if (problemMatchedID) problems.unshift(problemMatchedID);
+    });
 
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
