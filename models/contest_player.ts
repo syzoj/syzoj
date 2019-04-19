@@ -1,50 +1,41 @@
-let Sequelize = require('sequelize');
-let db = syzoj.db;
+import * as TypeORM from "typeorm";
+import Model from "./common";
 
-let User = syzoj.model('user');
-let Problem = syzoj.model('problem');
+import User from "./user";
+import Contest from "./contest";
 
-let model = db.define('contest_player', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  contest_id: { type: Sequelize.INTEGER },
-  user_id: { type: Sequelize.INTEGER },
+@TypeORM.Entity()
+export default class ContestPlayer extends Model {
+  @TypeORM.PrimaryGeneratedColumn()
+  id: number;
 
-  score: { type: Sequelize.INTEGER },
-  score_details: { type: Sequelize.JSON },
-  time_spent: { type: Sequelize.INTEGER }
-}, {
-    timestamps: false,
-    tableName: 'contest_player',
-    indexes: [
-      {
-        fields: ['contest_id'],
-      },
-      {
-        fields: ['user_id'],
-      }
-    ]
-  });
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  contest_id: number;
 
-let Model = require('./common');
-class ContestPlayer extends Model {
-  static async create(val) {
-    return ContestPlayer.fromRecord(ContestPlayer.model.build(Object.assign({
-      contest_id: 0,
-      user_id: 0,
-      score: 0,
-      score_details: {},
-      time_spent: 0
-    }, val)));
-  }
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  user_id: number;
+
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  score: number;
+
+  @TypeORM.Column({ nullable: true, type: "json" })
+  score_details: object;
+
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  time_spent: number;
+
+  user?: User;
+  contest?: Contest;
 
   static async findInContest(where) {
     return ContestPlayer.findOne({ where: where });
   }
 
   async loadRelationships() {
-    let Contest = syzoj.model('contest');
-    this.user = await User.fromID(this.user_id);
-    this.contest = await Contest.fromID(this.contest_id);
+    this.user = await User.findById(this.user_id);
+    this.contest = await Contest.findById(this.contest_id);
   }
 
   async updateScore(judge_state) {
@@ -65,7 +56,7 @@ class ContestPlayer extends Model {
           time: judge_state.submit_time
         };
 
-        let arr = Object.values(this.score_details[judge_state.problem_id].submissions);
+        let arr: any = Object.values(this.score_details[judge_state.problem_id].submissions);
         arr.sort((a, b) => a.time - b.time);
 
         let maxScoreSubmission = null;
@@ -117,7 +108,7 @@ class ContestPlayer extends Model {
           time: judge_state.submit_time
         };
 
-        let arr = Object.values(this.score_details[judge_state.problem_id].submissions);
+        let arr: any = Object.values(this.score_details[judge_state.problem_id].submissions);
         arr.sort((a, b) => a.time - b.time);
 
         this.score_details[judge_state.problem_id].unacceptedCount = 0;
@@ -145,10 +136,4 @@ class ContestPlayer extends Model {
       }
     }
   }
-
-  getModel() { return model; }
 }
-
-ContestPlayer.model = model;
-
-module.exports = ContestPlayer;

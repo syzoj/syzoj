@@ -1,13 +1,12 @@
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let FormattedCode = syzoj.model('formatted_code');
-let CustomTest = syzoj.model('custom_test');
-let WaitingJudge = syzoj.model('waiting_judge');
 let Contest = syzoj.model('contest');
 let ProblemTag = syzoj.model('problem_tag');
-let ProblemTagMap = syzoj.model('problem_tag_map');
 let Article = syzoj.model('article');
-const Sequelize = require('sequelize');
+
+const randomstring = require('randomstring');
+const fs = require('fs-extra');
 
 let Judger = syzoj.lib('judger');
 let CodeFormatter = syzoj.lib('code_formatter');
@@ -20,28 +19,24 @@ app.get('/problems', async (req, res) => {
       throw new ErrorMessage('错误的排序参数。');
     }
 
-    let sortVal = sort;
-    if (sort === 'ac_rate') {
-      sortVal = { raw: 'ac_num / submit_num' };
-    }
-    let where = {};
+    let query = Problem.createQueryBuilder();
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
       if (res.locals.user) {
-        where = {
-          $or: {
-            is_public: 1,
-            user_id: res.locals.user.id
-          }
-        };
+        query.where('is_public = 1')
+             .orWhere('user_id = :user_id', { user_id: res.locals.user.id });
       } else {
-        where = {
-          is_public: 1
-        };
+        query.where('is_public = 1');
       }
     }
 
-    let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(paginate, where, [[sortVal, order]]);
+    if (sort === 'ac_rate') {
+      query = query.orderBy('ac_num / submit_num', order.toUpperCase());
+    } else {
+      query = query.orderBy(sort, order.toUpperCase());
+    }
+
+    let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.queryPage(paginate, query);
 
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -73,51 +68,51 @@ app.get('/problems/search', async (req, res) => {
       throw new ErrorMessage('错误的排序参数。');
     }
 
-    let where = {
-      $or: {
-        title: { $like: `%${req.query.keyword}%` },
-        id: id
-      }
-    };
-
+    let query = Problem.createQueryBuilder();
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
       if (res.locals.user) {
-        where = {
-          $and: [
-            where,
-            {
-              $or: {
-                is_public: 1,
-                user_id: res.locals.user.id
-              }
-            }
-          ]
-        };
+        query.where(new TypeORM.Brackets(qb => {
+             qb.where('is_public = 1')
+                 .orWhere('user_id = :user_id', { user_id: res.locals.user.id })
+             }))
+             .andWhere(new TypeORM.Brackets(qb => {
+               qb.where('title LIKE :title', { title: `%${req.query.keyword}%` })
+                 .orWhere('id = :id', { id: id })
+             }));
       } else {
-        where = {
-          $and: [
-            where,
-            {
-              is_public: 1
-            }
-          ]
-        };
+        query.where('is_public = 1')
+             .andWhere(new TypeORM.Brackets(qb => {
+               qb.where('title LIKE :title', { title: `%${req.query.keyword}%` })
+                 .orWhere('id = :id', { id: id })
+             }));
       }
+    } else {
+      query.where('title LIKE :title', { title: `%${req.query.keyword}%` })
+           .orWhere('id = :id', { id: id })
     }
 
-    let sortVal = sort;
     if (sort === 'ac_rate') {
-      sortVal = { raw: 'ac_num / submit_num' };
+      query = query.orderBy('ac_num / submit_num', order.toUpperCase());
+    } else {
+      query = query.orderBy(sort, order.toUpperCase());
     }
 
-    let paginate = syzoj.utils.paginate(await Problem.count(where), req.query.page, syzoj.config.page.problem);
-    let problems = await Problem.query(paginate, where, [syzoj.db.literal('`id` = ' + id + ' DESC'), [sortVal, order]]);
+    let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.queryPage(paginate, query);
 
-    await problems.forEachAsync(async problem => {
+    let problemMatchedID = null;
+    problems = (await problems.mapAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.judge_state = await problem.getJudgeState(res.locals.user, true);
       problem.tags = await problem.getTags();
-    });
+
+      if (problem.id === id) {
+        problemMatchedID = problem;
+        return null;
+      } else return problem;
+    })).filter(x => x);
+
+    if (problemMatchedID) problems.unshift(problemMatchedID);
 
     res.render('problems', {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
@@ -137,7 +132,7 @@ app.get('/problems/search', async (req, res) => {
 app.get('/problems/tag/:tagIDs', async (req, res) => {
   try {
     let tagIDs = Array.from(new Set(req.params.tagIDs.split(',').map(x => parseInt(x))));
-    let tags = await tagIDs.mapAsync(async tagID => ProblemTag.fromID(tagID));
+    let tags = await tagIDs.mapAsync(async tagID => ProblemTag.findById(tagID));
     const sort = req.query.sort || syzoj.config.sorting.problem.field;
     const order = req.query.order || syzoj.config.sorting.problem.order;
     if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
@@ -157,7 +152,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
       }
     }
 
-    let sql = 'SELECT * FROM `problem` WHERE\n';
+    let sql = 'SELECT `id` FROM `problem` WHERE\n';
     for (let tagID of tagIDs) {
       if (tagID !== tagIDs[0]) {
         sql += 'AND\n';
@@ -174,13 +169,18 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
       }
     }
 
-    let paginate = syzoj.utils.paginate(await Problem.count(sql), req.query.page, syzoj.config.page.problem);
+    let paginate = syzoj.utils.paginate(await Problem.countQuery(sql), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.query(sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL());
 
-    await problems.forEachAsync(async problem => {
+    problems = await problems.mapAsync(async problem => {
+      // query() returns plain objects.
+      problem = await Problem.findById(problem.id);
+
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.judge_state = await problem.getJudgeState(res.locals.user, true);
       problem.tags = await problem.getTags();
+      
+      return problem;
     });
 
     res.render('problems', {
@@ -202,7 +202,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
 app.get('/problem/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     if (!problem) throw new ErrorMessage('无此题目。');
 
     if (!await problem.isAllowedUseBy(res.locals.user)) {
@@ -245,7 +245,7 @@ app.get('/problem/:id', async (req, res) => {
 app.get('/problem/:id/export', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     if (!problem || !problem.is_public) throw new ErrorMessage('无此题目。');
 
     let obj = {
@@ -279,11 +279,15 @@ app.get('/problem/:id/export', async (req, res) => {
 app.get('/problem/:id/edit', async (req, res) => {
   try {
     let id = parseInt(req.params.id) || 0;
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) {
       if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
-      problem = await Problem.create();
+      problem = await Problem.create({
+        time_limit: syzoj.config.default.problem.time_limit,
+        memory_limit: syzoj.config.default.problem.memory_limit,
+        type: 'traditional' 
+      });
       problem.id = id;
       problem.allowedEdit = true;
       problem.tags = [];
@@ -310,16 +314,20 @@ app.get('/problem/:id/edit', async (req, res) => {
 app.post('/problem/:id/edit', async (req, res) => {
   try {
     let id = parseInt(req.params.id) || 0;
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     if (!problem) {
       if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
-      problem = await Problem.create();
+      problem = await Problem.create({
+        time_limit: syzoj.config.default.problem.time_limit,
+        memory_limit: syzoj.config.default.problem.memory_limit,
+        type: 'traditional' 
+      });
 
       if (await res.locals.user.hasPrivilege('manage_problem')) {
         let customID = parseInt(req.body.id);
         if (customID) {
-          if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
+          if (await Problem.findById(customID)) throw new ErrorMessage('ID 已被使用。');
           problem.id = customID;
         } else if (id) problem.id = id;
       }
@@ -333,7 +341,7 @@ app.post('/problem/:id/edit', async (req, res) => {
       if (await res.locals.user.hasPrivilege('manage_problem')) {
         let customID = parseInt(req.body.id);
         if (customID && customID !== id) {
-          if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
+          if (await Problem.findById(customID)) throw new ErrorMessage('ID 已被使用。');
           await problem.changeID(customID);
         }
       }
@@ -357,7 +365,7 @@ app.post('/problem/:id/edit', async (req, res) => {
       req.body.tags = [req.body.tags];
     }
 
-    let newTagIDs = await req.body.tags.map(x => parseInt(x)).filterAsync(async x => ProblemTag.fromID(x));
+    let newTagIDs = await req.body.tags.map(x => parseInt(x)).filterAsync(async x => ProblemTag.findById(x));
     await problem.setTags(newTagIDs);
 
     res.redirect(syzoj.utils.makeUrl(['problem', problem.id]));
@@ -372,12 +380,16 @@ app.post('/problem/:id/edit', async (req, res) => {
 app.get('/problem/:id/import', async (req, res) => {
   try {
     let id = parseInt(req.params.id) || 0;
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) {
       if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
-      problem = await Problem.create();
+      problem = await Problem.create({
+        time_limit: syzoj.config.default.problem.time_limit,
+        memory_limit: syzoj.config.default.problem.memory_limit,
+        type: 'traditional' 
+      });
       problem.id = id;
       problem.new = true;
       problem.user_id = res.locals.user.id;
@@ -403,16 +415,20 @@ app.get('/problem/:id/import', async (req, res) => {
 app.post('/problem/:id/import', async (req, res) => {
   try {
     let id = parseInt(req.params.id) || 0;
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     if (!problem) {
       if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
-      problem = await Problem.create();
+      problem = await Problem.create({
+        time_limit: syzoj.config.default.problem.time_limit,
+        memory_limit: syzoj.config.default.problem.memory_limit,
+        type: 'traditional' 
+      });
 
       if (await res.locals.user.hasPrivilege('manage_problem')) {
         let customID = parseInt(req.body.id);
         if (customID) {
-          if (await Problem.fromID(customID)) throw new ErrorMessage('ID 已被使用。');
+          if (await Problem.findById(customID)) throw new ErrorMessage('ID 已被使用。');
           problem.id = customID;
         } else if (id) problem.id = id;
       }
@@ -460,15 +476,14 @@ app.post('/problem/:id/import', async (req, res) => {
     let download = require('download');
     let tmp = require('tmp-promise');
     let tmpFile = await tmp.file();
-    let fs = require('bluebird').promisifyAll(require('fs'));
 
     try {
       let data = await download(req.body.url + (req.body.url.endsWith('/') ? 'testdata/download' : '/testdata/download'));
-      await fs.writeFileAsync(tmpFile.path, data);
+      await fs.writeFile(tmpFile.path, data);
       await problem.updateTestdata(tmpFile.path, await res.locals.user.hasPrivilege('manage_problem'));
       if (json.obj.have_additional_file) {
         let additional_file = await download(req.body.url + (req.body.url.endsWith('/') ? 'download/additional_file' : '/download/additional_file'));
-        await fs.writeFileAsync(tmpFile.path, additional_file);
+        await fs.writeFile(tmpFile.path, additional_file);
         await problem.updateFile(tmpFile.path, 'additional_file', await res.locals.user.hasPrivilege('manage_problem'));
       }
     } catch (e) {
@@ -488,7 +503,7 @@ app.post('/problem/:id/import', async (req, res) => {
 app.get('/problem/:id/manage', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -512,7 +527,7 @@ app.get('/problem/:id/manage', async (req, res) => {
 app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount: 1 }, { name: 'additional_file', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -560,7 +575,7 @@ app.post('/problem/:id/manage', app.multer.fields([{ name: 'testdata', maxCount:
 async function setPublic(req, res, is_public) {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     if (!problem) throw new ErrorMessage('无此题目。');
 
     let allowedManage = await problem.isAllowedManageBy(res.locals.user);
@@ -571,10 +586,7 @@ async function setPublic(req, res, is_public) {
     problem.publicize_time = new Date();
     await problem.save();
 
-    JudgeState.model.update(
-      { is_public: is_public },
-      { where: { problem_id: id } }
-    );
+    JudgeState.query('UPDATE `judge_state` SET `is_public` = ' + is_public + ' WHERE `problem_id` = ' + id);
 
     res.redirect(syzoj.utils.makeUrl(['problem', id]));
   } catch (e) {
@@ -596,7 +608,7 @@ app.post('/problem/:id/dis_public', async (req, res) => {
 app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     const curUser = res.locals.user;
 
     if (!problem) throw new ErrorMessage('无此题目。');
@@ -625,6 +637,9 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 
       if (!file.md5) throw new ErrorMessage('上传答案文件失败。');
       judge_state = await JudgeState.create({
+        submit_time: parseInt((new Date()).getTime() / 1000),
+        status: 'Unknown',
+        task_id: randomstring.generate(10),
         code: file.md5,
         code_length: size,
         language: null,
@@ -636,14 +651,16 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       let code;
       if (req.files['answer']) {
         if (req.files['answer'][0].size > syzoj.config.limit.submit_code) throw new ErrorMessage('代码文件太大。');
-        let fs = Promise.promisifyAll(require('fs'));
-        code = (await fs.readFileAsync(req.files['answer'][0].path)).toString();
+        code = (await fs.readFile(req.files['answer'][0].path)).toString();
       } else {
         if (req.body.code.length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码太长。');
         code = req.body.code;
       }
 
       judge_state = await JudgeState.create({
+        submit_time: parseInt((new Date()).getTime() / 1000),
+        status: 'Unknown',
+        task_id: randomstring.generate(10),
         code: code,
         code_length: code.length,
         language: req.body.language,
@@ -656,7 +673,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     let contest_id = parseInt(req.query.contest_id);
     let contest;
     if (contest_id) {
-      contest = await Contest.fromID(contest_id);
+      contest = await Contest.findById(contest_id);
       if (!contest) throw new ErrorMessage('无此比赛。');
       if ((!contest.isRunning()) && (!await contest.isSupervisior(curUser))) throw new ErrorMessage('比赛未开始或已结束。');
       let problems_id = await contest.getProblems();
@@ -721,7 +738,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
 app.post('/problem/:id/delete', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
     if (!problem) throw new ErrorMessage('无此题目。');
 
     if (!problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -740,7 +757,7 @@ app.post('/problem/:id/delete', async (req, res) => {
 app.get('/problem/:id/testdata', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -767,7 +784,7 @@ app.get('/problem/:id/testdata', async (req, res) => {
 app.post('/problem/:id/testdata/upload', app.multer.array('file'), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -790,7 +807,7 @@ app.post('/problem/:id/testdata/upload', app.multer.array('file'), async (req, r
 app.post('/problem/:id/testdata/delete/:filename', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -809,7 +826,7 @@ app.post('/problem/:id/testdata/delete/:filename', async (req, res) => {
 app.get('/problem/:id/testdata/download/:filename?', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -836,14 +853,14 @@ app.get('/problem/:id/testdata/download/:filename?', async (req, res) => {
 app.get('/problem/:id/download/additional_file', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
 
     // XXX: Reduce duplication (see the '/problem/:id/submit' handler)
     let contest_id = parseInt(req.query.contest_id);
     if (contest_id) {
-      let contest = await Contest.fromID(contest_id);
+      let contest = await Contest.findById(contest_id);
       if (!contest) throw new ErrorMessage('无此比赛。');
       if (!contest.isRunning()) throw new ErrorMessage('比赛未开始或已结束。');
       let problems_id = await contest.getProblems();
@@ -869,7 +886,7 @@ app.get('/problem/:id/download/additional_file', async (req, res) => {
 app.get('/problem/:id/statistics/:type', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
@@ -899,7 +916,7 @@ app.get('/problem/:id/statistics/:type', async (req, res) => {
 app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', maxCount: 1 }, { name: 'input_file', maxCount: 1 }]), async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let problem = await Problem.fromID(id);
+    let problem = await Problem.findById(id);
 
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });

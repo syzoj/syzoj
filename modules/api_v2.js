@@ -4,19 +4,23 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
 
     let keyword = req.params.keyword || '';
     let conditions = [];
-    const uid = parseInt(keyword);
+    const uid = parseInt(keyword) || 0;
+
     if (uid != null && !isNaN(uid)) {
       conditions.push({ id: uid });
     }
     if (keyword != null && String(keyword).length >= 2) {
-      conditions.push({ username: { $like: `%${req.params.keyword}%` } });
+      conditions.push({ username: TypeORM.Like(`%${req.params.keyword}%`) });
     }
     if (conditions.length === 0) {
       res.send({ success: true, results: [] });
     } else {
-      let users = await User.query(null, {
-        $or: conditions
-      }, [['username', 'asc']]);
+      let users = await User.find({
+        where: conditions,
+        order: {
+          username: 'ASC'
+        }
+      });
 
       let result = [];
 
@@ -34,15 +38,20 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
     let Problem = syzoj.model('problem');
 
     let keyword = req.params.keyword || '';
-    let problems = await Problem.query(null, {
-      title: { $like: `%${req.params.keyword}%` }
-    }, [['id', 'asc']]);
+    let problems = await Problem.find({
+      where: {
+        title: TypeORM.Like(`%${req.params.keyword}%`)
+      },
+      order: {
+        id: 'ASC'
+      }
+    });
 
     let result = [];
 
     let id = parseInt(keyword);
     if (id) {
-      let problemById = await Problem.fromID(parseInt(keyword));
+      let problemById = await Problem.findById(parseInt(keyword));
       if (problemById && await problemById.isAllowedUseBy(res.locals.user)) {
         result.push(problemById);
       }
@@ -67,9 +76,14 @@ app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
     let ProblemTag = syzoj.model('problem_tag');
 
     let keyword = req.params.keyword || '';
-    let tags = await ProblemTag.query(null, {
-      name: { $like: `%${req.params.keyword}%` }
-    }, [['name', 'asc']]);
+    let tags = await ProblemTag.find({
+      where: {
+        name: TypeORM.Like(`%${req.params.keyword}%`)
+      },
+      order: {
+        name: 'ASC'
+      }
+    });
 
     let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);
 

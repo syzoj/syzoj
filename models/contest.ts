@@ -1,77 +1,69 @@
-let Sequelize = require('sequelize');
-let db = syzoj.db;
+import * as TypeORM from "typeorm";
+import Model from "./common";
 
-let User = syzoj.model('user');
-let Problem = syzoj.model('problem');
-let ContestRanklist = syzoj.model('contest_ranklist');
-let ContestPlayer = syzoj.model('contest_player');
+declare var syzoj, ErrorMessage: any;
 
-let model = db.define('contest', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  title: { type: Sequelize.STRING(80) },
-  subtitle: { type: Sequelize.TEXT },
-  start_time: { type: Sequelize.INTEGER },
-  end_time: { type: Sequelize.INTEGER },
+import User from "./user";
+import Problem from "./problem";
+import ContestRanklist from "./contest_ranklist";
+import ContestPlayer from "./contest_player";
 
-  holder_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
+enum ContestType {
+  NOI = "noi",
+  IOI = "ioi",
+  ICPC = "acm"
+}
+
+@TypeORM.Entity()
+export default class Contest extends Model {
+  @TypeORM.PrimaryGeneratedColumn()
+  id: number;
+
+  @TypeORM.Column({ nullable: true, type: "varchar", length: 80 })
+  title: string;
+
+  @TypeORM.Column({ nullable: true, type: "text" })
+  subtitle: string;
+
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  start_time: number;
+
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  end_time: number;
+
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  holder_id: number;
+
   // type: noi, ioi, acm
-  type: { type: Sequelize.STRING(10) },
+  @TypeORM.Column({ nullable: true, type: "enum", enum: ContestType })
+  type: ContestType;
 
-  information: { type: Sequelize.TEXT },
-  problems: { type: Sequelize.TEXT },
-  admins: { type: Sequelize.TEXT },
+  @TypeORM.Column({ nullable: true, type: "text" })
+  information: string;
 
-  ranklist_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'contest_ranklist',
-      key: 'id'
-    }
-  },
+  @TypeORM.Column({ nullable: true, type: "text" })
+  problems: string;
 
-  is_public: { type: Sequelize.BOOLEAN },
-  hide_statistics: { type: Sequelize.BOOLEAN }
-}, {
-    timestamps: false,
-    tableName: 'contest',
-    indexes: [
-      {
-        fields: ['holder_id'],
-      },
-      {
-        fields: ['ranklist_id'],
-      }
-    ]
-  });
+  @TypeORM.Column({ nullable: true, type: "text" })
+  admins: string;
 
-let Model = require('./common');
-class Contest extends Model {
-  static async create(val) {
-    return Contest.fromRecord(Contest.model.build(Object.assign({
-      title: '',
-      subtitle: '',
-      problems: '',
-      admins: '',
-      information: '',
-      type: 'noi',
-      start_time: 0,
-      end_time: 0,
-      holder: 0,
-      ranklist_id: 0,
-      is_public: false,
-      hide_statistics: false
-    }, val)));
-  }
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  ranklist_id: number;
+
+  @TypeORM.Column({ nullable: true, type: "boolean" })
+  is_public: boolean;
+
+  @TypeORM.Column({ nullable: true, type: "boolean" })
+  hide_statistics: boolean;
+
+  holder?: User;
+  ranklist?: ContestRanklist;
 
   async loadRelationships() {
-    this.holder = await User.fromID(this.holder_id);
-    this.ranklist = await ContestRanklist.fromID(this.ranklist_id);
+    this.holder = await User.findById(this.holder_id);
+    this.ranklist = await ContestRanklist.findById(this.ranklist_id);
   }
 
   async isSupervisior(user) {
@@ -110,7 +102,7 @@ class Contest extends Model {
   async setProblems(s) {
     let a = [];
     await s.split('|').forEachAsync(async x => {
-      let problem = await Problem.fromID(x);
+      let problem = await Problem.findById(x);
       if (!problem) return;
       a.push(x);
     });
@@ -146,19 +138,13 @@ class Contest extends Model {
     });
   }
 
-  isRunning(now) {
+  isRunning(now?) {
     if (!now) now = syzoj.utils.getCurrentDate();
     return now >= this.start_time && now < this.end_time;
   }
 
-  isEnded(now) {
+  isEnded(now?) {
     if (!now) now = syzoj.utils.getCurrentDate();
     return now >= this.end_time;
   }
-
-  getModel() { return model; }
 }
-
-Contest.model = model;
-
-module.exports = Contest;

@@ -1,4 +1,4 @@
-let statisticsStatements = {
+const statisticsStatements = {
   fastest:
   '\
 SELECT \
@@ -176,109 +176,108 @@ ORDER BY `max_memory` DESC \
 '
 };
 
-let Sequelize = require('sequelize');
-let db = syzoj.db;
+import * as TypeORM from "typeorm";
+import Model from "./common";
 
-let User = syzoj.model('user');
-let File = syzoj.model('file');
-const fs = require('fs-extra');
-const path = require('path');
+declare var syzoj, ErrorMessage: any;
 
-let model = db.define('problem', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+import User from "./user";
+import File from "./file";
+import JudgeState from "./judge_state";
+import Contest from "./contest";
+import ProblemTag from "./problem_tag";
+import ProblemTagMap from "./problem_tag_map";
 
-  title: { type: Sequelize.STRING(80) },
-  user_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
-  publicizer_id: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: 'user',
-      key: 'id'
-    }
-  },
-  is_anonymous: { type: Sequelize.BOOLEAN },
+import * as fs from "fs-extra";
+import * as path from "path";
+import * as util from "util";
 
-  description: { type: Sequelize.TEXT },
-  input_format: { type: Sequelize.TEXT },
-  output_format: { type: Sequelize.TEXT },
-  example: { type: Sequelize.TEXT },
-  limit_and_hint: { type: Sequelize.TEXT },
+enum ProblemType {
+  Traditional = "traditional",
+  SubmitAnswer = "submit-answer",
+  Interaction = "interaction"
+}
 
-  time_limit: { type: Sequelize.INTEGER },
-  memory_limit: { type: Sequelize.INTEGER },
+@TypeORM.Entity()
+export default class Problem extends Model {
+  @TypeORM.PrimaryGeneratedColumn()
+  id: number;
 
-  additional_file_id: { type: Sequelize.INTEGER },
+  @TypeORM.Column({ nullable: true, type: "varchar", length: 80 })
+  title: string;
 
-  ac_num: { type: Sequelize.INTEGER },
-  submit_num: { type: Sequelize.INTEGER },
-  is_public: { type: Sequelize.BOOLEAN },
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  user_id: number;
 
-  file_io: { type: Sequelize.BOOLEAN },
-  file_io_input_name: { type: Sequelize.TEXT },
-  file_io_output_name: { type: Sequelize.TEXT },
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  publicizer_id: number;
 
-  publicize_time: { type: Sequelize.DATE },
+  @TypeORM.Column({ nullable: true, type: "boolean" })
+  is_anonymous: boolean;
 
-  type: {
-    type: Sequelize.ENUM,
-    values: ['traditional', 'submit-answer', 'interaction']
-  }
-}, {
-    timestamps: false,
-    tableName: 'problem',
-    indexes: [
-      {
-        fields: ['title'],
-      },
-      {
-        fields: ['user_id'],
-      },
-      {
-        fields: ['publicize_time'],
-      },
-    ]
-  });
+  @TypeORM.Column({ nullable: true, type: "text" })
+  description: string;
 
-let Model = require('./common');
-class Problem extends Model {
-  static async create(val) {
-    return Problem.fromRecord(Problem.model.build(Object.assign({
-      title: '',
-      user_id: '',
-      publicizer_id: '',
-      is_anonymous: false,
-      description: '',
+  @TypeORM.Column({ nullable: true, type: "text" })
+  input_format: string;
+  
+  @TypeORM.Column({ nullable: true, type: "text" })
+  output_format: string;
 
-      input_format: '',
-      output_format: '',
-      example: '',
-      limit_and_hint: '',
+  @TypeORM.Column({ nullable: true, type: "text" })
+  example: string;
 
-      time_limit: syzoj.config.default.problem.time_limit,
-      memory_limit: syzoj.config.default.problem.memory_limit,
+  @TypeORM.Column({ nullable: true, type: "text" })
+  limit_and_hint: string;
 
-      ac_num: 0,
-      submit_num: 0,
-      is_public: false,
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  time_limit: number;
 
-      file_io: false,
-      file_io_input_name: '',
-      file_io_output_name: '',
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  memory_limit: number;
 
-      type: 'traditional'
-    }, val)));
-  }
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  additional_file_id: number;
+
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  ac_num: number;
+
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  submit_num: number;
+
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "boolean" })
+  is_public: boolean;
+
+  @TypeORM.Column({ nullable: true, type: "boolean" })
+  file_io: boolean;
+
+  @TypeORM.Column({ nullable: true, type: "text" })
+  file_io_input_name: string;
+
+  @TypeORM.Column({ nullable: true, type: "text" })
+  file_io_output_name: string;
+
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "datetime" })
+  publicize_time: Date;
+
+  @TypeORM.Column({ nullable: true,
+      type: "enum",
+      enum: ProblemType,
+      default: ProblemType.Traditional
+  })
+  type: ProblemType;
+
+  user?: User;
+  publicizer?: User;
+  additional_file?: File;
 
   async loadRelationships() {
-    this.user = await User.fromID(this.user_id);
-    this.publicizer = await User.fromID(this.publicizer_id);
-    this.additional_file = await File.fromID(this.additional_file_id);
+    this.user = await User.findById(this.user_id);
+    this.publicizer = await User.findById(this.publicizer_id);
+    this.additional_file = await File.findById(this.additional_file_id);
   }
 
   async isAllowedEditBy(user) {
@@ -324,7 +323,7 @@ class Problem extends Model {
       await fs.remove(dir);
       await fs.ensureDir(dir);
 
-      let execFileAsync = Promise.promisify(require('child_process').execFile);
+      let execFileAsync = util.promisify(require('child_process').execFile);
       await execFileAsync(__dirname + '/../bin/unzip', ['-j', '-o', '-d', dir, path]);
       await fs.move(path, this.getTestdataArchivePath(), { overwrite: true });
     });
@@ -345,11 +344,11 @@ class Problem extends Model {
       }
 
       if (!noLimit && oldSize + size > syzoj.config.limit.testdata) throw new ErrorMessage('数据包太大。');
-      if (!noLimit && oldCount + !replace > syzoj.config.limit.testdata_filecount) throw new ErrorMessage('数据包中的文件太多。');
+      if (!noLimit && oldCount + (!replace as any as number) > syzoj.config.limit.testdata_filecount) throw new ErrorMessage('数据包中的文件太多。');
 
       await fs.move(filepath, path.join(dir, filename), { overwrite: true });
 
-      let execFileAsync = Promise.promisify(require('child_process').execFile);
+      let execFileAsync = util.promisify(require('child_process').execFile);
       try { await execFileAsync('dos2unix', [path.join(dir, filename)]); } catch (e) {}
 
       await fs.remove(this.getTestdataArchivePath());
@@ -390,15 +389,15 @@ class Problem extends Model {
   async listTestdata() {
     try {
       let dir = this.getTestdataPath();
-      let list = await fs.readdir(dir);
-      list = await list.mapAsync(async x => {
+      let filenameList = await fs.readdir(dir);
+      let list = await Promise.all(filenameList.map(async x => {
         let stat = await fs.stat(path.join(dir, x));
         if (!stat.isFile()) return undefined;
         return {
           filename: x,
           size: stat.size
         };
-      });
+      }));
 
       list = list.filter(x => x);
 
@@ -461,9 +460,8 @@ class Problem extends Model {
 
   async getJudgeState(user, acFirst) {
     if (!user) return null;
-    let JudgeState = syzoj.model('judge_state');
 
-    let where = {
+    let where: any = {
       user_id: user.id,
       problem_id: this.id
     };
@@ -473,7 +471,9 @@ class Problem extends Model {
 
       let state = await JudgeState.findOne({
         where: where,
-        order: [['submit_time', 'desc']]
+        order: {
+          submit_time: 'DESC'
+        }
       });
 
       if (state) return state;
@@ -483,15 +483,16 @@ class Problem extends Model {
 
     return await JudgeState.findOne({
       where: where,
-      order: [['submit_time', 'desc']]
+      order: {
+        submit_time: 'DESC'
+      }
     });
   }
 
   async resetSubmissionCount() {
-    let JudgeState = syzoj.model('judge_state');
     await syzoj.utils.lock(['Problem::resetSubmissionCount', this.id], async () => {
-      this.submit_num = await JudgeState.count({ problem_id: this.id, type: { $not: 1 } });
-      this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id, type: { $not: 1 } });
+      this.submit_num = await JudgeState.count({ problem_id: this.id, type: TypeORM.Not(1) });
+      this.ac_num = await JudgeState.count({ score: 100, problem_id: this.id, type: TypeORM.Not(1) });
       await this.save();
     });
   }
@@ -501,12 +502,16 @@ class Problem extends Model {
     let statement = statisticsStatements[type];
     if (!statement) return null;
 
+    const entityManager = TypeORM.getManager();
+
     statement = statement.replace('__PROBLEM_ID__', this.id);
-    return await db.countQuery(statement);
+    return JudgeState.countQuery(statement);
   }
 
   // type: fastest / slowest / shortest / longest / earliest
   async getStatistics(type, paginate) {
+    const entityManager = TypeORM.getManager();
+
     let statistics = {
       type: type,
       judge_state: null,
@@ -522,12 +527,11 @@ class Problem extends Model {
 
     let a;
     if (!paginate.pageCnt) a = [];
-    else a = (await db.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`))[0];
+    else a = (await entityManager.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`))[0];
 
-    let JudgeState = syzoj.model('judge_state');
-    statistics.judge_state = await a.mapAsync(async x => JudgeState.fromID(x.id));
+    statistics.judge_state = await a.mapAsync(async x => JudgeState.findById(x.id));
 
-    a = (await db.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id)))[0];
+    a = (await entityManager.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id.toString())))[0];
 
     let scoreCount = [];
     for (let score of a) {
@@ -557,14 +561,14 @@ class Problem extends Model {
   }
 
   async getTags() {
-    let ProblemTagMap = syzoj.model('problem_tag_map');
-    let maps = await ProblemTagMap.query(null, {
-      problem_id: this.id
+    let maps = await ProblemTagMap.find({
+      where: {
+        problem_id: this.id
+      }
     });
 
-    let ProblemTag = syzoj.model('problem_tag');
-    let res = await maps.mapAsync(async map => {
-      return ProblemTag.fromID(map.tag_id);
+    let res = await (maps as any).mapAsync(async map => {
+      return ProblemTag.findById(map.tag_id);
     });
 
     res.sort((a, b) => {
@@ -575,8 +579,6 @@ class Problem extends Model {
   }
 
   async setTags(newTagIDs) {
-    let ProblemTagMap = syzoj.model('problem_tag_map');
-
     let oldTagIDs = (await this.getTags()).map(x => x.id);
 
     let delTagIDs = oldTagIDs.filter(x => !newTagIDs.includes(x));
@@ -604,14 +606,16 @@ class Problem extends Model {
   }
 
   async changeID(id) {
-    id = parseInt(id);
-    await db.query('UPDATE `problem`         SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
-    await db.query('UPDATE `judge_state`     SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await db.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await db.query('UPDATE `article`         SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    const entityManager = TypeORM.getManager();
 
-    let Contest = syzoj.model('contest');
-    let contests = await Contest.all();
+    id = parseInt(id);
+    await entityManager.query('UPDATE `problem`         SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
+    await entityManager.query('UPDATE `judge_state`     SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `article`         SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+
+
+    let contests = await Contest.find();
     for (let contest of contests) {
       let problemIDs = await contest.getProblems();
 
@@ -647,12 +651,17 @@ class Problem extends Model {
   }
 
   async delete() {
+    const entityManager = TypeORM.getManager();
+
     let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = this.getTestdataPath();
     await fs.remove(oldTestdataDir);
     await fs.remove(oldTestdataZip);
 
-    let JudgeState = syzoj.model('judge_state');
-    let submissions = await JudgeState.query(null, { problem_id: this.id }), submitCnt = {}, acUsers = new Set();
+    let submissions = await JudgeState.find({
+      where: {
+        problem_id: this.id
+      }
+    }), submitCnt = {}, acUsers = new Set();
     for (let sm of submissions) {
       if (sm.status === 'Accepted') acUsers.add(sm.user_id);
       if (!submitCnt[sm.user_id]) {
@@ -663,21 +672,15 @@ class Problem extends Model {
     }
 
     for (let u in submitCnt) {
-      let user = await User.fromID(u);
+      let user = await User.findById(parseInt(u));
       user.submit_num -= submitCnt[u];
       if (acUsers.has(parseInt(u))) user.ac_num--;
       await user.save();
     }
 
-    await db.query('DELETE FROM `problem`         WHERE `id`         = ' + this.id);
-    await db.query('DELETE FROM `judge_state`     WHERE `problem_id` = ' + this.id);
-    await db.query('DELETE FROM `problem_tag_map` WHERE `problem_id` = ' + this.id);
-    await db.query('DELETE FROM `article`         WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `problem`         WHERE `id`         = ' + this.id);
+    await entityManager.query('DELETE FROM `judge_state`     WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `problem_tag_map` WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `article`         WHERE `problem_id` = ' + this.id);
   }
-
-  getModel() { return model; }
 }
-
-Problem.model = model;
-
-module.exports = Problem;

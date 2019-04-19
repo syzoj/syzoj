@@ -2,7 +2,7 @@ const enums = require('./enums');
 const util = require('util');
 const winston = require('winston');
 const msgPack = require('msgpack-lite');
-const fs = Promise.promisifyAll(require('fs-extra'));
+const fs = require('fs-extra');
 const interface = require('./judger_interfaces');
 const judgeResult = require('./judgeResult');
 
@@ -198,7 +198,7 @@ module.exports.judge = async function (judge_state, problem, priority) {
     case 'submit-answer':
       type = enums.ProblemType.AnswerSubmission;
       param = null;
-      extraData = await fs.readFileAsync(syzoj.model('file').resolvePath('answer', judge_state.code));
+      extraData = await fs.readFile(syzoj.model('file').resolvePath('answer', judge_state.code));
       break;
     case 'interaction':
       type = enums.ProblemType.Interaction;

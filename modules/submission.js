@@ -23,23 +23,32 @@ const displayConfig = {
 app.get('/submissions', async (req, res) => {
   try {
     const curUser = res.locals.user;
-    let user = await User.fromName(req.query.submitter || '');
-    let where = {};
+
+    let query = JudgeState.createQueryBuilder();
+    let isFiltered = false;
+
     let inContest = false;
-    if (user) where.user_id = user.id;
-    else if (req.query.submitter) where.user_id = -1;
+
+    let user = await User.fromName(req.query.submitter || '');
+    if (user) {
+      query.andWhere('user_id = :user_id', { user_id: user.id });
+      isFiltered = true;
+    } else if (req.query.submitter) {
+      query.andWhere('user_id = :user_id', { user_id: 0 });
+      isFiltered = true;
+    }
 
     if (!req.query.contest) {
-      where.type = { $eq: 0 };
+      query.andWhere('type = 0');
     } else {
       const contestId = Number(req.query.contest);
-      const contest = await Contest.fromID(contestId);
+      const contest = await Contest.findById(contestId);
       contest.ended = contest.isEnded();
       if ((contest.ended && contest.is_public) || // If the contest is ended and is not hidden
         (curUser && await contest.isSupervisior(curUser)) // Or if the user have the permission to check
       ) {
-        where.type = { $eq: 1 };
-        where.type_info = { $eq: contestId };
+        query.andWhere('type = 1');
+        query.andWhere('type_info = :type_info', { type_info: contestId });
         inContest = true;
       } else {
         throw new Error("您暂时无权查看此比赛的详细评测信息。");
@@ -47,56 +56,55 @@ app.get('/submissions', async (req, res) => {
     }
 
     let minScore = parseInt(req.query.min_score);
+    if (!isNaN(minScore)) query.andWhere('score >= :minScore', { minScore });
     let maxScore = parseInt(req.query.max_score);
+    if (!isNaN(maxScore)) query.andWhere('score <= :maxScore', { maxScore });
 
-    if (!isNaN(minScore) || !isNaN(maxScore)) {
-      if (isNaN(minScore)) minScore = 0;
-      if (isNaN(maxScore)) maxScore = 100;
-      if (!(minScore === 0 && maxScore === 100)) {
-        where.score = {
-          $and: {
-            $gte: parseInt(minScore),
-            $lte: parseInt(maxScore)
-          }
-        };
+    if (!isNaN(minScore) || !isNaN(maxScore)) isFiltered = true;
+
+    if (req.query.language) {
+      if (req.query.language === 'submit-answer') {
+        query.andWhere(new TypeORM.Brackets(qb => {
+          qb.orWhere('language = :language', { language: '' })
+            .orWhere('language IS NULL');
+        }));
+        isFiltered = true;
+      } else if (req.query.language === 'non-submit-answer') {
+        query.andWhere('language != :language', { language: '' })
+             .andWhere('language IS NOT NULL');
+        isFiltered = true;
+      } else {
+        query.andWhere('language = :language', { language: req.query.language });
       }
     }
 
-    if (req.query.language) {
-      if (req.query.language === 'submit-answer') where.language = { $or: [{ $eq: '',  }, { $eq: null }] };
-      else if (req.query.language === 'non-submit-answer') where.language = { $not: '' };
-      else where.language = req.query.language;
+    if (req.query.status) {
+      query.andWhere('status LIKE :status', { status: req.query.status + '%' });
+      isFiltered = true;
     }
-    if (req.query.status) where.status = { $like: req.query.status + '%' };
 
     if (!inContest && (!curUser || !await curUser.hasPrivilege('manage_problem'))) {
       if (req.query.problem_id) {
         let problem_id = parseInt(req.query.problem_id);
-        let problem = await Problem.fromID(problem_id);
+        let problem = await Problem.findById(problem_id);
         if (!problem)
           throw new ErrorMessage("无此题目。");
         if (await problem.isAllowedUseBy(res.locals.user)) {
-          where.problem_id = {
-            $and: [
-              { $eq: where.problem_id = problem_id }
-            ]
-          };
+          query.andWhere('problem_id = :problem_id', { problem_id: parseInt(req.query.problem_id) || 0 });
+          isFiltered = true;
         } else {
           throw new ErrorMessage("您没有权限进行此操作。");
         }
       } else {
-        where.is_public = {
-          $eq: true,
-        };
+        query.andWhere('is_public = true');
       }
-    } else {
-      if (req.query.problem_id) where.problem_id = parseInt(req.query.problem_id) || -1;
+    } else if (req.query.problem_id) {
+      query.andWhere('problem_id = :problem_id', { problem_id: parseInt(req.query.problem_id) || 0 });
+      isFiltered = true;
     }
 
-    let isFiltered = !!(where.problem_id || where.user_id || where.score || where.language || where.status);
-
-    let paginate = syzoj.utils.paginate(await JudgeState.count(where), req.query.page, syzoj.config.page.judge_state);
-    let judge_state = await JudgeState.query(paginate, where, [['id', 'desc']], true);
+    let paginate = syzoj.utils.paginate(await JudgeState.countQuery(query), req.query.page, syzoj.config.page.judge_state);
+    let judge_state = await JudgeState.queryPage(paginate, query, { id: "DESC" });
 
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
@@ -132,14 +140,14 @@ app.get('/submissions', async (req, res) => {
 app.get('/submission/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const judge = await JudgeState.fromID(id);
+    const judge = await JudgeState.findById(id);
     if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
     const curUser = res.locals.user;
     if (!await judge.isAllowedVisitBy(curUser)) throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
     if (judge.type === 1) {
-      contest = await Contest.fromID(judge.type_info);
+      contest = await Contest.findById(judge.type_info);
       contest.ended = contest.isEnded();
 
       if ((!contest.ended || !contest.is_public) &&
@@ -194,7 +202,7 @@ app.get('/submission/:id', async (req, res) => {
 app.post('/submission/:id/rejudge', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let judge = await JudgeState.fromID(id);
+    let judge = await JudgeState.findById(id);
 
     if (judge.pending && !(res.locals.user && await res.locals.user.hasPrivilege('manage_problem'))) throw new ErrorMessage('无法重新评测一个评测中的提交。');
 

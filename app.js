@@ -12,6 +12,10 @@ const optionDefinitions = [
 
 const options = commandLineArgs(optionDefinitions);
 
+require('reflect-metadata');
+
+global.Promise = require('bluebird');
+
 global.syzoj = {
   rootDir: __dirname,
   config: require('object-assign-deep')({}, require('./config-example.json'), require(options.config)),
@@ -121,56 +125,36 @@ global.syzoj = {
     });
   },
   async connectDatabase() {
-    let Sequelize = require('sequelize');
-    let Op = Sequelize.Op;
-    let operatorsAliases = {
-      $eq: Op.eq,
-      $ne: Op.ne,
-      $gte: Op.gte,
-      $gt: Op.gt,
-      $lte: Op.lte,
-      $lt: Op.lt,
-      $not: Op.not,
-      $in: Op.in,
-      $notIn: Op.notIn,
-      $is: Op.is,
-      $like: Op.like,
-      $notLike: Op.notLike,
-      $iLike: Op.iLike,
-      $notILike: Op.notILike,
-      $regexp: Op.regexp,
-      $notRegexp: Op.notRegexp,
-      $iRegexp: Op.iRegexp,
-      $notIRegexp: Op.notIRegexp,
-      $between: Op.between,
-      $notBetween: Op.notBetween,
-      $overlap: Op.overlap,
-      $contains: Op.contains,
-      $contained: Op.contained,
-      $adjacent: Op.adjacent,
-      $strictLeft: Op.strictLeft,
-      $strictRight: Op.strictRight,
-      $noExtendRight: Op.noExtendRight,
-      $noExtendLeft: Op.noExtendLeft,
-      $and: Op.and,
-      $or: Op.or,
-      $any: Op.any,
-      $all: Op.all,
-      $values: Op.values,
-      $col: Op.col
+    // Patch TypeORM to workaround https://github.com/typeorm/typeorm/issues/3636
+    const TypeORMMysqlDriver = require('typeorm/driver/mysql/MysqlDriver');
+    const OriginalNormalizeType = TypeORMMysqlDriver.MysqlDriver.prototype.normalizeType;
+    TypeORMMysqlDriver.MysqlDriver.prototype.normalizeType = function (column) {
+      if (column.type === 'json') {
+        return 'longtext';
+      }
+      return OriginalNormalizeType(column);
     };
 
-    this.db = new Sequelize(this.config.db.database, this.config.db.username, this.config.db.password, {
-      host: this.config.db.host,
-      dialect: 'mariadb',
-      logging: syzoj.production ? false : syzoj.log,
-      timezone: require('moment')().format('Z'),
-      operatorsAliases: operatorsAliases
-    });
-    global.Promise = Sequelize.Promise;
-    this.db.countQuery = async (sql, options) => (await this.db.query(`SELECT COUNT(*) FROM (${sql}) AS \`__tmp_table\``, options))[0][0]['COUNT(*)'];
+    const TypeORM = require('typeorm');
+    global.TypeORM = TypeORM;
 
-    await this.loadModels();
+    const modelsPath = __dirname + '/models/';
+    const modelsBuiltPath = __dirname + '/models-built/';
+    const models = fs.readdirSync(modelsPath)
+                     .filter(filename => filename.endsWith('.ts') && filename !== 'common.ts')
+                     .map(filename => require(modelsBuiltPath + filename.replace('.ts', '.js')).default);
+
+    await TypeORM.createConnection({
+      type: 'mariadb',
+      host: this.config.db.host.split(':')[0],
+      port: this.config.db.host.split(':')[1] || 3306,
+      username: this.config.db.username,
+      password: this.config.db.password,
+      database: this.config.db.database,
+      entities: models,
+      synchronize: true,
+      logging: true
+    });
   },
   loadModules() {
     fs.readdir('./modules/', (err, files) => {
@@ -182,22 +166,11 @@ global.syzoj = {
            .forEach((file) => this.modules.push(require(`./modules/${file}`)));
     });
   },
-  async loadModels() {
-    fs.readdir('./models/', (err, files) => {
-      if (err) {
-        this.log(err);
-        return;
-      }
-      files.filter((file) => file.endsWith('.js'))
-           .forEach((file) => require(`./models/${file}`));
-    });
-    await this.db.sync();
-  },
   lib(name) {
     return require(`./libs/${name}`);
   },
   model(name) {
-    return require(`./models/${name}`);
+    return require(`./models-built/${name}`).default;
   },
   loadHooks() {
     let Session = require('express-session');
@@ -221,7 +194,7 @@ global.syzoj = {
 
       let User = syzoj.model('user');
       if (req.session.user_id) {
-        User.fromID(req.session.user_id).then((user) => {
+        User.findById(req.session.user_id).then((user) => {
           res.locals.user = user;
           next();
         }).catch((err) => {
