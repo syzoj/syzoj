@@ -4,10 +4,10 @@ import Model from "./common";
 @TypeORM.Entity()
 export default class ProblemTagMap extends Model {
   @TypeORM.Index()
-  @TypeORM.Column({ type: "integer", primary: true })
+  @TypeORM.PrimaryColumn({ type: "integer" })
   problem_id: number;
 
   @TypeORM.Index()
-  @TypeORM.Column({ type: "integer", primary: true })
+  @TypeORM.PrimaryColumn({ type: "integer" })
   tag_id: number;
 }

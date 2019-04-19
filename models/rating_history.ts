@@ -7,10 +7,10 @@ import User from "./user";
 
 @TypeORM.Entity()
 export default class RatingHistory extends Model {
-  @TypeORM.Column({ type: "integer", primary: true })
+  @TypeORM.PrimaryColumn({ type: "integer" })
   rating_calculation_id: number;
 
-  @TypeORM.Column({ type: "integer", primary: true })
+  @TypeORM.PrimaryColumn({ type: "integer" })
   user_id: number;
 
   @TypeORM.Column({ nullable: true, type: "integer" })
