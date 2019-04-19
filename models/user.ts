@@ -46,10 +46,10 @@ export default class User extends Model {
   @TypeORM.Column({ nullable: true, type: "boolean" })
   is_show: boolean;
 
-  @TypeORM.Column({ nullable: true, type: "boolean" })
+  @TypeORM.Column({ nullable: true, type: "boolean", default: true })
   public_email: boolean;
 
-  @TypeORM.Column({ nullable: true, type: "boolean" })
+  @TypeORM.Column({ nullable: true, type: "boolean", default: true })
   prefer_formatted_code: boolean;
 
   @TypeORM.Column({ nullable: true, type: "integer" })

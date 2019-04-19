@@ -111,11 +111,9 @@ app.post('/api/sign_up', async (req, res) => {
         username: req.body.username,
         password: req.body.password,
         email: req.body.email,
-        public_email: true,
         is_show: syzoj.config.default.user.show,
         rating: syzoj.config.default.user.rating,
-        register_time: parseInt((new Date()).getTime() / 1000),
-        prefer_formatted_code: true
+        register_time: parseInt((new Date()).getTime() / 1000)
       });
       await user.save();
 
@@ -200,11 +198,9 @@ app.get('/api/sign_up_confirm', async (req, res) => {
       username: obj.username,
       password: obj.password,
       email: obj.email,
-      public_email: true,
       is_show: syzoj.config.default.user.show,
       rating: syzoj.config.default.user.rating,
-      register_time: parseInt((new Date()).getTime() / 1000),
-      prefer_formatted_code: true
+      register_time: parseInt((new Date()).getTime() / 1000)
     });
     await user.save();
 
