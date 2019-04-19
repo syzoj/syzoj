@@ -125,6 +125,16 @@ global.syzoj = {
     });
   },
   async connectDatabase() {
+    // Patch TypeORM to workaround https://github.com/typeorm/typeorm/issues/3636
+    const TypeORMMysqlDriver = require('typeorm/driver/mysql/MysqlDriver');
+    const OriginalNormalizeType = TypeORMMysqlDriver.MysqlDriver.prototype.normalizeType;
+    TypeORMMysqlDriver.MysqlDriver.prototype.normalizeType = function (column) {
+      if (column.type === 'json') {
+        return 'longtext';
+      }
+      return OriginalNormalizeType(column);
+    };
+
     const TypeORM = require('typeorm');
     global.TypeORM = TypeORM;
 
@@ -134,7 +144,7 @@ global.syzoj = {
                      .filter(filename => filename.endsWith('.ts') && filename !== 'common.ts')
                      .map(filename => require(modelsBuiltPath + filename.replace('.ts', '.js')).default);
 
-    const connection = await TypeORM.createConnection({
+    await TypeORM.createConnection({
       type: 'mariadb',
       host: this.config.db.host.split(':')[0],
       port: this.config.db.host.split(':')[1] || 3306,
@@ -143,7 +153,7 @@ global.syzoj = {
       database: this.config.db.database,
       entities: models,
       synchronize: true,
-      logging: false
+      logging: true
     });
   },
   loadModules() {
