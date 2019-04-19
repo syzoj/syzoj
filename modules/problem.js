@@ -30,9 +30,9 @@ app.get('/problems', async (req, res) => {
     }
 
     if (sort === 'ac_rate') {
-      query = query.orderBy('ac_num / submit_num', order.toUpperCase());
+      query.orderBy('ac_num / submit_num', order.toUpperCase());
     } else {
-      query = query.orderBy(sort, order.toUpperCase());
+      query.orderBy(sort, order.toUpperCase());
     }
 
     let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
@@ -93,9 +93,9 @@ app.get('/problems/search', async (req, res) => {
 
     query.orderBy('id = ' + id.toString(), 'DESC');
     if (sort === 'ac_rate') {
-      query = query.addOrderBy('ac_num / submit_num', order.toUpperCase());
+      query.addOrderBy('ac_num / submit_num', order.toUpperCase());
     } else {
-      query = query.addOrderBy(sort, order.toUpperCase());
+      query.addOrderBy(sort, order.toUpperCase());
     }
 
     let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
