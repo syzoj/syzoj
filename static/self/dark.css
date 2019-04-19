@@ -344,3 +344,8 @@ div.statistic > div.label {
 #modal-rejudge a.green i{
     color: #2ecc40 !important;
 }
+
+/* 讨论中 divider */
+i.divider{
+    color: #eee !important;
+}
