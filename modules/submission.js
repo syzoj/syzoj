@@ -104,7 +104,7 @@ app.get('/submissions', async (req, res) => {
     }
 
     let paginate = syzoj.utils.paginate(await JudgeState.countQuery(query), req.query.page, syzoj.config.page.judge_state);
-    let judge_state = await JudgeState.queryPage(paginate, query, { id: "DESC" });
+    let judge_state = await JudgeState.queryPage(paginate, query, { id: "DESC" }, true);
 
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();

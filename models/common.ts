@@ -30,7 +30,7 @@ export default class Model extends TypeORM.BaseEntity {
     return await queryBuilder.getMany();
   }
 
-  static async queryPage(paginater: Paginater, where, order) {
+  static async queryPage(paginater: Paginater, where, order, largeData) {
     if (!paginater.pageCnt) return [];
 
     let queryBuilder = where instanceof TypeORM.SelectQueryBuilder
@@ -41,6 +41,11 @@ export default class Model extends TypeORM.BaseEntity {
 
     queryBuilder = queryBuilder.skip((paginater.currPage - 1) * paginater.perPage)
                                .take(paginater.perPage);
+
+    if (largeData) {
+      const rawResult = await queryBuilder.select('id').getRawMany();
+      return await Promise.all(rawResult.map(async result => this.findById(result.id)));
+    }
 
     return queryBuilder.getMany();
   }
