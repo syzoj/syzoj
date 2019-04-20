@@ -527,11 +527,11 @@ export default class Problem extends Model {
 
     let a;
     if (!paginate.pageCnt) a = [];
-    else a = (await entityManager.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`))[0];
+    else a = (await entityManager.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`));
 
     statistics.judge_state = await a.mapAsync(async x => JudgeState.findById(x.id));
 
-    a = (await entityManager.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id.toString())))[0];
+    a = (await entityManager.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id.toString())));
 
     let scoreCount = [];
     for (let score of a) {
