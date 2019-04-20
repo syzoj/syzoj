@@ -132,6 +132,12 @@ class JudgeState extends Model {
         } else {
           let contest = await Contest.fromID(this.type_info);
           await contest.newSubmission(this);
+          if (this.type === 2) {
+            await this.loadRelationships();
+            await this.user.refreshSubmitInfo();
+            await this.user.save();
+            await this.problem.resetSubmissionCount();
+          }
         }
       });
     });
