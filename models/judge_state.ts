@@ -31,19 +31,19 @@ export default class JudgeState extends Model {
   task_id: string;
 
   @TypeORM.Index()
-  @TypeORM.Column({ nullable: true, type: "integer" })
+  @TypeORM.Column({ nullable: true, type: "integer", default: 0 })
   score: number;
 
-  @TypeORM.Column({ nullable: true, type: "integer" })
+  @TypeORM.Column({ nullable: true, type: "integer", default: 0 })
   total_time: number;
 
-  @TypeORM.Column({ nullable: true, type: "integer" })
+  @TypeORM.Column({ nullable: true, type: "integer", default: 0 })
   code_length: number;
 
-  @TypeORM.Column({ nullable: true, type: "boolean" })
+  @TypeORM.Column({ nullable: true, type: "boolean", default: 0 })
   pending: boolean;
 
-  @TypeORM.Column({ nullable: true, type: "integer" })
+  @TypeORM.Column({ nullable: true, type: "integer", default: 0 })
   max_memory: number;
 
   @TypeORM.Column({ nullable: true, type: "json" })
