@@ -167,7 +167,10 @@ global.syzoj = {
       database: this.config.db.database,
       entities: models,
       synchronize: true,
-      logging: true
+      logging: false,
+      extra: {
+        connectionLimit: 50
+      }
     });
   },
   loadModules() {
