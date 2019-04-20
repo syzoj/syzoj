@@ -148,7 +148,7 @@ app.get('/submission/:id', async (req, res) => {
       contest = await Contest.fromID(judge.type_info);
       contest.ended = contest.isEnded();
 
-      if ((!contest.ended || !contest.is_public) &&
+      if (contest.type !== 'prac' && (!contest.ended || !contest.is_public) &&
         !(await judge.problem.isAllowedEditBy(res.locals.user) || await contest.isSupervisior(curUser))) {
         throw new Error("比赛未结束或未公开。");
       }
