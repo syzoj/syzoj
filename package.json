@@ -34,6 +34,7 @@
     "command-line-args": "^5.1.0",
     "cookie-parser": "^1.4.4",
     "cssfilter": "0.0.10",
+    "deepcopy": "^2.0.0",
     "download": "^7.1.0",
     "ejs": "^2.5.2",
     "express": "^4.14.0",

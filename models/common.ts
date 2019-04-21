@@ -1,6 +1,6 @@
 import * as TypeORM from "typeorm";
 import * as LRUCache from "lru-cache";
-import * as ObjectAssignDeep from "object-assign-deep";
+import * as DeepCopy from "deepcopy";
 
 interface Paginater {
   pageCnt: number;
@@ -41,25 +41,25 @@ export default class Model extends TypeORM.BaseEntity {
     if ((this as typeof Model).cache) {
       let result;
       if (result = cacheGet(this.name, id)) {
-        // Got cached result.
-        // Return a copy of it to avoid issue of adding or assigning properties.
-        const object = {};
-        Object.keys(result).forEach(key => {
-          object[key] = result[key] && typeof result[key] === 'object'
-                      ? ObjectAssignDeep({}, result[key])
-                      : result[key];
-        });
-        return (this as typeof Model).create<T>(object);
+        return result.clone();
       }
 
       result = await doQuery();
       if (result) {
         cacheSet(this.name, id, result);
       }
-      return result;
+      return result.clone();
     } else {
       return await doQuery();
     }
+  }
+
+  clone() {
+    const object = {};
+    TypeORM.getConnection().getMetadata(this.constructor).ownColumns.map(column => column.propertyName).forEach(key => {
+      object[key] = DeepCopy(this[key]);
+    });
+    return (this.constructor as any).create(object);
   }
 
   async destroy() {
