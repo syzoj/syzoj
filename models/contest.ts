@@ -16,6 +16,8 @@ enum ContestType {
 
 @TypeORM.Entity()
 export default class Contest extends Model {
+  static cache = true;
+
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
 

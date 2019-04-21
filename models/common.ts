@@ -1,4 +1,6 @@
 import * as TypeORM from "typeorm";
+import * as LRUCache from "lru-cache";
+import * as ObjectAssignDeep from "object-assign-deep";
 
 interface Paginater {
   pageCnt: number;
@@ -6,13 +8,74 @@ interface Paginater {
   currPage: number;
 }
 
+const caches: Map<string, LRUCache<number, Model>> = new Map();
+
+function ensureCache(modelName) {
+  if (!caches.has(modelName)) {
+    caches.set(modelName, new LRUCache({
+      max: 500
+    }));
+  }
+
+  return caches.get(modelName);
+}
+
+function cacheGet(modelName, id) {
+  return ensureCache(modelName).get(parseInt(id));
+}
+
+function cacheSet(modelName, id, data) {
+  if (data == null) {
+    ensureCache(modelName).del(id);
+  } else {
+    ensureCache(modelName).set(parseInt(id), data);
+  }
+}
+
 export default class Model extends TypeORM.BaseEntity {
+  static cache = false;
+
   static async findById<T extends TypeORM.BaseEntity>(this: TypeORM.ObjectType<T>, id?: number): Promise<T | undefined> {
-    return await (this as any).findOne(parseInt(id as any) || 0);
+    const doQuery = async () => await (this as any).findOne(parseInt(id as any) || 0);
+
+    if ((this as typeof Model).cache) {
+      let result;
+      if (result = cacheGet(this.name, id)) {
+        // Got cached result.
+        // Return a copy of it to avoid issue of adding or assigning properties.
+        const object = {};
+        Object.keys(result).forEach(key => {
+          object[key] = result[key] && typeof result[key] === 'object'
+                      ? ObjectAssignDeep({}, result[key])
+                      : result[key];
+        });
+        return (this as typeof Model).create<T>(object);
+      }
+
+      result = await doQuery();
+      if (result) {
+        cacheSet(this.name, id, result);
+      }
+      return result;
+    } else {
+      return await doQuery();
+    }
   }
 
   async destroy() {
+    const id = (this as any).id;
     await TypeORM.getManager().remove(this);
+    if ((this.constructor as typeof Model).cache) {
+      cacheSet(this.constructor.name, id, null);
+    }
+  }
+
+  async save(): Promise<this> {
+    await super.save();
+    if ((this.constructor as typeof Model).cache) {
+      cacheSet(this.constructor.name, (this as any).id, this);
+    }
+    return this;
   }
 
   static async countQuery<T extends TypeORM.BaseEntity>(this: TypeORM.ObjectType<T>, query: TypeORM.SelectQueryBuilder<T> | string) {

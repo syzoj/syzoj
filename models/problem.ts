@@ -200,6 +200,8 @@ enum ProblemType {
 
 @TypeORM.Entity()
 export default class Problem extends Model {
+  static cache = true;
+
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
 

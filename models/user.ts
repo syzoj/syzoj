@@ -9,6 +9,8 @@ import Article from "./article";
 
 @TypeORM.Entity()
 export default class User extends Model {
+  static cache = true;
+
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
 

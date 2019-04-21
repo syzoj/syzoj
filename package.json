@@ -25,6 +25,7 @@
   "homepage": "https://github.com/syzoj/syzoj#readme",
   "dependencies": {
     "@types/fs-extra": "^5.0.5",
+    "@types/lru-cache": "^5.1.0",
     "ansi-to-html": "^0.6.10",
     "async-lock": "^1.2.0",
     "bluebird": "^3.5.4",
@@ -45,6 +46,7 @@
     "jsdom": "^14.0.0",
     "jsondiffpatch": "0.2.5",
     "jsonwebtoken": "^8.5.1",
+    "lru-cache": "^5.1.1",
     "mariadb": "^2.0.3",
     "moment": "^2.24.0",
     "msgpack-lite": "^0.1.26",
