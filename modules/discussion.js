@@ -16,7 +16,7 @@ app.get('/discussion/:type?', async (req, res) => {
     } else {
       where = { problem_id: null };
     }
-    let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
+    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.discussion);
     let articles = await Article.queryPage(paginate, where, {
       sort_time: 'DESC'
     });
@@ -52,7 +52,7 @@ app.get('/discussion/problem/:pid', async (req, res) => {
     }
 
     let where = { problem_id: pid };
-    let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
+    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.discussion);
     let articles = await Article.queryPage(paginate, where, {
       sort_time: 'DESC'
     });
@@ -85,7 +85,7 @@ app.get('/article/:id', async (req, res) => {
     article.content = await syzoj.utils.markdown(article.content);
 
     let where = { article_id: id };
-    let commentsCount = await ArticleComment.count(where);
+    let commentsCount = await ArticleComment.countForPagination(where);
     let paginate = syzoj.utils.paginate(commentsCount, req.query.page, syzoj.config.page.article_comment);
 
     let comments = await ArticleComment.queryPage(paginate, where, {

@@ -12,7 +12,7 @@ app.get('/ranklist', async (req, res) => {
     if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
-    let paginate = syzoj.utils.paginate(await User.count({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
+    let paginate = syzoj.utils.paginate(await User.countForPagination({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
     let ranklist = await User.queryPage(paginate, { is_show: true }, { [sort]: order.toUpperCase() });
     await ranklist.forEachAsync(async x => x.renderInformation());
 

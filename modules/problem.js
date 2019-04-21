@@ -35,7 +35,7 @@ app.get('/problems', async (req, res) => {
       query.orderBy(sort, order.toUpperCase());
     }
 
-    let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
+    let paginate = syzoj.utils.paginate(await Problem.countForPagination(query), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.queryPage(paginate, query);
 
     await problems.forEachAsync(async problem => {
@@ -98,7 +98,7 @@ app.get('/problems/search', async (req, res) => {
       query.addOrderBy(sort, order.toUpperCase());
     }
 
-    let paginate = syzoj.utils.paginate(await Problem.countQuery(query), req.query.page, syzoj.config.page.problem);
+    let paginate = syzoj.utils.paginate(await Problem.countForPagination(query), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.queryPage(paginate, query);
 
     await problems.forEachAsync(async problem => {

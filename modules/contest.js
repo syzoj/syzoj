@@ -14,7 +14,7 @@ app.get('/contests', async (req, res) => {
     if (res.locals.user && res.locals.user.is_admin) where = {}
     else where = { is_public: true };
 
-    let paginate = syzoj.utils.paginate(await Contest.count(where), req.query.page, syzoj.config.page.contest);
+    let paginate = syzoj.utils.paginate(await Contest.countForPagination(where), req.query.page, syzoj.config.page.contest);
     let contests = await Contest.queryPage(paginate, where, {
       start_time: 'DESC'
     });
@@ -369,7 +369,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
     query.andWhere('type = 1')
          .andWhere('type_info = :contest_id', { contest_id });
 
-    let paginate = syzoj.utils.paginate(await JudgeState.countQuery(query), req.query.page, syzoj.config.page.judge_state);
+    let paginate = syzoj.utils.paginate(await JudgeState.countForPagination(query), req.query.page, syzoj.config.page.judge_state);
     let judge_state = await JudgeState.queryPage(paginate, query, {
       submit_time: 'DESC'
     });

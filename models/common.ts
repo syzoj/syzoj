@@ -26,6 +26,13 @@ export default class Model extends TypeORM.BaseEntity {
     )[0]['COUNT(*)']);
   }
 
+  static async countForPagination(where) {
+    const queryBuilder = where instanceof TypeORM.SelectQueryBuilder
+                       ? where
+                       : this.createQueryBuilder().where(where);
+    return await queryBuilder.getCount();
+  }
+
   static async queryAll(queryBuilder) {
     return await queryBuilder.getMany();
   }
