@@ -4,9 +4,7 @@
 
 An online judge system for algorithm competition.
 
-This project is the **official** successor and rewritten version of the original Python/Flask version of SYZOJ, which is authorized by the original author [@Chenyao2333](https://github.com/Chenyao2333).
-
-Currently maintained by [LibreOJ](https://loj.ac).
+This project is based on [@Chenyao2333](https://github.com/Chenyao2333)'s [SYZOJ](https://github.com/Zhengzhou-11-Highschool/syzoj). Currently maintained by [LibreOJ](https://loj.ac).
 
 # Deploying
 Currently, the tutorial for deploying is only available in Chinese. It's [部署指南](https://github.com/syzoj/syzoj/wiki/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97) in this project's wiki.
