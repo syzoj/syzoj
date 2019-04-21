@@ -191,6 +191,9 @@ import ProblemTagMap from "./problem_tag_map";
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as util from "util";
+import * as LRUCache from "lru-cache";
+
+const problemTagCache = new LRUCache<number, number[]>();
 
 enum ProblemType {
   Traditional = "traditional",
@@ -563,14 +566,22 @@ export default class Problem extends Model {
   }
 
   async getTags() {
+    if (problemTagCache.has(this.id)) {
+      return problemTagCache.get(this.id);
+    }
+
     let maps = await ProblemTagMap.find({
       where: {
         problem_id: this.id
       }
     });
 
-    let res = await (maps as any).mapAsync(async map => {
-      return ProblemTag.findById(map.tag_id);
+    let tagIDs = maps.map(x => x.tag_id);
+
+    problemTagCache.set(this.id, tagIDs);
+
+    let res = await (tagIDs as any).mapAsync(async tagID => {
+      return ProblemTag.findById(tagID);
     });
 
     res.sort((a, b) => {
@@ -581,6 +592,8 @@ export default class Problem extends Model {
   }
 
   async setTags(newTagIDs) {
+    problemTagCache.set(this.id, newTagIDs);
+
     let oldTagIDs = (await this.getTags()).map(x => x.id);
 
     let delTagIDs = oldTagIDs.filter(x => !newTagIDs.includes(x));
@@ -680,9 +693,12 @@ export default class Problem extends Model {
       await user.save();
     }
 
-    await entityManager.query('DELETE FROM `problem`         WHERE `id`         = ' + this.id);
+    problemTagCache.del(this.id);
+
     await entityManager.query('DELETE FROM `judge_state`     WHERE `problem_id` = ' + this.id);
     await entityManager.query('DELETE FROM `problem_tag_map` WHERE `problem_id` = ' + this.id);
     await entityManager.query('DELETE FROM `article`         WHERE `problem_id` = ' + this.id);
+
+    await this.destroy();
   }
 }
