@@ -245,6 +245,19 @@ module.exports = {
       }
     };
   },
+  paginateLargeData(currPageTop, currPageBottom, perPage) {
+    function parseIntOrNull(x) {
+      if (typeof x === 'string') x = parseInt(x);
+      if (typeof x !== 'number' || isNaN(x)) return null;
+      return x;
+    }
+
+    return {
+      currPageTop: parseIntOrNull(currPageTop),
+      currPageBottom: parseIntOrNull(currPageBottom),
+      perPage
+    };
+  },
   removeTitleTag(s) {
     return s.replace(/「[\S\s]+?」/, '');
   },

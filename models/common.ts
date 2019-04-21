@@ -33,14 +33,14 @@ export default class Model extends TypeORM.BaseEntity {
   static async queryPage(paginater: Paginater, where, order, largeData) {
     if (!paginater.pageCnt) return [];
 
-    let queryBuilder = where instanceof TypeORM.SelectQueryBuilder
-                     ? where
-                     : this.createQueryBuilder().where(where);
+    const queryBuilder = where instanceof TypeORM.SelectQueryBuilder
+                       ? where
+                       : this.createQueryBuilder().where(where);
 
     if (order) queryBuilder.orderBy(order);
 
-    queryBuilder = queryBuilder.skip((paginater.currPage - 1) * paginater.perPage)
-                               .take(paginater.perPage);
+    queryBuilder.skip((paginater.currPage - 1) * paginater.perPage)
+                .take(paginater.perPage);
 
     if (largeData) {
       const rawResult = await queryBuilder.select('id').getRawMany();
@@ -50,18 +50,58 @@ export default class Model extends TypeORM.BaseEntity {
     return queryBuilder.getMany();
   }
 
+  static async queryPageWithLargeData(queryBuilder, { currPageTop, currPageBottom, perPage }, type) {
+    const queryBuilderBak = queryBuilder.clone();
+
+    const result = {
+      meta: {
+        hasPrevPage: false,
+        hasNextPage: false,
+        top: 0,
+        bottom: 0
+      },
+      data: []
+    };
+
+    queryBuilder.take(perPage);
+    if (type === -1) {
+      if (currPageTop != null) queryBuilder.andWhere('id > :currPageTop', { currPageTop });
+    } else if (type === 1) {
+      if (currPageBottom != null) queryBuilder.andWhere('id < :currPageBottom', { currPageBottom });
+    }
+
+    result.data = await queryBuilder.getMany();
+
+    if (result.data.length === 0) return result;
+
+    const queryBuilderHasPrev = queryBuilderBak.clone(),
+          queryBuilderHasNext = queryBuilderBak;
+
+    result.meta.top = result.data[0].id;
+    result.meta.bottom = result.data[result.data.length - 1].id;
+
+    result.meta.hasPrevPage = !!(await queryBuilderHasPrev.andWhere('id > :id', {
+                                                            id: result.meta.top
+                                                          }).take(1).getOne());
+    result.meta.hasNextPage = !!(await queryBuilderHasNext.andWhere('id < :id', {
+                                                            id: result.meta.bottom
+                                                          }).take(1).getOne());
+
+    return result;
+  }
+
   static async queryRange(range: any[], where, order) {
     range[0] = parseInt(range[0]);
     range[1] = parseInt(range[1]);
 
-    let queryBuilder = where instanceof TypeORM.SelectQueryBuilder
-                     ? where
-                     : this.createQueryBuilder().where(where);
+    const queryBuilder = where instanceof TypeORM.SelectQueryBuilder
+                       ? where
+                       : this.createQueryBuilder().where(where);
 
     if (order) queryBuilder.orderBy(order);
 
-    queryBuilder = queryBuilder.skip(range[0] - 1)
-                               .take(range[1] - range[0] + 1);
+    queryBuilder.skip(range[0] - 1)
+                .take(range[1] - range[0] + 1);
 
     return queryBuilder.getMany();
   }

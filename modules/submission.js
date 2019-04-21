@@ -103,16 +103,21 @@ app.get('/submissions', async (req, res) => {
       isFiltered = true;
     }
 
-    let paginate = syzoj.utils.paginate(await JudgeState.countQuery(query), req.query.page, syzoj.config.page.judge_state);
-    let judge_state = await JudgeState.queryPage(paginate, query, { id: "DESC" }, true);
+    query.orderBy({
+      id: "DESC"
+    });
 
+    const queryResult = await JudgeState.queryPageWithLargeData(query, syzoj.utils.paginateLargeData(
+      req.query.currPageTop, req.query.currPageBottom, syzoj.config.page.judge_state
+    ), parseInt(req.query.page));
+
+    const judge_state = queryResult.data;
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
       if (obj.problem.type !== 'submit-answer') obj.code_length = obj.code.length;
-    })
+    });
 
     res.render('submissions', {
-      // judge_state: judge_state,
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),
         token: (x.pending && x.task_id != null) ? jwt.sign({
@@ -123,7 +128,7 @@ app.get('/submissions', async (req, res) => {
         result: getRoughResult(x, displayConfig, true),
         running: false,
       })),
-      paginate: paginate,
+      paginate: queryResult.meta,
       pushType: 'rough',
       form: req.query,
       displayConfig: displayConfig,
