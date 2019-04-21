@@ -48,7 +48,7 @@ export default class Model extends TypeORM.BaseEntity {
       if (result) {
         cacheSet(this.name, id, result);
       }
-      return result.clone();
+      return result && result.clone();
     } else {
       return await doQuery();
     }
