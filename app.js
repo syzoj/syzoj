@@ -167,7 +167,7 @@ global.syzoj = {
       database: this.config.db.database,
       entities: models,
       synchronize: true,
-      logging: false,
+      logging: !syzoj.production,
       extra: {
         connectionLimit: 50
       }
