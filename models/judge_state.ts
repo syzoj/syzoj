@@ -10,7 +10,8 @@ import Contest from "./contest";
 const Judger = syzoj.lib('judger');
 
 @TypeORM.Entity()
-@TypeORM.Index(['id', 'is_public', 'type_info', 'type'])
+@TypeORM.Index(['type', 'type_info'])
+@TypeORM.Index(['type', 'is_public'])
 export default class JudgeState extends Model {
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
@@ -60,6 +61,7 @@ export default class JudgeState extends Model {
   @TypeORM.Column({ nullable: true, type: "integer" })
   problem_id: number;
 
+  @TypeORM.Index()
   @TypeORM.Column({ nullable: true, type: "integer" })
   submit_time: number;
 
@@ -74,6 +76,7 @@ export default class JudgeState extends Model {
   @TypeORM.Column({ nullable: true, type: "integer" })
   type_info: number;
   
+  @TypeORM.Index()
   @TypeORM.Column({ nullable: true, type: "boolean" })
   is_public: boolean;
 
