@@ -566,19 +566,19 @@ export default class Problem extends Model {
   }
 
   async getTags() {
+    let tagIDs;
     if (problemTagCache.has(this.id)) {
-      return problemTagCache.get(this.id);
+      tagIDs = problemTagCache.get(this.id);
+    } else {
+      let maps = await ProblemTagMap.find({
+        where: {
+          problem_id: this.id
+        }
+      });
+
+      tagIDs = maps.map(x => x.tag_id);
+      problemTagCache.set(this.id, tagIDs);
     }
-
-    let maps = await ProblemTagMap.find({
-      where: {
-        problem_id: this.id
-      }
-    });
-
-    let tagIDs = maps.map(x => x.tag_id);
-
-    problemTagCache.set(this.id, tagIDs);
 
     let res = await (tagIDs as any).mapAsync(async tagID => {
       return ProblemTag.findById(tagID);
