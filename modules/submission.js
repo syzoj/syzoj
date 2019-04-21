@@ -103,13 +103,9 @@ app.get('/submissions', async (req, res) => {
       isFiltered = true;
     }
 
-    query.orderBy({
-      id: "DESC"
-    });
-
     const queryResult = await JudgeState.queryPageWithLargeData(query, syzoj.utils.paginateLargeData(
       req.query.currPageTop, req.query.currPageBottom, syzoj.config.page.judge_state
-    ), parseInt(req.query.page));
+    ), -1, parseInt(req.query.page));
 
     const judge_state = queryResult.data;
     await judge_state.forEachAsync(async obj => {
