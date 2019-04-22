@@ -432,7 +432,7 @@ app.get('/contest/submission/:id', async (req, res) => {
     judge.problem.title = syzoj.utils.removeTitleTag(judge.problem.title);
 
     if (judge.problem.type !== 'submit-answer') {
-      judge.codeLength = judge.code.length;
+      judge.codeLength = Buffer.from(judge.code).length;
       judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
     }
 

@@ -172,7 +172,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.judge_state = await problem.getJudgeState(res.locals.user, true);
       problem.tags = await problem.getTags();
-      
+
       return problem;
     });
 
@@ -279,7 +279,7 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem = await Problem.create({
         time_limit: syzoj.config.default.problem.time_limit,
         memory_limit: syzoj.config.default.problem.memory_limit,
-        type: 'traditional' 
+        type: 'traditional'
       });
       problem.id = id;
       problem.allowedEdit = true;
@@ -314,7 +314,7 @@ app.post('/problem/:id/edit', async (req, res) => {
       problem = await Problem.create({
         time_limit: syzoj.config.default.problem.time_limit,
         memory_limit: syzoj.config.default.problem.memory_limit,
-        type: 'traditional' 
+        type: 'traditional'
       });
 
       if (await res.locals.user.hasPrivilege('manage_problem')) {
@@ -381,7 +381,7 @@ app.get('/problem/:id/import', async (req, res) => {
       problem = await Problem.create({
         time_limit: syzoj.config.default.problem.time_limit,
         memory_limit: syzoj.config.default.problem.memory_limit,
-        type: 'traditional' 
+        type: 'traditional'
       });
       problem.id = id;
       problem.new = true;
@@ -415,7 +415,7 @@ app.post('/problem/:id/import', async (req, res) => {
       problem = await Problem.create({
         time_limit: syzoj.config.default.problem.time_limit,
         memory_limit: syzoj.config.default.problem.memory_limit,
-        type: 'traditional' 
+        type: 'traditional'
       });
 
       if (await res.locals.user.hasPrivilege('manage_problem')) {
@@ -646,7 +646,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         if (req.files['answer'][0].size > syzoj.config.limit.submit_code) throw new ErrorMessage('代码文件太大。');
         code = (await fs.readFile(req.files['answer'][0].path)).toString();
       } else {
-        if (req.body.code.length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码太长。');
+        if (Buffer.from(req.body.code).length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码太长。');
         code = req.body.code;
       }
 
@@ -655,7 +655,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         status: 'Unknown',
         task_id: randomstring.generate(10),
         code: code,
-        code_length: code.length,
+        code_length: Buffer.from(code).length,
         language: req.body.language,
         user_id: curUser.id,
         problem_id: req.params.id,
@@ -930,7 +930,7 @@ app.post('/problem/:id/custom-test', app.multer.fields([{ name: 'code_upload', m
       if (req.files['code_upload'][0].size > syzoj.config.limit.submit_code) throw new ErrorMessage('代码过长。');
       code = (await require('fs-extra').readFileAsync(req.files['code_upload'][0].path)).toString();
     } else {
-      if (req.body.code.length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码过长。');
+      if (Buffer.from(req.body.code).length > syzoj.config.limit.submit_code) throw new ErrorMessage('代码过长。');
       code = req.body.code;
     }
 
