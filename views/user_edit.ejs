@@ -44,7 +44,7 @@
 	    <div class="field">
         <label for="information">个性签名</label>
       </div>
-      
+
       </div>
       <div class="editor editor-with-border" id="information" style="width: 100%; height: 100px; margin-bottom: 1em; ">
         <%- this.showLoadingEditor(); %>
@@ -94,7 +94,14 @@
 		</form>
 	</div>
 </div>
+<script>
+var bakDefine = define;
+define = undefined;
+</script>
 <script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
+<script>
+define = bakDefine;
+</script>
 <script type="text/javascript">
 var editors = {
   information: { defaultValue: <%- serializejs(edited_user.information) %> },
