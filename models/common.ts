@@ -2,6 +2,8 @@ import * as TypeORM from "typeorm";
 import * as LRUCache from "lru-cache";
 import * as DeepCopy from "deepcopy";
 
+declare var syzoj: any;
+
 interface Paginater {
   pageCnt: number;
   perPage: number;
@@ -23,7 +25,7 @@ const caches: Map<string, LRUCache<number, Model>> = new Map();
 function ensureCache(modelName) {
   if (!caches.has(modelName)) {
     caches.set(modelName, new LRUCache({
-      max: 500
+      max: syzoj.config.db.cache_size
     }));
   }
 

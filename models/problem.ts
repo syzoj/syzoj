@@ -194,7 +194,9 @@ import * as util from "util";
 import * as LRUCache from "lru-cache";
 import * as DeepCopy from "deepcopy";
 
-const problemTagCache = new LRUCache<number, number[]>();
+const problemTagCache = new LRUCache<number, number[]>({
+  max: syzoj.config.db.cache_size
+});
 
 enum ProblemType {
   Traditional = "traditional",
