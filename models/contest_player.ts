@@ -6,6 +6,8 @@ import Contest from "./contest";
 
 @TypeORM.Entity()
 export default class ContestPlayer extends Model {
+  static cache = true;
+
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
 
