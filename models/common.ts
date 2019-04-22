@@ -49,27 +49,27 @@ export default class Model extends TypeORM.BaseEntity {
     const doQuery = async () => await (this as any).findOne(parseInt(id as any) || 0);
 
     if ((this as typeof Model).cache) {
-      let result;
-      if (result = cacheGet(this.name, id)) {
-        return result.clone();
+      const resultObject = cacheGet(this.name, id);
+      if (resultObject) {
+        return (this as typeof Model).create(resultObject) as any as T;
       }
 
-      result = await doQuery();
+      const result = await doQuery();
       if (result) {
-        cacheSet(this.name, id, result);
+        cacheSet(this.name, id, result.toPlain());
       }
-      return result && result.clone();
+      return result;
     } else {
       return await doQuery();
     }
   }
 
-  clone() {
+  toPlain() {
     const object = {};
     TypeORM.getConnection().getMetadata(this.constructor).ownColumns.map(column => column.propertyName).forEach(key => {
       object[key] = DeepCopy(this[key]);
     });
-    return (this.constructor as any).create(object);
+    return object;
   }
 
   async destroy() {
