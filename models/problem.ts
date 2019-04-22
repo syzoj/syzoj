@@ -192,6 +192,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import * as util from "util";
 import * as LRUCache from "lru-cache";
+import * as DeepCopy from "deepcopy";
 
 const problemTagCache = new LRUCache<number, number[]>();
 
@@ -226,7 +227,7 @@ export default class Problem extends Model {
 
   @TypeORM.Column({ nullable: true, type: "text" })
   input_format: string;
-  
+
   @TypeORM.Column({ nullable: true, type: "text" })
   output_format: string;
 
@@ -548,11 +549,11 @@ export default class Problem extends Model {
 
     statistics.scoreDistribution = [];
     for (let i = 0; i < scoreCount.length; i++) {
-      if (scoreCount[i] !== undefined) statistics.scoreDistribution.push({ score: i, count: scoreCount[i] });
+      if (scoreCount[i] !== undefined) statistics.scoreDistribution.push({ score: i, count: parseInt(scoreCount[i]) });
     }
 
-    statistics.prefixSum = JSON.parse(JSON.stringify(statistics.scoreDistribution));
-    statistics.suffixSum = JSON.parse(JSON.stringify(statistics.scoreDistribution));
+    statistics.prefixSum = DeepCopy(statistics.scoreDistribution);
+    statistics.suffixSum = DeepCopy(statistics.scoreDistribution);
 
     for (let i = 1; i < statistics.prefixSum.length; i++) {
       statistics.prefixSum[i].count += statistics.prefixSum[i - 1].count;
