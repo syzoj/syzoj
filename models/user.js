@@ -7,9 +7,6 @@ let model = db.define('user', {
   email: { type: Sequelize.STRING(120) },
   password: { type: Sequelize.STRING(120) },
 
-  name: { type: Sequelize.STRING(100) },
-  school: { type: Sequelize.STRING(200) },
-
   nickname: { type: Sequelize.STRING(80) },
   nameplate: { type: Sequelize.TEXT },
   information: { type: Sequelize.TEXT },
@@ -25,7 +22,12 @@ let model = db.define('user', {
   sex: { type: Sequelize.INTEGER },
   rating: { type: Sequelize.INTEGER },
 
-  register_time: { type: Sequelize.INTEGER }
+  register_time: { type: Sequelize.INTEGER },
+
+  school: { type: Sequelize.STRING(200) },
+  name: { type: Sequelize.STRING(100) },
+
+  background: { type: Sequelize.STRING(200) }
 }, {
   timestamps: false,
   tableName: 'user',
