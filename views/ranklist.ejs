@@ -2,6 +2,8 @@
 <% include header %>
 
 <div class="padding">
+  <h4 class="ui top attached block header"><i class="ui info icon"></i>排名</h4>
+  <div class="ui bottom attached segment">
   <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" class="ui mini form" method="get" role="form" style="margin-bottom: 25px; text-align: right; ">
     <div class="ui action left icon input inline" style="width: 180px; margin-right: 77px; ">
       <i class="search icon"></i><input name="nickname" placeholder="用户名" type="text">
@@ -66,5 +68,6 @@
 	    </table>
     <br>
 <% include page %>
+</div>
 </div>
 <% include footer %>

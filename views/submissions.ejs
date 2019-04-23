@@ -3,6 +3,8 @@
 <% include util %>
 <script src="<%- lib('textfit/2.3.1/textFit.min.js') %>"></script>
 <div class="padding">
+  <h4 class="ui top attached block header"><i class="ui info icon"></i>评测</h4>
+  <div class="ui bottom attached segment">
   <% if (displayConfig.inContest) { %>
     <div class="ui large info message">
       <div class="ui header">比赛 - <%= contest.title %></div>
@@ -118,6 +120,7 @@
   <br>
   <% include page %>
   <% } %>
+</div>
 </div>
 
 <script src="<%- lib('vue/2.5.21/vue.min.js') %>"></script>

@@ -8,6 +8,8 @@
 </style>
 <% include header %>
 <div class="padding">
+  <h4 class="ui top attached block header"><i class="ui info icon"></i>比赛</h4>
+  <div class="ui bottom attached segment">
   <h1><%= contest.title %></h1>
   <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
   <% let unveiled = (isSupervisior || syzoj.utils.getCurrentDate() >= contest.start_time); %>
@@ -117,6 +119,7 @@
     </div>
   <% } %>
   </div>
+</div>
 </div>
 
 <script>
