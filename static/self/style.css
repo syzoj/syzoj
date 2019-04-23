@@ -21,7 +21,7 @@ h4,
 h5,
 body
  {
-  opacity: 0.92;
+  background-color: rgba(255, 255, 255, 0.92);
   font-family:
     Lato,
     -apple-system,
@@ -55,6 +55,10 @@ a.black-link:hover {
 .padding {
     padding-left: 1em;
     padding-right: 1em;
+}
+
+.ui.segment{
+  background-color: rgba(255, 255, 255, 0.92);
 }
 
 .ui.segment:first-child {
