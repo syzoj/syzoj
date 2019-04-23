@@ -1,6 +1,7 @@
 <% this.title = '比赛' %>
 <% include header %>
 <div class="padding">
+    <div class="ui bottom attached segment">
     <% if (contests.length) { %>
     <% if (user && user.is_admin) { %>
     <form class="ui mini form">
@@ -60,5 +61,6 @@
     <% } %>
   <br>
   <% include page %>
+</div>
 </div>
 <% include footer %>
