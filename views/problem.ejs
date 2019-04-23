@@ -24,6 +24,9 @@ div[class*=ace_br] {
 }
 </style>
 <script src="<%- lib('ace/1.4.2/ace.js') %>"></script>
+
+<h4 class="ui top attached block header"><i class="ui list icon"></i>题目</h4>
+<div class="ui bottom attached segment">
 <div class="ui center aligned grid">
     <div class="row">
       <h1 class="ui header">
@@ -349,6 +352,7 @@ div[class*=ace_br] {
         </div>
     </div>
     <% } %>
+</div>
 </div>
 
 <% if (problem.type !== 'submit-answer') { %>
