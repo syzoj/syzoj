@@ -21,7 +21,7 @@ h4,
 h5,
 body
  {
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.75);
   font-family:
     Lato,
     -apple-system,
@@ -44,6 +44,10 @@ a.black-link:hover {
   color: #4183c4;
 }
 
+a.ui.button {
+  opacity: 0.75;
+}
+
 .font-content {
   font-family: 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
@@ -58,7 +62,16 @@ a.black-link:hover {
 }
 
 .ui.segment{
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.ui.label,
+.ui.top.attached.block.header{
+  background-color: rgba(230, 230, 230, 0.75);
+}
+
+.ui.header{
+  background-color: rgba(255, 255, 255, 0);
 }
 
 .ui.segment:first-child {
