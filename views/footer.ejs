@@ -10,8 +10,8 @@
 <script src="<%- selfLib('script.js') %>?20170710"></script>
 <% if (user) { %>
 	<script>
-		<% if (user.background != null) { %>
-			document.body.style.background = "url('" + <% user.background %> + "') fixed center";
+		<% if (user.background) { %>
+			document.body.style.background = "url('" + <%=user.background%> + "') fixed center";
 		<% } %>
 	</script>
 <% } %>
