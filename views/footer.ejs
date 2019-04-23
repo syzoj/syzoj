@@ -11,7 +11,7 @@
 <% if (user) { %>
 	<script>
 		<% if (user.background) { %>
-			document.body.style.background = "url('" + <%=user.background%> + "') fixed center";
+			document.body.style.background = "url('<%=user.background%>') fixed center";
 		<% } %>
 	</script>
 <% } %>
