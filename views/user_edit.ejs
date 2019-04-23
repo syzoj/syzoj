@@ -1,6 +1,8 @@
 <% this.title = '修改资料'; %>
 <% include header %>
 <div class="padding">
+  <h4 class="ui top attached block header"><i class="ui edit icon"></i>修改资料</h4>
+  <div class="ui bottom attached segment">
     <div class="ui <% if (error_info === '') { %>success<% } else { %>error<% } %> message" id="error" <% if (error_info === null) { %>hidden<% } %>>
       <% if (error_info !== null) {
           if (error_info === '') error_info = '修改成功。';
@@ -95,6 +97,7 @@
       </div>
 		</form>
 	</div>
+</div>
 </div>
 <script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
 <script type="text/javascript">
