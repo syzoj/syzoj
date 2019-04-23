@@ -11,7 +11,7 @@
 <% if (user) { %>
 	<script>
 		<% if (user.background) { %>
-			var pic = "<%=user.background%>".split(";");
+			var pic = "<%=user.background%>".trim().split(";");
 			var k = pic.length;
 			var randomIndex = Math.floor(Math.random() * k);
 			document.body.style.background = "url('" + pic[randomIndex] + "') fixed center";

@@ -27,7 +27,7 @@ let model = db.define('user', {
   school: { type: Sequelize.STRING(200) },
   name: { type: Sequelize.STRING(100) },
 
-  background: { type: Sequelize.STRING(200) }
+  background: { type: Sequelize.STRING(1000) }
 }, {
   timestamps: false,
   tableName: 'user',
