@@ -1,46 +1,77 @@
-<p align="center"><img src="static/self/syzoj.svg" width="250"></p>
+<p align="center"><img src="static/logo.png" width="250"></p>
 
-中文 | [English](README.en.md)
+本仓库作为漳平一中校内Online Judge使用，即ZPOJ。
 
-一个用于算法竞赛的在线评测系统。
+fork自syzoj，由于2019年3月23日原仓库更换了引擎，出于兼容性考虑本仓库不再做对应更新，最后一次upgrade的commit为：[1a7666bfe69480606194ab285c7b494138886d2a](https://github.com/syzoj/syzoj/commit/1a7666bfe69480606194ab285c7b494138886d2a)
 
-此项目为重写过的、原 Python/Flask 版 SYZOJ 的**官方**后继版本，由原作者 [@Chenyao2333](https://github.com/Chenyao2333) 授权。
+出于校内使用的考虑，与原SYZOJ相比有较大改动，以下是部分更新日志，供参考：
 
-目前由 [LibreOJ](https://loj.ac) 维护。
+## 4月23日
 
-# 部署
-见本项目 Wiki 中的 [部署指南](https://github.com/syzoj/syzoj/wiki/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
+增加了<font color="red">自定义背景</font>的功能，支持多张背景随机使用，OJ的整体UI需要跟进修改，待折腾。（已强行适配了一部分）
 
-加入 QQ 群 [565280992](https://jq.qq.com/?_wv=1027&k=5JQZWwd) 或 Telegram 群 [@lojdev](https://t.me/lojdev) 以取得帮助。
+## 4月15日
 
-# 升级须知
-因为一些数据库结构的更新，从该 commit [d5bcbe8fb79e80f9d603b764ac787295cceffa34](https://github.com/syzoj/syzoj/commit/d5bcbe8fb79e80f9d603b764ac787295cceffa34)（2018 年 4 月 21 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
+新增练习赛制
 
-```sql
-ALTER TABLE `judge_state` ADD `is_public` TINYINT(1) NOT NULL AFTER `compilation`;
-UPDATE `judge_state` JOIN `problem` ON `problem`.`id` = `judge_state`.`problem_id` SET `judge_state`.`is_public` = `problem`.`is_public`;
-ALTER TABLE `syzoj`.`judge_state` ADD INDEX `judge_state_is_public` (`id`, `is_public`, `type_info`, `type`);
-```
+## 4月11日
 
-从该 commit [26d66ceef24fbb35481317453bcb89ead6c69076](https://github.com/syzoj/syzoj/commit/26d66ceef24fbb35481317453bcb89ead6c69076)（2018 年 11 月 5 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
+微调排行榜的栏目间距
 
-```sql
-ALTER TABLE `contest_player` CHANGE `score_details` `score_details` JSON NOT NULL;
-ALTER TABLE `contest_ranklist` CHANGE `ranking_params` `ranking_params` JSON NOT NULL;
-ALTER TABLE `contest_ranklist` CHANGE `ranklist` `ranklist` JSON NOT NULL;
-ALTER TABLE `custom_test` CHANGE `result` `result` JSON NOT NULL;
-ALTER TABLE `judge_state` CHANGE `compilation` `compilation` JSON NOT NULL;
-ALTER TABLE `judge_state` CHANGE `result` `result` JSON NOT NULL;
-```
+## 4月8日
 
-从该 commit [84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23](https://github.com/syzoj/syzoj/commit/84b9e2d7b51e4ed3ab426621b66cf5ae9e1e1c23)（2018 年 11 月 6 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
+给比赛普通管理员也加了编辑比赛的权限（但是逻辑问题不少，勉强能用）
 
-```sql
-ALTER TABLE `problem` ADD `publicize_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`;
-```
+## 4月7日
 
-从该 commit [d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3](https://github.com/syzoj/syzoj/commit/d8be150fc6b8c43af61c5e4aca4fc0fe0445aef3)（2018 年 12 月 7 日）前更新的用户**必须**在其数据库上执行以下 SQL 语句。
+由于服务器出锅，紧急开发了管理员切换当前账号的功能。
 
-```sql
-ALTER TABLE `user` ADD `prefer_formatted_code` TINYINT(1) NOT NULL DEFAULT 1 AFTER `public_email`;
-```
+## 4月6日
+
+修改黄名的颜色为<font color = "#FFCB19">`#FFCB19`</font>，原来的颜色有点丑。
+
+用户资料中，头像下方的通过xx题可以点击跳转到该用户的AC记录了。
+
+## 4月1日
+
+对于OI赛制，把除了C++(NOI-Linux)，C++11(NOI-Linux)，C(NOI-Linux)外的选项删除。
+
+## 3月31日
+
+修复了比赛结束后重测某题，比赛的排行榜出问题的BUG。
+
+修复了在比赛结束后，比赛的统计页面显示不正常的BUG。
+
+## 3月30日
+
+用户界面的饼图跟着修改了一下。(见3月25日）
+
+## 3月26日
+
+修改了Rating算法，新的算法更加<strong><font color="red" size=4>鼓励参加比赛</strong></font>，每场比赛均会在计算完原来rating变化的情况下再<font color="red" size=4> $+10$ </font>。
+
+## 3月25日
+
+由于SYZOJ对通过题目的逻辑为，不算比赛时通过的代码，对于校内OJ来说这个设定比较不合理，现在计算完rating后会将这些数据做相应同步。
+
+修复了比赛结束后，访问比赛统计界面被重定向的BUG。
+
+修复了未开始比赛访问的逻辑，不再能访问排行榜和提交记录界面。
+
+修改了搜索评测记录的逻辑，现在主界面也能看到比赛时的记录了。
+
+打开了<font color="red">邮箱验证</font>功能。
+
+## 3月23日之前
+
+按`Codeforces`的形式给了个名字的高亮。
+
+实名制：姓名、学校。
+
+没有实名的用户将没有本OJ的访问权限。
+
+各个排行榜的对应修改。
+
+IOI赛制的看榜逻辑修改。
+
+修复了比赛期间无法查看提交记录的BUG。
