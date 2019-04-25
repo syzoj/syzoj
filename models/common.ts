@@ -112,7 +112,7 @@ export default class Model extends TypeORM.BaseEntity {
     return await queryBuilder.getMany();
   }
 
-  static async queryPage(paginater: Paginater, where, order, largeData) {
+  static async queryPage(paginater: Paginater, where, order, largeData = false) {
     if (!paginater.pageCnt) return [];
 
     const queryBuilder = where instanceof TypeORM.SelectQueryBuilder

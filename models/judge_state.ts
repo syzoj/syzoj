@@ -12,6 +12,7 @@ const Judger = syzoj.lib('judger');
 @TypeORM.Entity()
 @TypeORM.Index(['type', 'type_info'])
 @TypeORM.Index(['type', 'is_public'])
+@TypeORM.Index(['problem_id', 'type', 'pending', 'score'])
 export default class JudgeState extends Model {
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
@@ -114,6 +115,10 @@ export default class JudgeState extends Model {
       // No need to await them.
       this.user.refreshSubmitInfo();
       this.problem.resetSubmissionCount();
+
+      if (!newSubmission) {
+        this.problem.updateStatistics(this.user_id);
+      }
     } else if (this.type === 1) {
       let contest = await Contest.findById(this.type_info);
       await contest.newSubmission(this);
@@ -138,16 +143,7 @@ export default class JudgeState extends Model {
       this.task_id = require('randomstring').generate(10);
       await this.save();
 
-      await this.problem.resetSubmissionCount();
-      if (oldStatus === 'Accepted') {
-        await this.user.refreshSubmitInfo();
-        await this.user.save();
-      }
-
-      if (this.type === 1) {
-        let contest = await Contest.findById(this.type_info);
-        await contest.newSubmission(this);
-      }
+      await this.updateRelatedInfo(false);
 
       try {
         await Judger.judge(this, this.problem, 1);

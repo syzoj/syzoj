@@ -1,181 +1,3 @@
-const statisticsStatements = {
-  fastest:
-  '\
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `total_time` ASC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`total_time` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `total_time` ASC \
-    LIMIT 1 \
-	) AS `total_time` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `total_time` ASC \
-',
-  slowest:
-  ' \
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `total_time` DESC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`total_time` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `total_time` DESC \
-    LIMIT 1 \
-	) AS `total_time` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `total_time` DESC \
-',
-  shortest:
-  ' \
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `code_length` ASC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`code_length` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `code_length` ASC \
-    LIMIT 1 \
-	) AS `code_length` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `code_length` ASC \
-',
-  longest:
-  ' \
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `code_length` DESC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`code_length` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `code_length` DESC \
-    LIMIT 1 \
-	) AS `code_length` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `code_length` DESC \
-',
-  earliest:
-  ' \
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `submit_time` ASC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`submit_time` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `submit_time` ASC \
-    LIMIT 1 \
-	) AS `submit_time` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `submit_time` ASC \
-',
-  min:
-  ' \
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `max_memory` ASC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`max_memory` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `max_memory` ASC \
-    LIMIT 1 \
-	) AS `max_memory` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `max_memory` ASC \
-',
-  max:
-  ' \
-SELECT \
-	DISTINCT(`user_id`) AS `user_id`,  \
-	( \
-		SELECT \
-			`id` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `max_memory` ASC \
-    LIMIT 1 \
-	) AS `id`, \
-	( \
-		SELECT \
-			`max_memory` \
-		FROM `judge_state` `inner_table` \
-		WHERE `problem_id` = `outer_table`.`problem_id` AND `user_id` = `outer_table`.`user_id` AND `status` = "Accepted" AND `type` = 0 \
-		ORDER BY `max_memory` ASC \
-    LIMIT 1 \
-	) AS `max_memory` \
-FROM `judge_state` `outer_table` \
-WHERE  \
-	`problem_id` = __PROBLEM_ID__ AND `status` = "Accepted" AND `type` = 0 \
-ORDER BY `max_memory` DESC \
-'
-};
-
 import * as TypeORM from "typeorm";
 import Model from "./common";
 
@@ -187,6 +9,7 @@ import JudgeState from "./judge_state";
 import Contest from "./contest";
 import ProblemTag from "./problem_tag";
 import ProblemTagMap from "./problem_tag_map";
+import SubmissionStatictics, { StatisticsType } from "./submission_statistics";
 
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -203,6 +26,18 @@ enum ProblemType {
   SubmitAnswer = "submit-answer",
   Interaction = "interaction"
 }
+
+const statisticsTypes = {
+  fastest: ['total_time', 'ASC'],
+  slowest: ['total_time', 'DESC'],
+  shortest: ['code_length', 'ASC'],
+  longest: ['code_length', 'DESC'],
+  min: ['max_memory', 'ASC'],
+  max: ['max_memory', 'DESC'],
+  earliest: ['submit_time', 'ASC']
+};
+
+const statisticsCodeOnly = ["fastest", "slowest", "min", "max"];
 
 @TypeORM.Entity()
 export default class Problem extends Model {
@@ -505,18 +340,50 @@ export default class Problem extends Model {
     });
   }
 
-  // type: fastest / slowest / shortest / longest / earliest
-  async countStatistics(type) {
-    let statement = statisticsStatements[type];
-    if (!statement) return null;
+  async updateStatistics(user_id) {
+    await Promise.all(Object.keys(statisticsTypes).map(async type => {
+      if (this.type === ProblemType.SubmitAnswer && statisticsCodeOnly.includes(type)) return;
 
-    const entityManager = TypeORM.getManager();
+      await syzoj.utils.lock(['Problem::UpdateStatistics', this.id, type], async () => {
+        const [column, order] = statisticsTypes[type];
+        const result = await JudgeState.createQueryBuilder()
+                                       .select([column, "id"])
+                                       .where("user_id = :user_id", { user_id })
+                                       .andWhere("status = :status", { status: "Accepted" })
+                                       .andWhere("problem_id = :problem_id", { problem_id: this.id })
+                                       .orderBy({ [column]: order })
+                                       .take(1)
+                                       .getRawMany();
+        const resultRow = result[0];
 
-    statement = statement.replace('__PROBLEM_ID__', this.id);
-    return JudgeState.countQuery(statement);
+        if (!resultRow || resultRow[column] == null) return;
+
+        const baseColumns = {
+          user_id,
+          problem_id: this.id,
+          type: type as StatisticsType
+        };
+
+        let record = await SubmissionStatictics.findOne(baseColumns);
+        if (!record) {
+          record = SubmissionStatictics.create(baseColumns);
+        }
+
+        record.key = resultRow[column];
+        record.submission_id = resultRow["id"];
+
+        await record.save();
+      });
+    }));
   }
 
-  // type: fastest / slowest / shortest / longest / earliest
+  async countStatistics(type) {
+    return await SubmissionStatictics.count({
+      problem_id: this.id,
+      type: type
+    });
+  }
+
   async getStatistics(type, paginate) {
     const entityManager = TypeORM.getManager();
 
@@ -528,18 +395,29 @@ export default class Problem extends Model {
       suffixSum: null
     };
 
-    let statement = statisticsStatements[type];
-    if (!statement) return null;
+    const order = statisticsTypes[type][1];
+    const ids = (await SubmissionStatictics.queryPage(paginate, {
+      problem_id: this.id,
+      type: type
+    }, {
+      '`key`': order
+    })).map(x => x.submission_id);
 
-    statement = statement.replace('__PROBLEM_ID__', this.id);
+    statistics.judge_state = ids.length ? await JudgeState.createQueryBuilder()
+                                                          .whereInIds(ids)
+                                                          .orderBy(`FIELD(id,${ids.join(',')})`)
+                                                          .getMany()
+                                        : [];
 
-    let a;
-    if (!paginate.pageCnt) a = [];
-    else a = (await entityManager.query(statement + `LIMIT ${paginate.perPage} OFFSET ${(paginate.currPage - 1) * paginate.perPage}`));
-
-    statistics.judge_state = await a.mapAsync(async x => JudgeState.findById(x.id));
-
-    a = (await entityManager.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id.toString())));
+    JudgeState.createQueryBuilder()
+              .select('score')
+              .addSelect('COUNT(*)', 'count')
+              .where('problem_id = :problem_id', { problem_id: this.id })
+              .andWhere('type = 0')
+              .andWhere('pending = false')
+              .groupBy('score')
+              .getRawMany()
+    let a = (await entityManager.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id.toString())));
 
     let scoreCount = [];
     for (let score of a) {
@@ -548,6 +426,11 @@ export default class Problem extends Model {
     }
     if (scoreCount[0] === undefined) scoreCount[0] = 0;
     if (scoreCount[100] === undefined) scoreCount[100] = 0;
+
+    if (a[null as any]) {
+      a[0] += a[null as any];
+      delete a[null as any];
+    }
 
     statistics.scoreDistribution = [];
     for (let i = 0; i < scoreCount.length; i++) {
@@ -627,11 +510,11 @@ export default class Problem extends Model {
     const entityManager = TypeORM.getManager();
 
     id = parseInt(id);
-    await entityManager.query('UPDATE `problem`         SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
-    await entityManager.query('UPDATE `judge_state`     SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await entityManager.query('UPDATE `problem_tag_map` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await entityManager.query('UPDATE `article`         SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-
+    await entityManager.query('UPDATE `problem`              SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
+    await entityManager.query('UPDATE `judge_state`          SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `problem_tag_map`      SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `article`              SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `SubmissionStatictics` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
 
     let contests = await Contest.find();
     for (let contest of contests) {
@@ -698,9 +581,10 @@ export default class Problem extends Model {
 
     problemTagCache.del(this.id);
 
-    await entityManager.query('DELETE FROM `judge_state`     WHERE `problem_id` = ' + this.id);
-    await entityManager.query('DELETE FROM `problem_tag_map` WHERE `problem_id` = ' + this.id);
-    await entityManager.query('DELETE FROM `article`         WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `judge_state`           WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `problem_tag_map`       WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `article`               WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `submission_statictics` WHERE `problem_id` = ' + this.id);
 
     await this.destroy();
   }

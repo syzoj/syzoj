@@ -179,7 +179,7 @@ async function connect() {
         judge_state.max_memory = convertedResult.memory;
         judge_state.result = convertedResult.result;
         await judge_state.save();
-        await judge_state.updateRelatedInfo();
+        await judge_state.updateRelatedInfo(false);
       } else if (result.type == interface.ProgressReportType.Compiled) {
         if (!judge_state) return;
         judge_state.compilation = result.progress;
