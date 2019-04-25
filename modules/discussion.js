@@ -238,9 +238,7 @@ app.post('/article/:id/comment', async (req, res) => {
 
     await comment.save();
 
-    article.sort_time = syzoj.utils.getCurrentDate();
-    article.comments_num += 1;
-    await article.save();
+    await article.resetReplyCountAndTime();
 
     res.redirect(syzoj.utils.makeUrl(['article', article.id]));
   } catch (e) {
@@ -264,12 +262,11 @@ app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
       if (!await comment.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
+    const article = await Article.findById(comment.article_id);
+
     await comment.destroy();
 
-    let article = comment.article;
-    article.comments_num -= 1;
-
-    await article.save();
+    await article.resetReplyCountAndTime();
 
     res.redirect(syzoj.utils.makeUrl(['article', comment.article_id]));
   } catch (e) {
