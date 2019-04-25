@@ -7,7 +7,7 @@ const fs = require('fs'),
       commandLineArgs = require('command-line-args');
 
 const optionDefinitions = [
-    { name: 'config', alias: 'c', type: String, defaultValue: './config.json' },
+  { name: 'config', alias: 'c', type: String, defaultValue: __dirname + '/config.json' },
 ];
 
 const options = commandLineArgs(optionDefinitions);
@@ -174,7 +174,7 @@ global.syzoj = {
     });
   },
   loadModules() {
-    fs.readdir('./modules/', (err, files) => {
+    fs.readdir(__dirname + '/modules/', (err, files) => {
       if (err) {
         this.log(err);
         return;
@@ -268,4 +268,4 @@ global.syzoj = {
   }
 };
 
-syzoj.run();
+syzoj.untilStarted = syzoj.run();
