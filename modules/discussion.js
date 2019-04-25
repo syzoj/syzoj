@@ -12,7 +12,7 @@ app.get('/discussion/:type?', async (req, res) => {
 
     let where;
     if (in_problems) {
-      where = { problem_id: TypeORM.Not(null) };
+      where = { problem_id: TypeORM.Not(TypeORM.IsNull()) };
     } else {
       where = { problem_id: null };
     }
