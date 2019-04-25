@@ -355,7 +355,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
 
     if (displayConfig.showResult) {
       if (req.query.status) {
-        query.andWhere('status LIKE :status', { status: req.query.status + '%' });
+        query.andWhere('status = :status', { status: req.query.status });
         isFiltered = true;
       }
     }

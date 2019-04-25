@@ -9,9 +9,30 @@ import Contest from "./contest";
 
 const Judger = syzoj.lib('judger');
 
+enum Status {
+  ACCEPTED = "Accepted",
+  COMPILE_ERROR = "Compile Error",
+  FILE_ERROR = "File Error",
+  INVALID_INTERACTION = "Invalid Interaction",
+  JUDGEMENT_FAILED = "Judgement Failed",
+  MEMORY_LIMIT_EXCEEDED = "Memory Limit Exceeded",
+  NO_TESTDATA = "No Testdata",
+  OUTPUT_LIMIT_EXCEEDED = "Output Limit Exceeded",
+  PARTIALLY_CORRECT = "Partially Correct",
+  RUNTIME_ERROR = "Runtime Error",
+  SYSTEM_ERROR = "System Error",
+  TIME_LIMIT_EXCEEDED = "Time Limit Exceeded",
+  UNKNOWN = "Unknown",
+  WRONG_ANSWER = "Wrong Answer",
+  WAITING = "Waiting"
+}
+
 @TypeORM.Entity()
 @TypeORM.Index(['type', 'type_info'])
-@TypeORM.Index(['type', 'is_public'])
+@TypeORM.Index(['type', 'is_public', 'language', 'status', 'problem_id'])
+@TypeORM.Index(['type', 'is_public', 'status', 'problem_id'])
+@TypeORM.Index(['type', 'is_public', 'problem_id'])
+@TypeORM.Index(['type', 'is_public', 'language', 'problem_id'])
 @TypeORM.Index(['problem_id', 'type', 'pending', 'score'])
 export default class JudgeState extends Model {
   @TypeORM.PrimaryGeneratedColumn()
@@ -25,8 +46,8 @@ export default class JudgeState extends Model {
   language: string;
 
   @TypeORM.Index()
-  @TypeORM.Column({ nullable: true, type: "varchar", length: 50 })
-  status: string;
+  @TypeORM.Column({ nullable: true, type: "enum", enum: Status })
+  status: Status;
 
   @TypeORM.Index()
   @TypeORM.Column({ nullable: true, type: "varchar", length: 50 })
@@ -131,7 +152,7 @@ export default class JudgeState extends Model {
 
       let oldStatus = this.status;
 
-      this.status = 'Unknown';
+      this.status = Status.UNKNOWN;
       this.pending = false;
       this.score = null;
       if (this.language) {
@@ -148,7 +169,7 @@ export default class JudgeState extends Model {
       try {
         await Judger.judge(this, this.problem, 1);
         this.pending = true;
-        this.status = 'Waiting';
+        this.status = Status.WAITING;
         await this.save();
       } catch (err) {
         console.log("Error while connecting to judge frontend: " + err.toString());

@@ -79,7 +79,7 @@ app.get('/submissions', async (req, res) => {
     }
 
     if (req.query.status) {
-      query.andWhere('status LIKE :status', { status: req.query.status + '%' });
+      query.andWhere('status = :status', { status: req.query.status });
       isFiltered = true;
     }
 
