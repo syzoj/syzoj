@@ -201,6 +201,10 @@ app.post('/article/:id/delete', async (req, res) => {
       if (!await article.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
+    await Promise.all((await ArticleComment.find({
+      article_id: article.id
+    })).map(comment => comment.destroy()))
+
     await article.destroy();
 
     res.redirect(syzoj.utils.makeUrl(['discussion', 'global']));
