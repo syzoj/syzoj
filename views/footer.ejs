@@ -16,7 +16,7 @@
 			var k = pic.length;
 			var t = 1;
 			var tmp;
-			var rd = timestamp / 100000;
+			var rd = Math.floor(timestamp / 100000);
 			for (var i = 1; i < k; i++) {
 				t = (t * rd + rd % 10) % i;
 				tmp = pic[i];
