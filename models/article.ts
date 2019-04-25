@@ -41,7 +41,7 @@ export default class Article extends Model {
   @TypeORM.Column({ nullable: true, type: "integer" })
   comments_num: number;
 
-  @TypeORM.Column({ nullable: true, type: "boolean" })
+  @TypeORM.Column({ default: true, type: "boolean" })
   allow_comment: boolean;
 
   @TypeORM.Index()
