@@ -11,9 +11,16 @@
 <% if (user) { %>
 	<script>
 		<% if (user.background) { %>
+			var timestamp = new Date().getTime();
 			var pic = "<%=user.background%>".trim().split(";");
 			var k = pic.length;
-			var randomIndex = Math.floor(Math.random() * k);
+			var t = 1;
+			var randomIndex = Math.floor(timestamp % 100000 / 100000.0 * k);
+			var rd = timestamp / 100000 % 100;
+			for (var i = 1; i < pic.length; i++) {
+				t = (t * rd + 4) % i;
+				[pic[i], pic[t]] = [pic[t], pic[i]];
+			}
 			document.body.style.background = "url('" + pic[randomIndex] + "') fixed center";
 			document.body.style.backgroundSize = "cover";
 		<% } %>
