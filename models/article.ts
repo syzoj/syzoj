@@ -38,7 +38,7 @@ export default class Article extends Model {
   @TypeORM.Column({ nullable: true, type: "integer" })
   sort_time: number;
 
-  @TypeORM.Column({ nullable: true, type: "integer" })
+  @TypeORM.Column({ default: 0, type: "integer" })
   comments_num: number;
 
   @TypeORM.Column({ default: true, type: "boolean" })
