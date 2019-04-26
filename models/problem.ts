@@ -510,11 +510,11 @@ export default class Problem extends Model {
     const entityManager = TypeORM.getManager();
 
     id = parseInt(id);
-    await entityManager.query('UPDATE `problem`              SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
-    await entityManager.query('UPDATE `judge_state`          SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await entityManager.query('UPDATE `problem_tag_map`      SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await entityManager.query('UPDATE `article`              SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await entityManager.query('UPDATE `SubmissionStatictics` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `problem`               SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
+    await entityManager.query('UPDATE `judge_state`           SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `problem_tag_map`       SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `article`               SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `submission_statictics` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
 
     let contests = await Contest.find();
     for (let contest of contests) {
