@@ -133,13 +133,15 @@ export default class JudgeState extends Model {
     if (this.type === 0) {
       await this.loadRelationships();
 
-      // No need to await them.
-      this.user.refreshSubmitInfo();
-      this.problem.resetSubmissionCount();
+      const promises = [];
+      promises.push(this.user.refreshSubmitInfo());
+      promises.push(this.problem.resetSubmissionCount());
 
       if (!newSubmission) {
-        this.problem.updateStatistics(this.user_id);
+        promises.push(this.problem.updateStatistics(this.user_id));
       }
+
+      await Promise.all(promises);
     } else if (this.type === 1) {
       let contest = await Contest.findById(this.type_info);
       await contest.newSubmission(this);

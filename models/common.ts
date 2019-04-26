@@ -173,12 +173,15 @@ export default class Model extends TypeORM.BaseEntity {
     result.meta.top = result.data[0].id;
     result.meta.bottom = result.data[result.data.length - 1].id;
 
-    result.meta.hasPrevPage = !!(await queryBuilderHasPrev.andWhere(`id ${idOrder === PaginationIDOrder.DESC ? '>' : '<'} :id`, {
-                                                            id: result.meta.top
-                                                          }).take(1).getOne());
-    result.meta.hasNextPage = !!(await queryBuilderHasNext.andWhere(`id ${idOrder === PaginationIDOrder.DESC ? '<' : '>'} :id`, {
-                                                            id: result.meta.bottom
-                                                          }).take(1).getOne());
+    // Run two queries in parallel.
+    await Promise.all(([
+      async () => result.meta.hasPrevPage = !!(await queryBuilderHasPrev.andWhere(`id ${idOrder === PaginationIDOrder.DESC ? '>' : '<'} :id`, {
+                                                                          id: result.meta.top
+                                                                        }).take(1).getOne()),
+      async () => result.meta.hasNextPage = !!(await queryBuilderHasNext.andWhere(`id ${idOrder === PaginationIDOrder.DESC ? '<' : '>'} :id`, {
+                                                                          id: result.meta.bottom
+                                                                        }).take(1).getOne())
+    ]).map(f => f()));
 
     return result;
   }
