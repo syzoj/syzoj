@@ -255,7 +255,7 @@ module.exports = {
     return md5.digest('hex');
   },
   isValidUsername(s) {
-    return /^[a-zA-Z0-9\-\_]+$/.test(s);
+    return RegExp(syzoj.config.username_regex).test(s);
   },
   locks: [],
   lock(key, cb) {
