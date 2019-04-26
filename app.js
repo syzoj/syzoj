@@ -16,6 +16,13 @@ require('reflect-metadata');
 
 global.Promise = require('bluebird');
 
+// Disable 'Warning: a promise was created in a handler at ...'
+Promise.config({
+  warnings: {
+    wForgottenReturn: false
+  }
+});
+
 global.syzoj = {
   rootDir: __dirname,
   config: require('object-assign-deep')({}, require('./config-example.json'), require(options.config)),
