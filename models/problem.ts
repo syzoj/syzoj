@@ -9,7 +9,7 @@ import JudgeState from "./judge_state";
 import Contest from "./contest";
 import ProblemTag from "./problem_tag";
 import ProblemTagMap from "./problem_tag_map";
-import SubmissionStatictics, { StatisticsType } from "./submission_statistics";
+import SubmissionStatistics, { StatisticsType } from "./submission_statistics";
 
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -364,9 +364,9 @@ export default class Problem extends Model {
           type: type as StatisticsType
         };
 
-        let record = await SubmissionStatictics.findOne(baseColumns);
+        let record = await SubmissionStatistics.findOne(baseColumns);
         if (!record) {
-          record = SubmissionStatictics.create(baseColumns);
+          record = SubmissionStatistics.create(baseColumns);
         }
 
         record.key = resultRow[column];
@@ -378,7 +378,7 @@ export default class Problem extends Model {
   }
 
   async countStatistics(type) {
-    return await SubmissionStatictics.count({
+    return await SubmissionStatistics.count({
       problem_id: this.id,
       type: type
     });
@@ -396,7 +396,7 @@ export default class Problem extends Model {
     };
 
     const order = statisticsTypes[type][1];
-    const ids = (await SubmissionStatictics.queryPage(paginate, {
+    const ids = (await SubmissionStatistics.queryPage(paginate, {
       problem_id: this.id,
       type: type
     }, {
@@ -514,7 +514,7 @@ export default class Problem extends Model {
     await entityManager.query('UPDATE `judge_state`           SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
     await entityManager.query('UPDATE `problem_tag_map`       SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
     await entityManager.query('UPDATE `article`               SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
-    await entityManager.query('UPDATE `submission_statictics` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
+    await entityManager.query('UPDATE `submission_statistics` SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
 
     let contests = await Contest.find();
     for (let contest of contests) {
@@ -584,7 +584,7 @@ export default class Problem extends Model {
     await entityManager.query('DELETE FROM `judge_state`           WHERE `problem_id` = ' + this.id);
     await entityManager.query('DELETE FROM `problem_tag_map`       WHERE `problem_id` = ' + this.id);
     await entityManager.query('DELETE FROM `article`               WHERE `problem_id` = ' + this.id);
-    await entityManager.query('DELETE FROM `submission_statictics` WHERE `problem_id` = ' + this.id);
+    await entityManager.query('DELETE FROM `submission_statistics` WHERE `problem_id` = ' + this.id);
 
     await this.destroy();
   }
