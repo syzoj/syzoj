@@ -121,5 +121,6 @@
     "type": "like-google-fonts",
     "url": "https://fonts.loli.net"
   },
-  "no_cdn": false
+  "no_cdn": false,
+  "username_regex": "^[a-zA-Z0-9\\-\\_]+$"
 }
