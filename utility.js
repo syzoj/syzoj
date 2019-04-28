@@ -245,7 +245,7 @@ module.exports = {
       }
     };
   },
-  paginateLargeData(currPageTop, currPageBottom, perPage) {
+  paginateFast(currPageTop, currPageBottom, perPage) {
     function parseIntOrNull(x) {
       if (typeof x === 'string') x = parseInt(x);
       if (typeof x !== 'number' || isNaN(x)) return null;

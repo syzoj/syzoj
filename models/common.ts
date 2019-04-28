@@ -136,11 +136,11 @@ export default class Model extends TypeORM.BaseEntity {
     return queryBuilder.getMany();
   }
 
-  static async queryPageWithLargeData<T extends TypeORM.BaseEntity>(this: TypeORM.ObjectType<T>,
-                                                                    queryBuilder: TypeORM.SelectQueryBuilder<T>,
-                                                                    { currPageTop, currPageBottom, perPage },
-                                                                    idOrder: PaginationIDOrder,
-                                                                    pageType: PaginationType) {
+  static async queryPageFast<T extends TypeORM.BaseEntity>(this: TypeORM.ObjectType<T>,
+                                                           queryBuilder: TypeORM.SelectQueryBuilder<T>,
+                                                           { currPageTop, currPageBottom, perPage },
+                                                           idOrder: PaginationIDOrder,
+                                                           pageType: PaginationType) {
     const queryBuilderBak = queryBuilder.clone();
 
     const result = {

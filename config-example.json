@@ -123,5 +123,6 @@
     "type": "like-google-fonts",
     "url": "https://fonts.loli.net"
   },
-  "no_cdn": false
+  "no_cdn": false,
+  "submissions_page_fast_pagination": false
 }

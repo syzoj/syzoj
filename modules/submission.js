@@ -103,11 +103,24 @@ app.get('/submissions', async (req, res) => {
       isFiltered = true;
     }
 
-    const queryResult = await JudgeState.queryPageWithLargeData(query, syzoj.utils.paginateLargeData(
-      req.query.currPageTop, req.query.currPageBottom, syzoj.config.page.judge_state
-    ), -1, parseInt(req.query.page));
+    let judge_state, paginate;
 
-    const judge_state = queryResult.data;
+    if (syzoj.config.submissions_page_fast_pagination) {
+      const queryResult = await JudgeState.queryPageFast(query, syzoj.utils.paginateFast(
+        req.query.currPageTop, req.query.currPageBottom, syzoj.config.page.judge_state
+      ), -1, parseInt(req.query.page));
+
+      judge_state = queryResult.data;
+      paginate = queryResult.meta;
+    } else {
+      paginate = syzoj.utils.paginate(
+        await JudgeState.countQuery(query),
+        req.query.page,
+        syzoj.config.page.judge_state
+      );
+      judge_state = await JudgeState.queryPage(paginate, query, { id: "DESC" }, true);
+    }
+
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
       if (obj.problem.type !== 'submit-answer') obj.code_length = Buffer.from(obj.code).length;
@@ -124,11 +137,12 @@ app.get('/submissions', async (req, res) => {
         result: getRoughResult(x, displayConfig, true),
         running: false,
       })),
-      paginate: queryResult.meta,
+      paginate: paginate,
       pushType: 'rough',
       form: req.query,
       displayConfig: displayConfig,
-      isFiltered: isFiltered
+      isFiltered: isFiltered,
+      fast_pagination: syzoj.config.submissions_page_fast_pagination
     });
   } catch (e) {
     syzoj.log(e);
