@@ -536,6 +536,7 @@ export default class Problem extends Model {
 
     let oldTestdataDir = this.getTestdataPath(), oldTestdataZip = this.getTestdataArchivePath();
 
+    const oldID = this.id;
     this.id = id;
 
     // Move testdata
@@ -549,6 +550,9 @@ export default class Problem extends Model {
     }
 
     await this.save();
+
+    await Problem.deleteFromCache(oldID);
+    await problemTagCache.del(oldID);
   }
 
   async delete() {

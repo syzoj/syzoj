@@ -77,8 +77,12 @@ export default class Model extends TypeORM.BaseEntity {
   async destroy() {
     const id = (this as any).id;
     await TypeORM.getManager().remove(this);
-    if ((this.constructor as typeof Model).cache) {
-      cacheSet(this.constructor.name, id, null);
+    await (this.constructor as typeof Model).deleteFromCache(id);
+  }
+
+  static async deleteFromCache(id) {
+    if (this.cache) {
+      cacheSet(this.name, id, null);
     }
   }
 
