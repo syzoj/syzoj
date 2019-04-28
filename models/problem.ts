@@ -478,8 +478,6 @@ export default class Problem extends Model {
   }
 
   async setTags(newTagIDs) {
-    problemTagCache.set(this.id, newTagIDs);
-
     let oldTagIDs = (await this.getTags()).map(x => x.id);
 
     let delTagIDs = oldTagIDs.filter(x => !newTagIDs.includes(x));
@@ -504,6 +502,8 @@ export default class Problem extends Model {
 
       await map.save();
     }
+
+    problemTagCache.set(this.id, newTagIDs);
   }
 
   async changeID(id) {
