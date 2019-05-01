@@ -124,5 +124,6 @@
     "url": "https://fonts.loli.net"
   },
   "no_cdn": false,
-  "submissions_page_fast_pagination": false
+  "submissions_page_fast_pagination": false,
+  "username_regex": "^[a-zA-Z0-9\\-\\_]+$"
 }

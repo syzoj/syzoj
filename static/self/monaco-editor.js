@@ -584,10 +584,16 @@ require(['vs/editor/editor.main'], function () {
         });
       }
 
+      function autoLayout(editor) {
+        window.addEventListener('resize', function () {
+          editor.layout();
+        });
+      }
+
       $.getScript(window.pathSelfLib + "monaco-editor-tomorrow.js", function () {
         window.createCodeEditor = function (editorElement, langauge, content) {
           editorElement.innerHTML = '';
-          return monaco.editor.create(editorElement, {
+          var editor = monaco.editor.create(editorElement, {
             value: content,
             language: langauge,
             multicursorModifier: 'ctrlCmd',
@@ -608,6 +614,9 @@ require(['vs/editor/editor.main'], function () {
             hideCursorInOverviewRuler: true,
             contextmenu: false
           });
+
+          autoLayout(editor);
+          return editor;
         };
 
         window.createMarkdownEditor = function (wrapperElement, content, input) {
@@ -652,6 +661,8 @@ require(['vs/editor/editor.main'], function () {
           input.form.addEventListener('submit', function () {
             input.value = editor.getValue();
           });
+
+          autoLayout(editor);
 
           return editor;
         };

@@ -35,16 +35,16 @@ module.exports = async (code, lang) => {
     }
 
     await new Promise((resolve, reject) => {
-      let exit = code => {
-        if (code === 0) resolve();
-        else reject(code);
+      let exit = () => {
+        if (process.exitCode === 0) resolve();
+        else reject(process.exitCode);
       }
 
-      if (process.exitCode !== null) exit(process.exitCode);
-      else process.on('close', exit);
+      if (process.exitCode !== null) exit();
+      else process.on('close', () => exit());
     });
   } catch (e) {
-    console.log(e.stack);
+    console.log(e);
     result = null;
   }
 
