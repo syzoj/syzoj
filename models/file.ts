@@ -1,31 +1,24 @@
-let Sequelize = require('sequelize');
-let db = syzoj.db;
+import * as TypeORM from "typeorm";
+import Model from "./common";
 
-let model = db.define('file', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  type: { type: Sequelize.STRING(80) },
-  md5: { type: Sequelize.STRING(80), unique: true }
-}, {
-  timestamps: false,
-  tableName: 'file',
-  indexes: [
-    {
-      fields: ['type'],
-    },
-    {
-      fields: ['md5'],
-    }
-  ]
-});
+import * as fs from "fs-extra";
 
-let Model = require('./common');
-class File extends Model {
-  static create(val) {
-    return File.fromRecord(File.model.build(Object.assign({
-      type: '',
-      md5: ''
-    }, val)));
-  }
+declare var syzoj, ErrorMessage: any;
+
+@TypeORM.Entity()
+export default class File extends Model {
+  @TypeORM.PrimaryGeneratedColumn()
+  id: number;
+
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "varchar", length: 80 })
+  type: string;
+
+  @TypeORM.Index({ unique: true })
+  @TypeORM.Column({ nullable: true, type: "varchar", length: 80 })
+  md5: string;
+
+  unzipSize?: number;
 
   getPath() {
     return File.resolvePath(this.type, this.md5);
@@ -54,24 +47,12 @@ class File extends Model {
   }
 
   static async upload(path, type, noLimit) {
-    let fs = Promise.promisifyAll(require('fs-extra'));
-
-    let buf = await fs.readFileAsync(path);
+    let buf = await fs.readFile(path);
 
     if (!noLimit && buf.length > syzoj.config.limit.data_size) throw new ErrorMessage('数据包太大。');
 
-    try {
-      let p7zip = new (require('node-7z'));
-      this.unzipSize = 0;
-      await p7zip.list(path).progress(files => {
-        for (let file of files) this.unzipSize += file.size;
-      });
-    } catch (e) {
-      this.unzipSize = null;
-    }
-
     let key = syzoj.utils.md5(buf);
-    await fs.moveAsync(path, File.resolvePath(type, key), { overwrite: true });
+    await fs.move(path, File.resolvePath(type, key), { overwrite: true });
 
     let file = await File.findOne({ where: { md5: key } });
     if (!file) {
@@ -101,10 +82,4 @@ class File extends Model {
     if (this.unzipSize === null) throw new ErrorMessage('无效的 ZIP 文件。');
     else return this.unzipSize;
   }
-
-  getModel() { return model; }
 }
-
-File.model = model;
-
-module.exports = File;

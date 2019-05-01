@@ -12,17 +12,19 @@ app.get('/discussion/:type?', async (req, res) => {
 
     let where;
     if (in_problems) {
-      where = { problem_id: { $not: null } };
+      where = { problem_id: TypeORM.Not(TypeORM.IsNull()) };
     } else {
-      where = { problem_id: { $eq: null } };
+      where = { problem_id: null };
     }
-    let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
-    let articles = await Article.query(paginate, where, [['sort_time', 'desc']]);
+    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.discussion);
+    let articles = await Article.queryPage(paginate, where, {
+      sort_time: 'DESC'
+    });
 
     for (let article of articles) {
       await article.loadRelationships();
       if (in_problems) {
-        article.problem = await Problem.fromID(article.problem_id);
+        article.problem = await Problem.findById(article.problem_id);
       }
     }
 
@@ -43,15 +45,17 @@ app.get('/discussion/:type?', async (req, res) => {
 app.get('/discussion/problem/:pid', async (req, res) => {
   try {
     let pid = parseInt(req.params.pid);
-    let problem = await Problem.fromID(pid);
+    let problem = await Problem.findById(pid);
     if (!problem) throw new ErrorMessage('无此题目。');
     if (!await problem.isAllowedUseBy(res.locals.user)) {
       throw new ErrorMessage('您没有权限进行此操作。');
     }
 
     let where = { problem_id: pid };
-    let paginate = syzoj.utils.paginate(await Article.count(where), req.query.page, syzoj.config.page.discussion);
-    let articles = await Article.query(paginate, where, [['sort_time', 'desc']]);
+    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.discussion);
+    let articles = await Article.queryPage(paginate, where, {
+      sort_time: 'DESC'
+    });
 
     for (let article of articles) await article.loadRelationships();
 
@@ -72,7 +76,7 @@ app.get('/discussion/problem/:pid', async (req, res) => {
 app.get('/article/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let article = await Article.fromID(id);
+    let article = await Article.findById(id);
     if (!article) throw new ErrorMessage('无此帖子。');
 
     await article.loadRelationships();
@@ -81,10 +85,12 @@ app.get('/article/:id', async (req, res) => {
     article.content = await syzoj.utils.markdown(article.content);
 
     let where = { article_id: id };
-    let commentsCount = await ArticleComment.count(where);
+    let commentsCount = await ArticleComment.countForPagination(where);
     let paginate = syzoj.utils.paginate(commentsCount, req.query.page, syzoj.config.page.article_comment);
 
-    let comments = await ArticleComment.query(paginate, where, [['public_time', 'desc']]);
+    let comments = await ArticleComment.queryPage(paginate, where, {
+      public_time: 'DESC'
+    });
 
     for (let comment of comments) {
       comment.content = await syzoj.utils.markdown(comment.content);
@@ -94,7 +100,7 @@ app.get('/article/:id', async (req, res) => {
 
     let problem = null;
     if (article.problem_id) {
-      problem = await Problem.fromID(article.problem_id);
+      problem = await Problem.findById(article.problem_id);
       if (!await problem.isAllowedUseBy(res.locals.user)) {
         throw new ErrorMessage('您没有权限进行此操作。');
       }
@@ -120,7 +126,7 @@ app.get('/article/:id/edit', async (req, res) => {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
-    let article = await Article.fromID(id);
+    let article = await Article.findById(id);
 
     if (!article) {
       article = await Article.create();
@@ -146,7 +152,7 @@ app.post('/article/:id/edit', async (req, res) => {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
-    let article = await Article.fromID(id);
+    let article = await Article.findById(id);
 
     let time = syzoj.utils.getCurrentDate();
     if (!article) {
@@ -155,7 +161,7 @@ app.post('/article/:id/edit', async (req, res) => {
       article.public_time = article.sort_time = time;
 
       if (req.query.problem_id) {
-        let problem = await Problem.fromID(req.query.problem_id);
+        let problem = await Problem.findById(req.query.problem_id);
         if (!problem) throw new ErrorMessage('无此题目。');
         article.problem_id = problem.id;
       } else {
@@ -187,13 +193,17 @@ app.post('/article/:id/delete', async (req, res) => {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
-    let article = await Article.fromID(id);
+    let article = await Article.findById(id);
 
     if (!article) {
       throw new ErrorMessage('无此帖子。');
     } else {
       if (!await article.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
+
+    await Promise.all((await ArticleComment.find({
+      article_id: article.id
+    })).map(comment => comment.destroy()))
 
     await article.destroy();
 
@@ -211,7 +221,7 @@ app.post('/article/:id/comment', async (req, res) => {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
-    let article = await Article.fromID(id);
+    let article = await Article.findById(id);
 
     if (!article) {
       throw new ErrorMessage('无此帖子。');
@@ -228,9 +238,7 @@ app.post('/article/:id/comment', async (req, res) => {
 
     await comment.save();
 
-    article.sort_time = syzoj.utils.getCurrentDate();
-    article.comments_num += 1;
-    await article.save();
+    await article.resetReplyCountAndTime();
 
     res.redirect(syzoj.utils.makeUrl(['article', article.id]));
   } catch (e) {
@@ -246,7 +254,7 @@ app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
 
     let id = parseInt(req.params.id);
-    let comment = await ArticleComment.fromID(id);
+    let comment = await ArticleComment.findById(id);
 
     if (!comment) {
       throw new ErrorMessage('无此评论。');
@@ -254,12 +262,11 @@ app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
       if (!await comment.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
 
+    const article = await Article.findById(comment.article_id);
+
     await comment.destroy();
 
-    let article = comment.article;
-    article.comments_num -= 1;
-
-    await article.save();
+    await article.resetReplyCountAndTime();
 
     res.redirect(syzoj.utils.makeUrl(['article', comment.article_id]));
   } catch (e) {

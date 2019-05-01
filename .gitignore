@@ -3,6 +3,7 @@ config.json
 *.db
 .git.*
 package-lock.json
+models-built
 
 # Logs
 logs

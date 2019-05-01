@@ -6,7 +6,9 @@
     "database": "syzoj",
     "username": "syzoj",
     "password": "@DATABASE_PASSWORD@",
-    "host": "127.0.0.1"
+    "host": "127.0.0.1",
+    "migrated_to_typeorm": true,
+    "cache_size": 1000
   },
   "logo": {
     "url": null,
@@ -122,5 +124,6 @@
     "url": "https://fonts.loli.net"
   },
   "no_cdn": false,
+  "submissions_page_fast_pagination": false,
   "username_regex": "^[a-zA-Z0-9\\-\\_]+$"
 }

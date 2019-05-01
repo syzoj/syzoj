@@ -12,8 +12,8 @@ app.get('/ranklist', async (req, res) => {
     if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
-    let paginate = syzoj.utils.paginate(await User.count({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
-    let ranklist = await User.query(paginate, { is_show: true }, [[sort, order]]);
+    let paginate = syzoj.utils.paginate(await User.countForPagination({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
+    let ranklist = await User.queryPage(paginate, { is_show: true }, { [sort]: order.toUpperCase() });
     await ranklist.forEachAsync(async x => x.renderInformation());
 
     res.render('ranklist', {
@@ -76,7 +76,7 @@ app.post('/logout', async (req, res) => {
 app.get('/user/:id', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let user = await User.fromID(id);
+    let user = await User.findById(id);
     if (!user) throw new ErrorMessage('无此用户。');
     user.ac_problems = await user.getACProblems();
     user.articles = await user.getArticles();
@@ -86,7 +86,10 @@ app.get('/user/:id', async (req, res) => {
     await user.renderInformation();
     user.emailVisible = user.public_email || user.allowedEdit;
 
-    const ratingHistoryValues = await RatingHistory.query(null, { user_id: user.id }, [['rating_calculation_id', 'asc']]);
+    const ratingHistoryValues = await RatingHistory.find({
+      where: { user_id: user.id },
+      order: { rating_calculation_id: 'ASC' }
+    });
     const ratingHistories = [{
       contestName: "初始积分",
       value: syzoj.config.default.user.rating,
@@ -95,7 +98,7 @@ app.get('/user/:id', async (req, res) => {
     }];
 
     for (const history of ratingHistoryValues) {
-      const contest = await Contest.fromID((await RatingCalculation.fromID(history.rating_calculation_id)).contest_id);
+      const contest = await Contest.findById((await RatingCalculation.findById(history.rating_calculation_id)).contest_id);
       ratingHistories.push({
         contestName: contest.title,
         value: history.rating_after,
@@ -122,7 +125,7 @@ app.get('/user/:id', async (req, res) => {
 app.get('/user/:id/edit', async (req, res) => {
   try {
     let id = parseInt(req.params.id);
-    let user = await User.fromID(id);
+    let user = await User.findById(id);
     if (!user) throw new ErrorMessage('无此用户。');
 
     let allowedEdit = await user.isAllowedEditBy(res.locals.user);
@@ -156,7 +159,7 @@ app.post('/user/:id/edit', async (req, res) => {
   let user;
   try {
     let id = parseInt(req.params.id);
-    user = await User.fromID(id);
+    user = await User.findById(id);
     if (!user) throw new ErrorMessage('无此用户。');
 
     let allowedEdit = await user.isAllowedEditBy(res.locals.user);
