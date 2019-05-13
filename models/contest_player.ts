@@ -22,7 +22,7 @@ export default class ContestPlayer extends Model {
   @TypeORM.Column({ nullable: true, type: "integer" })
   score: number;
 
-  @TypeORM.Column({ nullable: true, type: "json" })
+  @TypeORM.Column({ default: JSON.stringify({}), type: "json" })
   score_details: object;
 
   @TypeORM.Column({ nullable: true, type: "integer" })
