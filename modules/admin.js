@@ -197,7 +197,7 @@ app.post('/admin/rating/add', async (req, res) => {
     if (!contest) throw new ErrorMessage('无此比赛');
 
     await contest.loadRelationships();
-    const newcalc = await RatingCalculation.create(contest.id);
+    const newcalc = await RatingCalculation.create({ contest_id: contest.id });
     await newcalc.save();
 
     if (!contest.ranklist || contest.ranklist.ranklist.player_num <= 1) {
@@ -218,7 +218,12 @@ app.post('/admin/rating/add', async (req, res) => {
       const user = newRating[i].user;
       user.rating = newRating[i].currentRating;
       await user.save();
-      const newHistory = await RatingHistory.create(newcalc.id, user.id, newRating[i].currentRating, newRating[i].rank);
+      const newHistory = await RatingHistory.create({
+        rating_calculation_id: newcalc.id,
+        user_id: user.id,
+        rating_after: newRating[i].currentRating,
+        rank: newRating[i].rank
+      });
       await newHistory.save();
     }
 
