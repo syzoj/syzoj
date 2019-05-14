@@ -129,6 +129,7 @@ export default class Contest extends Model {
           contest_id: this.id,
           user_id: judge_state.user_id
         });
+        await player.save();
       }
 
       await player.updateScore(judge_state);
