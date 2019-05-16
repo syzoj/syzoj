@@ -637,7 +637,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code_length: size,
         language: null,
         user_id: curUser.id,
-        problem_id: req.params.id,
+        problem_id: id,
         is_public: problem.is_public
       });
     } else {
@@ -658,7 +658,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
         code_length: Buffer.from(code).length,
         language: req.body.language,
         user_id: curUser.id,
-        problem_id: req.params.id,
+        problem_id: id,
         is_public: problem.is_public
       });
     }
