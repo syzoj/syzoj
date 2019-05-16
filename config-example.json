@@ -117,11 +117,11 @@
   "email_jwt_secret": "@EMAIL_JWT_SECRET@",
   "google_analytics": "UA-XXXXXXXX-X",
   "gravatar_url": "https://cdn.v2ex.com/gravatar",
-  "cdnjs_url": "https://cdnjs.loli.net/ajax/libs",
-  "self_cdn_url": "",
+  "cdnjs_url": "built-in",
+  "self_cdn_url": "built-in",
   "google_fonts": {
-    "type": "like-google-fonts",
-    "url": "https://fonts.loli.net"
+    "type": "built-in",
+    "url": ""
   },
   "no_cdn": false,
   "submissions_page_fast_pagination": false,
