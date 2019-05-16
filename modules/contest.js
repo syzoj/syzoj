@@ -397,7 +397,8 @@ app.get('/contest/:id/submissions', async (req, res) => {
       form: req.query,
       displayConfig: displayConfig,
       pushType: pushType,
-      isFiltered: isFiltered
+      isFiltered: isFiltered,
+      fast_pagination: syzoj.config.submissions_page_fast_pagination
     });
   } catch (e) {
     syzoj.log(e);
