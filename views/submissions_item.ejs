@@ -59,27 +59,27 @@ Vue.component('submission-item', {
 
 <script id="submissionItemTemplate" type="text/x-template">
 <tr>
-  <% if (active === 'submissions') { %>
+  <% if (active === 'submissions' || active === 'contest') { %>
   <td><a :href="submissionLink"><b>#{{ data.info.submissionId }}</b></a></td>
   <% } else { %>
   <td><b>#{{ data.info.submissionId }}</b></td>
   <% } %>
   <td ref="problemLabel"><a ref="problemLabelTextFit" style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;" :href="problemLink"><b>#{{ config.inContest ? alpha(data.info.problemId) : data.info.problemId }}.</b> {{ data.info.problemName }}</a></td>
-  <% if (active === 'submissions') { %>
+  <% if (active === 'submissions' || active === 'contest') { %>
   <td><a :href="submissionLink"><b><status-label :status="statusString" :progress="progress"></status-label></b></a></td>
   <% } else { %>
   <td><b><status-label :status="statusString" :progress="progress"></status-label></b></td>
   <% } %>
 
   <template v-if="data.result">
-  <% if (active === 'submissions') { %>
+  <% if (active === 'submissions' || active === 'contest') { %>
   <td v-if="config.showScore"><a :href="submissionLink"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></a></td>
   <% } else { %>
   <td v-if="config.showScore"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></td>
   <% } %>
   <td v-if="config.showUsage">{{ (data.result.time || 0).toString() + ' ms' }}</td>
 
-  <% if (active === 'submissions') { %>
+  <% if (active === 'submissions' || active === 'contest') { %>
   <td v-if="config.showUsage">{{ formatSize(data.result.memory * 1024, 2) }}</td>
   <% } else { %>
   <td v-if="config.showUsage">{{ (data.result.memory || 0).toString() + ' K'}}</td>
@@ -92,7 +92,7 @@ Vue.component('submission-item', {
   </template>
 
   <td v-if="config.showCode">
-    <% if (active === 'submissions') { %>
+    <% if (active === 'submissions' || active === 'contest') { %>
     <span v-if="data.info.language"><a :href="submissionLink"><b>{{ data.info.language }}</b></a> / </span>
     <% } else { %>
     <span v-if="data.info.language"><b>{{ data.info.language }}</b> / </span>
