@@ -369,10 +369,23 @@ app.get('/contest/:id/submissions', async (req, res) => {
     query.andWhere('type = 1')
          .andWhere('type_info = :contest_id', { contest_id });
 
-    let paginate = syzoj.utils.paginate(await JudgeState.countForPagination(query), req.query.page, syzoj.config.page.judge_state);
-    let judge_state = await JudgeState.queryPage(paginate, query, {
-      submit_time: 'DESC'
-    });
+    let judge_state, paginate;
+
+    if (syzoj.config.submissions_page_fast_pagination) {
+      const queryResult = await JudgeState.queryPageFast(query, syzoj.utils.paginateFast(
+        req.query.currPageTop, req.query.currPageBottom, syzoj.config.page.judge_state
+      ), -1, parseInt(req.query.page));
+
+      judge_state = queryResult.data;
+      paginate = queryResult.meta;
+    } else {
+      paginate = syzoj.utils.paginate(
+        await JudgeState.countQuery(query),
+        req.query.page,
+        syzoj.config.page.judge_state
+      );
+      judge_state = await JudgeState.queryPage(paginate, query, { id: "DESC" }, true);
+    }
 
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
@@ -397,7 +410,8 @@ app.get('/contest/:id/submissions', async (req, res) => {
       form: req.query,
       displayConfig: displayConfig,
       pushType: pushType,
-      isFiltered: isFiltered
+      isFiltered: isFiltered,
+      fast_pagination: syzoj.config.submissions_page_fast_pagination
     });
   } catch (e) {
     syzoj.log(e);
