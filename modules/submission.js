@@ -123,7 +123,6 @@ app.get('/submissions', async (req, res) => {
 
     await judge_state.forEachAsync(async obj => {
       await obj.loadRelationships();
-      if (obj.problem.type !== 'submit-answer') obj.code_length = Buffer.from(obj.code).length;
     });
 
     res.render('submissions', {
@@ -174,8 +173,6 @@ app.get('/submission/:id', async (req, res) => {
     await judge.loadRelationships();
 
     if (judge.problem.type !== 'submit-answer') {
-      judge.code_length = Buffer.from(judge.code).length;
-
       let key = syzoj.utils.getFormattedCodeKey(judge.code, judge.language);
       if (key) {
         let formattedCode = await FormattedCode.findOne({
