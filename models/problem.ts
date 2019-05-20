@@ -356,7 +356,10 @@ export default class Problem extends Model {
                                        .getRawMany();
         const resultRow = result[0];
 
-        if (!resultRow || resultRow[column] == null) return;
+        let toDelete = false;
+        if (!resultRow || resultRow[column] == null) {
+          toDelete = true;
+        }
 
         const baseColumns = {
           user_id,
@@ -365,6 +368,15 @@ export default class Problem extends Model {
         };
 
         let record = await SubmissionStatistics.findOne(baseColumns);
+
+        if (toDelete) {
+          if (record) {
+            await record.destroy();
+          }
+
+          return;
+        }
+
         if (!record) {
           record = SubmissionStatistics.create(baseColumns);
         }
@@ -378,6 +390,10 @@ export default class Problem extends Model {
   }
 
   async countStatistics(type) {
+    if (!statisticsTypes[type] || this.type === ProblemType.SubmitAnswer && statisticsCodeOnly.includes(type)) {
+      return null;
+    }
+
     return await SubmissionStatistics.count({
       problem_id: this.id,
       type: type
@@ -385,9 +401,11 @@ export default class Problem extends Model {
   }
 
   async getStatistics(type, paginate) {
-    const entityManager = TypeORM.getManager();
+    if (!statisticsTypes[type] || this.type === ProblemType.SubmitAnswer && statisticsCodeOnly.includes(type)) {
+      return null;
+    }
 
-    let statistics = {
+    const statistics = {
       type: type,
       judge_state: null,
       scoreDistribution: null,
@@ -409,15 +427,14 @@ export default class Problem extends Model {
                                                           .getMany()
                                         : [];
 
-    JudgeState.createQueryBuilder()
-              .select('score')
-              .addSelect('COUNT(*)', 'count')
-              .where('problem_id = :problem_id', { problem_id: this.id })
-              .andWhere('type = 0')
-              .andWhere('pending = false')
-              .groupBy('score')
-              .getRawMany()
-    let a = (await entityManager.query('SELECT `score`, COUNT(*) AS `count` FROM `judge_state` WHERE `problem_id` = __PROBLEM_ID__ AND `type` = 0 AND `pending` = 0 GROUP BY `score`'.replace('__PROBLEM_ID__', this.id.toString())));
+    const a = await JudgeState.createQueryBuilder()
+                              .select('score')
+                              .addSelect('COUNT(*)', 'count')
+                              .where('problem_id = :problem_id', { problem_id: this.id })
+                              .andWhere('type = 0')
+                              .andWhere('pending = false')
+                              .groupBy('score')
+                              .getRawMany();
 
     let scoreCount = [];
     for (let score of a) {

@@ -3,11 +3,11 @@ this.title = '统计';
 let types = {
   fastest: problem.type === 'submit-answer' ? null : '最快',
   slowest: problem.type === 'submit-answer' ? null : '最慢',
-  shortest: problem.type === 'submit-answer' ? null : '最短',
-  longest: problem.type === 'submit-answer' ? null : '最长',
+  shortest: problem.type === 'submit-answer' ? '最小' : '最短',
+  longest: problem.type === 'submit-answer' ? '最大' : '最长',
   earliest: '最早',
-  min: problem.type === 'submit-answer' ? '最小' : '最小内存',
-  max: problem.type === 'submit-answer' ? '最大' : '最大内存'
+  min: problem.type === 'submit-answer' ? null : '最小内存',
+  max: problem.type === 'submit-answer' ? null : '最大内存'
 };
 %>
 <% include header %>

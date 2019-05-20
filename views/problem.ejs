@@ -92,7 +92,7 @@ if (contest) {
             <a class="small ui primary button" href="#submit_code">提交</a>
           <% } %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
-          <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', problem.type === 'submit-answer' ? 'min' : 'fastest']) %>">统计</a>
+          <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', problem.type === 'submit-answer' ? 'shortest' : 'fastest']) %>">统计</a>
           <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata']) %>">测试数据</a>
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>">附加文件</a>
