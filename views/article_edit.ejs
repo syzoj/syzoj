@@ -40,7 +40,7 @@
       <div id="pv-content" class="font-content"></div>
     </div>
     <div style="text-align: center; ">
-    <button type="submit" class="ui labeled submit icon button">
+    <button id="submit_button" type="submit" class="ui disabled labeled submit icon button">
       <i class="icon edit"></i> 提交
     </button>
     </div>
@@ -59,6 +59,8 @@ window.onEditorLoaded(function () {
     var input = document.getElementsByName(name)[0];
     editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
   }
+
+  $('#submit_button').removeClass('disabled');
 });
 
 $(function () {

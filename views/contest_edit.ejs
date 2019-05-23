@@ -89,7 +89,7 @@
                 <label><span style="visibility: hidden; ">　</span></label>
               </div>
             </div>
-            <div style="text-align: center; "><button type="submit" class="ui labeled icon blue button"><i class="ui edit icon"></i>提交</button></div>
+            <div style="text-align: center; "><button id="submit_button" type="submit" class="ui disabled labeled icon blue button"><i class="ui edit icon"></i>提交</button></div>
           </div>
         </form>
 <script>
@@ -105,6 +105,8 @@ window.onEditorLoaded(function () {
     var input = document.getElementsByName(name)[0];
     editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
   }
+
+  $('#submit_button').removeClass('disabled');
 });
 
 $(function () {

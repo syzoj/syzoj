@@ -87,7 +87,7 @@
         </div>
       </div>
       <div style="text-align: center; margin-top: 30px; ">
-        <button type="submit" class="ui blue labeled icon button"><i class="ui icon edit"></i>修改</button>
+        <button id="submit_button" type="submit" class="ui disabled blue labeled icon button"><i class="ui icon edit"></i>修改</button>
         <a href="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>" class="ui labeled icon button"><i class="ui icon angle left"></i>返回</a>
       </div>
       </div>
@@ -114,6 +114,8 @@ window.onEditorLoaded(function () {
     var input = document.getElementsByName(name)[0];
     editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
   }
+
+  $('#submit_button').removeClass('disabled');
 });
 
 function make_md5(tag) {
