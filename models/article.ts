@@ -9,7 +9,7 @@ declare var syzoj: any;
 
 @TypeORM.Entity()
 export default class Article extends Model {
-  static cache = true;
+  static cache = false;
 
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
