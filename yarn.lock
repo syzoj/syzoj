@@ -2881,6 +2881,11 @@ redis-commands@^1.2.0:
   resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.4.0.tgz#52f9cf99153efcce56a8f86af986bd04e988602f"
   integrity sha512-cu8EF+MtkwI4DLIT0x9P8qNTLFhQD4jLfxLR0cCNkeGzs87FN6879JOJwNQR/1zD7aSYNbU0hgsV9zGY71Itvw==
 
+redis-lru@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/redis-lru/-/redis-lru-0.6.0.tgz#2a820a99011fe1a16a7ad2d67980def9d3336c7a"
+  integrity sha512-nDH+EHcUXp+cJdnkq8Hb+99kr82EDmAiFY40Bb02nB00A4N/dUqw3SCIJSgH8SUP2uee9EFijbMlf5WSul22uw==
+
 redis-parser@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/redis-parser/-/redis-parser-2.6.0.tgz#52ed09dacac108f1a631c07e9b69941e7a19504b"

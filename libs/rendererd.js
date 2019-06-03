@@ -19,11 +19,13 @@ const xss = new XSS.FilterXSS({
 });
 
 const Redis = require('redis');
+const RedisLRU = require('redis-lru');
 const util = require('util');
 const redis = Redis.createClient(process.argv[2]);
+const redisLru = RedisLRU(redis, parseInt(process.argv[3]));
 const redisCache = {
-  get: util.promisify(redis.get).bind(redis),
-  set: util.promisify(redis.set).bind(redis)
+  get: redisLru.get.bind(redisLru),
+  set: redisLru.set.bind(redisLru)
 };
 
 async function highlight(code, lang) {
