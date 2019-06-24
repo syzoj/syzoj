@@ -97,7 +97,7 @@ export default class JudgeState extends Model {
 
   @TypeORM.Column({ nullable: true, type: "integer" })
   type_info: number;
-  
+
   @TypeORM.Index()
   @TypeORM.Column({ nullable: true, type: "boolean" })
   is_public: boolean;
@@ -112,6 +112,10 @@ export default class JudgeState extends Model {
     if (!this.problem) {
       if (this.problem_id) this.problem = await Problem.findById(this.problem_id);
     }
+  }
+
+  async saveHook() {
+    if (this.score === null) this.score = 0;
   }
 
   async isAllowedVisitBy(user) {

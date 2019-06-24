@@ -86,7 +86,10 @@ export default class Model extends TypeORM.BaseEntity {
     }
   }
 
+  async saveHook(): Promise<void> {}
+
   async save(): Promise<this> {
+    await this.saveHook();
     await super.save();
     if ((this.constructor as typeof Model).cache) {
       cacheSet(this.constructor.name, (this as any).id, this);
