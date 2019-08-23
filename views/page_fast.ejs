@@ -1,0 +1,23 @@
+<% if (paginate.hasPrevPage || paginate.hasNextPage) { %>
+<%
+const queryParams = Object.assign({}, req.query, {
+  currPageTop: paginate.top,
+  currPageBottom: paginate.bottom
+});
+%>
+<div style="text-align: center; ">
+  <div class="ui pagination menu" style="box-shadow: none; ">
+    <a class="<% if (!paginate.hasPrevPage) { %> disabled<% } %> icon item"
+      <% if (paginate.hasPrevPage) { %>href="<%= syzoj.utils.makeUrl(req, Object.assign({}, queryParams, { page: -1 })) %>"
+      <% } %>id="page_prev">
+      <i class="left chevron icon"></i>
+    </a>
+
+    <a class="<% if (!paginate.hasNextPage) { %> disabled<% } %> icon item"
+      <% if (paginate.hasNextPage) { %>href="<%= syzoj.utils.makeUrl(req, Object.assign({}, queryParams, { page: +1 })) %>"
+      <% } %>id="page_next">
+      <i class="right chevron icon"></i>
+    </a>
+  </div>
+</div>
+<% } %>

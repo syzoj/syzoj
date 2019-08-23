@@ -9,14 +9,14 @@ const RatingHistory = syzoj.model('rating_history');
 let ContestPlayer = syzoj.model('contest_player');
 const calcRating = require('../libs/rating');
 
-let db = syzoj.db;
-
 app.get('/admin/info', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     let allSubmissionsCount = await JudgeState.count();
-    let todaySubmissionsCount = await JudgeState.count({ submit_time: { $gte: syzoj.utils.getCurrentDate(true) } });
+    let todaySubmissionsCount = await JudgeState.count({
+      submit_time: TypeORM.MoreThanOrEqual(syzoj.utils.getCurrentDate(true))
+    });
     let problemsCount = await Problem.count();
     let articlesCount = await Article.count();
     let contestsCount = await Contest.count();
@@ -119,12 +119,12 @@ app.get('/admin/privilege', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
-    let a = await UserPrivilege.query();
+    let a = await UserPrivilege.find();
     let users = {};
     for (let p of a) {
       if (!users[p.user_id]) {
         users[p.user_id] = {
-          user: await User.fromID(p.user_id),
+          user: await User.findById(p.user_id),
           privileges: []
         };
       }
@@ -149,7 +149,7 @@ app.post('/admin/privilege', async (req, res) => {
 
     let data = JSON.parse(req.body.data);
     for (let id in data) {
-      let user = await User.fromID(id);
+      let user = await User.findById(id);
       if (!user) throw new ErrorMessage(`不存在 ID 为 ${id} 的用户。`);
       await user.setPrivileges(data[id]);
     }
@@ -166,9 +166,16 @@ app.post('/admin/privilege', async (req, res) => {
 app.get('/admin/rating', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
-    const contests = await Contest.query(null, {}, [['start_time', 'desc']]);
-    const calcs = await RatingCalculation.query(null, {}, [['id', 'desc']]);
-    const util = require('util');
+    const contests = await Contest.find({
+      order: {
+        start_time: 'DESC'
+      }
+    });
+    const calcs = await RatingCalculation.find({
+      order: {
+        id: 'DESC'
+      }
+    });
     for (const calc of calcs) await calc.loadRelationships();
 
     res.render('admin_rating', {
@@ -186,11 +193,11 @@ app.get('/admin/rating', async (req, res) => {
 app.post('/admin/rating/add', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
-    const contest = await Contest.fromID(req.body.contest);
+    const contest = await Contest.findById(req.body.contest);
     if (!contest) throw new ErrorMessage('无此比赛');
 
     await contest.loadRelationships();
-    const newcalc = await RatingCalculation.create(contest.id);
+    const newcalc = await RatingCalculation.create({ contest_id: contest.id });
     await newcalc.save();
 
     if (!contest.ranklist || contest.ranklist.ranklist.player_num <= 1) {
@@ -199,7 +206,7 @@ app.post('/admin/rating/add', async (req, res) => {
 
     const players = [];
     for (let i = 1; i <= contest.ranklist.ranklist.player_num; i++) {
-      const user = await User.fromID((await ContestPlayer.fromID(contest.ranklist.ranklist[i])).user_id);
+      const user = await User.findById((await ContestPlayer.findById(contest.ranklist.ranklist[i])).user_id);
       players.push({
         user: user,
         rank: i,
@@ -211,7 +218,12 @@ app.post('/admin/rating/add', async (req, res) => {
       const user = newRating[i].user;
       user.rating = newRating[i].currentRating;
       await user.save();
-      const newHistory = await RatingHistory.create(newcalc.id, user.id, newRating[i].currentRating, newRating[i].rank);
+      const newHistory = await RatingHistory.create({
+        rating_calculation_id: newcalc.id,
+        user_id: user.id,
+        rating_after: newRating[i].currentRating,
+        rank: newRating[i].rank
+      });
       await newHistory.save();
     }
 
@@ -227,7 +239,14 @@ app.post('/admin/rating/add', async (req, res) => {
 app.post('/admin/rating/delete', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
-    const calcList = await RatingCalculation.query(null, { id: { $gte: req.body.calc_id } }, [['id', 'desc']]);
+    const calcList = await RatingCalculation.find({
+      where: {
+        id: TypeORM.MoreThanOrEqual(req.body.calc_id)
+      },
+      order: {
+        id: 'DESC'
+      }
+    });
     if (calcList.length === 0) throw new ErrorMessage('ID 不正确');
 
     for (let i = 0; i < calcList.length; i++) {
@@ -277,20 +296,20 @@ app.post('/admin/other', async (req, res) => {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     if (req.body.type === 'reset_count') {
-      const problems = await Problem.query();
+      const problems = await Problem.find();
       for (const p of problems) {
         await p.resetSubmissionCount();
       }
     } else if (req.body.type === 'reset_discussion') {
-      const articles = await Article.query();
+      const articles = await Article.find();
       for (const a of articles) {
         await a.resetReplyCountAndTime();
       }
     } else if (req.body.type === 'reset_codelen') {
-      const submissions = await JudgeState.query();
+      const submissions = await JudgeState.find();
       for (const s of submissions) {
         if (s.type !== 'submit-answer') {
-          s.code_length = s.code.length;
+          s.code_length = Buffer.from(s.code).length;
           await s.save();
         }
       }
@@ -310,60 +329,55 @@ app.post('/admin/rejudge', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
+    let query = JudgeState.createQueryBuilder();
+
     let user = await User.fromName(req.body.submitter || '');
-    let where = {};
-    if (user) where.user_id = user.id;
-    else if (req.body.submitter) where.user_id = -1;
+    if (user) {
+      query.andWhere('user_id = :user_id', { user_id: user.id });
+    } else if (req.body.submitter) {
+      query.andWhere('user_id = :user_id', { user_id: 0 });
+    }
 
     let minID = parseInt(req.body.min_id);
-    if (isNaN(minID)) minID = 0;
+    if (!isNaN(minID)) query.andWhere('id >= :minID', { minID })
     let maxID = parseInt(req.body.max_id);
-    if (isNaN(maxID)) maxID = 2147483647;
-
-    where.id = {
-      $and: {
-        $gte: parseInt(minID),
-        $lte: parseInt(maxID)
-      }
-    };
+    if (!isNaN(maxID)) query.andWhere('id <= :maxID', { maxID })
 
     let minScore = parseInt(req.body.min_score);
-    if (isNaN(minScore)) minScore = 0;
+    if (!isNaN(minScore)) query.andWhere('score >= :minScore', { minScore });
     let maxScore = parseInt(req.body.max_score);
-    if (isNaN(maxScore)) maxScore = 100;
-
-    if (!(minScore === 0 && maxScore === 100)) {
-      where.score = {
-        $and: {
-          $gte: parseInt(minScore),
-          $lte: parseInt(maxScore)
-        }
-      };
-    }
+    if (!isNaN(maxScore)) query.andWhere('score <= :maxScore', { maxScore });
 
     let minTime = syzoj.utils.parseDate(req.body.min_time);
-    if (isNaN(minTime)) minTime = 0;
+    if (!isNaN(minTime)) query.andWhere('submit_time >= :minTime', { minTime: parseInt(minTime) });
     let maxTime = syzoj.utils.parseDate(req.body.max_time);
-    if (isNaN(maxTime)) maxTime = 2147483647;
-
-    where.submit_time = {
-      $and: {
-        $gte: parseInt(minTime),
-        $lte: parseInt(maxTime)
-      }
-    };
+    if (!isNaN(maxTime)) query.andWhere('submit_time <= :maxTime', { maxTime: parseInt(maxTime) });
 
     if (req.body.language) {
-      if (req.body.language === 'submit-answer') where.language = { $or: [{ $eq: '',  }, { $eq: null }] };
-      else if (req.body.language === 'non-submit-answer') where.language = { $not: '' };
-      else where.language = req.body.language;
+      if (req.body.language === 'submit-answer') {
+        query.andWhere(new TypeORM.Brackets(qb => {
+          qb.orWhere('language = :language', { language: '' })
+            .orWhere('language IS NULL');
+        }));
+      } else if (req.body.language === 'non-submit-answer') {
+        query.andWhere('language != :language', { language: '' })
+             .andWhere('language IS NOT NULL');;
+      } else {
+        query.andWhere('language = :language', { language: req.body.language });
+      }
     }
-    if (req.body.status) where.status = { $like: req.body.status + '%' };
-    if (req.body.problem_id) where.problem_id = parseInt(req.body.problem_id) || -1;
 
-    let count = await JudgeState.count(where);
+    if (req.body.status) {
+      query.andWhere('status = :status', { status: req.body.status });
+    }
+
+    if (req.body.problem_id) {
+      query.andWhere('problem_id = :problem_id', { problem_id: parseInt(req.body.problem_id) || 0 })
+    }
+
+    let count = await JudgeState.countQuery(query);
     if (req.body.type === 'rejudge') {
-      let submissions = await JudgeState.query(null, where);
+      let submissions = await JudgeState.queryAll(query);
       for (let submission of submissions) {
         await submission.rejudge();
       }

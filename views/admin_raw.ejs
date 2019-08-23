@@ -19,11 +19,13 @@ window.onEditorLoaded(function () {
   $('form').on('submit', function () {
     input.val(editor.getValue());
   });
+
+  $('#submit_button').removeClass('disabled');
 });
 </script>
 
 <div style="text-align: center; ">
-  <button class="ui blue labeled icon button"><i class="ui edit icon"></i>提交</button>
+  <button id="submit_button" class="ui disabled blue labeled icon button"><i class="ui edit icon"></i>提交</button>
 </div>
 </form>
 <% include admin_footer %>

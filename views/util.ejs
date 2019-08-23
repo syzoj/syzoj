@@ -66,9 +66,13 @@ this.iconHidden = [
   'Skipped'
 ];
 
+this.builtInCdnUrl = 'https://cdn.jsdelivr.net/npm/syzoj-public-cdn@1.0.5';
+
 this.lib = uri => {
   if (useLocalLibs || !syzoj.config.cdnjs_url) {
     return syzoj.utils.makeUrl(['cdnjs', uri]);
+  } else if (syzoj.config.cdnjs_url === 'built-in') {
+    return builtInCdnUrl + '/cdnjs/' + uri;
   } else {
     return syzoj.config.cdnjs_url + '/' + uri;
   }
@@ -77,6 +81,8 @@ this.lib = uri => {
 this.selfLib = uri => {
   if (useLocalLibs || !syzoj.config.self_cdn_url) {
     return syzoj.utils.makeUrl(['self', uri]);
+  } else if (syzoj.config.self_cdn_url === 'built-in') {
+    return builtInCdnUrl + '/self/' + uri;
   } else {
     return syzoj.config.self_cdn_url + '/' + uri;
   }

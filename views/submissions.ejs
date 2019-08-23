@@ -116,7 +116,11 @@
   </div>
   <% } else { %>
   <br>
-  <% include page %>
+  <% if (fast_pagination) { %>
+    <% include page_fast %>
+  <% } else { %>
+    <% include page %>
+  <% } %>
   <% } %>
 </div>
 

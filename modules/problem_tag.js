@@ -5,7 +5,7 @@ app.get('/problems/tag/:id/edit', async (req, res) => {
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem_tag')) throw new ErrorMessage('您没有权限进行此操作。');
 
     let id = parseInt(req.params.id) || 0;
-    let tag = await ProblemTag.fromID(id);
+    let tag = await ProblemTag.findById(id);
 
     if (!tag) {
       tag = await ProblemTag.create();
@@ -28,7 +28,7 @@ app.post('/problems/tag/:id/edit', async (req, res) => {
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem_tag')) throw new ErrorMessage('您没有权限进行此操作。');
 
     let id = parseInt(req.params.id) || 0;
-    let tag = await ProblemTag.fromID(id);
+    let tag = await ProblemTag.findById(id);
 
     if (!tag) {
       tag = await ProblemTag.create();
