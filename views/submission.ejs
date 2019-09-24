@@ -309,52 +309,18 @@ const vueApp = new Vue({
 if (token != null) {
   const loadSocketIO = function () {
     let currentVersion = 0;
-    const socket = io(socketUrl);
-    socket.on('connect', function () {
-      socket.on('start', function () {
-        vueApp.roughData.running = true;
-        console.log("Judge start!");
-        vueApp.detailResult = {};
-      });
-      socket.on('update', function (p) {
-        console.log("Delta: ", p);
-        if (p.from === currentVersion) {
-          currentVersion = p.to;
-          jsondiffpatch.patch(vueApp.detailResult, p.delta);
-          vueApp.detailResult = JSON.parse(JSON.stringify(vueApp.detailResult));// WTF?
-          vueApp.roughData.result = p.roughResult;
-        } else { // Some packets are dropped. Let's reset.
-          socket.close();
-          setTimeout(loadSocketIO, 0);
-        }
-      });
-      socket.on('finish', function (p) {
-        console.log("Judge finished");
-        vueApp.roughData.running = false;
-        vueApp.roughData.result = p.roughResult;
-        vueApp.detailResult = p.result;
-        socket.close();
-      });
-      socket.emit('join', token, function (data) {
-        console.log("join! ", data);
-        if (data && data.ok) {
-          if (data.finished) {
-            vueApp.roughData.result = data.roughResult;
-            if (!data.result) location.reload(true);
-            vueApp.detailResult = data.result;
-            socket.close();
-          } else {
-            if (data.running) {
-              // vueApp.roughData.running = true;
-              vueApp.detailResult = data.current.content;
-              // vueApp.roughData.result = data.roughResult;
-              currentVersion = data.current.version;
-            }
-          }
-        } else {
-          alert("ERROR: " + JSON.stringify(data));
-        }
-      });
+    const ev = new EventSource("/api/submission-progress/" + token);
+    ev.addEventListener('reset', function () {
+      vueApp.roughData.running = true;
+      console.log("Judge start!");
+      vueApp.detailResult = {};
+    });
+    ev.addEventListener('progress', function(ev) {
+      const data = JSON.parse(ev.data);
+      vueApp.detailResult = data.progress;
+    });
+    ev.addEventListener('done', function(ev) {
+      location.reload(true);
     });
   };
   loadSocketIO();
