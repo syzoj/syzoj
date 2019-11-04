@@ -43,7 +43,7 @@
     "fs-extra": "^7.0.1",
     "gravatar": "^1.8.0",
     "javascript-time-ago": "^1.0.30",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^3.13.1",
     "jsdom": "^14.0.0",
     "jsondiffpatch": "0.2.5",
     "jsonwebtoken": "^8.5.1",
