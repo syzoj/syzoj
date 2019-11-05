@@ -1,5 +1,12 @@
 <p align="center"><img src="static/self/syzoj.svg" width="250"></p>
 
+# TODO
+- [ ] 比赛期间可查看自己 submissions 的代码
+- [ ] custom test
+- [ ] submission 默认折叠代码，删除 beautify 的功能
+- [ ] 气球
+- [ ] non-CDN 模式
+
 中文 | [English](README.en.md)
 
 一个用于算法竞赛的在线评测系统。
