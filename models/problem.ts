@@ -152,11 +152,10 @@ export default class Problem extends Model {
 
   async updateTestdata(path, noLimit) {
     await syzoj.utils.lock(['Problem::Testdata', this.id], async () => {
+      let unzipSize = 0, unzipCount = 0;
       let p7zip = new (require('node-7z'));
-
-      let unzipSize = 0, unzipCount;
       await p7zip.list(path).progress(files => {
-        unzipCount = files.length;
+        unzipCount += files.length;
         for (let file of files) unzipSize += file.size;
       });
       if (!noLimit && unzipCount > syzoj.config.limit.testdata_filecount) throw new ErrorMessage('数据包中的文件太多。');
