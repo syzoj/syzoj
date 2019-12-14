@@ -95,34 +95,16 @@
   </div>
   <% } %>
     <% if (article.allowedComment) { %>
-    <% include monaco-editor %>
     <form class="ui reply form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>">
-      <div id="comment" class="editor editor-with-border" style="height: 200px; width: 100%; margin-bottom: 1em; ">
-        <%- this.showLoadingEditor(); %>
+      <div class="field">
+        <textarea name="comment" class="markdown-edit"></textarea>
       </div>
-      <input type="hidden" name="comment">
       <div style="text-align: center; ">
-      <button id="submit_button" type="submit" class="ui disabled labeled submit icon button">
+      <button id="submit_button" type="submit" class="ui labeled submit icon button">
         <i class="icon edit"></i> 回复
       </button>
       </div>
     </form>
-    <script>
-      var editors = {
-        comment: { defaultValue: '' }
-      };
-      
-      window.onEditorLoaded(function () {
-        for (var name in editors) {
-          var editor = editors[name];
-          var editorElement = document.getElementById(name);
-          var input = document.getElementsByName(name)[0];
-          editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
-        }
-
-        $('#submit_button').removeClass('disabled');
-      });
-    </script>      
   <% } %>
 </div>
 <% include footer %>

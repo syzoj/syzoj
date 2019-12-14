@@ -1,6 +1,5 @@
 <% this.title = article.id ? '编辑帖子' : '发表帖子'; %>
 <% include header %>
-<% include monaco-editor %>
 <style type="text/css">
     .am-panel-title{
     font-size: 1.6em;
@@ -21,9 +20,7 @@
         <div class="field">
           <label for="content">内容</label>
         </div>
-      </div>
-      <div class="editor editor-with-border" id="content" style="width: 100%; height: 400px; margin-bottom: 1em; ">
-        <%- this.showLoadingEditor(); %>
+        <textarea rows="15" id="content" name="content" class="markdown-edit"><%= article.content %></textarea>
       </div>
       <input type="hidden" name="content">
 
@@ -40,7 +37,7 @@
       <div id="pv-content" class="font-content"></div>
     </div>
     <div style="text-align: center; ">
-    <button id="submit_button" type="submit" class="ui disabled labeled submit icon button">
+    <button id="submit_button" type="submit" class="ui labeled submit icon button">
       <i class="icon edit"></i> 提交
     </button>
     </div>
@@ -48,31 +45,16 @@
 </div>
 
 <script type="text/javascript">
-var editors = {
-  content: { defaultValue: <%- serializejs(article.content) %> },
-};
-
-window.onEditorLoaded(function () {
-  for (var name in editors) {
-    var editor = editors[name];
-    var editorElement = document.getElementById(name);
-    var input = document.getElementsByName(name)[0];
-    editor.editor = window.createMarkdownEditor(editorElement, editor.defaultValue, input);
-  }
-
-  $('#submit_button').removeClass('disabled');
-});
-
 $(function () {
     function render(output, input) {
-      $.post('/api/markdown', { s: editors[input].editor.getValue() }, function (s) {
+      $.post('/api/markdown', { s: input.val() }, function (s) {
         output.html(s);
       });
     }
     $("#preview_tab").click(function () {
       $("#pv-title").text($("#title").val());
       $("#pv-content").text('Loading...');
-      render($("#pv-content"), "content");
+      render($("#pv-content"), $("#content"));
     });
     $('.tabular.menu .item').tab();
 })
