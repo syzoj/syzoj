@@ -735,7 +735,7 @@ app.post('/problem/:id/delete', async (req, res) => {
     let problem = await Problem.findById(id);
     if (!problem) throw new ErrorMessage('无此题目。');
 
-    if (!problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await problem.delete();
 
