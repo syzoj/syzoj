@@ -249,7 +249,7 @@ if (contest) {
                 </div>
                 <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 13px) !important; ">
                   <% for (let i = 0; i < cases.length; i++) { %>
-                    <div id="editor-<%= i %>" class="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; overflow: hidden; <%= i === 0 ? '' : 'visibility: hidden; ' %>">
+                    <div id="editor-<%= i %>" class="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; overflow: hidden; <%= i === 0 ? '' : 'visibility: hidden; ' %>" contenteditable>
                       <%- this.showLoadingEditor(); %>
                     </div>
                   <% } %>
@@ -315,7 +315,7 @@ if (contest) {
                   </div>
                 </div>
                 <div class="twelve wide stretched column" style="position: relative; padding-left: 0; margin-left: calc(-1rem - 1px); width: calc(75% + 1rem + 13px) !important; ">
-                  <div id="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; overflow: hidden; " class="editor">
+                  <div id="editor" style="position: absolute; width: 100%; height: calc(100% - 28px); border: 1px solid #D4D4D5; overflow: hidden; " class="editor" contenteditable>
                     <%- this.showLoadingEditor(); %>
                   </div>
                 </div>
