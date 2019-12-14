@@ -1,6 +1,6 @@
 require.config({
   paths: {
-    vs: window.pathLib + "monaco-editor/0.16.2/min/vs",
+    vs: window.pathLib + "monaco-editor/0.18.1/min/vs",
     tokenizer: window.pathSelfLib + 'vendor/tokenizer'
   }
 });
