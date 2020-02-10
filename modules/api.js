@@ -271,6 +271,7 @@ app.post('/api/markdown', async (req, res) => {
 });
 
 app.get('/static/uploads/answer/:md5', async (req, res) => {
+  if (req.params.md5.indexOf('/') !== -1) return res.status(500).send('Not Found');
   try {
     res.sendFile(File.resolvePath('answer', req.params.md5));
   } catch (e) {
