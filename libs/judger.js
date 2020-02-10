@@ -224,16 +224,18 @@ module.exports.judge = async function (judge_state, problem, priority) {
 
   const content = {
     taskId: judge_state.task_id,
+    judgeId: judge_state.id,
     testData: problem.id.toString(),
     type: type,
     priority: priority,
+    realPriority: priority - parseInt(judge_state.id) / 10000000,
     param: param
   };
 
   judgeQueue.push({
     content: content,
     extraData: extraData
-  }, priority);
+  }, content.realPriority);
 
   winston.warn(`Judge task ${content.taskId} enqueued.`);
 }
