@@ -2,7 +2,7 @@ let User = syzoj.model('user');
 let Article = syzoj.model('article');
 let Contest = syzoj.model('contest');
 let Problem = syzoj.model('problem');
-let Divine = require('syzoj-divine');
+let Divine = syzoj.lib('divine');
 let TimeAgo = require('javascript-time-ago');
 let zh = require('../libs/timeago');
 TimeAgo.locale(zh);
