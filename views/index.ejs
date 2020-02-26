@@ -80,7 +80,7 @@
         <div class="ui bottom attached center aligned segment">
           <div class="ui active centered inline loader" id="hitokoto-loader"></div>
           <script>
-          $.get('https://sslapi.hitokoto.cn/?c=a', function (data) {
+          $.get('https://v1.hitokoto.cn/?c=a', function (data) {
             if (typeof data === 'string') data = JSON.parse(data);
             $('#hitokoto-loader').removeClass('active');
             $('#hitokoto-content').css('display', '').text(data.hitokoto);
