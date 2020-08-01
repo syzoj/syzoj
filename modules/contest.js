@@ -35,10 +35,11 @@ app.get('/contests', async (req, res) => {
 
 app.get('/contest/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
-
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.findById(contest_id);
+    const curUser = res.locals.user;
+    if (!res.locals.user || (!res.locals.user.is_admin && !await contest.isSupervisior(curUser)) ) throw new ErrorMessage('您没有权限进行此操作。');
+
     if (!contest) {
       contest = await Contest.create();
       contest.id = 0;
@@ -65,10 +66,11 @@ app.get('/contest/:id/edit', async (req, res) => {
 
 app.post('/contest/:id/edit', async (req, res) => {
   try {
-    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
-
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.findById(contest_id);
+    const curUser = res.locals.user;
+    if (!res.locals.user || (!res.locals.user.is_admin && !await contest.isSupervisior(curUser)) ) throw new ErrorMessage('您没有权限进行此操作。');
+
     let ranklist = null;
     if (!contest) {
       contest = await Contest.create();
@@ -124,7 +126,7 @@ app.get('/contest/:id', async (req, res) => {
 
     let contest = await Contest.findById(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+    if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !await contest.isSupervisior(curUser)))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
     const isSupervisior = await contest.isSupervisior(curUser);
     contest.running = contest.isRunning();
@@ -228,7 +230,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     const curUser = res.locals.user;
 
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+    if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !await contest.isSupervisior(curUser)))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
     if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
     contest.isEnded(),
     await contest.isSupervisior(curUser)].every(x => !x))
@@ -299,7 +301,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
   try {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.findById(contest_id);
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+    if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !await contest.isSupervisior(curUser)))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
     if (contest.isEnded()) {
       res.redirect(syzoj.utils.makeUrl(['submissions'], { contest: contest_id }));
