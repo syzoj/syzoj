@@ -47,6 +47,12 @@
                   <label for="type-acm">ICPC</label>
                 </div>
               </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-bioi" value="bioi"<% if (contest.type === 'bioi') { %> checked="checked"<% } %>>
+                  <label for="type-acm">BIOI</label>
+                </div>
+              </div>
             </div>
             <div class="field">
                 <label>排行参数（格式：<code>{ "题目 ID": 分值倍数 }</code>）</label>
