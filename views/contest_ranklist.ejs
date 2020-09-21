@@ -25,7 +25,7 @@
                   </a>
                 </th>
                 <% } %>
-                <% if (contest.type === 'noi' || contest.type === 'ioi') { %>
+                <% if (contest.type === 'noi' || contest.type === 'ioi' || contest.type === 'bioi') { %>
                   <th>总分</th>
                 <% } %>
             </tr>
@@ -54,7 +54,7 @@
             %>
             <tr>
                 <%
-                  if (contest.type === 'noi' || contest.type === 'ioi') {
+                  if (contest.type === 'noi' || contest.type === 'ioi' || contest.type =='bioi') {
                     if (i === 1 || item.player.score !== lastItem.player.score) rank = i;
                   } else if (contest.type === 'acm') {
                     for (let problem of problems) {
@@ -121,7 +121,7 @@
                         <% } %>
                       </a>
                     </td>
-                  <% } else if (contest.type === 'noi' || contest.type === 'ioi') { %>
+                  <% } else if (contest.type === 'noi' || contest.type === 'ioi' || contest.type =='bioi') { %>
                       <a href="<%= syzoj.utils.makeUrl(['submission', item.player.score_details[problem.id].judge_id]) %>">
                         <% if (item.player.score_details[problem.id].weighted_score != null) { %>
                           <span class="score score_<%= parseInt((item.player.score_details[problem.id].score / 10) || 0) %>">
@@ -140,7 +140,7 @@
                     </td>
                   <% } %>
                 <% } %>
-                <% if (contest.type === 'noi' || contest.type === 'ioi') { %>
+                <% if (contest.type === 'noi' || contest.type === 'ioi' || contest.type =='bioi') { %>
                   <td>
                     <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
                       <%= item.player.score %>
