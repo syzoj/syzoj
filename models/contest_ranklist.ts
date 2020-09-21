@@ -38,7 +38,7 @@ export default class ContestRanklist extends Model {
       players.push(player);
     }
 
-    if (contest.type === 'noi' || contest.type === 'ioi') {
+    if (contest.type === 'noi' || contest.type === 'ioi' || contest.type === 'bioi') {
       for (let player of players) {
         player.latest = 0;
         player.score = 0;
