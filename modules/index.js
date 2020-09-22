@@ -67,3 +67,14 @@ app.get('/help', async (req, res) => {
     });
   }
 });
+
+app.get('/calendar', async (req, res) => {
+  try {
+    res.render('calendar');
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
