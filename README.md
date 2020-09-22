@@ -6,6 +6,8 @@
 
 本项目继承自 [@louchenyao](https://github.com/louchenyao) 的 [SYZOJ](https://github.com/Zhengzhou-11-Highschool/syzoj)，目前由 [LibreOJ](https://loj.ac) 维护。
 
+wfyzoj 继承自 syzoj，但在其基础上加入了更多功能（如支持赛时看榜的 BIOI 赛制）。
+
 # 部署
 见本项目 Wiki 中的 [部署指南](https://github.com/syzoj/syzoj/wiki/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97)。
 
