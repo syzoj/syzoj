@@ -1,0 +1,66 @@
+<% this.title = '比赛日历' %>
+<% include header %>
+<h1 class="ui center aligned header">比赛日历</h1>
+<div id="calendarContainer"></div>
+<div id="organizerContainer"></div>
+<link href="https://cdn.jsdelivr.net/gh/wfyzoj/race_calendar/calendarorganizer.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/wfyzoj/race_calendar/calendarorganizer.min.js"></script>
+<script>
+var calendar = new Calendar("calendarContainer", "medium",
+                    [ "Monday", 3 ],
+                    [ "#f3f4f5", "#2185d0", "#000000", "#ffffff" ],
+                    {
+                        days: [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",  "Saturday" ],
+                        months: [ "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月" ],
+                        indicator: true,
+                        indicator_type: 1,
+                        indicator_pos: "bottom",
+                        placeholder: "<span>今天没有比赛哦</span>"
+                    });
+var data = {
+    2020: {
+        9: {
+            24: [
+                {
+                    startTime: "22:35",
+                    endTime: "次日 0:35",
+                    text: "Codeforces Round #672(Div2)"
+                }
+            ],
+            25: [
+                {
+                    startTime: "19:00",
+                    endTime: "22:30",
+                    text: "zroi2020 提高10连 Day5"
+                }
+            ],
+            26: [
+                {
+                    startTime: "18:00",
+                    endTime: "22:30",
+                    text: "ACL Contest 2"
+                },
+                {
+                    startTime: "20:00",
+                    endTime: "?",
+                    text: "ACL Contest 2"
+                }
+            ],
+            27: [
+                {
+                    startTime: "8:30",
+                    endTime: "12:00",
+                    text: "zroi2020 普转提7连 Day4"
+                },
+                {
+                    startTime: "23:05",
+                    endTime: "次日 1:05",
+                    text: "Codeforces Round #673(Div1+2)"
+                }
+            ]
+        }
+}
+};
+var organizer = new Organizer("organizerContainer", calendar, data);
+</script>
+<% include footer %>
