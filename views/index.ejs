@@ -29,7 +29,8 @@
             <tr>
 	            <th style="width: 50px; ">#</th>
 	            <th style="width: 170px; ">用户名</th>
-	            <th>个性签名</th>
+              <th>个性签名</th>
+              <th style="width: 100px; "><%- createSortableTitle('rating', '积分', false) %></th>
             </tr>
           </thead>
           <script data-cfasync="false">
@@ -68,6 +69,7 @@
                       })();
                       </script>
                     </td>
+                    <td><%= user.rating %></td>
                 </tr>
              <%
             } %>
