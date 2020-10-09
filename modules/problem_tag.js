@@ -2,6 +2,7 @@ let ProblemTag = syzoj.model('problem_tag');
 
 app.get('/problems/tag/:id/edit', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem_tag')) throw new ErrorMessage('您没有权限进行此操作。');
 
     let id = parseInt(req.params.id) || 0;
@@ -25,6 +26,7 @@ app.get('/problems/tag/:id/edit', async (req, res) => {
 
 app.post('/problems/tag/:id/edit', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem_tag')) throw new ErrorMessage('您没有权限进行此操作。');
 
     let id = parseInt(req.params.id) || 0;

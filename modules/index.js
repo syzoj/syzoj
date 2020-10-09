@@ -10,6 +10,7 @@ const timeAgo = new TimeAgo('zh-CN');
 
 app.get('/', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let ranklist = await User.queryRange([1, syzoj.config.page.ranklist_index], { is_show: true }, {
       [syzoj.config.sorting.ranklist.field]: syzoj.config.sorting.ranklist.order
     });
@@ -59,6 +60,7 @@ app.get('/', async (req, res) => {
 
 app.get('/help', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     res.render('help');
   } catch (e) {
     syzoj.log(e);
@@ -70,6 +72,7 @@ app.get('/help', async (req, res) => {
 
 app.get('/calendar', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     res.render('calendar');
   } catch (e) {
     syzoj.log(e);

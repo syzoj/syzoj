@@ -7,6 +7,7 @@ const ContestPlayer = syzoj.model('contest_player');
 // Ranklist
 app.get('/ranklist', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
     const order = req.query.order || syzoj.config.sorting.ranklist.order;
     if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
@@ -32,6 +33,7 @@ app.get('/ranklist', async (req, res) => {
 
 app.get('/find_user', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let user = await User.fromName(req.query.nickname);
     if (!user) throw new ErrorMessage('无此用户。');
     res.redirect(syzoj.utils.makeUrl(['user', user.id]));
@@ -56,6 +58,7 @@ app.get('/login', async (req, res) => {
 
 // Sign up
 app.get('/sign_up', async (req, res) => {
+  if (!syzoj.config.open_sign_up) throw new ErrorMessage('很遗憾，管理员暂未开启注册权限。请联系 OJ 管理员 @Tianpeng2333 开启注册权限。');
   if (res.locals.user) {
     res.render('error', {
       err: new ErrorMessage('您已经登录了，请先注销。', { '注销': syzoj.utils.makeUrl(['logout'], { 'url': req.originalUrl }) })
@@ -75,6 +78,7 @@ app.post('/logout', async (req, res) => {
 // User page
 app.get('/user/:id', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let id = parseInt(req.params.id);
     let user = await User.findById(id);
     if (!user) throw new ErrorMessage('无此用户。');
@@ -124,6 +128,7 @@ app.get('/user/:id', async (req, res) => {
 
 app.get('/user/:id/edit', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let id = parseInt(req.params.id);
     let user = await User.findById(id);
     if (!user) throw new ErrorMessage('无此用户。');
@@ -158,6 +163,7 @@ app.get('/forget', async (req, res) => {
 app.post('/user/:id/edit', async (req, res) => {
   let user;
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let id = parseInt(req.params.id);
     user = await User.findById(id);
     if (!user) throw new ErrorMessage('无此用户。');
