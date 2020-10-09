@@ -61,6 +61,7 @@ app.get('/sign_up', async (req, res) => {
   if (!syzoj.config.open_sign_up){
     res.render('error',{
     err: new ErrorMessage('很遗憾，管理员暂未开启注册权限。请联系 OJ 管理员 @Tianpeng2333 开启注册权限。')
+    })
   };
   if (res.locals.user) {
     res.render('error', {
