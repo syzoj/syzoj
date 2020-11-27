@@ -15,6 +15,7 @@
     <table class="ui very basic center aligned table">
       <thead>
         <tr>
+          <th>编号</th>
           <th>题单名称</th>
           <th>描述</th>
         </tr>
@@ -26,6 +27,7 @@
           let tag = '';
         %>
         <tr>
+          <td class="font-content">problemset.id</td>
           <td><a href="<%= syzoj.utils.makeUrl(['problemset', problemset.id]) %>"><%= problemset.title %></a></td>
           <td class="font-content"><%- problemset.subtitle %></td>
         </tr>
