@@ -65,7 +65,7 @@ app.post('/problemset/:id/edit', async (req, res) => {
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
         if (!res.locals.user || (!res.locals.user.is_admin && !await res.locals.user.hasPrivilege('manage_problemset'))) throw new ErrorMessage('您没有权限进行此操作。');
 
-        let problemset_id = parseInt(req.params.id) || 0;
+        let problemset_id = parseInt(req.params.id);
         let problemset = await Problemset.findById(problemset_id);
 
         if(!problemset) {
