@@ -64,7 +64,9 @@
     "discussion": 10,
     "article_comment": 10,
     "contest": 10,
+    "problemset": 20,
     "edit_contest_problem_list": 10,
+    "edit_problemset_problem_list": 10,
     "edit_problem_tag_list": 10
   },
   "enabled_languages": [
