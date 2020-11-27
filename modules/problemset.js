@@ -49,7 +49,7 @@ app.get('/problemset/:id/edit', async (req, res) => {
         
         res.render('problemset_edit', {
             problemset: problemset,
-            problems: problems,
+            problems: problems
         });
     } catch (e){
         syzoj.log(e);
@@ -130,7 +130,7 @@ app.get('/problemset/:id', async (req, res) => {
         res.render('problemset',{
             problemset: problemset,
             problems: problems,
-            isSupervisitor: isSupervisitor,
+            isSupervisitor: isSupervisitor
         })  
     } catch (e){
         syzoj.log(e);
