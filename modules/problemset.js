@@ -20,7 +20,7 @@ app.get('/problemsets', async (req, res) => {
 
         await problemsets.forEachAsync(async x => x.subtitle = await syzoj.utils.markdown(x.subtitle));
 
-        req.render('problemsets',{
+        res.render('problemsets',{
             problemsets: problemsets,
             paginate: paginate
         })
