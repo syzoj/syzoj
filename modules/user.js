@@ -59,7 +59,7 @@ app.get('/login', async (req, res) => {
 // Sign up
 app.get('/sign_up', async (req, res) => {
   if (syzoj.config.open_sign_up === false){
-    res.render('error', {err: new ErrorMessage('管理员暂未开放注册权限')});
+    res.render('error', {err: new ErrorMessage('管理员暂未开放注册权限，请尝试登录。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl })})});
   }
   if (res.locals.user) {
     res.render('error', {
