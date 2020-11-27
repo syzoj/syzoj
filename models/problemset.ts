@@ -25,6 +25,10 @@ export default class Problemset extends Model{
     @TypeORM.Column({ nullable: true, type: "boolean" })
     is_public: boolean;
 
+    async delete() {
+      await this.destroy();  
+    }
+
     async isSupervisitor(user){
       return user && (user.is_admin || await user.hasPrivilege('manage_problemset'));
     }
