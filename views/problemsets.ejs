@@ -27,7 +27,7 @@
           let tag = '';
         %>
         <tr>
-          <td class="font-content">problemset.id</td>
+          <td class="font-content"><%-problemset.id%></td>
           <td><a href="<%= syzoj.utils.makeUrl(['problemset', problemset.id]) %>"><%= problemset.title %></a></td>
           <td class="font-content"><%- problemset.subtitle %></td>
         </tr>
