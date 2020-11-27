@@ -12,10 +12,6 @@ app.get('/problemsets', async (req, res) => {
         let where;
         if (res.locals.user && (res.locals.user.is_admin || await res.locals.user.hasPrivilege('manage_problemset'))) where = {}
         else where = { is_public: true };
-
-        const sort = req.query.sort || syzoj.config.sorting.problem.field;
-        const order = req.query.order || syzoj.config.sorting.problem.order;
-
         let paginate = syzoj.utils.paginate(await Problemset.countForPagination(where), req.query.page, syzoj.config.page.problemset);
         let problemsets = await Problemset.queryPage(paginate, where, {
             id: 'ASC'
@@ -26,9 +22,7 @@ app.get('/problemsets', async (req, res) => {
         res.render('problemsets',{
             allowedManageProblemsets: res.locals.user && (res.locals.user.is_admin || await res.locals.user.hasPrivilege('manage_problemset')),
             problemsets: problemsets,
-            paginate: paginate,
-            curSort: sort,
-            curOrder: order === 'asc'
+            paginate: paginate
         })
     } catch(e){
         syzoj.log(e);
@@ -149,11 +143,16 @@ app.get('/problemset/:id', async (req, res) => {
             problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
             problem.judge_state = await problem.getJudgeState(res.locals.user, true);
           });
-        
+
+        const sort = req.query.sort || syzoj.config.sorting.problem.field;
+        const order = req.query.order || syzoj.config.sorting.problem.order;
+  
         res.render('problemset',{
             problemset: problemset,
             problems: problems,
-            isSupervisitor: isSupervisitor
+            isSupervisitor: isSupervisitor,
+            curSort: sort,
+            curOrder: order === 'asc'
         })  
     } catch (e){
         syzoj.log(e);
