@@ -1,8 +1,18 @@
-<% this.title = problemset.id ? '编辑比赛' : '新建比赛' %>
+<% this.title = problemset.id ? '编辑题单' : '新建题单' %>
 <% include header %>
 <div class="padding">
         <form action="<%= syzoj.utils.makeUrl(['problemset', problemset.id, 'edit']) %>" method="post">
           <div class="ui form">
+            <div class="field">
+                  <label for="id">
+                    <% if (problemset.id) { %>
+                      题单编号
+                    <% } else { %>
+                      修改题单编号
+                    <% } %>
+                  </label>
+                  <input type="text" id="id" name="id" placeholder="<% if (problemset.id) { %>留空则自动延伸<% } else { %>留空则不修改<% } %>" value="<%= problemset.id ? problemset.id : '' %>">
+            </div>
               <div class="field">
                 <label>题单名称</label>
                 <input type="text" name="title" value="<%= problemset.title %>">
