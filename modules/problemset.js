@@ -73,7 +73,7 @@ app.post('/problemset/:id/edit', async (req, res) => {
         }
 
         let customID = parseInt(req.body.id)
-        if(customID)
+        if(customID != req.params.id)
         {
             if(await Problemset.findById(customID))
                 throw new ErrorMessage('ID 已被使用。');
