@@ -1,0 +1,55 @@
+<% this.title = problemset.id ? '编辑比赛' : '新建比赛' %>
+<% include header %>
+<div class="padding">
+        <form action="<%= syzoj.utils.makeUrl(['problemset', problemset.id, 'edit']) %>" method="post">
+          <div class="ui form">
+              <div class="field">
+                <label>题单名称</label>
+                <input type="text" name="title" value="<%= problemset.title %>">
+              </div>
+              <div class="field">
+                <label>题单描述</label>
+                <input type="text" name="subtitle" class="markdown-edit" value="<%= problemset.subtitle %>">
+              </div>
+            <div class="field">
+                <label>题目列表</label>
+                <select class="ui fluid search dropdown" multiple="" id="search_problems" name="problems">
+                <% for (let problem of problems) { %>
+                <option value="<%= problem.id %>" selected>#<%= problem.id %>. <%= problem.title %></option>
+                <% } %>
+                </select>
+            </div>
+            <div class="field">
+                <label>题单信息</label>
+                <textarea rows="5" name="information" class="markdown-edit"><%= problemset.information %></textarea>
+            </div>
+            <div class="inline field">
+              <label class="ui header">公开</label>
+              <div class="ui toggle checkbox">
+                <input type="checkbox"<% if (problemset.is_public) { %> checked<% } %> name="is_public">
+                <label><span style="visibility: hidden; ">　</span></label>
+              </div>
+            </div>
+            <div style="text-align: center; "><button id="submit_button" type="submit" class="ui labeled icon blue button"><i class="ui edit icon"></i>提交</button></div>
+          </div>
+        </form>
+<script>
+$(function () {
+  $('#search_problems')
+    .dropdown({
+      debug: true,
+      apiSettings: {
+        url: '/api/v2/search/problems/{query}',
+        onResponse: function (response) {
+          var a = $('#search_problems').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(function(x) {return !a.includes(parseInt(x.value));});
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
+});
+</script>
+<% include footer %>
