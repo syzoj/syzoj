@@ -5,13 +5,13 @@
           <div class="ui form">
             <div class="field">
                   <label for="id">
-                    <% if (problemset.id) { %>
+                    <% if (!problemset.id) { %>
                       题单编号
                     <% } else { %>
                       修改题单编号
                     <% } %>
                   </label>
-                  <input type="text" id="id" name="id" placeholder="<% if (problemset.id) { %>留空则自动延伸<% } else { %>留空则不修改<% } %>" value="<%= problemset.id ? problemset.id : '' %>">
+                  <input type="text" id="id" name="id" placeholder="<% if (!problemset.id) { %>留空则自动延伸<% } else { %>留空则不修改<% } %>" value="<%= problemset.id ? problemset.id : '' %>">
             </div>
               <div class="field">
                 <label>题单名称</label>
