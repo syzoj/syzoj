@@ -70,7 +70,7 @@ app.post('/problemset/:id/edit', async (req, res) => {
         let problemset = await Problemset.findById(problemset_id);
 
         if(!problemset) {
-            problemset = await problemset.create();
+            problemset = await Problemset.create();
         }
 
         let customID = parseInt(req.body.id)
