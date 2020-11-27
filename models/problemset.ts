@@ -25,6 +25,10 @@ export default class Problemset extends Model{
     @TypeORM.Column({ nullable: true, type: "boolean" })
     is_public: boolean;
 
+    async isSupervisitor(user){
+      return user && (user.is_admin || await user.hasPrivilege('manage_problemset'));
+    }
+
     async getProblems(){
         if(!this.problems)  return [];
         return this.problems.split('|').map(x => parseInt(x))

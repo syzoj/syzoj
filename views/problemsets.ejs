@@ -1,0 +1,47 @@
+<% this.title = '题单' %>
+<% include header %>
+<div class="padding">
+    <% if (problemsets.length) { %>
+    <% if (user && (user.is_admin || await user.hasPrivilege('manage_problemset'))) { %>
+    <form class="ui mini form">
+      <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
+        <a href="<%= syzoj.utils.makeUrl(['problemset', 0, 'edit']) %>" class="ui mini labeled icon right floated button" style="margin-left: auto; ">
+          <i class="ui icon write"></i>
+          添加题单
+        </a>
+     </div>
+    </form>
+    <% } %>
+    <table class="ui very basic center aligned table">
+      <thead>
+        <tr>
+          <th>题单名称</th>
+          <th>描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="<%= syzoj.utils.makeUrl(['problemset', problemset.id]) %>"><%= problemset.title %></a></td>
+          <td class="font-content"><%- problemset.subtitle %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <div class="ui placeholder segment">
+      <div class="ui icon header">
+        <i class="calendar icon" style="margin-bottom: 20px; "></i>
+        暂无题单
+      </div>
+      <% if (user && (user.is_admin || await user.hasPrivilege('manage_problemset'))) { %>
+      <a href="<%= syzoj.utils.makeUrl(['problemset', 0, 'edit']) %>" class="ui primary labeled icon button">
+        <i class="ui icon write"></i>
+        添加第一个题单
+      </a>
+      <% } %>
+    </div>
+    <% } %>
+  <br>
+  <% include page %>
+</div>
+<% include footer %>

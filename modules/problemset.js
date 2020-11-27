@@ -10,10 +10,10 @@ app.get('/problemsets', async (req, res) => {
     try{
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
         let where;
-        if (res.locals.user && res.locals.user.is_admin) where = {}
+        if (res.locals.user && (res.locals.user.is_admin || await res.locals.user.hasPrivilege('manage_problemset'))) where = {}
         else where = { is_public: true };
 
-        let paginate = syzoj.utils.paginate(await Contest.countForPagination(where), req.query.page, syzoj.config.page.problemset);
+        let paginate = syzoj.utils.paginate(await Problemset.countForPagination(where), req.query.page, syzoj.config.page.problemset);
         let problemsets = await Problemset.queryPage(paginate, where, {
             id: 'ASC'
         });
@@ -35,7 +35,7 @@ app.get('/problemsets', async (req, res) => {
 app.get('/problemset/:id/edit', async (req, res) => {
     try{
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
-        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+        if (!res.locals.user || (!res.locals.user.is_admin && !await res.locals.user.hasPrivilege('manage_problemset'))) throw new ErrorMessage('您没有权限进行此操作。');
         
         let problemset_id = parseInt(req.params.id);
         let problemset = await Problemset.findById(problemset_id);
@@ -62,14 +62,24 @@ app.get('/problemset/:id/edit', async (req, res) => {
 app.post('/problemset/:id/edit', async (req, res) => {
     try{
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
-        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+        if (!res.locals.user || (!res.locals.user.is_admin && !await res.locals.user.hasPrivilege('manage_problemset'))) throw new ErrorMessage('您没有权限进行此操作。');
 
-        let problemset_id = parseInt(req.params.id);
+        let problemset_id = parseInt(req.params.id) || 0;
         let problemset = await Problemset.findById(problemset_id);
 
         if(!problemset) {
             problemset = await problemset.create();
         }
+
+        let customID = parseInt(req.body.id)
+        if(customID)
+        {
+            if(await Problemset.findById(customID))
+                throw new ErrorMessage('ID 已被使用。');
+            problemset.id = customID;
+        }
+        else if(problemset_id)
+            problemset.id = problemset_id;
 
         if (!req.body.title.trim()) throw new ErrorMessage('题单名不能为空。');  
         problemset.title = req.body.title;
@@ -78,10 +88,50 @@ app.post('/problemset/:id/edit', async (req, res) => {
         problemset.problems = req.body.problems.join('|');
         problemset.information = req.body.information;
         problemset.is_public = req.body.is_public === 'on';
-
         await problemset.save();
 
         res.redirect(syzoj.utils.makeUrl(['problemset', problemset.id]))
+    } catch (e){
+        syzoj.log(e);
+        res.render('error', {
+            err: e
+        });       
+    }
+});
+
+app.post('/problemset/:id/delete', async (req, res) =>{
+
+});
+
+app.get('/problemset/:id', async (req, res) => {
+    try{
+        if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
+        const curUser = res.locals.user;
+        let problemset_id = parseInt(req.params.id);
+
+        let problemset = await Problemset.findById(problemset_id);
+        if(!problemset) throw new ErrorMessage('无此题单。');
+        const isSupervisitor = await problemset.isSupervisitor(curUser)
+
+        if(!problemset.is_public && (!res.locals.user || !isSupervisitor))
+            throw new ErrorMessage('题单尚未公开');
+        
+        problemset.subtitle = await syzoj.utils.markdown(problemset.subtitle);
+        problemset.information = await syzoj.utils.markdown(problemset.information);
+
+        let problems_id = await problemset.getProblems();
+        let problems = await problems_id.mapAsync(async id => await Problem.findById(id));
+
+        await problems.forEachAsync(async problem => {
+            problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+            problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+          });
+        
+        res.render('problemset',{
+            problemset: problemset,
+            problems: problems,
+            isSupervisitor: isSupervisitor,
+        })  
     } catch (e){
         syzoj.log(e);
         res.render('error', {
