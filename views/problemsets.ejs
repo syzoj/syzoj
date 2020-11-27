@@ -2,7 +2,7 @@
 <% include header %>
 <div class="padding">
     <% if (problemsets.length) { %>
-    <% if (user && (user.is_admin || await user.hasPrivilege('manage_problemset'))) { %>
+    <% if (allowedManageProblemsets) { %>
     <form class="ui mini form">
       <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
         <a href="<%= syzoj.utils.makeUrl(['problemset', 0, 'edit']) %>" class="ui mini labeled icon right floated button" style="margin-left: auto; ">
@@ -38,7 +38,7 @@
         <i class="calendar icon" style="margin-bottom: 20px; "></i>
         暂无题单
       </div>
-      <% if (user && (user.is_admin || await user.hasPrivilege('manage_problemset'))) { %>
+      <% if (allowedManageProblemsets) { %>
       <a href="<%= syzoj.utils.makeUrl(['problemset', 0, 'edit']) %>" class="ui primary labeled icon button">
         <i class="ui icon write"></i>
         添加第一个题单

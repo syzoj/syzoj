@@ -21,6 +21,7 @@ app.get('/problemsets', async (req, res) => {
         await problemsets.forEachAsync(async x => x.subtitle = await syzoj.utils.markdown(x.subtitle));
 
         res.render('problemsets',{
+            allowedManageProblemsets: res.locals.user && (res.locals.user.is_admin || await res.locals.user.hasPrivilege('manage_problemset')),
             problemsets: problemsets,
             paginate: paginate
         })
@@ -48,6 +49,7 @@ app.get('/problemset/:id/edit', async (req, res) => {
         if (problemset.problems) problems = await problemset.problems.split('|').mapAsync(async id => await Problem.findById(id));
         
         res.render('problemset_edit', {
+            allowedManageProblemsets: res.locals.user && (res.locals.user.is_admin || await res.locals.user.hasPrivilege('manage_problemset')),
             problemset: problemset,
             problems: problems
         });
