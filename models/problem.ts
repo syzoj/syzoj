@@ -10,6 +10,7 @@ import Contest from "./contest";
 import ProblemTag from "./problem_tag";
 import ProblemTagMap from "./problem_tag_map";
 import SubmissionStatistics, { StatisticsType } from "./submission_statistics";
+import Problemset from "./problemset";
 
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -547,6 +548,26 @@ export default class Problem extends Model {
       if (flag) {
         await contest.setProblemsNoCheck(problemIDs);
         await contest.save();
+      }
+    }
+
+    //add support of the problemset
+
+    let problemsets = await Problemset.find();
+    for (let problemset of problemsets){
+      let problemIDs = await problemset.getProblems();
+
+      let flag = false;
+      for (let i in problemIDs){
+        if(problemIDs[i] == this.id){
+          problemIDs[i] = id;
+          flag = true;
+        }
+      }
+
+      if(flag){
+        await problemset.setProblemsNoCheck(problemIDs);
+        await problemset.save();
       }
     }
 
