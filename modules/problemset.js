@@ -82,9 +82,9 @@ app.post('/problemset/:id/edit', async (req, res) => {
         }else{
             let customID = parseInt(req.body.id);
             if (customID && customID !== problemset_id ) {
-              if (await Problemset.findById(customID)) 
-                throw new ErrorMessage('ID 已被使用。');
-                problemset.id = customID;
+                if (await Problemset.findById(customID)) 
+                    throw new ErrorMessage('ID 已被使用。');
+                await problemset.changeID(customID);
             }
         }
 

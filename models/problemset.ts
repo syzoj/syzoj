@@ -29,6 +29,15 @@ export default class Problemset extends Model{
       await this.destroy();  
     }
 
+    async changeID(id){
+      const oldID = this.id;
+      this.id = id;
+      
+      await this.save();
+      
+      await Problemset.deleteFromCache(oldID);
+    }
+
     async isSupervisitor(user){
       return user && (user.is_admin || await user.hasPrivilege('manage_problemset'));
     }
