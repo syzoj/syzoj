@@ -102,7 +102,7 @@ app.post('/problemset/:id/edit', async (req, res) => {
 
 app.post('/problemset/:id/delete', async (req, res) =>{
     try{
-        let id = parseInt(req.params.id);
+        let id = parseInt(req.params.id) || 0;
         let problemset = await Problemset.findById(id);
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
         if (!problemset) throw new ErrorMessage('无此题单。');

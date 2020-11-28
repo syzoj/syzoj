@@ -312,11 +312,10 @@ app.get('/problem/:id/edit', async (req, res) => {
 
 app.post('/problem/:id/edit', async (req, res) => {
   try {
+    if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let id = parseInt(req.params.id) || 0;
     let problem = await Problem.findById(id);
     if (!problem) {
-      if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
-
       problem = await Problem.create({
         time_limit: syzoj.config.default.problem.time_limit,
         memory_limit: syzoj.config.default.problem.memory_limit,
