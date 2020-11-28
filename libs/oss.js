@@ -2,7 +2,6 @@ const OSS = require("ali-oss");
 const fs = require("fs");
 const random = require("string-random");
 const crypto = require("crypto");
-const md5 = crypto.createHash('MD5');
 const path = require('path');
 
 const client = OSS({
@@ -12,10 +11,11 @@ const client = OSS({
     region: syzoj.config.pic_upload_config.region,
 });
 
-async function uploadImage(filepath){
+async function uploadImage(filepath,filename){
     try {
+        var md5 = crypto.createHash('MD5');
         var name = random(20) + toString(Date.now());
-        var uploadpath = syzoj.config.pic_upload_config.path + md5.update(name).digest('hex') + path.extname(filepath)
+        var uploadpath = syzoj.config.pic_upload_config.path + md5.update(name).digest('hex') + path.extname(filename)
         console.log(uploadpath);
         let stream = fs.createReadStream(filepath);
         let result = await client.put(uploadpath,stream);

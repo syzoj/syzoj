@@ -30,7 +30,7 @@ app.post('/picupload/upload', app.multer.array('pic'), async (req, res) =>{
                     throw new ErrorMessage('文件过大。');
                 if(flag > 10)
                     throw new ErrorMessage('文件过多。');
-                await oss.upload(file.path)
+                await oss.upload(file.path,file.originalname)
             }
         }
         res.redirect(syzoj.utils.makeUrl(['picupload']));
