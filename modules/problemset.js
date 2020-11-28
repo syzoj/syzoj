@@ -65,22 +65,28 @@ app.post('/problemset/:id/edit', async (req, res) => {
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
         if (!res.locals.user || (!res.locals.user.is_admin && !await res.locals.user.hasPrivilege('manage_problemset'))) throw new ErrorMessage('您没有权限进行此操作。');
 
-        let problemset_id = parseInt(req.params.id);
+        let problemset_id = parseInt(req.params.id) || 0;
         let problemset = await Problemset.findById(problemset_id);
 
         if(!problemset) {
             problemset = await Problemset.create();
-        }
-
-        let customID = parseInt(req.body.id)
-        if(customID != req.params.id)
-        {
-            if(await Problemset.findById(customID))
+            let customID = parseInt(req.body.id)
+            if(customID)
+            {
+                if(await Problemset.findById(customID))
+                    throw new ErrorMessage('ID 已被使用。');
+                problemset.id = customID;
+            }
+            else if(problemset_id)
+                problemset.id = problemset_id;       
+        }else{
+            let customID = parseInt(req.body.id);
+            if (customID && customID !== problemset_id ) {
+              if (await Problemset.findById(customID)) 
                 throw new ErrorMessage('ID 已被使用。');
-            problemset.id = customID;
+                problemset.id = customID;
+            }
         }
-        else if(problemset_id)
-            problemset.id = problemset_id;
 
         if (!req.body.title.trim()) throw new ErrorMessage('题单名不能为空。');  
         problemset.title = req.body.title;
@@ -102,7 +108,7 @@ app.post('/problemset/:id/edit', async (req, res) => {
 
 app.post('/problemset/:id/delete', async (req, res) =>{
     try{
-        let id = parseInt(req.params.id) || 0;
+        let id = parseInt(req.params.id);
         let problemset = await Problemset.findById(id);
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
         if (!problemset) throw new ErrorMessage('无此题单。');
