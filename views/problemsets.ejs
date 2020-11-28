@@ -28,7 +28,10 @@
         %>
         <tr>
           <td class="font-content"><%-problemset.id%></td>
-          <td><a href="<%= syzoj.utils.makeUrl(['problemset', problemset.id]) %>"><%= problemset.title %></a></td>
+          <td>
+            <a href="<%= syzoj.utils.makeUrl(['problemset', problemset.id]) %>"><%= problemset.title %></a>
+            <% if (!problemset.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+          </td>
           <td class="font-content"><%- problemset.subtitle %></td>
         </tr>
         <% } %>
