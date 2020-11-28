@@ -21,7 +21,7 @@ app.get('/picupload', async (req, res) => {
 app.post('/picupload/upload', app.multer.array('pic'), async (req, res) =>{
     try { 
         if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
-        
+        let pics = new Array();
         if (req.files) {
             var flag = 0;
             for (let file of req.files){
@@ -30,10 +30,12 @@ app.post('/picupload/upload', app.multer.array('pic'), async (req, res) =>{
                     throw new ErrorMessage('文件过大。');
                 if(flag > 10)
                     throw new ErrorMessage('文件过多。');
-                await oss.upload(file.path,file.originalname)
+                pics.push(await oss.upload(file.path,file.originalname));
             }
         }
-        res.redirect(syzoj.utils.makeUrl(['picupload']));
+        res.render('picupload_result',{
+            pics: pics
+        });
     } catch (e) 
     {
         syzoj.log(e);
