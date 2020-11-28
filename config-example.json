@@ -24,6 +24,14 @@
       "AccountName": "xxxx"
     }
   },
+  "pic_upload": false,
+  "pic_upload_config":{
+    "accessKeyId": "xxxx",
+    "accessKeySecret": "xxxx",
+    "bucket": "xxxx",
+    "region": "xxxx",
+    "path": "xxxx"
+  },
   "upload_dir": "uploads",
   "default": {
     "problem": {
