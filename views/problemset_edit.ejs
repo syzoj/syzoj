@@ -1,7 +1,7 @@
 <% this.title = problemset.id ? '编辑题单' : '新建题单' %>
 <% include header %>
 <div class="padding">
-        <form action="<%= syzoj.utils.makeUrl(['problemset', problemset.id, 'edit']) %>" method="post">
+        <form action="<%= syzoj.utils.makeUrl(['problemset', req.params.id, 'edit']) %>" method="post">
           <div class="ui form">
             <div class="field">
                   <label for="id">
