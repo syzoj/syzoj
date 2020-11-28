@@ -1,0 +1,20 @@
+<% this.title = '图床' %>
+<% include header %>
+<div class="padding">
+    <h1>图床</h1>
+    <div style="margin-top: 30px;">
+        <form id="form_upload" class="ui form" action="<%= syzoj.utils.makeUrl(['picupload','upload']) %>" method="post" enctype="multipart/form-data">
+            <label for="pic">
+                <div class="ui placeholder segment">
+                    <div class="ui icon header">
+                    <i class="image icon" style="margin-bottom: 20px; "></i>
+                    点击上传你的图片（可多选）
+                    </div>
+                </div>
+            </label>
+            <div class="ui labeled icon blue button" onclick="$('#form_upload').submit()"><i class="ui edit icon"></i>提交</div>
+            <input type="file" multiple id="pic" name="pic" style="display:none">
+        </form>
+    </div>
+</div>
+<% include footer %>
