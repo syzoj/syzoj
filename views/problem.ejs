@@ -389,4 +389,153 @@ if (contest) {
   }
   </script>
 <% } %>
+<script type="text/javascript">
+  // add copy button
+  $(document).ready(function (){
+    $("pre").prepend("<a class=\"copy-button ui small button\" style=\"position: absolute;top: -1px;right: -7px;border-top-left-radius: 0px;border-bottom-right-radius: 0px\">复制</a>");
+    $(".copy-button").click(function() {
+        var element = $(this).siblings("code");
+        var text = $(element).text();
+        var $temp = $("<textarea>");
+        $("body").append($temp);
+        $temp.val(text).select();
+        document.execCommand("copy");
+        $temp.remove();
+        $(this).text("复制成功");
+
+        var e = this;
+        setTimeout(function() {
+            $(e).text("复制");
+        }, 1000);
+    });
+  });
+
+  // add export button
+  function deselectCurrent() {
+    var selection = document.getSelection()
+    if (!selection.rangeCount) {
+        return function () { }
+    }
+    var active = document.activeElement
+
+    var ranges = []
+    for (var i = 0; i < selection.rangeCount; i++) {
+        ranges.push(selection.getRangeAt(i))
+    }
+
+    switch (active.tagName.toUpperCase()) {
+        case 'INPUT':
+        case 'TEXTAREA':
+            active.blur()
+            break
+
+        default:
+            active = null
+            break
+    }
+
+    selection.removeAllRanges()
+    return function () {
+        selection.type === 'Caret' &&
+            selection.removeAllRanges()
+
+        if (!selection.rangeCount) {
+            ranges.forEach(function (range) {
+                selection.addRange(range)
+            })
+        }
+
+        active &&
+            active.focus()
+      }
+    }
+
+    function format(message) {
+        var copyKey = (/mac os x/i.test(navigator.userAgent) ? '⌘' : 'Ctrl') + '+C'
+        return message.replace(/#{\s*key\s*}/g, copyKey)
+    }
+
+    function copy(text) {
+        var debug, message, reselectPrevious, range, selection, mark, success = false
+        try {
+            reselectPrevious = deselectCurrent()
+
+            range = document.createRange()
+            selection = document.getSelection()
+
+            mark = document.createElement('span')
+            mark.textContent = text
+            // reset user styles for span element
+            mark.style.all = 'unset'
+            // prevents scrolling to the end of the page
+            mark.style.position = 'fixed'
+            mark.style.top = 0
+            mark.style.clip = 'rect(0, 0, 0, 0)'
+            // used to preserve spaces and line breaks
+            mark.style.whiteSpace = 'pre'
+            // do not inherit user-select (it may be `none`)
+            mark.style.webkitUserSelect = 'text'
+            mark.style.MozUserSelect = 'text'
+            mark.style.msUserSelect = 'text'
+            mark.style.userSelect = 'text'
+
+            document.body.appendChild(mark)
+
+            range.selectNode(mark)
+            selection.addRange(range)
+
+            var successful = document.execCommand('copy')
+            if (!successful) {
+                throw new Error('copy command was unsuccessful')
+            }
+            success = true
+        } catch (err) {
+            try {
+                window.clipboardData.setData('text', text)
+                success = true
+            } catch (err) {
+                message = format('Copy to clipboard: #{key}, Enter')
+                window.prompt(message, text)
+            }
+        } finally {
+            if (selection) {
+                if (typeof selection.removeRange == 'function') {
+                    selection.removeRange(range)
+                } else {
+                    selection.removeAllRanges()
+                }
+            }
+
+            if (mark) {
+                document.body.removeChild(mark)
+            }
+            reselectPrevious()
+        }
+
+        return success
+    }
+
+    async function copyProblem(){
+      let content = ""
+      content += "# " +  "<%= syzoj.utils.removeTitleTag(problem.title) %>" + "\n\n"
+      <% if (problem.description) {%> 
+        content += "## 题目描述\n\n" + "<%- problem.description %>" + "\n\n"
+      <% } if (problem.input_format) {%> 
+        content += "## 输入格式\n\n" + "<%- problem.input_format %>" + "\n\n"
+      <% } if (problem.output_format) {%> 
+        content += "## 输出格式\n\n" + "<%- problem.output_format %>" + "\n\n"
+      <% } if (problem.example) {%> 
+        content += "## 样例\n\n" + "<%- problem.example %>" + "\n\n"
+      <% } if (problem.limit_and_hint) {%> 
+      content += "## 数据范围与提示\n\n" + "<%- problem.limit_and_hint %>" + "\n\n"
+      <% } %> 
+      copy(content)
+      $(this).text("复制成功");
+      var e = this;
+      setTimeout(function() {
+          $(e).text("复制题面");
+      }, 1000);
+    }
+
+</script>
 <% include footer %>
