@@ -522,7 +522,32 @@ if (contest) {
       if(!res.success){
           alert("复制失败")
       }      
-      content += "# " +  res.obj.title + "\n\n"
+      let content = "# " +  res.obj.title + "\n\n"
+
+      //basic infos
+      content += "## 基本信息\n\n" + "|中文题目名称|" + res.obj.title +"|\n|:---:|:---:|\n"
+      if(res.obj.type === "submit-answer") {
+        content += "|题目类型|提交答案|\n"
+        content += "|评测方式|<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '全文比较（过滤行末空格及回车）') : '无测试数据' %>|\n"
+      }
+      else {
+        if (res.obj.type === 'interaction'){
+          content += "|题目类型|交互|\n"
+        } else {
+          content += "|题目类型|传统|\n"
+          content += "|评测方式|<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '全文比较（过滤行末空格及回车）') : '无测试数据' %>|\n"
+          if (res.obj.file_io){
+            content += "|输入输出方式|文件输入输出|\n"
+            content += "|输入文件|`<%= problem.file_io_input_name %>`|\n"
+            content += "|输出文件|`<%= problem.file_io_output_name %>`|\n"
+          } else {
+            content += "|输入输出方式|标准输入输出|\n"
+          }
+        }
+        content += "|内存限制|`<%= problem.memory_limit %> MiB`|\n"
+        content += "|时间限制|`<%= problem.time_limit %> ms`|\n"
+      }
+      content += "\n"
       if(res.obj.description) {
         content += "## 题目描述\n\n" + res.obj.description + "\n\n"
       } if(res.obj.description) {
