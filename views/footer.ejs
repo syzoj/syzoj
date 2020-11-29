@@ -16,6 +16,7 @@
     if(themeName === "dark-official"){
       $('head').append('<link rel="stylesheet" class="wfyzoj-theme" href="https://cdn.jsdelivr.net/gh/wfyzoj/themes@master/Dark.min.css" type="text/css">')
     }
+    $('head').append('<link href="<%- selfLib("style.css") %>?20181212" rel="stylesheet">')
   }
 
   if(localStorage.getItem("theme")===null){
