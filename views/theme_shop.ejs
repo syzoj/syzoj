@@ -3,17 +3,28 @@
 <div class="padding">
     <h1 class="ui center aligned header">主题商店</h1>
     <div style="font-content">
-        <p>暂时仅供预览，不久后会实装换肤功能</p>
         <h2 class="ui header">Light Official</h2>
+        <div class="ui buttons">
+            <a class="settheme small ui primary button" name="light-official">更换为本主题</a>
+        </div>
+        
         <h3 class="ui header">Preview</h3>
         <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/theme/Preview_Light_1.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
         <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/theme/Preview_Light_2.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
         <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/theme/Preview_Light_3.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
         <h2 class="ui header">Dark Official</h2>
+        <div class="ui buttons">
+            <a class="settheme small ui primary button" name="dark-official">更换为本主题</a>
+        </div>
         <h3 class="ui header">Preview</h3>
-        <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/theme/Preview_Dark_1.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
-        <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/theme/Preview_Dark_2.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
-        <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/theme/Preview_Dark_3.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
+        <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/user/6ae2619dff145c94f5ed53d620db6f8a.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
+        <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/user/b04da34eb34c48f428b895f47206b6bf.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
+        <p><img src="http://wfyzoj-files.oss-cn-beijing.aliyuncs.com/image/user/05e6316b08c0162a633feffeffb76cc5.jpg" alt="0vgaut.png" style="display: block; margin: 0px auto;"></p>
     </div>
 </div>
 <% include footer %>
+<script>
+    $(".settheme").click(function(){
+        localStorage.setItem("theme",$(this).name)
+    })
+</script>
