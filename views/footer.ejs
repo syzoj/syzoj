@@ -13,13 +13,15 @@
   //script for the theme shop
   function settheme(themeName){
     $('.wfyzoj-theme').remove()
-    if(themeName === "dark-offical"){
+    if(themeName === "dark-official"){
       $('head').append('<link rel="stylesheet" class="wfyzoj-theme" href="https://cdn.jsdelivr.net/gh/wfyzoj/themes@master/Dark.min.css" type="text/css">')
     }
   }
+
   if(localStorage.getItem("theme")===null){
-    localStorage.setItem("theme","dark-offical")
+    localStorage.setItem("theme","dark-official")
   }
+
   settheme(localStorage.getItem("theme"))
 </script>
 </html>
