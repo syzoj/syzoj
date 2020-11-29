@@ -86,7 +86,7 @@ if (contest) {
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, pid, 'download', 'additional_file']) %>">附加文件</a>
           <% } %>
-          <a class="small ui purple button" onclick="copyProblem()">复制题目</a>
+          <a class="copy-problem-button small ui purple button">复制题目</a>
           <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui orange button">返回比赛</a>
         <% } else { %>
           <% if (testcases && !testcases.error) { %>
@@ -104,7 +104,7 @@ if (contest) {
               <div class="floating ui red tiny circular label" style="background-color: #8c5633 !important; top: -0.6em; "><%= discussionCount %></div>
             <% } %>
           </a>
-          <a class="small ui purple button" onclick="copyProblem()">复制题目</a>
+          <a class="copy-problem-button small ui purple button">复制题目</a>
         <% } %>
       </div>
       <% if (!contest) { %>
@@ -518,7 +518,7 @@ if (contest) {
         return success
     }
 
-    async function copyProblem(){
+    $(".copy-problem-button").click(async function copyProblem(){
       let pid = /([0-9]+)/.exec(location.pathname)[1]
       let res = await fetch(`http://59.110.137.14/problem/${pid}/export`).then(res => (res.json()))
       if(!res.success){
@@ -558,13 +558,13 @@ if (contest) {
 
       if(res.obj.description) {
         content += "## 题目描述\n\n" + res.obj.description + "\n\n"
-      } if(res.obj.description) {
+      } if(res.obj.input_format) {
         content += "## 输入格式\n\n" + res.obj.input_format + "\n\n"
-      } if(res.obj.description) {
+      } if(res.obj.output_format) {
         content += "## 输出格式\n\n" + res.obj.output_format + "\n\n"
-      } if(res.obj.description) {
+      } if(res.obj.example) {
         content += "## 样例\n\n" + res.obj.example + "\n\n"
-      } if(res.obj.description) {
+      } if(res.obj.limit_and_hint) {
         content += "## 数据范围与提示\n\n" + res.obj.limit_and_hint + "\n\n"
       }
       copy(content)
@@ -573,6 +573,5 @@ if (contest) {
       setTimeout(function() {
           $(e).text("复制题目");
       }, 1000);
-    }
-
+    });
 </script>
