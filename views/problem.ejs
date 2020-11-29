@@ -389,6 +389,7 @@ if (contest) {
   }
   </script>
 <% } %>
+<% include footer %>
 <script type="text/javascript">
   // add copy button
   $(document).ready(function (){
@@ -516,19 +517,22 @@ if (contest) {
     }
 
     async function copyProblem(){
-      let content = ""
-      content += "# " +  "<%= syzoj.utils.removeTitleTag(problem.title) %>" + "\n\n"
-      <% if (problem.description) {%> 
-        content += "## 题目描述\n\n" + "<%- problem.description %>" + "\n\n"
-      <% } if (problem.input_format) {%> 
-        content += "## 输入格式\n\n" + "<%- problem.input_format %>" + "\n\n"
-      <% } if (problem.output_format) {%> 
-        content += "## 输出格式\n\n" + "<%- problem.output_format %>" + "\n\n"
-      <% } if (problem.example) {%> 
-        content += "## 样例\n\n" + "<%- problem.example %>" + "\n\n"
-      <% } if (problem.limit_and_hint) {%> 
-      content += "## 数据范围与提示\n\n" + "<%- problem.limit_and_hint %>" + "\n\n"
-      <% } %> 
+      let res = await fetch(`http://59.110.137.14/problem/${pid}/export`).then(res => (res.json()))
+      if(!res.success){
+          alert("复制失败")
+      }      
+      content += "# " +  res.obj.title + "\n\n"
+      if(res.obj.description) {
+        content += "## 题目描述\n\n" + res.obj.description + "\n\n"
+      } if(res.obj.description) {
+        content += "## 输入格式\n\n" + res.obj.input_format + "\n\n"
+      } if(res.obj.description) {
+        content += "## 输出格式\n\n" + res.obj.output_format + "\n\n"
+      } if(res.obj.description) {
+        content += "## 样例\n\n" + res.obj.example + "\n\n"
+      } if(res.obj.description) {
+        content += "## 数据范围与提示\n\n" + res.obj.limit_and_hint + "\n\n"
+      }
       copy(content)
       $(this).text("复制成功");
       var e = this;
@@ -538,4 +542,3 @@ if (contest) {
     }
 
 </script>
-<% include footer %>
