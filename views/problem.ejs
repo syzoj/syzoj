@@ -517,7 +517,7 @@ if (contest) {
     }
 
     async function copyProblem(){
-      let pid = "<%= this.alpha(pid) %>"
+      let pid = /([0-9]+)/.exec(location.pathname)[1]
       let res = await fetch(`http://59.110.137.14/problem/${pid}/export`).then(res => (res.json()))
       if(!res.success){
           alert("复制失败")
