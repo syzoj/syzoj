@@ -86,6 +86,7 @@ if (contest) {
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, pid, 'download', 'additional_file']) %>">附加文件</a>
           <% } %>
+          <a class="small ui purple button" onclick="copyProblem()">复制题目</a>
           <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui orange button">返回比赛</a>
         <% } else { %>
           <% if (testcases && !testcases.error) { %>
@@ -103,6 +104,7 @@ if (contest) {
               <div class="floating ui red tiny circular label" style="background-color: #8c5633 !important; top: -0.6em; "><%= discussionCount %></div>
             <% } %>
           </a>
+          <a class="small ui purple button" onclick="copyProblem()">复制题目</a>
         <% } %>
       </div>
       <% if (!contest) { %>
@@ -525,7 +527,7 @@ if (contest) {
       let content = "# " +  res.obj.title + "\n\n"
 
       //basic infos
-      content += "## 基本信息\n\n" + "|中文题目名称|" + res.obj.title +"|\n|:---:|:---:|\n"
+      content += "## 基本信息\n\n" + "|题目名称|" + res.obj.title +"|\n|:---:|:---:|\n"
       if(res.obj.type === "submit-answer") {
         content += "|题目类型|提交答案|\n"
         content += "|评测方式|<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '全文比较（过滤行末空格及回车）') : '无测试数据' %>|\n"
@@ -547,7 +549,13 @@ if (contest) {
         content += "|内存限制|`<%= problem.memory_limit %> MiB`|\n"
         content += "|时间限制|`<%= problem.time_limit %> ms`|\n"
       }
+      if(res.obj.have_additional_file){
+        content += "|附加文件|![下载链接](<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>)|\n"
+      }else {
+        content+= "|附加文件|无|\n"
+      }
       content += "\n"
+
       if(res.obj.description) {
         content += "## 题目描述\n\n" + res.obj.description + "\n\n"
       } if(res.obj.description) {
@@ -563,7 +571,7 @@ if (contest) {
       $(this).text("复制成功");
       var e = this;
       setTimeout(function() {
-          $(e).text("复制题面");
+          $(e).text("复制题目");
       }, 1000);
     }
 
