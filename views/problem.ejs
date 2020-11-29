@@ -86,7 +86,6 @@ if (contest) {
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, pid, 'download', 'additional_file']) %>">附加文件</a>
           <% } %>
-          <a class="copy-problem-button small ui purple button">复制题目</a>
           <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui orange button">返回比赛</a>
         <% } else { %>
           <% if (testcases && !testcases.error) { %>
