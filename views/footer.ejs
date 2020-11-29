@@ -9,20 +9,4 @@
 <script src="<%- lib('Chart.js/2.7.3/Chart.bundle.min.js') %>"></script>
 <script src="<%- selfLib('script.js') %>?20170710"></script>
 </body>
-<script data-cfasync="false">
-  //script for the theme shop
-  function settheme(themeName){
-    $('.wfyzoj-theme').remove()
-    if(themeName === "dark-official"){
-      $('head').append('<link rel="stylesheet" class="wfyzoj-theme" href="https://cdn.jsdelivr.net/gh/wfyzoj/themes@master/Dark.min.css" type="text/css">')
-    }
-    $('head').append('<link href="<%- selfLib("style.css") %>?20181212" rel="stylesheet">')
-  }
-
-  if(localStorage.getItem("theme")===null){
-    localStorage.setItem("theme","dark-official")
-  }
-
-  settheme(localStorage.getItem("theme"))
-</script>
 </html>
