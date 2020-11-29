@@ -550,7 +550,7 @@ if (contest) {
         content += "|时间限制|`<%= problem.time_limit %> ms`|\n"
       }
       if(res.obj.have_additional_file){
-        content += "|附加文件|![下载链接](<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>)|\n"
+        content += "|附加文件|[下载链接](<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>)|\n"
       }else {
         content+= "|附加文件|无|\n"
       }
