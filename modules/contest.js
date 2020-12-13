@@ -42,9 +42,15 @@ app.get('/contest/:id/edit', async (req, res) => {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.findById(contest_id);
     if (!contest) {
+      // if contest does not exist, only system administrators can create one
+      if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
       contest = await Contest.create();
       contest.id = 0;
     } else {
+      // if contest exists, both system administrators and contest administrators can edit it.
+      if (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString()))) throw new ErrorMessage('您没有权限进行此操作。');
+
       await contest.loadRelationships();
     }
 
@@ -74,6 +80,9 @@ app.post('/contest/:id/edit', async (req, res) => {
     let contest = await Contest.findById(contest_id);
     let ranklist = null;
     if (!contest) {
+      // if contest does not exist, only system administrators can create one
+      if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
       contest = await Contest.create();
 
       contest.holder_id = res.locals.user.id;
@@ -84,6 +93,9 @@ app.post('/contest/:id/edit', async (req, res) => {
       if (!['noi', 'ioi', 'acm', 'bioi'].includes(req.body.type)) throw new ErrorMessage('无效的赛制。');
       contest.type = req.body.type;
     } else {
+      // if contest exists, both system administrators and contest administrators can edit it.
+      if (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString()))) throw new ErrorMessage('您没有权限进行此操作。');
+      
       await contest.loadRelationships();
       ranklist = contest.ranklist;
     }
@@ -128,9 +140,12 @@ app.get('/contest/:id', async (req, res) => {
 
     let contest = await Contest.findById(contest_id);
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
     const isSupervisior = await contest.isSupervisior(curUser);
+
+    // if contest is non-public, both system administrators and contest administrators can see it.
+    if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString())))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+
     contest.running = contest.isRunning();
     contest.ended = contest.isEnded();
     contest.subtitle = await syzoj.utils.markdown(contest.subtitle);
@@ -233,7 +248,9 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     const curUser = res.locals.user;
 
     if (!contest) throw new ErrorMessage('无此比赛。');
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+    // if contest is non-public, both system administrators and contest administrators can see it.
+    if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString())))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+
     if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
     contest.isEnded(), contest.allowedShowingBoard(),
     await contest.isSupervisior(curUser)].every(x => !x))
@@ -306,7 +323,8 @@ app.get('/contest/:id/submissions', async (req, res) => {
     if (!res.locals.user) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': req.originalUrl }) });
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.findById(contest_id);
-    if (!contest.is_public && (!res.locals.user || !res.locals.user.is_admin)) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
+    // if contest is non-public, both system administrators and contest administrators can see it.
+    if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString())))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
     if (contest.isEnded()) {
       res.redirect(syzoj.utils.makeUrl(['submissions'], { contest: contest_id }));
