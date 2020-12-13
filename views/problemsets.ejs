@@ -1,0 +1,57 @@
+<% this.title = '题单' %>
+<% include header %>
+<div class="padding">
+    <% if (problemsets.length) { %>
+    <% if (allowedManageProblemsets) { %>
+    <form class="ui mini form">
+      <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
+        <a href="<%= syzoj.utils.makeUrl(['problemset', 0, 'edit']) %>" class="ui mini labeled icon right floated button" style="margin-left: auto; ">
+          <i class="ui icon write"></i>
+          添加题单
+        </a>
+     </div>
+    </form>
+    <% } %>
+    <table class="ui very basic center aligned table">
+      <thead>
+        <tr>
+          <th>编号</th>
+          <th>题单名称</th>
+          <th>描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%
+        for (let problemset of problemsets) {
+          let now = syzoj.utils.getCurrentDate();
+          let tag = '';
+        %>
+        <tr>
+          <td class="font-content"><%-problemset.id%></td>
+          <td>
+            <a href="<%= syzoj.utils.makeUrl(['problemset', problemset.id]) %>"><%= problemset.title %></a>
+            <% if (!problemset.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+          </td>
+          <td class="font-content"><%- problemset.subtitle %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <div class="ui placeholder segment">
+      <div class="ui icon header">
+        <i class="compass icon" style="margin-bottom: 20px; "></i>
+        暂无题单
+      </div>
+      <% if (allowedManageProblemsets) { %>
+      <a href="<%= syzoj.utils.makeUrl(['problemset', 0, 'edit']) %>" class="ui primary labeled icon button">
+        <i class="ui icon write"></i>
+        添加第一个题单
+      </a>
+      <% } %>
+    </div>
+    <% } %>
+  <br>
+  <% include page %>
+</div>
+<% include footer %>

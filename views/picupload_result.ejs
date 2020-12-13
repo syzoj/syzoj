@@ -1,0 +1,39 @@
+<% this.title = '图床' %>
+<% include header %>
+<div class="padding">
+    <h1>上传结果</h1>
+    <div style="margin-top: 30px;">
+        <div class="ui grid">
+            <% for (let pic of pics) {%>
+                <div class="row">
+                    <div class="six wide column">
+                        <img src="<%= pic %>">
+                    </div> 
+                    <div class="ten wide column">
+                        <div class="ui grid">
+                            <div class="row">
+                                <div class="column">
+                                    <h4 class="ui top attached block header">地址</h4>
+                                    <div class="ui bottom attached segment"><%= pic %></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column">
+                                    <h4 class="ui top attached block header">Markdown</h4>
+                                    <div class="ui bottom attached segment">![img](<%= pic %>)</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column">
+                                    <h4 class="ui top attached block header">HTML</h4>
+                                    <div class="ui bottom attached segment">&lt;img src=&quot;<%= pic %>&quot;&gt;</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }%>  
+        </div>
+    </div>
+</div>
+<% include footer %>

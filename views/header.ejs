@@ -9,7 +9,6 @@
     <link href="<%- lib('semantic-ui/2.4.1/semantic.min.css') %>" rel="stylesheet">
     <link href="<%- selfLib('tomorrow.css') %>" rel="stylesheet">
     <link href="<%- selfLib('math.css') %>" rel="stylesheet">
-    <link href="<%- selfLib('style.css') %>?20181212" rel="stylesheet">
     <link href="<%- lib('morris.js/0.5.1/morris.css') %>" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/wfyzoj/race_calendar/calendarorganizer.min.css" rel="stylesheet" />
     <% if (useLocalLibs || !syzoj.config.google_fonts || !['like-google-fonts', 'like-local', 'built-in'].includes(syzoj.config.google_fonts.type)) { %>
@@ -46,6 +45,23 @@
 
     </script>
     <% } %>
+    <script data-cfasync="false">
+      //script for the theme shop
+      function settheme(themeName){
+        $('.wfyzoj-theme').remove()
+        if(themeName === "dark-official"){
+          $('head').append('<link rel="stylesheet" class="wfyzoj-theme" href="https://cdn.jsdelivr.net/gh/wfyzoj/themes@master/Dark.min.css" type="text/css">')
+        }
+        $('head').append('<link href="<%- selfLib("style.css") %>?20181212" rel="stylesheet">')
+      }
+    
+      if(localStorage.getItem("theme")===null){
+        localStorage.setItem("theme","dark-official")
+      }
+    
+      settheme(localStorage.getItem("theme"))
+    </script>  
+
 </head>
 <body style="position: relative; margin-top: 49px; height: calc(100% - 49px); overflow-y: overlay; overflow-x: overlay; ">
     <div class="ui fixed borderless menu" style="position: fixed; height: 49px; ">
@@ -60,14 +76,22 @@
             <a class="header item" href="/"><span style="font-family: 'Exo 2'; font-size: 1.5em; font-weight: 600; "><%= syzoj.config.title %></span></a>
             <% } %>
             <a class="item<% if (active === '') { %> active<% } %>" href="/"><i class="home icon"></i> 首页</a>
-            <a class="item<% if (active.startsWith('problem')) { %> active<% } %>" href="/problems"><i class="list icon"></i> 题库</a>
+            <a class="item<% if (active.startsWith('problem') && !active.startsWith('problemset')) { %> active<% } %>" href="/problems"><i class="list icon"></i> 题库</a>
+            <a class="item<% if (active.startsWith('problemset')) { %> active<% } %>" href="/problemsets"><i class="compass icon"></i> 题单</a>
             <a class="item<% if (active.startsWith('contest')) { %> active<% } %>" href="/contests"><i class="calendar icon"></i> 比赛</a>
             <a class="item<% if (active.startsWith('submission')) { %> active<% } %>" href="/submissions"><i class="tasks icon"></i> 评测</a>
             <a class="item<% if (active.startsWith('ranklist')) { %> active<% } %>" href="/ranklist"><i class="signal icon"></i> 排名</a>
             <a class="item<% if (active.startsWith('discussion') || active.startsWith('article')) { %> active<% } %>" href="/discussion/global"><i class="comments icon"></i> 讨论</a>
             <a class="item<% if (active.startsWith('help')) { %> active<% } %>" href="/help"><i class="help circle icon"></i> 帮助</a>
-            <a class="item<% if (active.startsWith('calendar')) { %> active<% } %>" href="/calendar"><i class="calendar icon"></i>比赛日历</a>
-            <a class="item<% if (active.startsWith('theme_shop')) { %> active<% } %>" href="/theme_shop"><i class="shop icon"></i>主题商店</a>
+            <div class="ui simple dropdown item">
+              <i class="setting icon"></i>应用<i class="dropdown icon"></i>
+              <div class="ui fixed borderless menu">
+                <a class="item" href="/calendar"><i class="calendar icon"></i>比赛日历</a>
+                <a class="item" href="/theme_shop"><i class="shop icon"></i>主题商店</a>
+                <a class="item" href="/picupload"><i class="image icon"></i>图床</a>
+              </div>
+            </div>
+
             <% if (typeof contest !== 'undefined' && contest && contest.id) { %>
               <a id="back_to_contest" class="item" href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>"><i class="arrow left icon"></i> 返回比赛</a>
             <% } %>

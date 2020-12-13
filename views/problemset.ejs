@@ -1,0 +1,102 @@
+<% include util %>
+<% this.title = problemset.title + ' - 题单' %>
+<% include header %>
+<div class="padding">
+    <h1><%= problemset.title %></h1>
+    <div style="margin-bottom: 30px;"><%- problemset.subtitle %></div>
+    <div class="ui grid" style="margin-bottom: 30px;">
+        <div class="row">
+          <div class="column">
+            <div class="ui buttons">
+              <% if (isSupervisitor) { %>
+                <a class="ui small button" href="<%= syzoj.utils.makeUrl(['problemset', problemset.id, 'edit']) %>">编辑题单</a>
+                <div class="ui basic modal" id="modal-delete">
+                  <div class="ui icon header">
+                    <i class="trash icon"></i>
+                    <p style="margin-top: 15px; ">删除题单</p>
+                  </div>
+                  <div class="content" style="text-align: center; ">
+                    <p>确认删除此题单吗？</p>
+                    <b>警告：本操作为不可逆操作，请谨慎选择！</b>
+                  </div>
+                  <div class="actions">
+                    <div class="ui red basic cancel inverted button">
+                      <i class="remove icon"></i>
+                      否
+                    </div>
+                    <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['problemset', problemset.id, 'delete']) %>">
+                      <i class="checkmark icon"></i>
+                      是
+                    </a>
+                  </div>
+                </div>
+                <div class="small ui red button" onclick="$('#modal-delete').modal('show')">删除</div>    
+              <% } %>
+            </div>
+          </div>
+        </div>
+    <% if (problemset.information) { %>
+        <div class="row">
+          <div class="column">
+                <h4 class="ui top attached block header">基本信息</h4>
+                <div class="ui bottom attached segment font-content">
+                <%- problemset.information %>
+                </div>
+          </div>
+       </div>
+    <% } %>
+    </div>
+    
+    <% if (problems.length) { %>
+        <table class="ui very basic center aligned table">
+          <thead>
+            <tr>
+              <% if (user) { %>
+              <th class="one wide">提交状态</th>
+              <% } %>
+              <th class="one wide"><%- createSortableTitle('id', '编号', true) %></th>
+              <th class="left aligned"><%- createSortableTitle('title', '题目名称', true) %></th>
+              <th class="one wide"><%- createSortableTitle('ac_num', '通过', false) %></th>
+              <th class="one wide"><%- createSortableTitle('submit_num', '提交', false) %></th>
+              <th class="one wide">通过率</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% for (let problem of problems) { %>
+              <% if (problem.is_public || problem.allowedEdit) { %>
+              <tr style="height: 44px; ">
+                  <% if (user) { %>
+                      <td>
+                      <% if (problem.judge_state) { %>
+                        <a href="<%= syzoj.utils.makeUrl(['submission', problem.judge_state.id]) %>">
+                          <span class="status <%= problem.judge_state.status.toLowerCase().split(' ').join('_') %>">
+                            <i class="<%= icon[problem.judge_state.status] || 'remove' %> icon"></i>
+                          </span>
+                        </a>
+                      <% } %>
+                      </td>
+                  <% } %>
+                  <td><b><%= problem.id %></b></td>
+                  <td class="left aligned">
+                    <a style="vertical-align: middle; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
+                      <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+                    </a>
+                  </td>
+                  <td><%= problem.ac_num %></td>
+                  <td><%= problem.submit_num %></td>
+                  <td><%= problem.submit_num != 0 ? (((problem.ac_num / problem.submit_num * 100) || 0).toFixed(2) + '%') : '-' %></td>
+              </tr>
+              <% } %>
+          <% } %>
+          </tbody>
+        </table><br>
+    <% } else { %>
+        <div class="ui placeholder segment">
+          <div class="ui icon header">
+            <i class="list icon" style="margin-bottom: 20px; "></i>
+            暂无题目
+          </div>
+        </div>
+    <% } %>
+</div>
+<% include footer %>
