@@ -77,7 +77,7 @@
           <input <% if (!allowedManagePrivilege) { %>disabled="disabled" <% } %>type="checkbox"<% if (edited_user.privileges.includes('manage_user')) { %> checked<% } %>>
           <label>管理用户</label>
         </div>
-        <div class="ui toggle <% if (!allowedManagePrivilege) { %>disabled <% } %>checkbox checkbox_privilege" data-name="manage_user">
+        <div class="ui toggle <% if (!allowedManagePrivilege) { %>disabled <% } %>checkbox checkbox_privilege" data-name="manage_problemset">
           <input <% if (!allowedManagePrivilege) { %>disabled="disabled" <% } %>type="checkbox"<% if (edited_user.privileges.includes('manage_problemset')) { %> checked<% } %>>
           <label>管理题单</label>
         </div>
