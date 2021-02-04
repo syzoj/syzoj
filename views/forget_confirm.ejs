@@ -44,6 +44,7 @@ function submitForm() {
         return;
     }
     password = md5($("#password1").val() + "syzoj2_xxx");
+
     $("#resetPassword").addClass("loading");
     $.ajax({
         url: "/api/reset_password",
