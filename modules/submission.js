@@ -125,6 +125,8 @@ app.get('/submissions', async (req, res) => {
       await obj.loadRelationships();
     });
 
+    //console.log(req.query.status)
+
     res.render('submissions', {
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),

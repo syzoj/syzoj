@@ -90,7 +90,7 @@ app.post('/contest/:id/edit', async (req, res) => {
     } else {
       // if contest exists, both system administrators and contest administrators can edit it.
       if (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString()))) throw new ErrorMessage('您没有权限进行此操作。');
-      
+
       await contest.loadRelationships();
       ranklist = contest.ranklist;
     }
@@ -136,6 +136,7 @@ app.get('/contest/:id', async (req, res) => {
     if (!contest) throw new ErrorMessage('无此比赛。');
 
     const isSupervisior = await contest.isSupervisior(curUser);
+    const isWathcer = await contest.isWatcher(curUser)
 
     // if contest is non-public, both system administrators and contest administrators can see it.
     if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString())))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
@@ -224,7 +225,8 @@ app.get('/contest/:id', async (req, res) => {
       contest: contest,
       problems: problems,
       hasStatistics: hasStatistics,
-      isSupervisior: isSupervisior
+      isSupervisior: isSupervisior,
+      isWatcher: isWathcer
     });
   } catch (e) {
     syzoj.log(e);
@@ -244,10 +246,6 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     // if contest is non-public, both system administrators and contest administrators can see it.
     if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString())))) throw new ErrorMessage('比赛未公开，请耐心等待 (´∀ `)');
 
-    if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
-    contest.isEnded(),
-    await contest.isSupervisior(curUser)].every(x => !x))
-      throw new ErrorMessage('您没有权限进行此操作。');
 
     await contest.loadRelationships();
 

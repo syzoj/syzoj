@@ -34,6 +34,7 @@ enum Status {
 @TypeORM.Index(['type', 'is_public', 'problem_id'])
 @TypeORM.Index(['type', 'is_public', 'language', 'problem_id'])
 @TypeORM.Index(['problem_id', 'type', 'pending', 'score'])
+@TypeORM.Index(['type', 'type_info', 'status', 'user_id', 'problem_id'])
 export default class JudgeState extends Model {
   @TypeORM.PrimaryGeneratedColumn()
   id: number;
@@ -101,6 +102,10 @@ export default class JudgeState extends Model {
   @TypeORM.Index()
   @TypeORM.Column({ nullable: true, type: "boolean" })
   is_public: boolean;
+
+  @TypeORM.Index()
+  @TypeORM.Column({ nullable: true, type: "boolean" })
+  balloon_checked: boolean;
 
   user?: User;
   problem?: Problem;

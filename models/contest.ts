@@ -72,6 +72,10 @@ export default class Contest extends Model {
     return user && (user.is_admin || this.holder_id === user.id || this.admins.split('|').includes(user.id.toString()));
   }
 
+  async isWatcher(user) {
+    return user && ((user.nickname && user.nickname === "watcher") || this.isSupervisior(user));
+  }
+
   allowedSeeingOthers() {
     if (this.type === 'acm') return true;
     else return false;

@@ -1,0 +1,99 @@
+<% this.title = '气球榜单' %>
+<% include header %>
+<% include util %>
+<script src="<%- lib('textfit/2.3.1/textFit.min.js') %>"></script>
+<div class="padding">
+
+    <div id="vueAppBallons">
+    <table class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
+        <thead>
+        <tr>
+            <th>编号</th>
+            <th>题目</th>
+            <th>状态</th>
+            <th v-if="displayConfig.showScore">分数</th>
+            <th v-if="displayConfig.showUsage">总时间</th>
+            <th v-if="displayConfig.showUsage">内存</th>
+            <th v-if="displayConfig.showCode">代码 / 答案文件</th>
+            <th>提交者</th>
+            <th>提交时间</th>
+            <th>确认分发</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in items" :config="displayConfig" :show-rejudge="false" :data="item" is='balloons-item' :rough="true">
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="ui basic modal" id="modal-distribute">
+        <div class="ui icon header">
+            <i class="lightbulb icon"></i>
+            <p style="margin-top: 15px; ">确认分发</p>
+        </div>
+        <div class="content" style="text-align: center; ">
+            <p>确认标记气球已经分发完毕？</p>认分发
+        </div>
+        <div class="actions">
+            <div class="ui red basic cancel inverted button">
+                <i class="remove icon"></i>
+                否
+            </div>
+            <a class="ui green ok inverted button" :href-post="confirmLink + '/confirm'">
+                <i class="checkmark icon"></i>
+                是
+            </a>
+        </div>
+    </div>
+    </div>
+    <% if (!items.length) { %>
+        <div style="background-color: #fff; height: 18px; margin-top: -18px; "></div>
+        <div class="ui placeholder segment" style="margin-top: -5px; ">
+            <div class="ui icon header">
+                <i class="ui file icon" style="margin-bottom: 20px; "></i>
+                暂无气球需要分发
+            </div>
+        </div>
+    <% } else { %>
+        <br>
+        <% if (fast_pagination) { %>
+            <% include page_fast %>
+        <% } else { %>
+            <% include page %>
+        <% } %>
+    <% } %>
+</div>
+
+<script src="<%- lib('vue/2.5.21/vue.min.js') %>"></script>
+
+<% include balloons_item %>
+
+
+
+<script >
+
+     function check_distribute(idx) {
+         vueApp.submission_index = idx
+         $('#modal-distribute').modal('show');
+     }
+
+    const itemList = <%- serializejs(items) %>;
+    const displayConfig = <%- serializejs(displayConfig) %>;
+    const balloonConfirmUrl = <%- serializejs(syzoj.utils.makeUrl(['submission', '20000528'])) %>;
+
+    const vueApp = new Vue({
+        el: '#vueAppBallons',
+        data: {
+            items: itemList,
+            displayConfig: displayConfig,
+            submission_index: 1
+        },
+        computed: {
+            confirmLink(){
+                return balloonConfirmUrl.replace('20000528', this.submission_index);
+            }
+        }
+    });
+
+</script>
+<% include footer %>

@@ -5,7 +5,7 @@ import * as DeepCopy from "deepcopy";
 declare var syzoj: any;
 
 interface Paginater {
-  pageCnt: number;
+  pageCnt: number;DESC
   perPage: number;
   currPage: number;
 }

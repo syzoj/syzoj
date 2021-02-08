@@ -1,0 +1,70 @@
+<% include util %>
+<% include status_label %>
+
+<script>
+    function formatSize(x, precision) {
+        if (typeof x !== 'number') return '0 B';
+        var unit = 'B', units = ['K', 'M', 'G', 'T'];
+        for (var i in units) if (x > 1024) x /= 1024, unit = units[i];
+        var fixed = x === Math.round(x) ? x.toString() : x.toFixed(precision);
+        return fixed + ' ' + unit;
+    }
+
+    const userUrl = <%- serializejs(syzoj.utils.makeUrl(['user', '20000528'])) %>;
+
+    Vue.component('balloons-item', {
+        template: '#balloonsItemTemplate',
+        props: ['data', 'config', 'showRejudge', 'progress', 'compiling', 'rough'],
+        computed: {
+            statusString() {
+                const data = this.data;
+
+                if (data.result) {
+                    return data.result.result;
+                } else if (data.running) {
+                    if (this.rough) return 'Judging';
+                    if (this.compiling) return 'Compiling';
+                    return 'Running';
+                } else return 'Waiting';
+            },
+            userLink() {
+                return userUrl.replace('20000528', this.data.info.userId);
+            },
+            scoreClass() {
+                return "score_" + (parseInt(this.data.result.score / 10) || 0).toString();
+            }
+        },
+        methods: {
+            alpha(number) {
+                if (number && parseInt(number) == number && parseInt(number) > 0) return String.fromCharCode('A'.charCodeAt(0) + parseInt(number) - 1);
+            }
+        },
+        mounted() {
+            textFit(this.$refs.problemLabelTextFit, { maxFontSize: 14 });
+        }
+    });
+</script>
+
+<script id="balloonsItemTemplate" type="text/x-template">
+    <tr>
+        <td><b>#{{ data.info.submissionId }}</b></td>
+
+        <td ref="problemLabelTextFit" style="width: 230px; height: 22px; display: block; margin: 0 auto; line-height: 22px;"><b>{{ alpha(data.info.problemId)}}.</b> {{ data.info.problemName }}</td>
+
+        <td><b><status-label :status="statusString" :progress="progress"></status-label></b></td>
+
+
+
+        <td v-if="config.showScore"><span class="score" :class="scoreClass">{{ Math.floor(data.result.score || 0) }}</span></td>
+
+
+        <td><a :href="userLink" style="font-size: 17px; width: 230px;">{{ data.info.user }}</a></td>
+        <td>{{ data.info.submitTime }}</td>
+
+        <td v-if="!data.info.balloon_checked">
+            <b id="balloon-confirm-button" :onclick="'check_distribute('+data.info.submissionId+')'" style="color: #000; cursor: pointer;"><i class="check icon"></i></b>
+        </td>
+    </tr>
+</script>
+
+
