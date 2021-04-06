@@ -38,10 +38,24 @@ app.get('/problems', async (req, res) => {
 
     let paginate = syzoj.utils.paginate(await Problem.countForPagination(query), req.query.page, syzoj.config.page.problem);
     let problems = await Problem.queryPage(paginate, query);
+    let judge_state_ids = new Map();
 
+    if(res.locals.user){
+      let judge_states = await JudgeState.find({
+        where:{
+          user_id: res.locals.user.id
+        }
+      });
+      for(let judge_state of judge_states){
+        judge_state_ids.set(judge_state.problem_id,1);
+      }
+    }
+    
     await problems.forEachAsync(async problem => {
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
-      problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+      if(judge_state_ids.has(problem.id)){
+        problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+      }
       problem.tags = await problem.getTags();
     });
 
