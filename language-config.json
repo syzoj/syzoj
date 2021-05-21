@@ -2,21 +2,21 @@
   "cpp": {
     "show": "C++",
     "highlight": "cpp",
-    "version": "GCC 8.2.0",
+    "version": "GCC 10.2.0",
     "editor": "cpp",
     "format": "cpp"
   },
   "cpp11": {
     "show": "C++ 11",
     "highlight": "cpp",
-    "version": "GCC 8.2.0",
+    "version": "GCC 10.2.0",
     "editor": "cpp",
     "format": "cpp"
   },
   "cpp17": {
     "show": "C++ 17",
     "highlight": "cpp",
-    "version": "GCC 8.2.0",
+    "version": "GCC 10.2.0",
     "editor": "cpp",
     "format": "cpp"
   },
@@ -37,21 +37,21 @@
   "cpp11-clang": {
     "show": "C++ 11 (Clang)",
     "highlight": "cpp",
-    "version": "Clang 7.0.1",
+    "version": "Clang 12.0.1",
     "editor": "cpp",
     "format": "cpp"
   },
   "cpp17-clang": {
     "show": "C++ 17 (Clang)",
     "highlight": "cpp",
-    "version": "Clang 7.0.1",
+    "version": "Clang 12.0.1",
     "editor": "cpp",
     "format": "cpp"
   },
   "c": {
     "show": "C",
     "highlight": "c",
-    "version": "Clang 7.0.1",
+    "version": "Clang 12.0.1",
     "editor": "c",
     "format": "c"
   },
@@ -65,7 +65,7 @@
   "csharp": {
     "show": "C#",
     "highlight": "csharp",
-    "version": "Mono 5.16.0.220",
+    "version": "Mono 6.12.0.122",
     "editor": "csharp"
   },
   "vala": {
@@ -77,7 +77,7 @@
   "java": {
     "show": "Java",
     "highlight": "java",
-    "version": "OpenJDK 10.0.2",
+    "version": "OpenJDK 11.0.11",
     "editor": "java",
     "format": "java"
   },
@@ -103,32 +103,32 @@
   "python2": {
     "show": "Python 2",
     "highlight": "python",
-    "version": "PyPy 6.0.0 (Python 2.7.13)",
+    "version": "PyPy 7.3.4 (Python 2.7.18)",
     "editor": "python"
   },
   "python3": {
     "show": "Python 3",
     "highlight": "python",
-    "version": "PyPy 6.0.0 (Python 3.5.3)",
+    "version": "PyPy 7.3.4 (Python 3.7.10)",
     "editor": "python"
   },
   "nodejs": {
     "show": "Node.js",
     "highlight": "js",
-    "version": "10.14.0",
+    "version": "16.1.0",
     "editor": "javascript",
     "format": "js"
   },
   "ruby": {
     "show": "Ruby",
     "highlight": "ruby",
-    "version": "2.5.1",
+    "version": "2.7.0",
     "editor": "ruby"
   },
   "haskell": {
     "show": "Haskell",
     "highlight": "haskell",
-    "version": "GHC 8.6.2",
+    "version": "GHC 8.10.4",
     "editor": "haskell"
   },
   "ocaml": {
