@@ -49,6 +49,6 @@ module.exports = async (code, lang) => {
   }
 
   clearTimeout(timer);
-  try { if (tempFile) await fs.delete(tempFile); } catch (e) {}
+  try { if (tempFile) await fs.unlink(tempFile); } catch (e) {}
   return result;
 }
