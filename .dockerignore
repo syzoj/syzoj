@@ -1,0 +1,4 @@
+/node_modules
+/models-built
+/.git
+/Dockerfile
