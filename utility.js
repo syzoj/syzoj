@@ -303,7 +303,7 @@ module.exports = {
   },
   async saveConfig() {
     let fs = require('fs-extra');
-    fs.writeFileAsync(syzoj.configDir, JSON.stringify(syzoj.config, null, 2));
+    fs.writeFileAsync(syzoj.configDir, JSON.stringify(syzoj.configInFile, null, 2));
   },
   withTimeoutRetry(func) {
     let attemptCount = 0;

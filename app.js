@@ -4,10 +4,13 @@ const fs = require('fs'),
       http = require('http'),
       serializejs = require('serialize-javascript'),
       UUID = require('uuid'),
-      commandLineArgs = require('command-line-args');
+      commandLineArgs = require('command-line-args'),
+      objectPath = require('object-path'),
+      deepAssign = require('object-assign-deep'),
+      deepCopy = require('deepcopy');
 
 const optionDefinitions = [
-  { name: 'config', alias: 'c', type: String, defaultValue: __dirname + '/config.json' },
+  { name: 'config', alias: 'c', type: String, defaultValue: __dirname + '/config.json' }
 ];
 
 const options = commandLineArgs(optionDefinitions);
@@ -23,9 +26,50 @@ Promise.config({
   }
 });
 
+const configBase = require('./config-example.json');
+const configInFile = JSON.parse((fs.existsSync(options.config) && fs.readFileSync(options.config, 'utf-8')) || '{}');
+const configEnvOverrideItems = {
+  SYZOJ_WEB_LISTEN_HOSTNAME: [String, "hostname"],
+  SYZOJ_WEB_LISTEN_PORT: [Number, "port"],
+  SYZOJ_WEB_DB_HOST: [String, "db.host"],
+  SYZOJ_WEB_DB_DATABASE: [String, "db.database"],
+  SYZOJ_WEB_DB_USERNAME: [String, "db.username"],
+  SYZOJ_WEB_DB_PASSWORD: [String, "db.password"],
+  SYZOJ_WEB_REDIS_URI: [String, "redis"],
+  SYZOJ_WEB_SECRET_SESSION: [String, "session_secret"],
+  SYZOJ_WEB_SECRET_JUDGE: [String, "judge_token"],
+  SYZOJ_WEB_SECRET_EMAIL: [String, "email_jwt_secret"],
+  SYZOJ_WEB_REGISTER_EMAIL_VERIFICATION: [Boolean, "register_mail"],
+  SYZOJ_WEB_EMAIL_METHOD: [String, "email.method"],
+  SYZOJ_WEB_EMAIL_SENDMAIL_ADDRESS: [String, "email.options.address"],
+  SYZOJ_WEB_EMAIL_ALIYUNDM_AKID: [String, "email.options.AccessKeyId"],
+  SYZOJ_WEB_EMAIL_ALIYUNDM_AKS: [String, "email.options.AccessKeySecret"],
+  SYZOJ_WEB_EMAIL_ALIYUNDM_ACCOUNT: [String, "email.options.AccountName"],
+  SYZOJ_WEB_EMAIL_SMTP_HOST: [String, "email.options.host"],
+  SYZOJ_WEB_EMAIL_SMTP_PORT: [String, "email.options.port"],
+  SYZOJ_WEB_EMAIL_SMTP_USERNAME: [String, "email.options.username"],
+  SYZOJ_WEB_EMAIL_SMTP_PASSWORD: [String, "email.options.password"],
+  SYZOJ_WEB_EMAIL_SMTP_ALLOW_UNAUTHORIZED_TLS: [String, "email.options.allowUnauthorizedTls"],
+};
+const configEnvOverride = (() => {
+  const override = {};
+  for (const key in configEnvOverrideItems) {
+    const [Type, configKey] = configEnvOverrideItems[key];
+    if (key in process.env)
+      objectPath.set(override, configKey, Type(process.env[key]));
+  }
+  return override;
+})();
+const configOverrideExtra = eval('(' + (process.env['SYZOJ_WEB_CONFIG_OVERRIDE'] || '{}') + ')');
+function loadConfig(config) {
+  return deepAssign(deepCopy(configBase), config, configEnvOverride, configOverrideExtra);
+}
+
 global.syzoj = {
   rootDir: __dirname,
-  config: require('object-assign-deep')({}, require('./config-example.json'), require(options.config)),
+  config: loadConfig(configInFile),
+  configInFile: configInFile,
+  reloadConfig: () => syzoj.config = loadConfig(syzoj.configInFile),
   languages: require('./language-config.json'),
   configDir: options.config,
   models: [],
@@ -37,8 +81,7 @@ global.syzoj = {
     console.log(obj);
   },
   checkMigratedToTypeORM() {
-    const userConfig = require(options.config);
-    if (!userConfig.db.migrated_to_typeorm) {
+    if (configInFile.db && !configInFile.db.migrated_to_typeorm) {
       app.use((req, res) => res.send('Please refer to <a href="https://github.com/syzoj/syzoj/wiki/TypeORM-%E8%BF%81%E7%A7%BB%E6%8C%87%E5%8D%97">TypeORM Migration Guide</a>.'));
       app.listen(parseInt(syzoj.config.port), syzoj.config.hostname);
       return false;
@@ -205,7 +248,7 @@ global.syzoj = {
       rolling: true,
       saveUninitialized: true,
       resave: true,
-      store: new FileStore
+      store: new FileStore({ retries: 0 }),
     };
     if (syzoj.production) {
       app.set('trust proxy', 1);

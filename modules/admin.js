@@ -1,3 +1,4 @@
+const objectPath = require('object-path');
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let Article = syzoj.model('article');
@@ -69,7 +70,7 @@ app.get('/admin/config', async (req, res) => {
 
     for (let i in configItems) {
       if (!configItems[i]) continue;
-      configItems[i].val = eval(`syzoj.config.${i}`);
+      configItems[i].val = objectPath.get(syzoj.config, i);
     }
 
     res.render('admin_config', {
@@ -99,11 +100,13 @@ app.post('/admin/config', async (req, res) => {
           val = req.body[i];
         }
 
-        let f = new Function('val', `syzoj.config.${i} = val`);
-        f(val);
+        const oldVal = objectPath.get(syzoj.config, i);
+        if (oldVal !== val)
+          objectPath.set(syzoj.configInFile, i, val);
       }
     }
 
+    syzoj.reloadConfig();
     await syzoj.utils.saveConfig();
 
     res.redirect(syzoj.utils.makeUrl(['admin', 'config']));
@@ -414,8 +417,11 @@ app.post('/admin/links', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
-    syzoj.config.links = JSON.parse(req.body.data);
-    await syzoj.utils.saveConfig();
+    if (JSON.stringify(syzoj.config.links) !== req.body.data) {
+      syzoj.configInFile.links = JSON.parse(req.body.data);
+      syzoj.reloadConfig();
+      await syzoj.utils.saveConfig();
+    }
 
     res.redirect(syzoj.utils.makeUrl(['admin', 'links']));
   } catch (e) {
@@ -431,7 +437,7 @@ app.get('/admin/raw', async (req, res) => {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
     res.render('admin_raw', {
-      data: JSON.stringify(syzoj.config, null, 2)
+      data: JSON.stringify(syzoj.configInFile, null, 2)
     });
   } catch (e) {
     syzoj.log(e);
@@ -445,7 +451,8 @@ app.post('/admin/raw', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
 
-    syzoj.config = JSON.parse(req.body.data);
+    syzoj.configInFile = JSON.parse(req.body.data);
+    syzoj.reloadConfig();
     await syzoj.utils.saveConfig();
 
     res.redirect(syzoj.utils.makeUrl(['admin', 'raw']));
@@ -463,9 +470,7 @@ app.post('/admin/restart', async (req, res) => {
 
     syzoj.restart();
 
-    res.render('admin_restart', {
-      data: JSON.stringify(syzoj.config, null, 2)
-    });
+    res.render('admin_restart');
   } catch (e) {
     syzoj.log(e);
     res.render('error', {
