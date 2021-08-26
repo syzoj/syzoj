@@ -61,7 +61,7 @@
     "object-path": "^0.11.5",
     "random-js": "1.0.8",
     "randomstring": "^1.1.5",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "redis-lru": "^0.6.0",
     "reflect-metadata": "^0.1.13",
     "request": "^2.74.0",
