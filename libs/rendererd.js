@@ -38,7 +38,7 @@ async function markdown(markdownCode) {
   function filter(html) {
     html = xss.process(html);
     if (html) {
-      html = `<div style="position: relative; overflow: hidden; ">${html}</div>`;
+      html = `<div style="position: relative; overflow: hidden; transform: translate3d(0, 0, 0); ">${html}</div>`;
     }
     return html;
   };
