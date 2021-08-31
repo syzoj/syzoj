@@ -26,6 +26,12 @@ Promise.config({
   }
 });
 
+function parseBoolean(s) {
+    if (s === 'true') return true;
+    else if (s === 'false') return false;
+    throw new Error(`Invalid boolean value: ${JSON.stringify(s)}`);
+}
+
 const configBase = require('./config-example.json');
 const configInFile = JSON.parse((fs.existsSync(options.config) && fs.readFileSync(options.config, 'utf-8')) || '{}');
 const configEnvOverrideItems = {
@@ -39,7 +45,7 @@ const configEnvOverrideItems = {
   SYZOJ_WEB_SECRET_SESSION: [String, "session_secret"],
   SYZOJ_WEB_SECRET_JUDGE: [String, "judge_token"],
   SYZOJ_WEB_SECRET_EMAIL: [String, "email_jwt_secret"],
-  SYZOJ_WEB_REGISTER_EMAIL_VERIFICATION: [Boolean, "register_mail"],
+  SYZOJ_WEB_REGISTER_EMAIL_VERIFICATION: [parseBoolean, "register_mail"],
   SYZOJ_WEB_EMAIL_METHOD: [String, "email.method"],
   SYZOJ_WEB_EMAIL_SENDMAIL_ADDRESS: [String, "email.options.address"],
   SYZOJ_WEB_EMAIL_ALIYUNDM_AKID: [String, "email.options.AccessKeyId"],
