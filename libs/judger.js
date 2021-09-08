@@ -3,6 +3,7 @@ const util = require('util');
 const winston = require('winston');
 const msgPack = require('msgpack-lite');
 const fs = require('fs-extra');
+const FastPriorityQueue = require('fastpriorityqueue');
 const interface = require('./judger_interfaces');
 const judgeResult = require('./judgeResult');
 
@@ -22,28 +23,52 @@ function getRunningTaskStatusString(result) {
   return `Running ${allFinished}/${allTotal}`;
 }
 
-let judgeQueue;
+const judgeQueue = (() => {
+  const queue = new FastPriorityQueue();
+  let queueConsumers = [];
+
+  class Item {
+    constructor(data, priority) {
+      this.data = data;
+      this.priority = priority;
+    }
+
+    valueOf() {
+      return this.priority;
+    }
+  }
+
+  return {
+    push(data, priority) {
+      const item = new Item(data, priority);
+      if (queueConsumers.length > 0) {
+        const consumer = queueConsumers.pop();
+        consumer(item);
+      } else
+        queue.add(item);
+    },
+    poll(timeout) {
+      return new Promise(resolve => {
+        if (!queue.isEmpty()) return resolve(queue.poll());
+
+        const timer = setTimeout(() => {
+          queueConsumers = queueConsumers.filter(cb => cb !== onNewItem);
+          resolve(null);
+        }, timeout);
+
+        function onNewItem(item) {
+          clearTimeout(timer);
+          resolve(item);
+        }
+
+        queueConsumers.push(onNewItem);
+      });
+    }
+  }
+})();
 
 async function connect() {
   const JudgeState = syzoj.model('judge_state');
-
-  const  blockableRedisClient = syzoj.redis.duplicate();
-  judgeQueue = {
-    redisZADD: util.promisify(syzoj.redis.zadd).bind(syzoj.redis),
-    redisBZPOPMAX: util.promisify(blockableRedisClient.bzpopmax).bind(blockableRedisClient),
-    async push(data, priority) {
-      return await this.redisZADD('judge', priority, JSON.stringify(data));
-    },
-    async poll(timeout) {
-      const result = await this.redisBZPOPMAX('judge', timeout);
-      if (!result) return null;
-
-      return {
-        data: JSON.parse(result[1]),
-        priority: result[2]
-      };
-    }
-  };
 
   const judgeNamespace = syzoj.socketIO.of('judge');
   judgeNamespace.on('connect', socket => {

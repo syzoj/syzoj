@@ -41,7 +41,6 @@ const configEnvOverrideItems = {
   SYZOJ_WEB_DB_DATABASE: [String, "db.database"],
   SYZOJ_WEB_DB_USERNAME: [String, "db.username"],
   SYZOJ_WEB_DB_PASSWORD: [String, "db.password"],
-  SYZOJ_WEB_REDIS_URI: [String, "redis"],
   SYZOJ_WEB_SECRET_SESSION: [String, "session_secret"],
   SYZOJ_WEB_SECRET_JUDGE: [String, "judge_token"],
   SYZOJ_WEB_SECRET_EMAIL: [String, "email_jwt_secret"],
@@ -151,14 +150,6 @@ global.syzoj = {
 
     await this.connectDatabase();
     this.loadModules();
-
-    // redis and redisCache is for syzoj-renderer
-    const redis = require('redis');
-    this.redis = redis.createClient(this.config.redis);
-    this.redisCache = {
-      get: util.promisify(this.redis.get).bind(this.redis),
-      set: util.promisify(this.redis.set).bind(this.redis)
-    };
 
     if (!module.parent) {
       // Loaded by node CLI, not by `require()`.

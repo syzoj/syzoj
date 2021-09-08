@@ -18,18 +18,11 @@ const xss = new XSS.FilterXSS({
   }
 });
 
-const Redis = require('redis');
-const RedisLRU = require('redis-lru');
-const util = require('util');
-const redis = Redis.createClient(process.argv[2]);
-const redisLru = RedisLRU(redis, parseInt(process.argv[3]));
-const redisCache = {
-  get: redisLru.get.bind(redisLru),
-  set: redisLru.set.bind(redisLru)
-};
+const LRUCache = require('lru-cache');
+const cache = new LRUCache({ max: parseInt(process.argv[2]) });
 
 async function highlight(code, lang) {
-  return await renderer.highlight(code, lang, redisCache, {
+  return await renderer.highlight(code, lang, cache, {
     wrapper: null
   });
 }
@@ -43,7 +36,7 @@ async function markdown(markdownCode) {
     return html;
   };
 
-  return await renderer.markdown(markdownCode, redisCache, filter);
+  return await renderer.markdown(markdownCode, cache, filter);
 }
 
 process.on('message', async msg => {
