@@ -204,8 +204,13 @@ app.post('/user/:id/edit', async (req, res) => {
       error_info: ''
     });
   } catch (e) {
-    user.privileges = await user.getPrivileges();
-    res.locals.user.allowedManage = await res.locals.user.hasPrivilege('manage_user');
+    try {
+      user.privileges = await user.getPrivileges();
+      if (res.locals.user)
+        res.locals.user.allowedManage = await res.locals.user.hasPrivilege('manage_user');
+    } catch (e) {
+      console.error(e);
+    }
 
     res.render('user_edit', {
       edited_user: user,
