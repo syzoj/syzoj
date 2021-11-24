@@ -229,6 +229,7 @@
 $(function () {
   $('.ui.search').search({
     debug: true,
+    saveRemoteData: false,
     apiSettings: {
       url: '/api/v2/search/problems/{query}',
       cache: false
