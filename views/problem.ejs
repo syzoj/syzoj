@@ -305,6 +305,7 @@ if (contest) {
                     if (state) {
                       language = state.language;
                     } else if (lastLanguage) language = lastLanguage;
+                    if (!syzoj.config.enabled_languages.includes(language)) language = syzoj.config.enabled_languages[0];
                     %>
                     <% for (lang of syzoj.config.enabled_languages) { %>
                       <a style="border-radius: 0; " class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.languages[lang].editor %>">
