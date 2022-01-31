@@ -134,7 +134,7 @@ $(function () {
   $('#select_status').dropdown();
 });
 const itemList = <%- serializejs(items) %>;
-const socketUrl = "/rough";
+const socketUrl = "/<%= pushType %>";
 const displayConfig = <%- serializejs(displayConfig) %>;
 
 const vueApp = new Vue({
