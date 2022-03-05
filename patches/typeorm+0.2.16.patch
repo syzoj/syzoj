@@ -1,0 +1,13 @@
+diff --git a/node_modules/typeorm/util/OrmUtils.js b/node_modules/typeorm/util/OrmUtils.js
+index bac7bb4..40fac32 100644
+--- a/node_modules/typeorm/util/OrmUtils.js
++++ b/node_modules/typeorm/util/OrmUtils.js
+@@ -71,7 +71,7 @@ var OrmUtils = /** @class */ (function () {
+         if (this.isObject(target) && this.isObject(source)) {
+             for (var key in source) {
+                 var propertyKey = key;
+-                if (source[key] instanceof Promise)
++                if (key === "__proto__" || source[key] instanceof Promise)
+                     continue;
+                 // if (source[key] instanceof Promise) {
+                 //     propertyKey = "__" + key + "__";
