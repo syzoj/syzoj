@@ -73,7 +73,7 @@
     "session-file-store": "^1.0.0",
     "socket.io": "^2.2.0",
     "stream-to-string": "^1.2.0",
-    "syzoj-renderer": "^1.2.3",
+    "syzoj-renderer": "^1.2.4",
     "tempfile": "^2.0.0",
     "tmp-promise": "^1.0.3",
     "typeorm": "^0.2.16",

@@ -3572,10 +3572,10 @@ symbol-tree@^3.2.2:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
   integrity sha1-rifbOPZgp64uHDt9G8KQgZuFGeY=
 
-syzoj-renderer@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.npmjs.org/syzoj-renderer/-/syzoj-renderer-1.2.3.tgz#638daffd00c2b3ae06fa78e9ab834bc51da4090f"
-  integrity sha512-ulsKrdHMjWiTYSzsGrKSXeMAt541zArisOt3iEeAjI9KpR8jYiY7ekWVHNYWfT+s38RhpwBnhpMxAvmaTKXxrw==
+syzoj-renderer@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/syzoj-renderer/-/syzoj-renderer-1.2.4.tgz#94a000afa77661e40ef906637e3c1d41ef0377cb"
+  integrity sha512-o6/uVk2WkPWXrg9r/6l6e6vErMWSVA3bN3mFlDpB9g5KH2yUaOFuo5zWlMV0d6SAvdtJHoMdA2P97xLc9DPC1w==
   dependencies:
     babel-runtime "^6.26.0"
     cheerio "^1.0.0-rc.10"
