@@ -26,6 +26,7 @@
   "homepage": "https://github.com/syzoj/syzoj#readme",
   "dependencies": {
     "@types/fs-extra": "^5.0.5",
+    "@types/js-yaml": "^4.0.5",
     "@types/lru-cache": "^5.1.0",
     "ansi-to-html": "^0.6.10",
     "async-lock": "^1.2.0",
@@ -46,7 +47,7 @@
     "fs-extra": "^7.0.1",
     "gravatar": "^1.8.0",
     "javascript-time-ago": "^1.0.30",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^4.1.0",
     "jsdom": "^14.0.0",
     "jsondiffpatch": "0.2.5",
     "jsonwebtoken": "^8.5.1",
