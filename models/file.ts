@@ -32,11 +32,12 @@ export default class File extends Model {
   static async zipFiles(files) {
     let tmp = require('tmp-promise');
     let dir = await tmp.dir(), path = require('path'), fs = require('fs-extra');
-    let filenames = await files.mapAsync(async file => {
+    let filenames = (await files.mapAsync(async file => {
+      if (file.filename.includes('../')) return;
       let fullPath = path.join(dir.path, file.filename);
       await fs.writeFileAsync(fullPath, file.data);
       return fullPath;
-    });
+    })).filter(x => x);
 
     let p7zip = new (require('node-7z')), zipFile = await tmp.tmpName() + '.zip';
     await p7zip.add(zipFile, filenames);
