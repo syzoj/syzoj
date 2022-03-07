@@ -37,7 +37,7 @@ app.post('/problems/tag/:id/edit', async (req, res) => {
 
     req.body.name = req.body.name.trim();
     if (tag.name !== req.body.name) {
-      if (await ProblemTag.findOne({ where: { name: req.body.name } })) {
+      if (await ProblemTag.findOne({ where: { name: String(req.body.name) } })) {
         throw new ErrorMessage('标签名称已被使用。');
       }
     }

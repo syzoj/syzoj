@@ -464,7 +464,7 @@ app.post('/problem/:id/import', async (req, res) => {
 
     await problem.save();
 
-    let tagIDs = (await json.obj.tags.mapAsync(name => ProblemTag.findOne({ where: { name: name } }))).filter(x => x).map(tag => tag.id);
+    let tagIDs = (await json.obj.tags.mapAsync(name => ProblemTag.findOne({ where: { name: String(name) } }))).filter(x => x).map(tag => tag.id);
     await problem.setTags(tagIDs);
 
     let download = require('download');

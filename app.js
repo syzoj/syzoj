@@ -274,8 +274,8 @@ global.syzoj = {
             obj = JSON.parse(req.cookies.login);
             User.findOne({
               where: {
-                username: obj[0],
-                password: obj[1]
+                username: String(obj[0]),
+                password: String(obj[1])
               }
             }).then(user => {
               if (!user) throw null;

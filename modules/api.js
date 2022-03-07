@@ -69,7 +69,7 @@ app.post('/api/sign_up', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     let user = await User.fromName(req.body.username);
     if (user) throw 2008;
-    user = await User.findOne({ where: { email: req.body.email } });
+    user = await User.findOne({ where: { email: String(req.body.email) } });
     if (user) throw 2009;
 
 
