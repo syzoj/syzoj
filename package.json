@@ -53,7 +53,7 @@
     "jsonwebtoken": "^8.5.1",
     "lru-cache": "^5.1.1",
     "mariadb": "^2.0.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "msgpack-lite": "^0.1.26",
     "multer": "^1.2.0",
     "mysql2": "^1.6.5",
