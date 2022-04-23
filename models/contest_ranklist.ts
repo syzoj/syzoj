@@ -44,6 +44,8 @@ export default class ContestRanklist extends Model {
         player.score = 0;
 
         for (let i in player.score_details) {
+          if (!player.score_details || !player.score_details[i]) continue;
+
           let judge_state = await JudgeState.findById(player.score_details[i].judge_id);
           if (!judge_state) continue;
 
