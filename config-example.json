@@ -122,7 +122,7 @@
     "type": "built-in",
     "url": ""
   },
-  "no_cdn": false,
+  "no_cdn": true,
   "submissions_page_fast_pagination": false,
   "username_regex": "^[a-zA-Z0-9\\-\\_]+$",
   "site_for_download": "",
