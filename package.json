@@ -39,7 +39,7 @@
     "cssfilter": "0.0.10",
     "deepcopy": "^2.0.0",
     "download": "^7.1.0",
-    "ejs": "^2.5.2",
+    "ejs": "^3.1.7",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "fastpriorityqueue": "^0.7.1",
