@@ -51,7 +51,7 @@ if (syzoj.config.email.method === "sendmail") {
 
     doSendEmail = async function send_smtp(to, subject, body) {
         await transporter.sendMailAsync({
-            from: `"${syzoj.config.title}" <${syzoj.config.email.options.username}>`,
+            from: `"${syzoj.config.title}" <${syzoj.config.email.options.address || syzoj.config.email.options.username}>`,
             to: to,
             subject: subject,
             html: body
