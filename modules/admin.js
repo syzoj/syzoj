@@ -316,11 +316,41 @@ app.post('/admin/other', async (req, res) => {
           await s.save();
         }
       }
+    } else if (req.body.type === 'import_luogu') {
+      if (!syzoj.config.luogu_openapi_token)
+        throw new ErrorMessage("请在配置文件中填写洛谷 OpenAPI Token：\"luogu_openapi_token\"");
+      const { fetchProblems } = require("@menci/luogu-openapi");
+      const luoguProblems = await fetchProblems();
+      const problemMap = {};
+      const problems = await Problem.find({ where: { type: "vjudge:luogu" } });
+      for (const problem of problems) problemMap[problem.vjudge_config] = problem;
+      for (const p of luoguProblems) {
+        const problem = p.pid in problemMap ? problemMap[p.pid] : Problem.create({ type: 'vjudge:luogu' });
+        problem.title = p.title;
+        // WTF '[Ynoi2078] 《How to represent part-whole hierarchies in a neural network》阅读报告（更新中...）'
+        if (problem.title.length > 80) problem.title = problem.title.slice(0, 80);
+        problem.description = [p.background, p.description, p.translation].filter(x => x && x.trim()).join("\n\n---\n\n");
+        problem.input_format = p.inputFormat;
+        problem.output_format = p.outputFormat;
+        problem.example = p.samples.map((s, i) => `### 样例输入 ${i + 1}\n\n\`\`\`plain\n${s[0]}\n\`\`\`\n\n### 样例输出 ${i + 1}\n\n\`\`\`plain\n${s[1]}\n\`\`\`\n`).join("\n");
+        problem.limit_and_hint = p.hint;
+        problem.time_limit = Number.isSafeInteger(p.timeLimit) ? p.timeLimit : 0;
+        problem.memory_limit = Number.isSafeInteger(p.memoryLimit) ? Math.round(p.memoryLimit / 1024) : 0;
+        problem.is_public = true;
+        problem.publicize_time = new Date;
+        problem.vjudge_config = p.pid;
+        problem.is_anonymous = true;
+        problem.user_id = res.locals.user.id;
+        problem.publicizer_id = res.locals.user.id;
+        await problem.save();
+      }
     } else {
       throw new ErrorMessage("操作类型不正确");
     }
 
-    res.redirect(syzoj.utils.makeUrl(['admin', 'other']));
+    res.render('admin_other', {
+      success: true
+    });
   } catch (e) {
     syzoj.log(e);
     res.render('error', {

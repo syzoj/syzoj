@@ -1,8 +1,14 @@
 <% this.adminPage = 'other'; %>
 <% include admin_header %>
+<% if (typeof success !== "undefined" && success) { %>
+  <div class="ui success message" style="flex-grow: 0; ">
+    <p>操作成功！</p>
+  </div>
+<% } %>
 <form method="post" class="ui form">
   <p><button class="ui blue labeled icon button" name="type" value="reset_count" type="submit"><i class="ui repeat icon"></i>重新计算提交及 AC 数</button></p>
   <p><button class="ui blue labeled icon button" name="type" value="reset_discussion" type="submit"><i class="ui repeat icon"></i>重新计算讨论版回复数和回复时间</button></p>
   <p><button class="ui blue labeled icon button" name="type" value="reset_codelen" type="submit"><i class="ui repeat icon"></i>重新计算提交代码长度</button></p>
+  <p><button class="ui blue labeled icon button" name="type" value="import_luogu" type="submit"><i class="ui repeat icon"></i>导入洛谷 VJudge 题目</button></p>
 </form>
 <% include admin_footer %>

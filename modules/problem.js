@@ -226,7 +226,8 @@ app.get('/problem/:id', async (req, res) => {
       state: state,
       lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null,
       testcases: testcases,
-      discussionCount: discussionCount
+      discussionCount: discussionCount,
+      languages: problem.getVJudgeLanguages()
     });
   } catch (e) {
     syzoj.log(e);
@@ -606,7 +607,8 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     const curUser = res.locals.user;
 
     if (!problem) throw new ErrorMessage('无此题目。');
-    if (problem.type !== 'submit-answer' && !syzoj.config.enabled_languages.includes(req.body.language)) throw new ErrorMessage('不支持该语言。');
+    const vjudgeLanguages = problem.getVJudgeLanguages();
+    if (problem.type !== 'submit-answer' && !(vjudgeLanguages ? Object.keys(vjudgeLanguages) : syzoj.config.enabled_languages).includes(req.body.language)) throw new ErrorMessage('不支持该语言。');
     if (!curUser) throw new ErrorMessage('请登录后继续。', { '登录': syzoj.utils.makeUrl(['login'], { 'url': syzoj.utils.makeUrl(['problem', id]) }) });
 
     let judge_state;
@@ -684,8 +686,10 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
     }
     await judge_state.updateRelatedInfo(true);
 
-    if (problem.type !== 'submit-answer' && syzoj.languages[req.body.language].format) {
-      let key = syzoj.utils.getFormattedCodeKey(judge_state.code, req.body.language);
+    const lang = (problem.getVJudgeLanguages() || syzoj.languages)[req.body.language];
+
+    if (problem.type !== 'submit-answer' && lang.format) {
+      let key = syzoj.utils.getFormattedCodeKey(judge_state.code, lang.format);
       let formattedCode = await FormattedCode.findOne({
         where: {
           key: key
@@ -693,7 +697,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       });
 
       if (!formattedCode) {
-        let formatted = await CodeFormatter(judge_state.code, syzoj.languages[req.body.language].format);
+        let formatted = await CodeFormatter(judge_state.code, lang.format);
         if (formatted) {
           formattedCode = await FormattedCode.create({
             key: key,
@@ -713,6 +717,7 @@ app.post('/problem/:id/submit', app.multer.fields([{ name: 'answer', maxCount: 1
       judge_state.status = 'Waiting';
       await judge_state.save();
     } catch (err) {
+      console.log(err);
       throw new ErrorMessage(`无法开始评测：${err.toString()}`);
     }
 

@@ -6,6 +6,8 @@ if (contest) {
 } else {
   this.title = problem.title + ' - 题目';
 }
+const isVJudge = problem.type.startsWith("vjudge:");
+if (isVJudge) testcases = [];
 %>
 <% include header %>
 <style>
@@ -47,8 +49,15 @@ if (contest) {
     <% } %>
     <% if (problem.type !== 'interaction') { %>
       <div class="row" style="margin-top: -<%= problem.type === 'submit-answer' ? 15 : 23 %>px">
-          <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
-          <span class="ui label">评测方式：<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
+          <span class="ui label">题目类型：<%=
+            {
+              'submit-answer': '答案提交',
+              'interaction': '交互',
+              'traditional': '传统',
+              'vjudge:luogu': 'VJudge（洛谷）'
+            }[problem.type]
+          %></span>
+          <span class="ui label">评测方式：<%= isVJudge ? "VJudge" : (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
       </div>
     <% } %>
     <% if (!contest) { %>
@@ -93,7 +102,9 @@ if (contest) {
           <% } %>
           <a class="small ui positive button" href="<%= syzoj.utils.makeUrl(['submissions'], { problem_id: problem.id }) %>">提交记录</a>
           <a class="small ui orange button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'statistics', problem.type === 'submit-answer' ? 'shortest' : 'fastest']) %>">统计</a>
+          <% if (!isVJudge) { %>
           <a class="small ui yellow button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata']) %>">测试数据</a>
+          <% } %>
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>">附加文件</a>
           <% } %>
@@ -109,7 +120,9 @@ if (contest) {
         <div class="ui buttons right floated">
           <% if (problem.allowedEdit) { %>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑</a>
+            <% if (!isVJudge) { %>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'manage']) %>">管理</a>
+            <% } %>
           <% } %>
           <% if (problem.allowedManage) { %>
             <% if (problem.is_public) {  %>
@@ -301,16 +314,20 @@ if (contest) {
                 <div class="four wide column" style="margin-right: -25px; ">
                   <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <%
-                    let language = syzoj.config.enabled_languages[0];
+                    const languageList = languages ? Object.keys(languages) : syzoj.config.enabled_languages;
+                    let language = languageList[0];
                     if (state) {
                       language = state.language;
                     } else if (lastLanguage) language = lastLanguage;
-                    if (!syzoj.config.enabled_languages.includes(language)) language = syzoj.config.enabled_languages[0];
+                    if (!languageList.includes(language)) language = languageList[0];
+                    const languageMap = languages || syzoj.languages;
                     %>
-                    <% for (lang of syzoj.config.enabled_languages) { %>
-                      <a style="border-radius: 0; " class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= syzoj.languages[lang].editor %>">
-                        <%= syzoj.languages[lang].show %>
-                        <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= syzoj.languages[lang].version %></div>
+                    <% for (lang of languageList) { %>
+                      <a style="border-radius: 0; " class="item<%= lang === language ? ' active' : '' %>" data-value="<%= lang %>" data-mode="<%= languageMap[lang].editor %>">
+                        <%= languageMap[lang].show %>
+                        <% if (languageMap[lang].version) { %>
+                        <div class="ui right floated" style="opacity: 0.4; margin-top: 8px; font-size: 0.7em; "><%= languageMap[lang].version %></div>
+                        <% } %>
                       </a>
                     <% } %>
                   </div>

@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/syzoj/syzoj#readme",
   "dependencies": {
+    "@menci/luogu-openapi": "^1.0.0",
     "@types/fs-extra": "^5.0.5",
     "@types/js-yaml": "^4.0.5",
     "@types/lru-cache": "^5.1.0",

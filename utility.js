@@ -95,9 +95,9 @@ module.exports = {
       var fixed = x === Math.round(x) ? x.toString() : x.toFixed(precision);
       return fixed + ' ' + unit;
   },
-  getFormattedCodeKey(code, lang) {
-    if (syzoj.languages[lang].format) {
-      return syzoj.languages[lang].format + '\n' + syzoj.utils.md5(code);
+  getFormattedCodeKey(code, lang_format) {
+    if (lang_format) {
+      return lang_format + '\n' + syzoj.utils.md5(code);
     }
     return null;
   },

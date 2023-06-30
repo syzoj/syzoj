@@ -463,7 +463,7 @@ app.get('/contest/submission/:id', async (req, res) => {
 
     if (judge.problem.type !== 'submit-answer') {
       judge.codeLength = Buffer.from(judge.code).length;
-      judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
+      judge.code = await syzoj.utils.highlight(judge.code, (judge.problem.getVJudgeLanguages() || syzoj.languages)[judge.language].highlight);
     }
 
     res.render('submission', {

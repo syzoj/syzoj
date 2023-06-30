@@ -173,7 +173,8 @@ app.get('/submission/:id', async (req, res) => {
     await judge.loadRelationships();
 
     if (judge.problem.type !== 'submit-answer') {
-      let key = syzoj.utils.getFormattedCodeKey(judge.code, judge.language);
+      const lang = (judge.problem.getVJudgeLanguages() || syzoj.languages)[judge.language];
+      let key = syzoj.utils.getFormattedCodeKey(judge.code, lang.format);
       if (key) {
         let formattedCode = await FormattedCode.findOne({
           where: {
@@ -182,10 +183,10 @@ app.get('/submission/:id', async (req, res) => {
         });
 
         if (formattedCode) {
-          judge.formattedCode = await syzoj.utils.highlight(formattedCode.code, syzoj.languages[judge.language].highlight);
+          judge.formattedCode = await syzoj.utils.highlight(formattedCode.code, lang.highlight);
         }
       }
-      judge.code = await syzoj.utils.highlight(judge.code, syzoj.languages[judge.language].highlight);
+      judge.code = await syzoj.utils.highlight(judge.code, lang.highlight);
     }
 
     displayConfig.showRejudge = await judge.problem.isAllowedEditBy(res.locals.user);

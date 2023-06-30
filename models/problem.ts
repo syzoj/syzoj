@@ -24,7 +24,8 @@ const problemTagCache = new LRUCache<number, number[]>({
 enum ProblemType {
   Traditional = "traditional",
   SubmitAnswer = "submit-answer",
-  Interaction = "interaction"
+  Interaction = "interaction",
+  VJudge_Luogu = "vjudge:luogu"
 }
 
 const statisticsTypes = {
@@ -112,6 +113,9 @@ export default class Problem extends Model {
       default: ProblemType.Traditional
   })
   type: ProblemType;
+
+  @TypeORM.Column({ nullable: true, type: "varchar", length: 80 })
+  vjudge_config: string;
 
   user?: User;
   publicizer?: User;
@@ -284,7 +288,7 @@ export default class Problem extends Model {
     if (this.time_limit > syzoj.config.limit.time_limit) return 'Time limit too large';
     if (this.memory_limit <= 0) return 'Invalid memory limit';
     if (this.memory_limit > syzoj.config.limit.memory_limit) return 'Memory limit too large';
-    if (!['traditional', 'submit-answer', 'interaction'].includes(this.type)) return 'Invalid problem type';
+    if (!Object.values(ProblemType).includes(this.type)) return 'Invalid problem type';
 
     if (this.type === 'traditional') {
       let filenameRE = /^[\w \-\+\.]*$/;
@@ -607,5 +611,10 @@ export default class Problem extends Model {
     await entityManager.query('DELETE FROM `submission_statistics` WHERE `problem_id` = ' + this.id);
 
     await this.destroy();
+  }
+
+  getVJudgeLanguages() {
+    let vjudge = this.type.startsWith("vjudge:") ? this.type.split(":")[1] : null;
+    return vjudge ? require("../libs/vjudge").languages[vjudge] : null;
   }
 }

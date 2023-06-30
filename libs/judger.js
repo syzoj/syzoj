@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const FastPriorityQueue = require('fastpriorityqueue');
 const interface = require('./judger_interfaces');
 const judgeResult = require('./judgeResult');
+const vjudge = require("./vjudge");
 
 const judgeStateCache = new Map();
 const progressPusher = require('../modules/socketio');
@@ -218,6 +219,49 @@ async function connect() {
 module.exports.connect = connect;
 
 module.exports.judge = async function (judge_state, problem, priority) {
+  if (problem.type.startsWith("vjudge:")) {
+    progressPusher.createTask(judge_state.task_id);
+    judgeStateCache.set(judge_state.task_id, {
+      result: 'Pending',
+      score: 0,
+      time: 0,
+      memory: 0
+    });
+
+    return vjudge(judge_state, problem, async progress => {
+      console.log(progress);
+      if (progress.type === interface.ProgressReportType.Compiled) {
+        progressPusher.updateCompileStatus(progress.taskId, progress.progress);
+      } else if (progress.type === interface.ProgressReportType.Progress) {
+        const convertedResult = judgeResult.convertResult(progress.taskId, progress.progress);
+        judgeStateCache.set(progress.taskId, {
+          result: getRunningTaskStatusString(progress.progress),
+          score: convertedResult.score,
+          time: convertedResult.time,
+          memory: convertedResult.memory
+        });
+        progressPusher.updateProgress(progress.taskId, progress.progress);
+      } else if (progress.type === interface.ProgressReportType.Finished) {
+        progressPusher.updateResult(progress.taskId, progress.progress);
+        setTimeout(async () => {
+          judgeStateCache.delete(progress.taskId);
+          progressPusher.cleanupProgress(progress.taskId);
+
+          const convertedResult = judgeResult.convertResult(progress.taskId, progress.progress);
+          judge_state.score = convertedResult.score;
+          judge_state.pending = false;
+          judge_state.status = convertedResult.statusString;
+          judge_state.total_time = convertedResult.time;
+          judge_state.max_memory = convertedResult.memory;
+          judge_state.result = convertedResult.result;
+          judge_state.compilation = progress.progress.compile;
+          await judge_state.save();
+          await judge_state.updateRelatedInfo(false);
+        }, 5000);
+      }
+    });
+  }
+
   let type, param, extraData = null;
   switch (problem.type) {
     case 'submit-answer':
