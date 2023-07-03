@@ -528,7 +528,8 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
       problem: problem,
       state: state,
       lastLanguage: res.locals.user ? await res.locals.user.getLastSubmitLanguage() : null,
-      testcases: testcases
+      testcases: testcases,
+      languages: problem.getVJudgeLanguages()
     });
   } catch (e) {
     syzoj.log(e);
