@@ -63,7 +63,7 @@ module.exports = async function vjudge(judge_state, problem, onProgress) {
                 [/* MemoryLimitExceeded */ 4]: /* MemoryLimitExceeded */ 4,
                 [/* TimeLimitExceeded */ 5]: /* TimeLimitExceeded */ 5,
                 [/* WrongAnswer */ 6]: /* WrongAnswer */ 2,
-                [/* RuntimeError */ 7]: /* RuntimeError */ 6,
+                [/* RuntimeError */ 7]: /* RuntimeError */ 8,
                 [/* Invalid */ 11]: -1,
                 [/* Accepted */ 12]: /* Accepted */ 1,
                 [/* OverallUnaccepted */ 14]: /* PartiallyCorrect */ 3
