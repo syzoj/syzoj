@@ -315,6 +315,7 @@ if (isVJudge) testcases = [];
                   <div class="ui attached vertical fluid pointing menu" id="languages-menu" style="height: 370px; overflow-y: scroll; overflow-x: hidden; ">
                     <%
                     const languageList = languages ? Object.keys(languages) : syzoj.config.enabled_languages;
+                    if (languages && languageList[0] && languages[languageList[0]].index != null) languageList.sort((a, b) => languages[a].index - languages[b].index);
                     let language = languageList[0];
                     if (state) {
                       language = state.language;

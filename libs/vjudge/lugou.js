@@ -127,13 +127,13 @@ module.exports = async function vjudge(judge_state, problem, onProgress) {
 };
 
 const languages = {
-  "c/99/gcc": "ISO C99 (GCC)",
+  "cxx/noi/202107": "ISO C++14 w/ GCC 9.3.0",
   "cxx/98/gcc": "ISO C++98 (GCC)",
   "cxx/11/gcc": "ISO C++11 (GCC)",
   "cxx/14/gcc": "ISO C++14 (GCC)",
-  "cxx/noi/202107": "ISO C++14 w/ GCC 9.3.0",
   "cxx/17/gcc": "ISO C++17 (GCC)",
   "cxx/20/gcc  ": "ISO C++20 (GCC)",
+  "c/99/gcc": "ISO C99 (GCC)",
   "python3/c": "Python 3 (CPython)",
   "python3/py": "Python 3 (PyPy)",
   "pascal/fpc": "Pascal",
@@ -150,11 +150,13 @@ const languages = {
 };
 
 module.exports.languages = {};
+let i = 0;
 for (const l in languages) {
   let base = l.split("/")[0];
   if (base === "cxx") base = "cpp";
   if (base.startsWith("python")) base = "python";
   const lang = {
+    index: i++,
     show: languages[l],
     highlight: base,
     editor: base

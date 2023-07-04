@@ -126,6 +126,7 @@ app.get('/submissions', async (req, res) => {
     });
 
     res.render('submissions', {
+      vjudge: require("../libs/vjudge"),
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),
         token: (x.pending && x.task_id != null) ? jwt.sign({
