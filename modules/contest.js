@@ -411,6 +411,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
 
     const pushType = displayConfig.showResult ? 'rough' : 'compile';
     res.render('submissions', {
+      vjudge: require("../libs/vjudge"),
       contest: contest,
       items: judge_state.map(x => ({
         info: getSubmissionInfo(x, displayConfig),
