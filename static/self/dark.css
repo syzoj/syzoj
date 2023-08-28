@@ -1,0 +1,363 @@
+/* syzoj dark theme */
+/* 导航栏 */
+div.ui.fixed.borderless.menu,
+div.ui.fixed.borderless.menu a {
+    background-color: #222 !important;
+    color: #fff !important;
+}
+div.ui.menu a.item {
+    transition: .1s;
+}
+div.ui.menu a.item:hover {
+    background-color: #444 !important;
+}
+div.ui.menu a.item.active {
+    background-color: #555 !important;
+}
+a.header > img {
+    filter: invert(1);
+}
+div.ui.menu div.right.menu a.button {
+    background-color: #444 !important;
+}
+div.ui.menu div.right.menu a.button.primary {
+    background-color: #2789d3 !important;
+}
+div.menu.fixed div.right.menu div.menu {
+    background-color: #222 !important;
+}
+div.menu.fixed div.right.menu div.menu a.item {
+    background-color: #222 !important;
+    border: none !important;
+    color: #fff !important;
+}
+div.menu.fixed div.right.menu div.menu a.item:hover {
+    background-color: #333 !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+/* 页面文字及背景 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+body,
+th,
+td,
+table,
+label,
+div.column,
+p,
+div.title {
+    color: #fff !important;
+}
+body {
+    background-color: #2d2d2d;
+}
+.ui.header.top,
+div.pagination,
+div.selection,
+input,
+div.message {
+    background-color: #454545 !important;
+    color: #fff !important
+}
+div.pagination > a {
+    color: #aaa !important;
+}
+.ui.segment,
+.ui.table,
+tbody,
+thead,
+td,
+th,
+p {
+    background-color: #44444400 !important;
+    color: #fff !important;
+}
+.ui.footer {
+    background-color: #2d2d2d !important;
+}
+div.accordion {
+    background-color: #44444400 !important;
+}
+div.ui.header {
+    color: #66ccff !important;
+}
+span.date {
+    color: #bbb !important;
+}
+div.actions > a {
+    color: #777 !important;
+}
+
+/* 各类超链接 */
+a {
+    color: #66ccff;
+}
+a.item {
+    color: #000 !important;
+}
+div.tabular a.item {
+    color: #eee !important;
+}
+div.menu a.item {
+    color: #fff !important;
+}
+a.black-link {
+    color: #fff !important;
+}
+a.author {
+    color: #33aacc !important;
+}
+
+/* 比赛 1A 底色 */
+td[style="background: rgb(244, 255, 245); "] {
+    background-color: #3d3d3d !important;
+}
+
+/* 「一言」的来源 */
+#hitokoto-from {
+    color: #ddd !important;
+}
+
+
+/* 代码显示框 */
+code {
+    color: #ccc !important;
+}
+.pl-p,
+.pl-n {
+    color: #cccccc !important;
+}
+
+/* ACE Editor */
+#editor,
+#languages-menu,
+div.ace_gutter {
+    background-color: #333 !important;
+}
+#languages-menu > a,
+div.ace_gutter {
+    color: #eee !important;
+}
+div.ace_active-line,
+div.ace_gutter-active-line {
+    background-color: #444 !important;
+}
+span.ace_paren,
+span.ace_identifier {
+    color: #eee !important;
+}
+span.ace_operator {
+    color: #aaa !important;
+}
+div.ace_selection {
+    background-color: #626262 !important;
+}
+div.ace_cursor {
+    border-color: #aaa !important;
+}
+#languages-menu a.item.active {
+    background-color: #4a4a4a !important;
+}
+
+/* 评测状态 */
+span.status.accepted,
+span.score.score_10 {
+    color: #00d000 !important;
+}
+span.status.wrong_answer {
+    color: red !important;
+}
+span.status.runtime_error,
+span.status.invalid_interaction,
+span.status.file_error {
+    color: #bb54ee !important;
+}
+span.status.time_limit_exceeded,
+span.status.memory_limit_exceeded,
+span.status.output_limit_exceeded {
+    color: #f4a460 !important;
+}
+span.status.compile_error {
+    color: blue !important;
+}
+span.status.partially_correct {
+    color: cyan !important;
+}
+span.status.running{
+    color: rgb(102, 204, 255) !important;
+}
+span.status.skipped,
+span.status.waiting{
+    color: #aaa !important;
+}
+
+
+/* 按钮增加透明度, 防止颜色太突出 */
+a.ui.button {
+    opacity: 0.85;
+}
+
+/* 标签及显示分类标签 */
+span.ui.label {
+    background-color: #666;
+    color: #eee;
+}
+#show_tag_title_div {
+    background-color: #454545;
+}
+#show_tag_button {
+    color: #fff !important;
+}
+i.search.icon {
+    color: #eee !important;
+}
+.ui.toggle.checkbox input:checked ~ label,
+.ui.toggle.checkbox input:focus:checked ~ label {
+    color: #fff !important;
+}
+
+/* 页面右上角, 功能性按钮 */
+form[action="/find_user"] button {
+    color: #eee !important;
+    background-color: #5f5f5f !important;
+}
+form[action="/find_user"] button:hover {
+    color: #eee !important;
+    background-color: #555 !important;
+}
+#add_problem_dropdown {
+    background-color: #5f5f5f !important;
+    color: #fff !important;
+}
+#add_problem_dropdown:hover {
+    background-color: #555 !important;
+}
+
+/* textarea */
+textarea.markdown-edit,
+textarea[name="comment"] {
+    background-color: #454545 !important;
+    color: #fff !important;
+}
+
+/* 选择栏 */
+div.menu > div.item[data-value] {
+    background-color: #454545 !important;
+    border-top: 1px solid #3d3d3d !important;
+    color: #fff !important;
+    transition: 0.1s ease;
+}
+div.menu > div.item[data-value]:hover {
+    background-color: #666 !important;
+}
+div.results {
+    background-color: #454545 !important;
+    color: #eee !important;
+}
+a.result:hover,
+a.result.active {
+    background-color: #666 !important;
+}
+div.menu.transition:not(.pagination),
+div.menu.transition:not(.pagination) > a {
+    background-color: #444 !important;
+    color: #eee !important;
+}
+div.menu:not(.pagination) > a.item {
+    background-color: #333 !important;
+    transition: .1s;
+}
+div.menu:not(.pagination) > a.item:hover {
+    background-color: #555 !important;
+}
+
+/* 个人中心 */
+#user_card div.content {
+    background-color: #2d2d2d !important;
+    color: #fff !important;
+}
+#user_card div.header,
+#user_card div.meta,
+#user_card a.group {
+    color: #fff !important;
+}
+#user_card div.extra.content > a {
+    color: #fff !important;
+}
+#user_card div.extra.content > a:hover {
+    color: #1e70bf !important;
+}
+
+/* 表格 */
+.ui.celled.table tr td,
+.ui.celled.table tr th {
+    border-right: 1px solid #888 !important;
+    border-bottom: 1px solid #888 !important;
+}
+.ui.celled.table td:first-child,
+.ui.celled.table th:first-child {
+    border-left: 1px solid #888 !important;
+}
+.ui.celled.table tr th {
+    background-color: #454545 !important;
+    border-top: 1px solid #888 !important;
+    border-radius: 0px !important;
+}
+
+/* 比赛中的‘提交时间’ */
+div.submit_time {
+    color: #888 !important;
+}
+
+/* segment */
+div.segment {
+    border-color: #555 !important;
+}
+div.accordion {
+    box-shadow: 0px 0px 1px 1px #555 !important;
+}
+div.segment,
+.ui.top.attached.block.header {
+    border-color: #777 !important;
+}
+
+/* div.message */
+div.message .header,
+div.message .description {
+    color: #fff !important;
+}
+
+/* 登录界面的按钮 */
+div #login {
+    background-color: #666 !important;
+    color: #eee !important;
+}
+
+/* 后台管理 中的内容 */
+div.statistic > div.value,
+div.statistic > div.label {
+    color: #eee !important;
+}
+
+/* 重新评测 按钮及界面 */
+#rejudge-button{
+    color: #ddd !important;
+}
+#modal-rejudge i{
+    color: #ddd !important;
+}
+#modal-rejudge a.green,
+#modal-rejudge a.green i{
+    color: #2ecc40 !important;
+}
+
+/* 讨论中 divider */
+i.divider{
+    color: #eee !important;
+}
